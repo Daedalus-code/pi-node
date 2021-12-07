@@ -19,3 +19,10 @@ CPU_CTEMP=$(echo "$CPU_CTEMP / 100 * 0.1" 2>&1 |
   bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 CPU_FTEMP=$(echo "(1.8 * $CPU_CTEMP) + 32" 2>&1 |
   bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+# free Memory
+FREE_MEM=$(free --mega 2>/dev/null | grep "Mem" 2>/dev/null |
+  awk '{ print $4 }' 2>/dev/null)
+# total Memory
+TOTAL_MEM=$(free --mega 2>/dev/null | grep "Mem" 2>/dev/null |
+  awk '{ print $2 }' 2>/dev/null)

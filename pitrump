@@ -21,7 +21,7 @@ for (( ; ; )); do # loop dashbord
                       TrumpCoin Fullnode
 $Y1   ################# ${GR:?} -----------------------------------------${N0:?}
 $Y1   ################# ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
-$Y1   ##    #####    ##
+$Y1   ##    #####    ## ${N0:?} Free Mem ${G0:?}${FREE_MEM:?}M${N0:?} / ${G0:?}${TOTAL_MEM:?}M${N0:?} HDDuse ${USED_HDD:?}${N0:?} (${USED_HDD_P:?})
 $Y1         #####
 $Y1         #####
 $Y1         #####
