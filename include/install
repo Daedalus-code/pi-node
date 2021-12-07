@@ -6,3 +6,4 @@
 
 # install/update
 sudo cp -R /home/"$(whoami)"/trump-node/include* /usr/local/bin/ 2>&1
+sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
