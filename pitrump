@@ -10,7 +10,7 @@ sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz
 for (( ; ; )); do # loop dashbord
 
   source /usr/local/bin/color
-  source /usr/local/bin/function
+  source /usr/local/bin/functions
   source /usr/local/bin/time_fix
 
   clear
