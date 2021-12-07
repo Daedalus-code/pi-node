@@ -7,7 +7,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # time - date, trim extra spaces with xargs
-CLOCK=$(date 2>&1 | xargs 2>&1)
+CLOCK=$(date "+%H:%M:%S" 2>&1)
 
 # system load
 LOAD=$(uptime 2>&1 | awk '{ print $8,$9,$10 }' 2>&1 |
