@@ -2,8 +2,8 @@
 
 # By Rainman
 # V20210712
-# 0.0.0.8
+# 0.0.0.9
 
 # install/update
-sudo cp -R /home/"$(whoami)"/trump-node/include* /usr/local/bin/ 2>&1
+sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
