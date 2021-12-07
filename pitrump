@@ -23,7 +23,7 @@ $Y1   ################# ${GR:?} -----------------------------------------${N0:?}
 $Y1   ################# ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
 $Y1   ##    #####    ## ${N0:?} Free Mem ${G0:?}${FREE_MEM:?}M${N0:?} / ${G0:?}${TOTAL_MEM:?}M${N0:?} HDDuse ${G0?:}${USED_HDD:?} (${USED_HDD_P:?})${N0:?}
 $Y1         #####
-$Y1         #####       ${N0:?} $USER${CY:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
+$Y1         #####       ${N0:?} ${USER:?}@${CY:?}${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
 $Y1         #####
 $Y1         #####
 $Y1        #######
