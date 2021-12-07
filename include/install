@@ -5,4 +5,4 @@
 # 0.0.0.8
 
 # install/update
-cp /home/"$(whoami)"/trump-node/include* /usr/local/bin/ 2>&1
+sudo cp -R /home/"$(whoami)"/trump-node/include* /usr/local/bin/ 2>&1
