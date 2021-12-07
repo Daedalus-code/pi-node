@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210712
-# 0.0.2.1
+# 0.0.3.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -26,3 +26,9 @@ FREE_MEM=$(free --mega 2>/dev/null | grep "Mem" 2>/dev/null |
 # total Memory
 TOTAL_MEM=$(free --mega 2>/dev/null | grep "Mem" 2>/dev/null |
   awk '{ print $2 }' 2>/dev/null)
+
+# free Space, mmc block device #0, partition #2, partition #2, dev/root
+USED_HDD=$(df -h 2>/dev/null | grep -E "mmcblk0p2|mmcblk0p3|/dev/root" 2>/dev/null |
+  awk '{ print $3 }' 2>/dev/null)
+USED_HDD_P=$(df -h | grep -E "mmcblk0p2|mmcblk0p3|/dev/root" 2>/dev/null |
+  awk '{ print $5 }' 2>/dev/null)
