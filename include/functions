@@ -56,8 +56,8 @@ UPLOAD=$(ifconfig 2>/dev/null | grep -E "wla*|eth*" 2>/dev/null |
 ### wallet information #########################################################
 
 # collect wallet info, on every update (loop)
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ getinfo >"$LOG_DIR"/getinfo
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ getnetworkinfo >"$LOG_DIR"/getnetworkinfo
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ getblockchaininfo >"$LOG_DIR"/getblockchaininfo
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo >"$LOG_DIR"/getinfo
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo >"$LOG_DIR"/getnetworkinfo
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo >"$LOG_DIR"/getblockchaininfo
 
 # END
