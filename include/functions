@@ -48,10 +48,10 @@ TOTAL_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 |
   awk '{ print $2 }' 2>&1)
 # calculate total system total memory + total swap
 TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 |
-  bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+  bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
 # calculate total free system free memory + used swap
 FREE_MEM=$(echo "$FREE_MEM-$USED_SWAP" 2>&1 |
-  bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+  bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
 # free Space, mmc block device #0, partition #2, partition #2, dev/root
 USED_HDD=$(df -h 2>&1 | grep -E "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
