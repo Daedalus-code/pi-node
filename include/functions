@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210812
-# 0.1.3.5
+# 0.1.5.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -30,12 +30,28 @@ CPU_CTEMP=$(echo "$CPU_CTEMP / 100 * 0.1" 2>&1 |
 CPU_FTEMP=$(echo "(1.8 * $CPU_CTEMP) + 32" 2>&1 |
   bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
+# used swap
+USED_SWAP=$(swapon -s 2>&1 | grep "/swapfile" 2>&1 |
+  awk '{ print $4 }' 2>&1)
+# calculate megabytes (used swap)
+USED_SWAP=$(echo "$USED_SWAP/1024" | bc -l)
+# total swap
+TOTAL_SWAP=$(swapon -s 2>&1 | grep "/swapfile" 2>&1 |
+  awk '{ print $3 }' 2>&1)
+# calculate megabytes (total swap)
+TOTAL_SWAP=$(echo "$TOTAL_SWAP/1024" | bc -l)
 # free Memory
 FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 |
   awk '{ print $4 }' 2>&1)
 # total Memory
 TOTAL_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 |
   awk '{ print $2 }' 2>&1)
+# calculate total system total memory + total swap
+TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 |
+  bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+# calculate total free system free memory + used swap
+FREE_MEM=$(echo "$FREE_MEM-$USED_SWAP" 2>&1 |
+  bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
 # free Space, mmc block device #0, partition #2, partition #2, dev/root
 USED_HDD=$(df -h 2>&1 | grep -E "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
