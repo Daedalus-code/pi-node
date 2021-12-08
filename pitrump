@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210812
-# 0.0.3.9
+# 0.0.4.0
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
 sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz
@@ -26,10 +26,11 @@ $RC         #####
 $RC         #####       ${N0:?} ${USER:?}@${CY:?}${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
 $RC         #####       ${N0:?} trumpcoin ${G0:?}${WALLET_VERSION:?} ${WALLET_CHAIN:?}${N0:?} Sync ${G0:?}${WALLET_SYNC:?}%${N0:?}
 $RC         #####       ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}P2P ${P1:?}${WALLET_PEERS:?}${N0:?}
-$RC        #######      ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?}
+$RC        #######      ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes 0
 $RC      ###########    ${N0:?} TxCount ${G0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
 
 ${RC_LOADING:?}${N0:?}
+
 
 ${LAST_LOG:?}
 "
