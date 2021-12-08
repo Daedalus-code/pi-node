@@ -108,7 +108,7 @@ if [[ -z "$WALLET_CHAIN" ]]; then
   WALLET_CHAIN="${GR:?}0${N0:?}"
 fi
 if [[ -z "$WALLET_SYNC" ]]; then
-  WALLET_SYNC="${GR:?}0.00${N0:?}"
+  WALLET_SYNC=""
 fi
 if [[ -z "$GETCONNECTIONS" ]]; then
   GETCONNECTIONS="${GR:?}0${N0:?}"
