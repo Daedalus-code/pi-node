@@ -29,7 +29,7 @@ $Y1         #####       ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}P2P ${P1:?}${GE
 $Y1        #######      ${N0:?} Balance ${TOTAL_BALANCE:?}
 $Y1      ###########$N0
 
-
+${LAST_LOG:?}
 "
 
   sleep "${TIME:?}"

@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210812
-# 0.0.9.8
+# 0.1.0.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -12,6 +12,10 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 ### system information #########################################################
+
+# log lines (tail debug)
+LAST_LOG=$(tail -n 1 "$WALLET_DIR"/debug.log 2>&1)
+LAST_LOG=$(echo "${LAST_LOG:0:188} $SIZE")
 
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
