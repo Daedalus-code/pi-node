@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210812
-# 0.0.3.7
+# 0.0.3.9
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
 sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz
@@ -28,6 +28,8 @@ $Y1         #####       ${N0:?} trumpcoin ${G0:?}${WALLET_VERSION:?} ${WALLET_CH
 $Y1         #####       ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}P2P ${P1:?}${GETCONNECTIONS:?}${N0:?}
 $Y1        #######      ${N0:?} Balance ${TOTAL_BALANCE:?}
 $Y1      ###########$N0
+
+
 
 ${LAST_LOG:?}
 "
