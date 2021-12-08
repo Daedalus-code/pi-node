@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20210812
+# V20210912
 # 0.1.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
