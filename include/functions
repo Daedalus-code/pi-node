@@ -2,9 +2,13 @@
 
 # By Rainman
 # V20210712
-# 0.0.5.0
+# 0.0.6.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
+
+source ../pitrump.conf
+
+### system information #########################################################
 
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
@@ -48,3 +52,12 @@ DOWNLOAD=$(ifconfig 2>/dev/null | grep -E "wla*|eth*" 2>/dev/null |
 UPLOAD=$(ifconfig 2>/dev/null | grep -E "wla*|eth*" 2>/dev/null |
   grep "TX packets" 2>/dev/null | head -1 2>/dev/null |
   awk '{ print $6 $7 }' 2>/dev/null | tr -d '()' 2>/dev/null)
+
+### wallet information #########################################################
+
+# collect wallet info, on every update (loop)
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ getinfo >"$LOG_DIR"/getinfo
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ getnetworkinfo >"$LOG_DIR"/getnetworkinfo
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ getblockchaininfo >"$LOG_DIR"/getblockchaininfo
+
+# END
