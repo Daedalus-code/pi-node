@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210812
-# 0.1.2.0
+# 0.1.1.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -94,7 +94,7 @@ if [[ "$(echo "$WALLET_CALC" 2>&1 | tr -d '.' 2>&1)" -eq "9999" ]] &>/dev/null; 
   # 100% synced
   WALLET_SYNC="100"
 else
-  WALLET_SYNC=$(echo "100/$HEADS*$BLOCK" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+  WALLET_SYNC="$WALLET_CALC"
 fi
 # wallet connections
 GETCONNECTIONS=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "connections" 2>&1 | egrep -o "[0-9]+" 2>&1)
@@ -106,9 +106,6 @@ if [[ -z "$WALLET_VERSION" ]]; then
 fi
 if [[ -z "$WALLET_CHAIN" ]]; then
   WALLET_CHAIN="${GR:?}0${N0:?}"
-fi
-if [[ -z "$WALLET_SYNC" ]]; then
-  WALLET_SYNC=""
 fi
 if [[ -z "$GETCONNECTIONS" ]]; then
   GETCONNECTIONS="${GR:?}0${N0:?}"
