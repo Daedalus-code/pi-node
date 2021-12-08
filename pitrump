@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.0.4.1
+# 0.0.4.0
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
 sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz
@@ -29,7 +29,6 @@ $RC       #######       ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes
 $RC     ###########     ${N0:?} TxCount ${G0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
 
 ${RC_LOADING:?}${N0:?}
-
 
 ${LAST_LOG:?}
 "

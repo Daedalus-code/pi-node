@@ -14,7 +14,7 @@ mkdir /home/"$(whoami)"/node_data &>/dev/null
 ### system information #########################################################
 
 # log lines (tail debug)
-LAST_LOG=$(tail -n 1 "$WALLET_DIR"/debug.log 2>&1)
+LAST_LOG=$(tail -n 2 "$WALLET_DIR"/debug.log 2>&1)
 LAST_LOG=$(echo "${LAST_LOG:0:188} $SIZE")
 
 # time - date, trim extra spaces with xargs
@@ -109,7 +109,7 @@ fi
 if ! cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep "error" &>/dev/null; then
   RC_LOADING="${N0:?}"
   # logo turns yellow while running
-  RC="${Y0:?}"
+  RC="${Y1:?}"
   # headers, blocks, sync
   WALLET_HEADS=$(cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep "blocks" 2>&1 | grep -Eo "[0-9]+" 2>&1)
   WALLET_BLOCK=$(cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep "headers" 2>&1 | grep -Eo "[0-9]+" 2>&1)
