@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # By Rainman
-# V20210712
+# V20210812
 # 0.0.9.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
-source ../pitrump.conf
+source /home/pi/pitrump.conf
 
 ### system information #########################################################
 
