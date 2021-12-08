@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20210812
+# V20210912
 # 0.0.4.0
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
@@ -30,7 +30,7 @@ $RC       #######       ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes
 $RC     ###########     ${N0:?} TxCount ${G0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
 
 ${RC_LOADING:?}${N0:?}
-${WALLET_TX:?}
+
 
 ${LAST_LOG:?}
 "
