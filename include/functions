@@ -116,7 +116,7 @@ if ! cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep "error" &>/dev/null; then
   WALLET_SYNC=$(echo "100/$WALLET_HEADS*$WALLET_BLOCK" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 else
   # loading while waiting on client
-  RC_LOADING="${GR:?}       Loading${N0:?}"
+  RC_LOADING="${GR:?}        Loading${N0:?}"
   # logo turns grey while loading
   RC="${GR:?}"
   # non responsive (loading)
