@@ -74,9 +74,9 @@ UPLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
 ### wallet information #########################################################
 
 # collect wallet info, on every update (loop)
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo >"$LOG_DIR"/getinfo
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo >"$LOG_DIR"/getnetworkinfo
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo >"$LOG_DIR"/getblockchaininfo
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo >"$LOG_DIR"/getinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo >"$LOG_DIR"/getnetworkinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo >"$LOG_DIR"/getblockchaininfo 2>&1
 
 WALLET_VERSION=$(cat "$LOG_DIR"/getnetworkinfo 2>&1 |
   grep "Core" 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1)
