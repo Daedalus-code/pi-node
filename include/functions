@@ -115,7 +115,7 @@ if ! cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep "error" &>/dev/null; then
   WALLET_SYNC=$(echo "100/$WALLET_HEADS*$WALLET_BLOCK" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 else
   # logo turns yellow while running
-  RC_LOADING="${GR:?}       Loading${N0:?}"
+  RC_LOADING="${GR:?}        Loading${N0:?}"
   RC="${GR:?}"
   # non responsive (loading)
   WALLET_SYNC="${GR:?}0.00${N0:?}"
