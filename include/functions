@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210812
-# 0.1.2.9
+# 0.1.3.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -112,6 +112,12 @@ if [[ -z "$WALLET_VERSION" ]]; then
 fi
 if [[ -z "$WALLET_CHAIN" ]]; then
   WALLET_CHAIN="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_HEADS" ]]; then
+  WALLET_HEADS="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_BLOCK" ]]; then
+  WALLET_BLOCK="${GR:?}0${N0:?}"
 fi
 if [[ -z "$WALLET_PEERS" ]]; then
   WALLET_PEERS="${GR:?}0${N0:?}"
