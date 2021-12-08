@@ -4,6 +4,6 @@
 # V20210812
 # 0.0.0.9
 
-source ../pitrump.conf
+source ../../pitrump.conf
 
 "$WALLET_DIR"/trumpcoind -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf -daemon
