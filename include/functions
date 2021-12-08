@@ -9,7 +9,7 @@
 source /home/pi/pitrump.conf
 
 # create data directory
-mkdir home/"$(whoami)"/node_data &>/dev/null
+mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 ### system information #########################################################
 
