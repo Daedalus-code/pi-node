@@ -121,6 +121,7 @@ else
   RC="${GR:?}"
   # non responsive (loading)
   WALLET_SYNC="${GR:?}0.00${N0:?}"
+  WALLET_TX=""
 fi
 # wallet connections
 WALLET_PEERS=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "connections" 2>&1 | egrep -o "[0-9]+" 2>&1)
