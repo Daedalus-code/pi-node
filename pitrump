@@ -26,7 +26,7 @@ $RC         #####
 $RC         #####        ${N0:?} ${USER:?}@${CY:?}${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
 $RC         #####        ${N0:?} trumpcoin ${G0:?}${WALLET_VERSION:?} ${WALLET_CHAIN:?}${N0:?} Sync ${G0:?}${WALLET_SYNC:?}%${N0:?}
 $RC         #####        ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}P2P ${P1:?}${WALLET_PEERS:?}${N0:?}
-$RC        #######       ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes 0
+$RC        #######       ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes 0 Inputs 0
 $RC      ###########     ${N0:?} TxCount ${G0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
 
 ${RC_LOADING:?}${N0:?}
