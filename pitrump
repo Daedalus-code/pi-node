@@ -25,7 +25,7 @@ $Y1   ##    #####    ## ${N0:?} Free Mem ${G0:?}${FREE_MEM:?}M${N0:?} / ${G0:?}$
 $Y1         #####
 $Y1         #####       ${N0:?} ${USER:?}@${CY:?}${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
 $Y1         #####       ${N0:?} trumpcoin ${G0:?}${WALLET_VERSION:?} ${WALLET_CHAIN:?}${N0:?} Sync ${G0:?}${WALLET_SYNC:?}%${N0:?}
-$Y1         #####       ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}P2P ${P1:?}${GETCONNECTIONS:?}${N0:?}
+$Y1         #####       ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}P2P ${P1:?}${WALLET_PEERS:?}${N0:?}
 $Y1        #######      ${N0:?} Balance ${WALLET_BALANCE:?}
 $Y1      ###########$N0 ${N0:?} TxCount ${WALLET_TXCOUNT:?} Mempool ${WALLET_MEMPOOL:?} Block ${WALLET_HEADS:?}${N0:?}
 
