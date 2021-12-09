@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # By Rainman
-# V20210712
-# 0.0.0.9
+# V20210912
+# 0.0.1.1
 
 # install/update
-sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/ 2>&1
+sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
+echo "Updated!"
+ls -lS /usr/local/bin/include/

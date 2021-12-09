@@ -147,6 +147,6 @@ WALLET_MEMPOOL=$(cat "$LOG_DIR"/getmempoolinfo 2>&1 | grep "size" 2>&1 | egrep -
 WALLET_TXCOUNT=$(cat "$LOG_DIR"/getwalletinfo 2>&1 | grep "txcount" 2>&1 | egrep -o "[0-9]+" 2>&1)
 
 # non responsive
-source /usr/local/bin/null
+source /usr/local/bin/include/null
 
 # END
