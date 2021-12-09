@@ -2,8 +2,14 @@
 
 # By Rainman
 # V20210912
-# 0.0.0.9
+# 0.0.1.5
 
 source /home/pi/pitrump.conf
+
+# make sure tor is installed
+if ! [ -x "$(command -v tor)" ]; then
+  sudo apt-get install tor -y
+  echo "Setup tor/wallet configurations!"
+fi
 
 "$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
