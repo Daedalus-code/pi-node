@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.0.6.9
+# 0.0.7.2
 
 # non responsive
 if [[ -z "$WALLET_NODES_TOTAL" ]]; then
@@ -54,6 +54,9 @@ if [[ -z "$RC_LOADING" ]]; then
   RC_LOADING=""
 fi
 if [[ -z "$WALLET_INPUTS" ]]; then
+  WALLET_INPUTS="${GR:?}0${N0:?}"
+fi
+if [[ "$WALLET_INPUTS" -eq "0" ]]; then
   WALLET_INPUTS="${GR:?}0${N0:?}"
 fi
 if [[ -z "$WALLET_STAKES" ]]; then
