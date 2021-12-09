@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.0.6.3
+# 0.0.6.6
 
 # non responsive
 if [[ -z "$WALLET_NODES_TOTAL" ]]; then
@@ -58,6 +58,9 @@ if [[ -z "$WALLET_INPUTS" ]]; then
 fi
 if [[ -z "$WALLET_STAKES" ]]; then
   WALLET_STAKES="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_TXLAST" ]]; then
+  WALLET_TXLAST=""
 fi
 
 # END
