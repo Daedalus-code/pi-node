@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.0.4.6
+# 0.0.4.9
 
 # non responsive
 if [[ -z "$WALLET_NODES_TOTAL" ]]; then
@@ -13,6 +13,9 @@ if [[ -z "$WALLET_NODES_STABLE" ]]; then
 fi
 if [[ -z "$WALLET_NODES_ENABLED" ]]; then
   WALLET_NODES_ENABLED="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_NODES_INQUEUE" ]]; then
+  WALLET_NODES_INQUEUE="${GR:?}0${N0:?}"
 fi
 if [[ -z "$IP_ADDRESS" ]]; then
   IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
