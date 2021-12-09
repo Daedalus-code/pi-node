@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # By Rainman
-# V20210812
+# V20210912
 # 0.0.0.9
 
 source /home/pi/pitrump.conf
 
-"$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -conf="$WALLET_DIR"/trumpcoin.conf -daemon
+"$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
