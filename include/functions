@@ -144,9 +144,9 @@ WALLET_NODES_INQUEUE=$(cat "$LOG_DIR"/getpatriotnodecount 2>&1 | grep "inqueue" 
 # wallet connections total
 WALLET_PEERS_TOTAL=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "connections" 2>&1 | egrep -o "[0-9]+" 2>&1)
 # wallet connections latest (using used version)
-WALLET_PEERS_LATEST=$(cat "$LOG_DIR"/getpeerinfo 2>&1 | grep subver 2>&1 | egrep -o "$WALLET_VERSION" 2>&1)
+WALLET_PEERS_LATEST=$(cat "$LOG_DIR"/getpeerinfo 2>&1 | grep subver 2>&1 | egrep -o "$WALLET_VERSION" 2>&1 | wc -l 2>&1)
 # wallet connections other (not latest, probably older wallets)
-WALLET_PEERS_OTHER=$(cat "$LOG_DIR"/getpeerinfo 2>&1 | grep subver 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1 | grep -v "$WALLET_VERSION" 2>&1)
+WALLET_PEERS_OTHER=$(cat "$LOG_DIR"/getpeerinfo 2>&1 | grep subver 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1 | grep -v "$WALLET_VERSION" 2>&1 | wc -l 2>&1)
 # wallet balance
 WALLET_BALANCE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "balance" 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 # wallet mempool
