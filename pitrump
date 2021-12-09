@@ -24,7 +24,7 @@ ${RC:?}   ##    #####    ##   ${N0:?} Free Mem ${G0:?}${FREE_MEM:?}M${N0:?}/${G0
 ${RC:?}         #####         ${N0:?}
 ${RC:?}         #####         ${N0:?} ${USER:?}@${CY:?}${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
 ${RC:?}         #####         ${N0:?} trumpcoin ${G0:?}${WALLET_VERSION:?} ${WALLET_CHAIN:?}${N0:?} Sync ${G0:?}${WALLET_SYNC:?}%${N0:?}
-${RC:?}         #####         ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}Peers ${P1:?}${WALLET_PEERS:?}${N0:?} ${GR:?}0 0${N0:?}
+${RC:?}         #####         ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}Peers ${P1:?}${WALLET_PEERS_TOTAL:?}${N0:?} ${G1:?}${WALLET_PEERS_LATEST:?}${N0:?} ${G0:?}${WALLET_PEERS_OTHER:?}${N0:?}
 ${RC:?}        #######        ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes ${G0:?}0${N0:?} Inputs ${G0:?}$WALLET_INPUTS${N0:?}
 ${RC:?}      ###########      ${N0:?} TxCount ${N0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
 ${N0:?}                       ${N0:?} Patriotnodes ${G1:?}${WALLET_NODES_STABLE:?}${N0:?} ${G0:?}${WALLET_NODES_TOTAL:?}${N0:?} ${GR:?}${WALLET_NODES_ENABLED:?}${N0:?} ${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}
