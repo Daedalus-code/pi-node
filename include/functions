@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.1.8.4
+# 0.1.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.1.8.4"
+VERSION="v0.1.8.6"
 
 ### system information #########################################################
 
@@ -174,9 +174,11 @@ WALLET_TXLAST=$(cat "$LOG_DIR"/listunspent 2>&1 | tr -d '"|:|,' 2>&1 | grep -B8 
 # wallet stakes (addtowallet)
 WALLET_STAKES=$(cat "$WALLET_DIR"/debug.log 2>&1 | grep -c "AddToWallet" 2>&1)
 # update if new data is available
-if [[ "$WALLET_STAKES" -lt "$(grep -c "$LOG_DIR"/stake_count 2>&1)" ]] &>/dev/null; then
+if [[ "$WALLET_STAKES" -lt "$(grep -c "$LOG_DIR"/stake_count 2>&1 |
+  awk '{ printf "%.2f\n", $1 }' 2>&1)" ]] &>/dev/null; then
   cat "$WALLET_DIR"/debug.log 2>&1 | grep -c "AddToWallet" >"$LOG_DIR"/stake_count 2>&1
 fi
+WALLET_STAKES=$(cat "$LOG_DIR"/stake_count 2>&1)
 
 # non responsive
 source /usr/local/bin/include/null
