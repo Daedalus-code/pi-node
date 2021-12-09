@@ -16,7 +16,7 @@ for (( ; ; )); do # loop dashbord
   clear
   # dashbord
   printf '%b' "
-${N0:?}                       ${Y1:?} Pi${Y0:?}Trump ${Y1:?}${VERSION:?} ${GR:?}pitrump${N0:?}         ${CLOCK:?}
+${N0:?}                       ${Y1:?} PiTrump ${N0:?}${VERSION:?} ${GR:?}pitrump${N0:?}         ${CLOCK:?}
 ${N0:?}                       ${N0:?} TrumpCoin Fullnode                   ${CY:?}${INTERFACE:?}${N0:?}
 ${RC:?}   #################   ${GR:?} -----------------------------------------${N0:?}
 ${RC:?}   #################   ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
