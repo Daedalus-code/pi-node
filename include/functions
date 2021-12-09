@@ -53,7 +53,7 @@ TOTAL_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 |
 TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 |
   bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
 # calculate total free system free memory + used swap
-FREE_MEM=$(echo "$FREE_MEM-$USED_SWAP" 2>&1 |
+FREE_MEM=$(echo "$USED_SWAP-$FREE_MEM" 2>&1 |
   bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
 # free Space, mmc block device #0, partition #2, partition #2, dev/root
