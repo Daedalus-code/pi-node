@@ -17,7 +17,7 @@ VERSION="v0.1.8.4"
 ### system information #########################################################
 
 # log lines (tail debug)
-LAST_LOG=$(tail -n 2 "$WALLET_DIR"/debug.log 2>&1)
+LAST_LOG=$(tail -n 1 "$WALLET_DIR"/debug.log 2>&1)
 LAST_LOG=$(echo "${LAST_LOG:0:188} $SIZE")
 
 # time - date, trim extra spaces with xargs
