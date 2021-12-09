@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.1.4.6
+# 0.1.5.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -12,7 +12,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.1.4.6"
+VERSION="v0.1.5.2"
 
 ### system information #########################################################
 
@@ -92,7 +92,7 @@ UPLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
 
 ### wallet information #########################################################
 
-# collect wallet info, on every update (loop)
+# collect wallet info, on every update (loop) from client
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo >"$LOG_DIR"/getblockchaininfo 2>&1
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo >"$LOG_DIR"/getinfo 2>&1
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getmempoolinfo >"$LOG_DIR"/getmempoolinfo 2>&1
@@ -100,8 +100,11 @@ UPLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpatriotnodecount >"$LOG_DIR"/getpatriotnodecount 2>&1
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getwalletinfo >"$LOG_DIR"/getwalletinfo 2>&1
 
+# wallet version
 WALLET_VERSION=$(cat "$LOG_DIR"/getnetworkinfo 2>&1 |
   grep "Core" 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1)
+
+# running mainnet or testnet
 if ! "$(cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep "main" 2>&1)" -eq "main" &>/dev/null; then
   # mainnet
   WALLET_CHAIN="mainnet"
@@ -109,6 +112,8 @@ else
   # testnet
   WALLET_CHAIN="testnet"
 fi
+
+# rpc in warm-up, loading block index, wait
 if ! cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep "error" &>/dev/null; then
   RC_LOADING="${N0:?}"
   # logo turns yellow while running
@@ -125,6 +130,7 @@ else
   # non responsive (loading)
   WALLET_SYNC="${GR:?}0.00${N0:?}"
 fi
+
 # wallet patriotnodes total
 WALLET_NODES_TOTAL=$(cat "$LOG_DIR"/getpatriotnodecount 2>&1 | grep "total" 2>&1 | egrep -o "[0-9]+" 2>&1)
 # wallet patriotnodes stable
