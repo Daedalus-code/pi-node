@@ -16,18 +16,18 @@ for (( ; ; )); do # loop dashbord
   clear
   # dashbord
   printf '%b' "
-                        ${Y1:?}Pi${Y0:?}Trump ${Y1:?}${VERSION:?} ${GR:?}pitrump${N0:?}         ${CLOCK:?}
-                        TrumpCoin Fullnode                   ${CY:?}${INTERFACE:?}${N0:?}
-$RC   #################   ${GR:?} -----------------------------------------${N0:?}
-$RC   #################   ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
-$RC   ##    #####    ##   ${N0:?} Free Mem ${G0:?}${FREE_MEM:?}M${N0:?}/${G0:?}${TOTAL_MEM:?}M${N0:?} HDDuse ${G0?:}${USED_HDD:?} (${USED_HDD_P:?})${N0:?}
-$RC         #####
-$RC         #####         ${N0:?} ${USER:?}@${CY:?}${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
-$RC         #####         ${N0:?} trumpcoin ${G0:?}${WALLET_VERSION:?} ${WALLET_CHAIN:?}${N0:?} Sync ${G0:?}${WALLET_SYNC:?}%${N0:?}
-$RC         #####         ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}Peers ${P1:?}${WALLET_PEERS:?}${N0:?} ${GR:?}0 0${N0:?}
-$RC        #######        ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes ${GR:?}0${N0:?} Inputs ${GR:?}0${N0:?}
-$RC      ###########      ${N0:?} TxCount ${N0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
-                       ${N0:?} Patriotnodes ${G1:?}${WALLET_NODES_STABLE:?}${N0:?} ${G0:?}${WALLET_NODES_TOTAL:?}${N0:?} ${GR:?}${WALLET_NODES_ENABLED:?}${N0:?}
+${N0:?}                       ${Y1:?} Pi${Y0:?}Trump ${Y1:?}${VERSION:?} ${GR:?}pitrump${N0:?}         ${CLOCK:?}
+${N0:?}                       ${N0:?} TrumpCoin Fullnode                   ${CY:?}${INTERFACE:?}${N0:?}
+${RC:?}   #################   ${GR:?} -----------------------------------------${N0:?}
+${RC:?}   #################   ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
+${RC:?}   ##    #####    ##   ${N0:?} Free Mem ${G0:?}${FREE_MEM:?}M${N0:?}/${G0:?}${TOTAL_MEM:?}M${N0:?} HDDuse ${G0?:}${USED_HDD:?} (${USED_HDD_P:?})${N0:?}
+${RC:?}         #####         ${N0:?}
+${RC:?}         #####         ${N0:?} ${USER:?}@${CY:?}${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
+${RC:?}         #####         ${N0:?} trumpcoin ${G0:?}${WALLET_VERSION:?} ${WALLET_CHAIN:?}${N0:?} Sync ${G0:?}${WALLET_SYNC:?}%${N0:?}
+${RC:?}         #####         ${N0:?} WAN ${CY:?}${PUBLIC_IP:?} ${N0:?}Peers ${P1:?}${WALLET_PEERS:?}${N0:?} ${GR:?}0 0${N0:?}
+${RC:?}        #######        ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes ${GR:?}0${N0:?} Inputs ${GR:?}0${N0:?}
+${RC:?}      ###########      ${N0:?} TxCount ${N0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
+${N0:?}                       ${N0:?} Patriotnodes ${G1:?}${WALLET_NODES_STABLE:?}${N0:?} ${G0:?}${WALLET_NODES_TOTAL:?}${N0:?} ${GR:?}${WALLET_NODES_ENABLED:?}${N0:?}
 ${RC_LOADING:?}${N0:?}
 
 

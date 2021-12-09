@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# By Rainman
+# V20210912
+# 0.0.4.6
+
+# non responsive
+if [[ -z "$WALLET_NODES_TOTAL" ]]; then
+  WALLET_NODES_TOTAL="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_NODES_STABLE" ]]; then
+  WALLET_NODES_STABLE="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_NODES_ENABLED" ]]; then
+  WALLET_NODES_ENABLED="${GR:?}0${N0:?}"
+fi
+if [[ -z "$IP_ADDRESS" ]]; then
+  IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
+fi
+if [[ -z "$WALLET_VERSION" ]]; then
+  WALLET_VERSION="${GR:?}0.0.0${N0:?}"
+fi
+if [[ -z "$WALLET_CHAIN" ]]; then
+  WALLET_CHAIN="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_HEADS" ]]; then
+  WALLET_HEADS="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_BLOCK" ]]; then
+  WALLET_BLOCK="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_PEERS" ]]; then
+  WALLET_PEERS="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_BALANCE" ]]; then
+  WALLET_BALANCE="${GR:?}0.00000000${N0:?}"
+fi
+if [[ -z "$WALLET_MEMPOOL" ]]; then
+  WALLET_MEMPOOL="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_TXCOUNT" ]]; then
+  WALLET_TXCOUNT="${GR:?}0${N0:?}"
+fi
+if [[ -z "$RC_LOADING" ]]; then
+  RC_LOADING=""
+fi
