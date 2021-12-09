@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.1.6.9
+# 0.1.7.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -12,9 +12,16 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.1.6.9"
+VERSION="v0.1.7.6"
 
 ### system information #########################################################
+
+# tor status
+if pidof tor &>/dev/null; then
+  TOR_ICON=$(printf '%b' "${P1:?}T$N0")
+else
+  TOR_ICON=$(printf '%b' "${GR:?}T$N0")
+fi
 
 # log lines (tail debug)
 LAST_LOG=$(tail -n 1 "$WALLET_DIR"/debug.log 2>&1)
