@@ -60,10 +60,10 @@ if [[ -z "$WALLET_STAKES" ]]; then
   WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 if [[ -z "$LAST_TX" ]]; then
-  LAST_TX=""
+  LAST_TX="0"
 fi
 if [[ -z "$WALLET_TXLAST" ]]; then
-  WALLET_TXLAST="${GR:?}0000000000000000000000000000000000000000000000000000000000000000${N0:?}"
+  WALLET_TXLAST="${N0:?}"
 fi
 
 # END
