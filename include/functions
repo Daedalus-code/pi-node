@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.1.5.4
+# 0.1.5.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -12,7 +12,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.1.5.4"
+VERSION="v0.1.5.7"
 
 ### system information #########################################################
 
@@ -99,6 +99,7 @@ UPLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo >"$LOG_DIR"/getnetworkinfo 2>&1
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpatriotnodecount >"$LOG_DIR"/getpatriotnodecount 2>&1
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getwalletinfo >"$LOG_DIR"/getwalletinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent >"$LOG_DIR"/listunspent 2>&1
 
 # wallet version
 WALLET_VERSION=$(cat "$LOG_DIR"/getnetworkinfo 2>&1 |
@@ -147,6 +148,8 @@ WALLET_BALANCE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "balance" 2>&1 | egrep -o "[
 WALLET_MEMPOOL=$(cat "$LOG_DIR"/getmempoolinfo 2>&1 | grep "size" 2>&1 | egrep -o "[0-9]+" 2>&1)
 # wallet txcount
 WALLET_TXCOUNT=$(cat "$LOG_DIR"/getwalletinfo 2>&1 | grep "txcount" 2>&1 | egrep -o "[0-9]+" 2>&1)
+# wallet inputs
+WALLET_INPUTS=$(cat "$LOG_DIR"/listunspent 2>&1 | grep "address" 2>&1 | wc -l 2>&1)
 
 # non responsive
 source /usr/local/bin/include/null
