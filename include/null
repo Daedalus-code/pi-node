@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.0.7.2
+# 0.0.8.1
 
 # non responsive
 if [[ -z "$WALLET_NODES_TOTAL" ]]; then
@@ -39,6 +39,15 @@ if [[ -z "$WALLET_PEERS_LATEST" ]]; then
   WALLET_PEERS_LATEST="${GR:?}0${N0:?}"
 fi
 if [[ -z "$WALLET_PEERS_OTHER" ]]; then
+  WALLET_PEERS_OTHER="${GR:?}0${N0:?}"
+fi
+if [[ "$WALLET_PEERS_TOTAL" -eq "0" ]]; then
+  WALLET_PEERS_TOTAL="${GR:?}0${N0:?}"
+fi
+if [[ "$WALLET_PEERS_LATEST" -eq "0" ]]; then
+  WALLET_PEERS_LATEST="${GR:?}0${N0:?}"
+fi
+if [[ "$WALLET_PEERS_OTHER" -eq "0" ]]; then
   WALLET_PEERS_OTHER="${GR:?}0${N0:?}"
 fi
 if [[ -z "$WALLET_BALANCE" ]]; then
