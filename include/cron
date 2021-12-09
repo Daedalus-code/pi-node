@@ -2,8 +2,9 @@
 
 # By Rainman
 # V20210912
-# 0.0.1.5
+# 0.0.1.6
 
+# pitrump configurations
 source /home/pi/pitrump.conf
 
 # make sure tor is installed

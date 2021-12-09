@@ -2,22 +2,24 @@
 
 # By Rainman
 # V20210912
-# 0.1.7.6
+# 0.1.7.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
+# pitrump configurations
 source /home/pi/pitrump.conf
 
 # create data directory
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.1.7.6"
+VERSION="v0.1.7.8"
 
 ### system information #########################################################
 
 # tor status
-if pidof tor &>/dev/null; then
+if cat "$LOG_DIR"/getinfo 2>&1 |
+  grep "127.0.0.1:9050" &>/dev/null; then
   TOR_ICON=$(printf '%b' "${P1:?}T$N0")
 else
   TOR_ICON=$(printf '%b' "${GR:?}T$N0")
