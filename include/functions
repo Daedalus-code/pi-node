@@ -20,9 +20,9 @@ VERSION="v0.1.7.8"
 # tor status
 if cat "$LOG_DIR"/getinfo 2>&1 |
   grep "127.0.0.1:9050" &>/dev/null; then
-  TOR_ICON=$(printf '%b' "${P1:?}T$N0")
+  TOR_ICON=$(printf '%b' "${P1:?}P$N0")
 else
-  TOR_ICON=$(printf '%b' "${GR:?}T$N0")
+  TOR_ICON=$(printf '%b' "${GR:?}P$N0")
 fi
 
 # log lines (tail debug)
