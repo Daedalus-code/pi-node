@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20210912
-# 0.1.8.1
+# 0.1.8.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -10,6 +10,9 @@ source /home/pi/pitrump.conf
 
 # create data directory
 mkdir /home/"$(whoami)"/node_data &>/dev/null
+
+# script version
+VERSION="v0.1.8.4"
 
 ### system information #########################################################
 
