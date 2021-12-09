@@ -17,14 +17,6 @@ VERSION="v0.1.7.8"
 
 ### system information #########################################################
 
-# tor status
-if cat "$LOG_DIR"/getinfo 2>&1 |
-  grep "127.0.0.1:9050" &>/dev/null; then
-  TOR_ICON=$(printf '%b' "${P1:?}P$N0")
-else
-  TOR_ICON=$(printf '%b' "${GR:?}P$N0")
-fi
-
 # log lines (tail debug)
 LAST_LOG=$(tail -n 1 "$WALLET_DIR"/debug.log 2>&1)
 LAST_LOG=$(echo "${LAST_LOG:0:188} $SIZE")
@@ -98,6 +90,14 @@ DOWNLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
 UPLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
   grep "TX packets" 2>&1 | head -1 2>&1 |
   awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1)
+
+# tor status
+if cat "$LOG_DIR"/getinfo 2>&1 |
+  grep "127.0.0.1:9050" &>/dev/null; then
+  TOR_ICON=$(printf '%b' "${P1:?}P$N0")
+else
+  TOR_ICON=$(printf '%b' "${GR:?}P$N0")
+fi
 
 ### wallet information #########################################################
 
