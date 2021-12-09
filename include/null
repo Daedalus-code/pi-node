@@ -36,7 +36,7 @@ if [[ -z "$WALLET_PEERS" ]]; then
   WALLET_PEERS="${GR:?}0${N0:?}"
 fi
 if [[ -z "$WALLET_BALANCE" ]]; then
-  WALLET_BALANCE="${GR:?}0.00000000${N0:?}"
+  WALLET_BALANCE="${GR:?}0.00${N0:?}"
 fi
 if [[ -z "$WALLET_MEMPOOL" ]]; then
   WALLET_MEMPOOL="${GR:?}0${N0:?}"
