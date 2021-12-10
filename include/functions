@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20210912
-# 0.1.9.4
+# V20211012
+# 0.2.1.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.1.9.4"
+VERSION="v0.2.1.0"
 
 ### system information #########################################################
 
@@ -71,11 +71,11 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | grep -E "wlan*|eth*" 2>&1 |
   awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 |
   head -1 2>&1)
 
-# update wan (every day)
+# update wan (everyday)
 if [[ "$(date +%H%M 2>&1 | grep -Eo "2359" 2>&1)" ]]; then
   rm "$LOG_DIR"/getwan &>/dev/null
 fi
-# get wan
+# get wan address
 if [[ ! -f "$LOG_DIR"/getwan ]]; then
   host myip.opendns.com resolver1.opendns.com >"$LOG_DIR"/getwan
 fi
@@ -100,6 +100,22 @@ else
 fi
 
 ### wallet information #########################################################
+
+# update addnodes (everyday)
+if [[ "$(date +%H%M 2>&1 | grep -Eo "2359" 2>&1)" ]]; then
+  rm "$LOG_DIR"/nodes.tmp &>/dev/null
+fi
+# get node list (api)
+if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
+  curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes >"$LOG_DIR"/nodes.tmp 2>&1
+fi
+# create a list (addnodes) from nodes.tmp
+egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+." "$LOG_DIR"/nodes.tmp 2>&1 |
+  tr -d '"' 2>&1 | sort -n >"$LOG_DIR"/addnodes 2>&1
+# connect nodes found with addnodes list above
+while IFS= read -r ADDS; do
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
+done <"$LOG_DIR"/addnodes
 
 # collect wallet info, on every update (loop) from client
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo >"$LOG_DIR"/getblockchaininfo 2>&1
