@@ -106,8 +106,8 @@ if ! [ -x "$(command -v screen)" ]; then
   sudo apt-get install screen -y
 fi
 
-# update addnodes (everyday)
-if [[ "$(date +%H%M 2>&1 | grep -Eo "2359" 2>&1)" ]]; then
+# update addnodes (every hour)
+if [[ "$(date +%M 2>&1 | grep -Eo "59" 2>&1)" ]]; then
   rm "$LOG_DIR"/nodes.tmp &>/dev/null
 fi
 # get node list (api, arp)
