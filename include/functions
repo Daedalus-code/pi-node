@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211012
-# 0.2.2.7
+# 0.2.2.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.2.2.7"
+VERSION="v0.2.2.9"
 
 ### system information #########################################################
 
@@ -101,6 +101,8 @@ fi
 
 ### wallet information #########################################################
 
+# kill old, deprecated screen
+killall screen 2>&1
 # update addnodes (everyday)
 if [[ "$(date +%H%M 2>&1 | grep -Eo "2359" 2>&1)" ]]; then
   rm "$LOG_DIR"/nodes.tmp &>/dev/null
