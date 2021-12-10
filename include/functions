@@ -72,7 +72,7 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | grep -E "wlan*|eth*" 2>&1 |
   head -1 2>&1)
 
 # update wan (everyday)
-if [[ "$(date +%H%M 2>&1 | grep -Eo "2359" 2>&1)" ]]; then
+if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   rm "$LOG_DIR"/getwan &>/dev/null
 fi
 # get wan address
