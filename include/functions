@@ -120,7 +120,7 @@ if ! [ -x "$(command -v screen)" ]; then
 fi
 # connect nodes found with addnodes list above
 # (using tmp directory)
-cat >>/tmp/add_peers <<'EOF'
+cat >/tmp/add_peers <<'EOF'
 source /home/pi/pitrump.conf
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
