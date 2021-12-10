@@ -107,7 +107,7 @@ if ! [ -x "$(command -v screen)" ]; then
 fi
 
 # update addnodes (every hour)
-if [[ "$(date +%M 2>&1 | grep -Eo "59" 2>&1)" ]]; then
+if [[ "$(date +%M 2>&1 | grep -Eo "00" 2>&1)" ]]; then
   rm "$LOG_DIR"/nodes.tmp &>/dev/null
 fi
 # get node list (api, arp)
