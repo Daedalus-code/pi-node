@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211012
-# 0.2.1.0
+# 0.2.2.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.2.1.0"
+VERSION="v0.2.2.6"
 
 ### system information #########################################################
 
@@ -112,10 +112,26 @@ fi
 # create a list (addnodes) from nodes.tmp
 egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+." "$LOG_DIR"/nodes.tmp 2>&1 |
   tr -d '"' 2>&1 | sort -n >"$LOG_DIR"/addnodes 2>&1
+# make sure screen is installed
+if ! [ -x "$(command -v screen)" ]; then
+  sudo apt-get install screen -y
+fi
 # connect nodes found with addnodes list above
+# (using tmp directory)
+cat >>/tmp/add_peers <<'EOF'
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
 done <"$LOG_DIR"/addnodes
+exit
+EOF
+# look for screen session, if not found, run one
+if ! screen -list 2>&1 |
+  grep -q "addnodes" 2>&1; then
+  # create screen sessions
+  screen -dmS addnodes 2>&1
+  # start adding nodes, inside screen session
+  screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+fi
 
 # collect wallet info, on every update (loop) from client
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo >"$LOG_DIR"/getblockchaininfo 2>&1
