@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211012
-# 0.2.2.9
+# 0.2.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.2.2.9"
+VERSION="v0.2.3.1"
 
 ### system information #########################################################
 
@@ -99,7 +99,7 @@ else
   TOR_ICON=$(printf '%b' "${GR:?}P$N0")
 fi
 
-### wallet information #########################################################
+### adding nodes ###############################################################
 
 # look for screen session, if not found, run one
 if ! screen -list 2>&1 |
@@ -135,6 +135,8 @@ EOF
   # start adding nodes, inside screen session
   screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
 fi
+
+### wallet information #########################################################
 
 # collect wallet info, on every update (loop) from client
 "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo >"$LOG_DIR"/getblockchaininfo 2>&1
