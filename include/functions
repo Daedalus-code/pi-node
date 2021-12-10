@@ -130,7 +130,7 @@ while IFS= read -r ADDS; do
 done <"$LOG_DIR"/addnodes
 killall screen
 EOF
-  # create screen sessions
+  # create screen session
   screen -dmS addnodes 2>&1
   # start adding nodes, inside screen session
   screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
