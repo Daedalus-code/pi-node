@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211012
-# 0.2.3.0
+# 0.2.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.2.3.0"
+VERSION="v0.2.3.1"
 
 ### system information #########################################################
 
@@ -101,6 +101,11 @@ fi
 
 ### adding nodes ###############################################################
 
+# make sure screen is installed
+if ! [ -x "$(command -v screen)" ]; then
+  sudo apt-get install screen -y
+fi
+
 # update addnodes (everyday)
 if [[ "$(date +%H%M 2>&1 | grep -Eo "2359" 2>&1)" ]]; then
   rm "$LOG_DIR"/nodes.tmp &>/dev/null
@@ -116,10 +121,6 @@ egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+." "$LOG_DIR"/nodes.tmp 2>&1 |
 # look for screen session, if not found, run one
 if ! screen -list 2>&1 |
   grep -q "addnodes" 2>&1; then
-  # make sure screen is installed
-  if ! [ -x "$(command -v screen)" ]; then
-    sudo apt-get install screen -y
-  fi
   # connect nodes found with addnodes list above
   # (using tmp directory)
   cat >/tmp/add_peers <<'EOF'
