@@ -119,7 +119,7 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
 fi
 # create a list (addnodes) from nodes.tmp
 egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/nodes.tmp 2>&1 |
-  tr -d '"' 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
+  shuf >"$LOG_DIR"/addnodes 2>&1
 
 # look for screen session, if not found, run one
 if ! screen -list 2>&1 |
