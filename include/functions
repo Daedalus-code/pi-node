@@ -113,12 +113,12 @@ fi
 # get node list (api, arp)
 if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
   # add local address (arp) intranet
-  arp -a 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+." 2>&1 | tr -d ')' >"$LOG_DIR"/nodes.tmp 2>&1
+  arp -a 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tr -d ')' >"$LOG_DIR"/nodes.tmp 2>&1
   # add node address (api) internet
   curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes >>"$LOG_DIR"/nodes.tmp 2>&1
 fi
 # create a list (addnodes) from nodes.tmp
-egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+." "$LOG_DIR"/nodes.tmp 2>&1 |
+egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/nodes.tmp 2>&1 |
   tr -d '"' 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
 
 # look for screen session, if not found, run one
