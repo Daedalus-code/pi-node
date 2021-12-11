@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20210912
-# 0.0.8.1
+# V20211112
+# 0.0.8.4
 
 # non responsive
 if [[ -z "$WALLET_NODES_TOTAL" ]] &>/dev/null; then
@@ -76,6 +76,9 @@ if [[ -z "$LAST_TX" ]] &>/dev/null; then
 fi
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="${N0:?}"
+fi
+if [[ -z "$TIMELINE" ]] &>/dev/null; then
+  TIMELINE="${N0:?}"
 fi
 
 # END
