@@ -281,7 +281,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     TIMELINE="Immature ${GR:?}$TIMELINE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "6" ]; then
     # lowest confirmation
-    TIMELINE_CONF=$(cat "$LOG_DIR"/listunspent 2>&1 | grep "confirmations" 2>&1 |
+    TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
@@ -291,7 +291,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     TIMELINE="New Input ${CY:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
     # highest confirmation
-    TIMELINE_CONF=$(cat "$LOG_DIR"/listunspent 2>&1 | grep "confirmations" 2>&1 |
+    TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
