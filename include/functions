@@ -112,7 +112,7 @@ if [[ "$(date +%M 2>&1 | grep -Eo "00" 2>&1)" ]]; then
 fi
 # get node list (api, arp)
 if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
-  # keep working peers around (ipv4)
+  # save "stable/working" peers into file (addnodes - ipv4 address)
   cat "$LOG_DIR"/getpeerinfo 2>&1 | grep "addrlocal" 2>&1 |
     egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>/home/"$(whoami)"/addnodes 2>&1
   # clean up and use as "manually addnodes"
