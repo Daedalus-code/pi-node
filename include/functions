@@ -287,7 +287,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }')
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
-    TIMELINE="Lowest confirmation ${G0:?}$TIMELINE_SEC${N0:?} ${GR:?}$INPUT_AGE${N0:?}"
+    TIMELINE="Lowest confirmation ${G0:?}$TIMELINE_CONF${N0:?} ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
     # highest confirmation
     TIMELINE_CONF=$(cat "$LOG_DIR"/listunspent 2>&1 | grep "confirmations" 2>&1 |
@@ -296,7 +296,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }')
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
-    TIMELINE="Highest confirmation ${G1:?}$TIMELINE_SEC${N0:?} ${GR:?}$INPUT_AGE${N0:?}"
+    TIMELINE="Highest confirmation ${G1:?}$TIMELINE_CONF${N0:?} ${GR:?}$INPUT_AGE${N0:?}"
   fi
 else # wait on wallet
   TIMELINE=""
