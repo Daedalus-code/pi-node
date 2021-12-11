@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.3.0
+# 0.4.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -305,17 +305,12 @@ function pos() {
 if [[ "$DARKMODE" -eq "1" ]]; then
   # darkmode theme
   RC="${GR:?}"
+  TH="${RC:?}D${N0:?}"
   pos
 else # default theme
   RC="${Y1:?}"
+  TH="${RC:?}D${N0:?}"
   pos
-fi
-
-if [[ "$DARKMODE" -eq "0" ]]; then
-  # using default
-  TH="${RC:?}D${N0:?}"
-else # using darkmode
-  TH="${RC:?}D${N0:?}"
 fi
 
 ### timeline ###################################################################
