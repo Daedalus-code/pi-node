@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.0.8.7
+# 0.0.9.3
 
 # non responsive
 if [[ -z "$WALLET_NODES_TOTAL" ]] &>/dev/null; then
@@ -55,6 +55,12 @@ if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
 fi
 if [[ "$WALLET_BALANCE" -eq "0" ]] &>/dev/null; then
   WALLET_BALANCE="${GR:?}0.00${N0:?}"
+fi
+if [[ "$WALLET_VALUE" -eq "0" ]] &>/dev/null; then
+  WALLET_VALUE="${GR:?}0.00${N0:?}"
+fi
+if [[ -z "$WALLET_VALUE" ]] &>/dev/null; then
+  WALLET_VALUE="${GR:?}0.00${N0:?}"
 fi
 if [[ -z "$WALLET_MEMPOOL" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR:?}0${N0:?}"
