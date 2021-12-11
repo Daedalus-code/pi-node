@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.4.0.8
+# 0.4.1.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.0.8"
+VERSION="v0.4.1.3"
 
 ### system information #########################################################
 
@@ -71,9 +71,11 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | grep -E "wlan*|eth*" 2>&1 |
   awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 |
   head -1 2>&1)
 
-# update wan (everyday)
+# update wan, update repo (everyday)
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   rm "$LOG_DIR"/getwan &>/dev/null
+  # update repo
+  cd /home/"$(whoami)"/trump-node || exit && git pull -q && bash include/install 2>&1
 fi
 # get wan address
 if [[ ! -f "$LOG_DIR"/getwan ]]; then
@@ -275,8 +277,11 @@ fi
 function pos() {
   # proof of stake, less than n confirmations
   if [[ "$LAST_TX" -lt "91" ]]; then
-    # wallet got a stake
+    # wallet got a stake with darkmode theme
     RC="${Y1:?}"
+  else
+    # wallet got a stake with default theme
+    RC="${GR:?}"
   fi
 }
 
