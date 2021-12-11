@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.2.3.7
+# 0.2.4.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.2.3.7"
+VERSION="v0.2.4.0"
 
 ### system information #########################################################
 
@@ -112,11 +112,14 @@ if [[ "$(date +%M 2>&1 | grep -Eo "00" 2>&1)" ]]; then
 fi
 # get node list (api, arp)
 if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
-  # keep working peers around
-  cat "$LOG_DIR"/getpeerinfo 2>&1 | grep "addr:" 2>&1 |
-    awk '{ print $2 }' | sed -r '/^.{,8}$/d' >"$LOG_DIR"/nodes.tmp
+  # keep working peers around (ipv4)
+  cat "$LOG_DIR"/getpeerinfo 2>&1 | grep "addrlocal" 2>&1 |
+    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"$LOG_DIR"/nodes.tmp 2>&1
   # add local address (arp) intranet
-  arp -a 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes.tmp 2>&1
+  arp -a 2>&1 |
+    # ignore common default router IP address
+    grep -vwE "(192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" 2>&1 |
+    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes.tmp 2>&1
   # add node address (api) internet
   curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes >>"$LOG_DIR"/nodes.tmp 2>&1
 fi
