@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20210912
+# V20211112
 # 0.0.4.1
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
@@ -18,7 +18,7 @@ for (( ; ; )); do # loop dashbord
   printf '%b' "
 ${N0:?}                       ${Y1:?} PiTrump ${N0:?}${VERSION:?} ${GR:?}pitrump${N0:?}         ${CLOCK:?}
 ${N0:?}                       ${N0:?} TrumpCoin Fullnode                 ${TOR_ICON:?} ${CY:?}${INTERFACE:?}${N0:?}
-${RC:?}   #################   ${GR:?} -----------------------------------------${N0:?}
+${RC:?}   #################   ${Y1:?} -----------------------------------------${N0:?}
 ${RC:?}   #################   ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
 ${RC:?}   ##    #####    ##   ${N0:?} Free Mem ${G0:?}${FREE_MEM:?}M${N0:?}/${G0:?}${TOTAL_MEM:?}M${N0:?} HDDuse ${G0?:}${USED_HDD:?} (${USED_HDD_P:?})${N0:?}
 ${RC:?}         #####         ${N0:?} ${USER:?}@${CY:?}${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
