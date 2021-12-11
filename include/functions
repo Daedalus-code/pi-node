@@ -252,22 +252,22 @@ if ! cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep "error" &>/dev/null; then
   # difficulty
   if [ "$RANDOM_TIMELINE" -eq "1" ]; then
     TIMELINE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "difficulty" 2>&1 | awk '{ print $2 }' 2>&1)
-    TIMELINE=$(echo "Difficulty: $TIMELINE")
+    TIMELINE=$(echo "Difficulty $TIMELINE")
   # patriotnodes
   elif [ "$RANDOM_TIMELINE" -eq "2" ]; then
     TIMELINE="Patriotnodes ${N0:?}${WALLET_NODES_STABLE:?}${N0:?} ${G1:?}${WALLET_NODES_TOTAL:?}${N0:?} ${G0:?}${WALLET_NODES_ENABLED:?}${N0:?} ${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}"
   # moneysupply
   elif [ "$RANDOM_TIMELINE" -eq "3" ]; then
     TIMELINE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "moneysupply" 2>&1 | awk '{ print $2 }' 2>&1)
-    TIMELINE=$(echo "Moneysupply: $TIMELINE")
+    TIMELINE=$(echo "Moneysupply $TIMELINE")
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
     TIMELINE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "unconfirmed_balance" 2>&1 | awk '{ print $2 }' 2>&1)
-    TIMELINE=$(echo "Unconfirmed: $TIMELINE")
+    TIMELINE=$(echo "Unconfirmed $TIMELINE")
   # immature_balance
   elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
     TIMELINE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "immature_balance" 2>&1 | awk '{ print $2 }' 2>&1)
-    TIMELINE=$(echo "Immature: $TIMELINE")
+    TIMELINE=$(echo "Immature $TIMELINE")
   fi
 else # wait on wallet
   TIMELINE=""
