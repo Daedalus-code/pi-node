@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.3.8.4
+# 0.3.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -256,16 +256,18 @@ WALLET_TXLAST=$(cat "$LOG_DIR"/listunspent 2>&1 | tr -d ':' 2>&1 |
   awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 # wallet stakes (addtowallet)
 WALLET_STAKES=$(grep -c "AddToWallet" "$WALLET_DIR"/debug.log 2>&1)
-# wallet pos status
-if [[ "$(grep "Staking Active" "$LOG_DIR"/getinfo 2>&1)" ]]; then
-  # pos active
-  POS_STATUS="${G1:?}S${N0:?}"
-  # balance is staking, highlight balance, stakes and inputs
-  WALLET_BALANCE="${G1:?}${WALLET_BALANCE:?}${N0:?}"
-  WALLET_STAKES="${G1:?}${WALLET_STAKES:?}${N0:?}"
-  WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
-else # pos not active
-  POS_STATUS="${GR:?}S${N0:?}"
+if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
+  # wallet pos status
+  if [[ "$(grep "Staking Active" "$LOG_DIR"/getinfo 2>&1)" ]]; then
+    # pos active
+    POS_STATUS="${G1:?}S${N0:?}"
+    # balance is staking, highlight balance, stakes and inputs
+    WALLET_BALANCE="${G1:?}${WALLET_BALANCE:?}${N0:?}"
+    WALLET_STAKES="${G1:?}${WALLET_STAKES:?}${N0:?}"
+    WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
+  else # pos not active
+    POS_STATUS="${GR:?}S${N0:?}"
+  fi
 fi
 
 ### timeline ###################################################################

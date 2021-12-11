@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.0.9.3
+# 0.0.9.6
 
 # non responsive
 if [[ -z "$WALLET_NODES_TOTAL" ]] &>/dev/null; then
@@ -88,6 +88,9 @@ if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
 fi
 if [[ -z "$TIMELINE" ]] &>/dev/null; then
   TIMELINE="${N0:?}"
+fi
+if [[ -z "$POS_STATUS" ]] &>/dev/null; then
+  POS_STATUS="${N0:?}"
 fi
 
 # END
