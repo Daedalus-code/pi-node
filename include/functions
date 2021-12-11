@@ -109,7 +109,7 @@ fi
 if [[ "$(date +%M 2>&1 | grep -Eo "00" 2>&1)" ]]; then
   rm "$LOG_DIR"/nodes.tmp &>/dev/null
 fi
-# get node list (api, arp)
+# get node list, ticker (api, arp)
 if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
   # save "stable/working" peers into file (addnodes - ipv4 address)
   grep "addrlocal" "$LOG_DIR"/getpeerinfo 2>&1 |
