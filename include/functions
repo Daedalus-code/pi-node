@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.3.8.8
+# 0.3.9.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.3.8.8"
+VERSION="v0.3.9.6"
 
 ### system information #########################################################
 
@@ -278,7 +278,7 @@ fi
 if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
 
   # random start number
-  RANDOM_TIMELINE=$((((RANDOM % 11) + 1)))
+  RANDOM_TIMELINE=$((((RANDOM % 12) + 1)))
 
   # difficulty
   if [ "$RANDOM_TIMELINE" -eq "1" ]; then
@@ -350,6 +350,14 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     TIMELINE=$(grep "amount" "$LOG_DIR"/listunspent 2>&1 | awk '{ print $2 }' 2>&1 |
       sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Lowest Input ${G0:?}$TIMELINE${N0:?}"
+    # theme
+  elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
+    if [[ "$DARKMODE" -eq "0" ]]; then
+      # using default
+      TIMELINE="Theme ${RC:?}default${N0:?}"
+    else # using darkmode
+      TIMELINE="Theme ${RC:?}darkmode${N0:?}"
+    fi
   fi
 else # wait on wallet
   # random start number
