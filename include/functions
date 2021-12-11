@@ -308,7 +308,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="Old Input ${G1:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "8" ]; then
-    TIMELINE="Wallet Value${G0:?}${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
+    TIMELINE="Value${G0:?} ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
   fi
 else # wait on wallet
   # random start number
