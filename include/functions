@@ -287,7 +287,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }')
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
-    INPUT_AGE_D=$(echo "$INPUT_AGE/24" 2>&1 | bc 2>&1)
+    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep "[0-9]+h" 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="Lowest confirmation ${G0:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
     # highest confirmation
@@ -297,7 +297,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }')
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
-    INPUT_AGE_D=$(echo "$INPUT_AGE/24" 2>&1 | bc 2>&1)
+    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep "[0-9]+h" 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="Highest confirmation ${G1:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   fi
 else # wait on wallet
