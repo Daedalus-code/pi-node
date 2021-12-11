@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.4.3.3
+# 0.4.3.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.3.3"
+VERSION="v0.4.3.6"
 
 ### system information #########################################################
 
@@ -213,9 +213,6 @@ else # wallet is loading/syncing
   RC="${GR:?}"
   # non responsive (loading)
   WALLET_SYNC="${GR:?}0.00${N0:?}"
-  WALLET_BALANCE="${GR:?}0${N0:?}"
-  WALLET_STAKES="${GR:?}0${N0:?}"
-  WALLET_INPUTS="${GR:?}0${N0:?}"
 fi
 
 # wallet patriotnodes total
@@ -429,5 +426,11 @@ else # wait on wallet
 fi
 # non responsive
 source /usr/local/bin/include/null
+if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
+  # balance is staking, highlight balance, stakes and inputs
+  WALLET_BALANCE="${GR:?}0${N0:?}"
+  WALLET_STAKES="${GR:?}0${N0:?}"
+  WALLET_INPUTS="${GR:?}0${N0:?}"
+fi
 
 # END
