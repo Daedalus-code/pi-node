@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# By Rainman
+# V20211112
+# 0.0.1.4
+
+PIDOFTRUMP=$(pidof trumpcoind 2>&1 | wc -w 2>&1)
+
+if echo "$PIDOFTRUMP" 2>&1 | grep -q -E "1"; then
+  echo "Already running"
+else
+  bash /home/"$(whoami)"/trump-node/include/cron
+fi
