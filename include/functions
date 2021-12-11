@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.2.4
+# 0.4.1.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.3.0"
+VERSION="v0.4.1.1"
 
 ### system information #########################################################
 
@@ -399,26 +399,13 @@ fi
 # non responsive
 source /usr/local/bin/include/null
 
-function pos() {
-  # proof of stake, less than n confirmations
-  if [[ "$LAST_TX" -lt "91" ]] &>/dev/null; then
-    # wallet got a stake with darkmode theme
-    RC="${Y1:?}"
-  else
-    # wallet got a stake with default theme
-    RC="${GR:?}"
-  fi
-}
-
 if [[ "$DARKMODE" -eq "1" ]]; then
   # darkmode theme
   RC="${GR:?}"
   TH="${RC:?}D${N0:?}"
-  pos
 else # default theme
   RC="${Y1:?}"
   TH="${RC:?}D${N0:?}"
-  pos
 fi
 
 # END
