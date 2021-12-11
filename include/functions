@@ -267,12 +267,12 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     TIMELINE=$(echo "Moneysupply $TIMELINE")
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
-    TIMELINE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "unconfirmed_balance" 2>&1 |
+    TIMELINE=$(cat "$LOG_DIR"/getwalletinfo 2>&1 | grep "unconfirmed_balance" 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     TIMELINE=$(echo "Unconfirmed $TIMELINE")
   # immature_balance
   elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
-    TIMELINE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "immature_balance" 2>&1 |
+    TIMELINE=$(cat "$LOG_DIR"/getwalletinfo 2>&1 | grep "immature_balance" 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     TIMELINE=$(echo "Immature $TIMELINE")
   fi
