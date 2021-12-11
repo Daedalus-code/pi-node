@@ -176,7 +176,7 @@ else
 fi
 
 # if rpc in warm-up, loading block index, wait
-if ! cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep "error" &>/dev/null; then
+if ! cat "$LOG_DIR"/getblockchaininfo 2>&1 | grep -q "error" &>/dev/null; then
   # loading is done
   RC_LOADING="${N0:?}"
   # logo turns yellow while running
