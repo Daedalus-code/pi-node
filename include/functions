@@ -272,6 +272,11 @@ else # pos not active
   POS_STATUS="${GR:?}S${N0:?}"
 fi
 
+if [[ "$DARKMODE" -eq "1" ]]; then
+  # darkmode theme
+  RC="${GR:?}"
+fi
+
 ### timeline ###################################################################
 
 # if rpc in warm-up, loading block index, wait
@@ -387,10 +392,5 @@ else # wait on wallet
 fi
 # non responsive
 source /usr/local/bin/include/null
-
-if [[ "$DARKMODE" -eq "1" ]]; then
-  # darkmode theme
-  RC="${GR:?}"
-fi
 
 # END
