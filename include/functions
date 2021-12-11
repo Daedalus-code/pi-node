@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.3.4.2
+# 0.3.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.3.4.2"
+VERSION="v0.3.4.6"
 
 ### system information #########################################################
 
@@ -126,8 +126,12 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
     egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes.tmp 2>&1
   # add node address (api) internet
   curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes >>"$LOG_DIR"/nodes.tmp 2>&1
-  # ticker.usd (api)
-  curl -sf https://chainz.cryptoid.info/trump/api.dws?q=ticker.usd >"$LOG_DIR"/ticker.tmp 2>&1
+  # ticker (api)
+  curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/ticker.tmp 2>&1
+  # clean up ticker
+  cat "$LOG_DIR"/ticker.tmp 2>&1 | tr -d '"|,' 2>&1 | grep -o "10.63usd........." 2>&1 |
+    egrep -o "usd:[0-9]+.[0-9]+" 2>&1 | tr -d 'usd:' >/tmp/ticker.tmp 2>&1
+  mv /tmp/ticker.tmp "$LOG_DIR"/ticker.tmp 2>&1
 fi
 # create a list (addnodes) from nodes.tmp
 egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/nodes.tmp 2>&1 |
