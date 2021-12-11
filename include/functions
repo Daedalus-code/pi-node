@@ -306,8 +306,7 @@ if [[ "$DARKMODE" -eq "1" ]]; then
   # darkmode theme
   RC="${GR:?}"
   pos
-elif [[ "$DARKMODE" -eq "0" ]]; then
-  # default theme
+else # default theme
   RC="${Y1:?}"
   pos
 fi
