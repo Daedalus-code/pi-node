@@ -294,7 +294,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
-    INPUT_AGE=$(printf '%dh:%dm%\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
+    INPUT_AGE=$(echo '%dh:%dm%' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="New Input ${CY:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
@@ -304,7 +304,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
-    INPUT_AGE=$(printf '%dh:%dm%\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
+    INPUT_AGE=$(echo '%dh:%dm%' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="Old Input ${G1:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "8" ]; then
