@@ -246,7 +246,7 @@ fi
 ### timeline ###################################################################
 
 # if rpc in warm-up, loading block index, wait
-if [[ ! -f "$LOG_DIR"/getblockchaininfo ]]; then
+if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
 
   # random start number
   RANDOM_TIMELINE=$((((RANDOM % 5) + 1)))
