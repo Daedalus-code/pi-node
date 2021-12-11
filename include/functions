@@ -256,26 +256,26 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
   if [ "$RANDOM_TIMELINE" -eq "1" ]; then
     TIMELINE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "difficulty" 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE=$(echo "Difficulty $TIMELINE")
+    TIMELINE="Difficulty $TIMELINE"
   # patriotnodes
   elif [ "$RANDOM_TIMELINE" -eq "2" ]; then
-    TIMELINE="Patriotnodes ${N0:?}${WALLET_NODES_STABLE:?}${N0:?} ${G1:?}${WALLET_NODES_TOTAL:?}${N0:?} ${G0:?}${WALLET_NODES_ENABLED:?}${N0:?} ${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}"
+    TIMELINE="Patriotnodes ${N0:?}${WALLET_NODES_STABLE:?}${N0:?}/${G1:?}${WALLET_NODES_TOTAL:?}${N0:?}/${G0:?}${WALLET_NODES_ENABLED:?}${N0:?}/${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}"
   # moneysupply
   elif [ "$RANDOM_TIMELINE" -eq "3" ]; then
     TIMELINE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "moneysupply" 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1 | rev 2>&1 |
       sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
-    TIMELINE=$(echo "Moneysupply $TIMELINE")
+    TIMELINE="Moneysupply $TIMELINE"
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
     TIMELINE=$(cat "$LOG_DIR"/getwalletinfo 2>&1 | grep "unconfirmed_balance" 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE=$(echo "Unconfirmed $TIMELINE")
+    TIMELINE="Unconfirmed ${GR:?}$TIMELINE${N0:?}"
   # immature_balance
   elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
     TIMELINE=$(cat "$LOG_DIR"/getwalletinfo 2>&1 | grep "immature_balance" 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE=$(echo "Immature $TIMELINE")
+    TIMELINE="Immature ${GR:?}$TIMELINE${N0:?}"
   fi
 else # wait on wallet
   TIMELINE=""
