@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.3.7.0
+# 0.3.7.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.3.7.0"
+VERSION="v0.3.7.2"
 
 ### system information #########################################################
 
@@ -255,6 +255,8 @@ WALLET_STAKES=$(grep -c "AddToWallet" "$WALLET_DIR"/debug.log 2>&1)
 if [[ "$(grep "Staking Active" "$LOG_DIR"/getinfo 2>&1)" ]]; then
   # pos active
   POS_STATUS="${G1:?}S${N0:?}"
+  # balance is staking, highlight
+  WALLET_BALANCE="${G1:?}${WALLET_BALANCE:?}${N0:?}"
 else # pos not active
   POS_STATUS="${GR:?}S${N0:?}"
 fi
