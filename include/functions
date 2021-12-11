@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.2.8.5
+# 0.2.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.2.8.5"
+VERSION="v0.2.8.6"
 
 ### system information #########################################################
 
@@ -263,7 +263,8 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
   # moneysupply
   elif [ "$RANDOM_TIMELINE" -eq "3" ]; then
     TIMELINE=$(cat "$LOG_DIR"/getinfo 2>&1 | grep "moneysupply" 2>&1 |
-      awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+      awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1 | rev 2>&1 |
+      sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
     TIMELINE=$(echo "Moneysupply $TIMELINE")
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
