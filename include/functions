@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.0.9"
+VERSION="v0.4.0.8"
 
 ### system information #########################################################
 
