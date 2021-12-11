@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.3.6.9
+# 0.3.7.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.3.6.9"
+VERSION="v0.3.7.0"
 
 ### system information #########################################################
 
@@ -316,12 +316,13 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     UNSPENT_COUNT=$(grep "confirmations" "$LOG_DIR"/listunspent | wc -l)
     TIMELINE=$(grep "confirmations" "$LOG_DIR"/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)
+    # average calculated
+    TIMELINE_AVG=$(echo "$TIMELINE/$UNSPENT_COUNT" 2>&1 | bc 2>&1)
     # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+    TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    TIMELINE_AVG=$(echo "$TIMELINE/$UNSPENT_COUNT" 2>&1 | bc 2>&1)
     TIMELINE="Average ${G0:?}$TIMELINE_AVG${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
     # wallet value
   elif [ "$RANDOM_TIMELINE" -eq "9" ]; then
