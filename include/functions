@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.3.0.9
+# 0.3.3.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.3.0.9"
+VERSION="v0.3.3.8"
 
 ### system information #########################################################
 
@@ -301,6 +301,35 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     TIMELINE="Highest confirmation ${G1:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   fi
 else # wait on wallet
+
+  # random start number
+  RANDOM_TIMELINE=$((((RANDOM % 7) + 1)))
+
+  if [ "$RANDOM_TIMELINE" -eq "1" ]; then
+    TIMELINE="${GR}Think big${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "2" ]; then
+    TIMELINE="${GR}Protect downside, upside will take care of itself${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "3" ]; then
+    TIMELINE="${GR}Maximize your options${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
+    TIMELINE="${GR}Know your market${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
+    TIMELINE="${GR}Use your leverage${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "6" ]; then
+    TIMELINE="${GR}Enhance your location${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
+    TIMELINE="${GR}Get the word out${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "8" ]; then
+    TIMELINE="${GR}Fight back${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "9" ]; then
+    TIMELINE="${GR}Deliver the goods${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "10" ]; then
+    TIMELINE="${GR}Contain the costs${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "11" ]; then
+    TIMELINE="${GR}Have fun${N0:?}"
+
+  fi
+
   TIMELINE=""
 fi
 # non responsive
