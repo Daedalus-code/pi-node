@@ -293,7 +293,7 @@ fi
 
 function pos() {
   # proof of stake, less than n confirmations
-  if [[ "$LAST_TX" -lt "91" ]]; then
+  if [[ "$LAST_TX" -lt "91" ]] &>/dev/null; then
     # wallet got a stake with darkmode theme
     RC="${Y1:?}"
   else
