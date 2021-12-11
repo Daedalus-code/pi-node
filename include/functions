@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.3.7.8
+# 0.3.8.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.3.7.8"
+VERSION="v0.3.8.0"
 
 ### system information #########################################################
 
@@ -372,7 +372,9 @@ fi
 # non responsive
 source /usr/local/bin/include/null
 
-# darkmode
-RC="${GR:?}"
+if [[ "$DARKMODE" -eq "1" ]]; then
+  # darkmode theme
+  RC="${GR:?}"
+fi
 
 # END
