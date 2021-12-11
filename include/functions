@@ -213,6 +213,9 @@ else # wallet is loading/syncing
   RC="${GR:?}"
   # non responsive (loading)
   WALLET_SYNC="${GR:?}0.00${N0:?}"
+  WALLET_BALANCE="${GR:?}0${N0:?}"
+  WALLET_STAKES="${GR:?}0${N0:?}"
+  WALLET_INPUTS="${GR:?}0${N0:?}"
 fi
 
 # wallet patriotnodes total
@@ -286,9 +289,6 @@ if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
     WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
   else # pos not active
     POS_STATUS="${GR:?}S${N0:?}"
-    WALLET_BALANCE="${GR:?}0${N0:?}"
-    WALLET_STAKES="${GR:?}0${N0:?}"
-    WALLET_INPUTS="${GR:?}0${N0:?}"
   fi
 else # pos not active
   POS_STATUS="${GR:?}S${N0:?}"
