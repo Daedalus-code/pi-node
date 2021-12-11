@@ -179,10 +179,10 @@ WALLET_VERSION=$(grep "Core" "$LOG_DIR"/getnetworkinfo 2>&1 |
 # running mainnet or testnet
 if ! "$(grep "main" "$LOG_DIR"/getblockchaininfo 2>&1)" -eq "main" &>/dev/null; then
   # mainnet
-  WALLET_CHAIN="mainnet"
+  WALLET_CHAIN="${G1:?}mainnet${N0:?}"
 else
   # testnet
-  WALLET_CHAIN="testnet"
+  WALLET_CHAIN="${C1:?}testnet${N0:?}"
 fi
 
 # if rpc in warm-up, loading block index, wait
@@ -343,7 +343,7 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    TIMELINE="New Input ${CY:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
+    TIMELINE="New Input ${C1:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
     # highest confirmation
     TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/listunspent 2>&1 |
