@@ -333,12 +333,12 @@ if [[ -f "$LOG_DIR"/getblockchaininfo ]]; then
   elif [ "$RANDOM_TIMELINE" -eq "10" ]; then
     TIMELINE=$(grep "amount" "$LOG_DIR"/listunspent 2>&1 | awk '{ print $2 }' 2>&1 |
       sort -n 2>&1 | tail -1 2>&1)
-    TIMELINE="Highest Input $TIMELINE"
+    TIMELINE="Highest Input ${G1:?}$TIMELINE${N0:?}"
     # lowest input amount
   elif [ "$RANDOM_TIMELINE" -eq "11" ]; then
     TIMELINE=$(grep "amount" "$LOG_DIR"/listunspent 2>&1 | awk '{ print $2 }' 2>&1 |
       sort -n 2>&1 | head -1 2>&1)
-    TIMELINE="Lowest Input $TIMELINE"
+    TIMELINE="Lowest Input ${G0:?}$TIMELINE${N0:?}"
   fi
 else # wait on wallet
   # random start number
