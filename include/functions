@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.3.8.6
+# 0.3.8.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.3.8.6"
+VERSION="v0.3.8.8"
 
 ### system information #########################################################
 
@@ -268,6 +268,8 @@ if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
   else # pos not active
     POS_STATUS="${GR:?}S${N0:?}"
   fi
+else # pos not active
+  POS_STATUS="${GR:?}S${N0:?}"
 fi
 
 ### timeline ###################################################################
