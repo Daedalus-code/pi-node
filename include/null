@@ -90,7 +90,7 @@ if [[ -z "$TIMELINE" ]] &>/dev/null; then
   TIMELINE="${N0:?}"
 fi
 if [[ -z "$POS_STATUS" ]] &>/dev/null; then
-  POS_STATUS="${N0:?}"
+  POS_STATUS="${GR:?}S${GR:?}"
 fi
 
 # END
