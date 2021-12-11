@@ -114,7 +114,7 @@ fi
 if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
   # keep working peers around (ipv4)
   cat "$LOG_DIR"/getpeerinfo 2>&1 | grep "addrlocal" 2>&1 |
-    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >/home/"$(whoami)"/addnodes 2>&1
+    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>/home/"$(whoami)"/addnodes 2>&1
   # clean up and use as "manually addnodes"
   cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' >/tmp/an.tmp 2>&1
   mv /tmp/an.tmp /home/"$(whoami)"/addnodes 2>&1
