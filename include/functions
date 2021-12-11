@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211112
-# 0.2.8.6
+# 0.2.8.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.2.8.6"
+VERSION="v0.2.8.9"
 
 ### system information #########################################################
 
@@ -115,7 +115,10 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
   # keep working peers around (ipv4)
   cat "$LOG_DIR"/getpeerinfo 2>&1 | grep "addrlocal" 2>&1 |
     egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >/home/"$(whoami)"/addnodes 2>&1
-  # constantly adding (ipv4)
+  # clean up and use as "manually addnodes"
+  cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' >/tmp/an.tmp 2>&1
+  mv /tmp/an.tmp /home/"$(whoami)"/addnodes 2>&1
+  # constantly adding (ipv4+manually added)
   cat /home/"$(whoami)"/addnodes >"$LOG_DIR"/nodes.tmp
   # add local address (arp) intranet
   arp -a 2>&1 |
