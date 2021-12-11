@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20211012
+# V20211112
 # 0.2.3.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -142,14 +142,14 @@ fi
 ### wallet information #########################################################
 
 # collect wallet info, on every update (loop) from client
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo >"$LOG_DIR"/getblockchaininfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo >"$LOG_DIR"/getinfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getmempoolinfo >"$LOG_DIR"/getmempoolinfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo >"$LOG_DIR"/getnetworkinfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpatriotnodecount >"$LOG_DIR"/getpatriotnodecount 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getwalletinfo >"$LOG_DIR"/getwalletinfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent >"$LOG_DIR"/listunspent 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpeerinfo >"$LOG_DIR"/getpeerinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/getblockchaininfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/getinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getmempoolinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/getmempoolinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/getnetworkinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpatriotnodecount 2>&1 | tr -d '"|,' >"$LOG_DIR"/getpatriotnodecount 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getwalletinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/getwalletinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent 2>&1 | tr -d '"|,' >"$LOG_DIR"/listunspent 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpeerinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/getpeerinfo 2>&1
 
 # wallet version
 WALLET_VERSION=$(cat "$LOG_DIR"/getnetworkinfo 2>&1 |
