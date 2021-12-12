@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.5.1
+# 0.4.6.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -14,7 +14,7 @@ source /usr/local/bin/include/color
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.5.1"
+VERSION="v0.4.6.6"
 
 ### system information #########################################################
 
@@ -116,65 +116,80 @@ fi
 if [ ! -s "$LOG_DIR"/addnodes ]; then
   rm "$LOG_DIR"/addnodes &>/dev/null
 fi
-if [ ! -s "$LOG_DIR"/nodes.tmp ]; then
-  rm "$LOG_DIR"/nodes.tmp &>/dev/null
+if [ ! -s "$LOG_DIR"/nodes ]; then
+  rm "$LOG_DIR"/nodes &>/dev/null
 fi
 # update addnodes (every hour)
 if [[ "$(date +%M 2>&1 | grep -Eo "00" 2>&1)" ]]; then
-  rm "$LOG_DIR"/nodes.tmp &>/dev/null
+  rm "$LOG_DIR"/nodes &>/dev/null
 fi
 
 # get node list, ticker (api, arp)
-if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
+if [[ ! -f "$LOG_DIR"/nodes ]]; then
+
   # save "stable/working" peers into file (addnodes - ipv4 address)
   cat "$LOG_DIR"/getpeerinfo 2>&1 |
     awk '/:[0-9]+/ && !/]/ {print $2,$3}' 2>&1 |
     grep -v "Core" >>/home/"$(whoami)"/addnodes 2>&1
+
   # clean up and use as "manually addnodes"
   awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes 2>&1 |
-    awk '!a[$0]++' 2>&1 | sort -n >/tmp/an.tmp 2>&1
-  mv /tmp/an.tmp /home/"$(whoami)"/addnodes 2>&1
+    awk '!a[$0]++' 2>&1 | sort -n >/tmp/an 2>&1
+  mv /tmp/an /home/"$(whoami)"/addnodes 2>&1
+
   # constantly adding (ipv4+manually added)
-  awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes >"$LOG_DIR"/nodes.tmp
+  awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes >"$LOG_DIR"/nodes
+
   # add local address (arp) intranet, no ports on these
   arp -a 2>&1 |
     # ignore common default router IP address
     grep -vwE "(192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" 2>&1 |
-    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes.tmp 2>&1
+    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes 2>&1
+
   # add node address (api) internet
   curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
+
     # clean up the file above (ipv4) no ports on these
-    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes.tmp 2>&1
+    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes 2>&1
 
   # ticker (api price)
-  curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/ticker.tmp 2>&1
+  curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/ticker 2>&1
 
-  if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
+  if [[ -f "$LOG_DIR"/ticker ]]; then
+
     # clean up ticker
-    cat "$LOG_DIR"/ticker.tmp 2>&1 | tr -d '"|,' 2>&1 |
+    cat "$LOG_DIR"/ticker 2>&1 | tr -d '"|,' 2>&1 |
       egrep -o "[a0-z9]+-[0-9]+usd:[0-9]+.[0-9]+" 2>&1 |
-      egrep -o "usd:[0-9]+.[0-9]+" 2>&1 | tr -d 'usd:' >/tmp/ticker.tmp 2>&1
+      egrep -o "usd:[0-9]+.[0-9]+" 2>&1 | tr -d 'usd:' >/tmp/ticker 2>&1
+
     # count ticker lines, create average
-    TICKER_TOTAL=$(cat /tmp/ticker.tmp 2>&1 |
+    TICKER_TOTAL=$(cat /tmp/ticker 2>&1 |
       awk '{ SUM += $1} END { print SUM }' 2>&1)
-    TICKER_LINES=$(cat /tmp/ticker.tmp 2>&1 | wc -l 2>&1)
+    TICKER_LINES=$(cat /tmp/ticker 2>&1 | wc -l 2>&1)
     echo "${TICKER_TOTAL:?}/${TICKER_LINES:?}" 2>&1 |
       bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >/tmp/ticker 2>&1
+
     # remove old file
-    rm "$LOG_DIR"/ticker.tmp &>/dev/null
+    rm "$LOG_DIR"/ticker &>/dev/null
+
     # move new file into place
-    mv /tmp/ticker "$LOG_DIR"/ticker.tmp 2>&1
+    mv /tmp/ticker "$LOG_DIR"/ticker 2>&1
   fi
 
   # don't connect already connected nodes
-  # use connected nodes against nodes.tmp
+  # use connected nodes against nodes
   # get rid of already connected peers
-  # cat "$LOG_DIR"/nodes.tmp 2>&1 |
-  # grep -v -f /home/"$(whoami)"/addnodes >/tmp/nodes.tmp 2>&1
-  # mv /tmp/nodes.tmp "$LOG_DIR"/nodes.tmp 2>&1
+  # cat "$LOG_DIR"/nodes 2>&1 |
+  # grep -v -f /home/"$(whoami)"/addnodes >/tmp/nodes 2>&1
+  # mv /tmp/nodes "$LOG_DIR"/nodes 2>&1
+
+  # create failed connection list
+  egrep -o "connect to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
+    awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $3 }' >"$LOG_DIR"/failed 2>&1
 fi
-# create a list (addnodes) from nodes.tmp
-cat "$LOG_DIR"/nodes.tmp 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
+
+# create a list (addnodes) from nodes
+cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
 
 # look for screen session, if not found, run one
 if ! screen -list 2>&1 |
@@ -259,34 +274,34 @@ WALLET_NODES_INQUEUE=$(grep "inqueue" "$LOG_DIR"/getpatriotnodecount 2>&1 |
 # wallet connections total
 WALLET_PEERS_TOTAL=$(grep "connections" "$LOG_DIR"/getinfo 2>&1 |
   egrep -o "[0-9]+" 2>&1)
-if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
+if [[ -f "$LOG_DIR"/ticker ]]; then
   WALLET_PEERS_TOTAL="${P1:?}${WALLET_PEERS_TOTAL:?}${N0:?}"
 fi
 # wallet connections latest (using wallet version)
 WALLET_PEERS_LATEST=$(grep "subver" "$LOG_DIR"/getpeerinfo 2>&1 |
   egrep -o "$WALLET_VERSION" 2>&1 | wc -l 2>&1)
-if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
+if [[ -f "$LOG_DIR"/ticker ]]; then
   WALLET_PEERS_LATEST="${G1:?}${WALLET_PEERS_LATEST:?}${N0:?}"
 fi
 # wallet connections other (not latest, probably older wallets)
 WALLET_PEERS_OTHER=$(grep "subver" "$LOG_DIR"/getpeerinfo 2>&1 |
   egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1 | grep -v "$WALLET_VERSION" 2>&1 | wc -l 2>&1)
-if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
+if [[ -f "$LOG_DIR"/ticker ]]; then
   WALLET_PEERS_OTHER="${G0:?}${WALLET_PEERS_OTHER:?}${N0:?}"
 fi
-if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
+if [[ -f "$LOG_DIR"/ticker ]]; then
   # wallet balance
   WALLET_BALANCE=$(grep "balance" "$LOG_DIR"/getinfo 2>&1 |
     egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   # wallet value
-  WALLET_VALUE=$(echo "$(cat "$LOG_DIR"/ticker.tmp 2>&1 |
+  WALLET_VALUE=$(echo "$(cat "$LOG_DIR"/ticker 2>&1 |
     tail -1 2>&1)*$WALLET_BALANCE" 2>&1 |
     bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 fi
-if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
+if [[ -f "$LOG_DIR"/ticker ]]; then
   WALLET_VERSION="${G1:?}${WALLET_VERSION:?}${N0:?}"
   # wallet ticker.usd
-  WALLET_TICKER=$(cat "$LOG_DIR"/ticker.tmp 2>&1)
+  WALLET_TICKER=$(cat "$LOG_DIR"/ticker 2>&1)
   # wallet mempool
   WALLET_MEMPOOL=$(grep "size" "$LOG_DIR"/getmempoolinfo 2>&1 |
     egrep -o "[0-9]+" 2>&1)
@@ -307,7 +322,7 @@ WALLET_TXLAST=$(cat "$LOG_DIR"/listunspent 2>&1 | tr -d ':' 2>&1 |
 # create staking log
 grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/staking
 WALLET_STAKES=$(grep -c "AddToWallet" "$LOG_DIR"/staking 2>&1)
-if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
+if [[ -f "$LOG_DIR"/ticker ]]; then
   # wallet pos status
   if [[ "$(grep "Staking Active" "$LOG_DIR"/getinfo 2>&1)" ]]; then
     # pos active
