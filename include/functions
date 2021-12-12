@@ -191,23 +191,20 @@ if [ -f "$LOG_DIR"/nodes ]; then
   SUCCESS_RA_SX=$(echo "$SUCCESS_RA" 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
   if [[ "$SUCCESS_RA_SX" -ge "0" ]]; then
-    SRAC="${GR:?}${SUCCESS_RA:?}"
+    SRAC="${GR:?}${SUCCESS_RA:?}%"
   fi
   if [[ "$SUCCESS_RA_SX" -ge "10" ]]; then
-    SRAC="${Y0:?}${SUCCESS_RA:?}"
+    SRAC="${Y0:?}${SUCCESS_RA:?}%"
   fi
   if [[ "$SUCCESS_RA_SX" -ge "25" ]]; then
-    SRAC="${Y1:?}${SUCCESS_RA:?}"
+    SRAC="${Y1:?}${SUCCESS_RA:?}%"
   fi
   if [[ "$SUCCESS_RA_SX" -ge "50" ]]; then
-    SRAC="$G0:?}${SUCCESS_RA:?}"
+    SRAC="$G0:?}${SUCCESS_RA:?}%"
   fi
   if [[ "$SUCCESS_RA_SX" -ge "100" ]]; then
-    SRAC="${G1:?}${SUCCESS_RA:?}"
+    SRAC="${G1:?}${SUCCESS_RA:?}%"
   fi
-
-  # success rate w symbol
-  SUCCESS_RA="${SUCCESS_RA:?}%"
 
   if ! screen -list 2>&1 |
     grep -q "addnodes" 2>&1; then
