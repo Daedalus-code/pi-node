@@ -4,8 +4,6 @@
 # V20211112
 # 0.0.2.4
 
-source /usr/local/bin/include/functions
-
 PIDOFTRUMP=$(pidof trumpcoind 2>&1 | wc -w 2>&1)
 
 if echo "$PIDOFTRUMP" 2>&1 | grep -q -E "1"; then
