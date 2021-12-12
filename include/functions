@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.6.5
+# 0.4.6.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -14,7 +14,7 @@ source /usr/local/bin/include/color
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.6.5"
+VERSION="v0.4.6.8"
 
 ### system information #########################################################
 
@@ -180,6 +180,9 @@ fi
 # create failed connection list
 egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
   awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/failed 2>&1
+# count failed connections, feed output to debug.log
+FAIL_COUNT=$(wc -l "$LOG_DIR"/failed | awk '{ print $1 }')
+echo "${CLOCK:?} Failed sonnections so far: ${FAIL_COUNT:?}" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 
 # create a list (addnodes) from nodes
 cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
