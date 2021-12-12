@@ -189,7 +189,7 @@ if [[ ! -f "$LOG_DIR"/nodes ]]; then
 fi
 # remove failed connections inside addnodes
 cat "$LOG_DIR"/addnodes | grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes
-mv /tmp/clean_addnodes "$LOG_DIR"/addnodes
+cat /tmp/clean_addnodes >"$LOG_DIR"/addnodes 2>&1
 
 # create a list (addnodes) from nodes
 cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
