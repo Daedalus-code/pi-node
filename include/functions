@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.4.1
+# 0.4.5.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -14,7 +14,7 @@ source /usr/local/bin/include/color
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.4.1"
+VERSION="v0.4.5.1"
 
 ### system information #########################################################
 
@@ -304,7 +304,9 @@ WALLET_TXLAST=$(cat "$LOG_DIR"/listunspent 2>&1 | tr -d ':' 2>&1 |
   grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 |
   awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 # wallet stakes (addtowallet)
-WALLET_STAKES=$(grep -c "AddToWallet" "$WALLET_DIR"/debug.log 2>&1)
+# create staking log
+grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/staking
+WALLET_STAKES=$(grep -c "AddToWallet" "$LOG_DIR"/staking 2>&1)
 if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
   # wallet pos status
   if [[ "$(grep "Staking Active" "$LOG_DIR"/getinfo 2>&1)" ]]; then
@@ -319,6 +321,14 @@ if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
   fi
 else # pos not active
   POS_STATUS="${GR:?}S${N0:?}"
+fi
+
+### clean up debug.log (truncate) ##############################################
+
+if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
+  truncate -s /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  # keep proof-of-work
+  cat "$LOG_DIR"/staking >>/home/"$(whoami)"/TrumpCoin/debug.log
 fi
 
 ### timeline ###################################################################
