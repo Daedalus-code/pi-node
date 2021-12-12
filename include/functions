@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.6.8
+# 0.4.7.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -14,7 +14,7 @@ source /usr/local/bin/include/color
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.6.8"
+VERSION="v0.4.7.3"
 
 ### system information #########################################################
 
@@ -182,7 +182,12 @@ egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami
   awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/failed 2>&1
 # count failed connections, feed output to debug.log
 FAIL_COUNT=$(wc -l "$LOG_DIR"/failed | awk '{ print $1 }')
-echo "${CLOCK:?} Failed sonnections so far: ${FAIL_COUNT:?}" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+SUCCESS_CO=$(grep -c "New outbound peer" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1)
+SUCCESS_RA=$(echo "100/$(echo "$FAIL_COUNT+$SUCCESS_CO" 2>&1 |
+  bc -l 2>&1)*$SUCCESS_CO" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+SUCCESS_RA="${SUCCESS_RA:?}%"
+LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
+printf '%b' "${C1:?}${LOG_DATE:?}${N0:?} Failed/Succes connections so far. ${R1:?}F: ${FAIL_COUNT:?} ${G1:?}S: $SUCCESS_CO${N0:?} ${Y1:?}Succes Rate: $SUCCESS_RA${N0:?}" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 
 # create a list (addnodes) from nodes
 cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
