@@ -135,11 +135,11 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
   mv /tmp/an.tmp /home/"$(whoami)"/addnodes 2>&1
   # constantly adding (ipv4+manually added)
   awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes >"$LOG_DIR"/nodes.tmp
-  # add local address (arp) intranet
+  # add local address (arp) intranet, no ports on these
   arp -a 2>&1 |
     # ignore common default router IP address
     grep -vwE "(192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" 2>&1 |
-    awk '/:[0-9]+/ && !/]/ {print $1}' >>"$LOG_DIR"/nodes.tmp 2>&1
+    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes.tmp 2>&1
   # add node address (api) internet
   curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
     # clean up the file above (ipv4) no ports on these
