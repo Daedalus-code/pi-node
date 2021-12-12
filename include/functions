@@ -192,13 +192,13 @@ if [ -f "$LOG_DIR"/nodes ]; then
 
   if [[ "$SUCCESS_RA_SX" -gt "0" ]]; then
     SRAC="$GR"
-  elif [[ "$SUCCESS_RA_SX" -gt "10" ]]; then
+  elif [[ "$SUCCESS_RA_SX" -lt "10" ]]; then
     SRAC="$Y0"
-  elif [[ "$SUCCESS_RA_SX" -gt "25" ]]; then
+  elif [[ "$SUCCESS_RA_SX" -lt "25" ]]; then
     SRAC="$Y1"
-  elif [[ "$SUCCESS_RA_SX" -gt "50" ]]; then
+  elif [[ "$SUCCESS_RA_SX" -lt "50" ]]; then
     SRAC="$G0"
-  elif [[ "$SUCCESS_RA_SX" -gt "70" ]]; then
+  elif [[ "$SUCCESS_RA_SX" -lt "100" ]]; then
     SRAC="$G1"
   fi
 
