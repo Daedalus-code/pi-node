@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.7.0
+# 0.4.7.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -14,7 +14,7 @@ source /usr/local/bin/include/color
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.6.7"
+VERSION="v0.4.7.2"
 
 ### system information #########################################################
 
@@ -189,6 +189,8 @@ if [[ ! -f "$LOG_DIR"/nodes ]]; then
 fi
 # remove failed connections inside addnodes
 cat "$LOG_DIR"/addnodes | grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes
+# remove old file
+rm "$LOG_DIR"/addnodes &>/dev/null
 cat /tmp/clean_addnodes >"$LOG_DIR"/addnodes 2>&1
 
 # create a list (addnodes) from nodes
