@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.9.0
+# 0.4.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.9.0"
+VERSION="v0.4.8.6"
 
 ### system information #########################################################
 
@@ -174,7 +174,7 @@ if [[ ! -f "$LOG_DIR"/nodes ]]; then
   fi
 fi
 
-if [[ ! -f "$LOG_DIR"/nodes ]]; then
+if [[ -f "$LOG_DIR"/nodes ]]; then
   # create failed connection list
   egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
     awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/failed 2>&1
@@ -363,10 +363,6 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   truncate -s 0 /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   truncate -s 0 /home/"$(whoami)"/TrumpCoin/peers.dat 2>&1
   printf '%b' "${LOG_DATE:?} Status() CleanUp(truncate) - Done!${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  # keep proof-of-work
-  POS_COUNT=$(wc -l "$LOG_DIR"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() ProofOfWork - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  cat "$LOG_DIR"/staking >>/home/"$(whoami)"/TrumpCoin/debug.log
 fi
 
 ### timeline ###################################################################

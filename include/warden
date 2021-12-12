@@ -2,8 +2,10 @@
 
 # By Rainman
 # V20211112
-# 0.0.2.8
+# 0.0.3.5
 
+# pitrump configurations
+source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
 # date for logs
@@ -15,9 +17,14 @@ if echo "$PIDOFTRUMP" 2>&1 |
   wc -l 2>&1 | grep -q -E "1"; then
   printf '%b' "${LOG_DATE:?} Status() WalletMonitor.: Wallet ok${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 else
+  # remove old files
+  grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/staking
+  # keep proof-of-work
+  POS_COUNT=$(wc -l "$LOG_DIR"/staking 2>&1 | awk '{ print $1 }' 2>&1)
+  printf '%b' "${LOG_DATE:?} Status() ProofOfWork - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  cat "$LOG_DIR"/staking >>/home/"$(whoami)"/TrumpCoin/debug.log
+  rm "$LOG_DIR"/*
   truncate -s 0 /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  # pitrump configurations
-  source /home/pi/pitrump.conf
   # make sure tor is installed
   if ! [ -x "$(command -v tor)" ]; then
     sudo apt-get install tor -y
