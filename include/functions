@@ -191,15 +191,15 @@ if [ -f "$LOG_DIR"/nodes ]; then
   SUCCESS_RA_SX=$(echo "$SUCCESS_RA" 2>&1 | tr -d '%' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
   if [[ "$SUCCESS_RA_SX" -gt "0" ]]; then
-    SRAC="$GR"
+    SRAC="${GR:?}${SUCCESS_RA:?}"
   elif [[ "$SUCCESS_RA_SX" -lt "10" ]]; then
-    SRAC="$Y0"
+    SRAC="${Y0:?}${SUCCESS_RA:?}"
   elif [[ "$SUCCESS_RA_SX" -lt "25" ]]; then
-    SRAC="$Y1"
+    SRAC="${Y1:?}${SUCCESS_RA:?}"
   elif [[ "$SUCCESS_RA_SX" -lt "50" ]]; then
-    SRAC="$G0"
+    SRAC="$G0:?}${SUCCESS_RA:?}"
   elif [[ "$SUCCESS_RA_SX" -lt "100" ]]; then
-    SRAC="$G1"
+    SRAC="${G1:?}${SUCCESS_RA:?}"
   fi
 
   # success rate w symbol
@@ -207,7 +207,7 @@ if [ -f "$LOG_DIR"/nodes ]; then
 
   printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Fail/Success..: Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}$SUCCESS_RA${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Fail/Success..: Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() AddnodeSize...: AddNewPeers ${CY:?}${ADDNODE_SI:?}${N0:?} AddnodePeers ${C1:?}$ADDNODE_PSI${N0:?} Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() PeerStatus....: Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 
