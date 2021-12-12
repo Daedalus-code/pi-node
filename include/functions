@@ -132,7 +132,7 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
     awk '!a[$0]++' 2>&1 | sort -n >/tmp/an.tmp 2>&1
   mv /tmp/an.tmp /home/"$(whoami)"/addnodes 2>&1
   # constantly adding (ipv4+manually added)
-  cat /home/"$(whoami)"/addnodes >"$LOG_DIR"/nodes.tmp
+  egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" /home/"$(whoami)"/addnodes >"$LOG_DIR"/nodes.tmp
   # add local address (arp) intranet
   arp -a 2>&1 |
     # ignore common default router IP address
