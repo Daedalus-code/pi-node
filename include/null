@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.1.0.1
+# 0.1.0.7
 
 source /usr/local/bin/include/color
 
@@ -96,6 +96,12 @@ if [[ -z "$POS_STATUS" ]] &>/dev/null; then
 fi
 if [[ "$POS_STATUS" -eq "0" ]] &>/dev/null; then
   POS_STATUS="${GR:?}S${GR:?}"
+fi
+if [[ -z "$DARKMODE" ]] &>/dev/null; then
+  DARKMODE="${GR:?}0${GR:?}"
+fi
+if [[ "$DARKMODE" -eq "0" ]] &>/dev/null; then
+  DARKMODE="${GR:?}0${GR:?}"
 fi
 
 # END

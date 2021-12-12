@@ -2,19 +2,21 @@
 
 # By Rainman
 # V20211212
-# 0.4.8.5
+# 0.4.8.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # pitrump configurations
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
+# non responsive
+source /usr/local/bin/include/null
 
 # create data directory
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.8.5"
+VERSION="v0.4.8.8"
 
 ### system information #########################################################
 
@@ -470,8 +472,6 @@ else # wait on wallet
     TIMELINE="${GR}Have fun${N0:?}"
   fi
 fi
-# non responsive
-source /usr/local/bin/include/null
 
 if [[ "$DARKMODE" -eq "1" ]]; then
   # darkmode theme
@@ -481,5 +481,8 @@ else # default theme
   RC="${Y1:?}"
   TH="${RC:?}D${N0:?}"
 fi
+
+# non responsive
+source /usr/local/bin/include/null
 
 # END
