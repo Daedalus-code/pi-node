@@ -160,6 +160,8 @@ egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/nodes.tmp 2>&1 |
 # look for screen session, if not found, run one
 if ! screen -list 2>&1 |
   grep -q "addnodes" 2>&1; then
+  # create screen session
+  screen -dmS addnodes 2>&1
   # connect nodes found with addnodes list above
   # (using tmp directory)
   cat >/tmp/add_peers <<'EOF'
@@ -169,8 +171,6 @@ while IFS= read -r ADDS; do
 done <"$LOG_DIR"/addnodes
 killall screen
 EOF
-  # create screen session
-  screen -dmS addnodes 2>&1
   # start adding nodes, inside screen session
   screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
 fi
