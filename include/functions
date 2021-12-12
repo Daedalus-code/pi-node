@@ -182,11 +182,11 @@ if [[ ! -f "$LOG_DIR"/nodes ]]; then
   # cat "$LOG_DIR"/nodes 2>&1 |
   # grep -v -f /home/"$(whoami)"/addnodes >/tmp/nodes 2>&1
   # mv /tmp/nodes "$LOG_DIR"/nodes 2>&1
-
-  # create failed connection list
-  egrep -o "connect to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
-    awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $3 }' >"$LOG_DIR"/failed 2>&1
 fi
+
+# create failed connection list
+egrep -o "connect to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
+  awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $3 }' >"$LOG_DIR"/failed 2>&1
 
 # create a list (addnodes) from nodes
 cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
