@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.6.6
+# 0.4.6.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -14,7 +14,7 @@ source /usr/local/bin/include/color
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.6.6"
+VERSION="v0.4.6.7"
 
 ### system information #########################################################
 
@@ -338,10 +338,11 @@ else # pos not active
   POS_STATUS="${GR:?}S${N0:?}"
 fi
 
-### clean up debug.log (truncate) ##############################################
+### clean up debug.log, peers.dat (truncate) ###################################
 
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
-  truncate -s /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  truncate -s 0 /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  truncate -s 0 /home/"$(whoami)"/TrumpCoin/peers.dat 2>&1
   # keep proof-of-work
   cat "$LOG_DIR"/staking >>/home/"$(whoami)"/TrumpCoin/debug.log
 fi
