@@ -193,24 +193,23 @@ if [[ ! -f "$LOG_DIR"/nodes ]]; then
   printf '%b' "${LOG_DATE:?} Status() Fail/Success..: Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${Y1:?}$SUCCESS_RA${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() AddnodeSize...: AddNewPeers ${CY:?}${ADDNODE_SI:?}${N0:?} AddnodePeers ${C1:?}$ADDNODE_PSI${N0:?} Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() PeerStatus....: Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-fi
 
-# create a list (addnodes) from nodes
-cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
+  # create a list (addnodes) from nodes
+  cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
 
-# remove failed connections inside addnodes
-cat "$LOG_DIR"/addnodes | grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes
-# setup new file
-mv /tmp/clean_addnodes "$LOG_DIR"/addnodes 2>&1
+  # remove failed connections inside addnodes
+  cat "$LOG_DIR"/addnodes | grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes
+  # setup new file
+  mv /tmp/clean_addnodes "$LOG_DIR"/addnodes 2>&1
 
-# look for screen session, if not found, run one
-if ! screen -list 2>&1 |
-  grep -q "addnodes" 2>&1; then
-  # create screen session
-  screen -dmS addnodes 2>&1
-  # connect nodes found with addnodes list above
-  # (using tmp directory)
-  cat >/tmp/add_peers <<'EOF'
+  # look for screen session, if not found, run one
+  if ! screen -list 2>&1 |
+    grep -q "addnodes" 2>&1; then
+    # create screen session
+    screen -dmS addnodes 2>&1
+    # connect nodes found with addnodes list above
+    # (using tmp directory)
+    cat >/tmp/add_peers <<'EOF'
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
@@ -223,8 +222,9 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 printf '%b' "${LOG_DATE:?} Status() AddNodes......: ${G1:?}Adding nodes done! ${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 killall screen
 EOF
-  # start adding nodes, inside screen session
-  screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+    # start adding nodes, inside screen session
+    screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+  fi
 fi
 
 ### wallet information #########################################################
