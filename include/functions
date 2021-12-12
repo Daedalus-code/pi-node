@@ -154,7 +154,7 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
     TICKER_TOTAL=$(cat /tmp/ticker.tmp 2>&1 |
       awk '{ SUM += $1} END { print SUM }' 2>&1)
     TICKER_LINES=$(cat /tmp/ticker.tmp 2>&1 | wc -l 2>&1)
-    echo "$(cat /tmp/ticker.tmp 2>&1)/${TICKER_LINES:?}" 2>&1 |
+    echo "${TICKER_TOTAL:?}/${TICKER_LINES:?}" 2>&1 |
       bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >/tmp/ticker 2>&1
     mv /tmp/ticker "$LOG_DIR"/ticker.tmp 2>&1
   fi
