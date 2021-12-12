@@ -169,9 +169,9 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
   # don't connect already connected nodes
   # use connected nodes against nodes.tmp
   # get rid of already connected peers
-  cat "$LOG_DIR"/nodes.tmp 2>&1 |
-    grep -v -f /home/"$(whoami)"/addnodes >/tmp/nodes.tmp 2>&1
-  mv /tmp/nodes.tmp "$LOG_DIR"/nodes.tmp 2>&1
+  # cat "$LOG_DIR"/nodes.tmp 2>&1 |
+  # grep -v -f /home/"$(whoami)"/addnodes >/tmp/nodes.tmp 2>&1
+  # mv /tmp/nodes.tmp "$LOG_DIR"/nodes.tmp 2>&1
 fi
 # create a list (addnodes) from nodes.tmp
 cat "$LOG_DIR"/nodes.tmp 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
