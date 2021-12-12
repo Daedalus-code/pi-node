@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.5.1.2
+# 0.5.1.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.1.2"
+VERSION="v0.5.1.6"
 
 ### system information #########################################################
 
@@ -192,13 +192,17 @@ if [ -f "$LOG_DIR"/nodes ]; then
 
   if [[ "$SUCCESS_RA_SX" -ge "0" ]]; then
     SRAC="${GR:?}${SUCCESS_RA:?}"
-  elif [[ "$SUCCESS_RA_SX" -ge "10" ]]; then
+  fi
+  if [[ "$SUCCESS_RA_SX" -ge "10" ]]; then
     SRAC="${Y0:?}${SUCCESS_RA:?}"
-  elif [[ "$SUCCESS_RA_SX" -ge "25" ]]; then
+  fi
+  if [[ "$SUCCESS_RA_SX" -ge "25" ]]; then
     SRAC="${Y1:?}${SUCCESS_RA:?}"
-  elif [[ "$SUCCESS_RA_SX" -ge "50" ]]; then
+  fi
+  if [[ "$SUCCESS_RA_SX" -ge "50" ]]; then
     SRAC="$G0:?}${SUCCESS_RA:?}"
-  elif [[ "$SUCCESS_RA_SX" -ge "100" ]]; then
+  fi
+  if [[ "$SUCCESS_RA_SX" -ge "100" ]]; then
     SRAC="${G1:?}${SUCCESS_RA:?}"
   fi
 
