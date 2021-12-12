@@ -13,7 +13,7 @@ PIDOFTRUMP=$(pidof trumpcoind 2>&1 | wc -w 2>&1)
 
 if echo "$PIDOFTRUMP" 2>&1 |
   wc -l 2>&1 | grep -q -E "1"; then
-  printf '%b' "${LOG_DATE:?} Status() WalletMonitor.: Wallet running${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() WalletMonitor.: Wallet ok${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 else
   truncate -s 0 /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   # pitrump configurations
