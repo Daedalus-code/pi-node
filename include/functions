@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.8.3
+# 0.4.8.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -14,7 +14,7 @@ source /usr/local/bin/include/color
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.8.3"
+VERSION="v0.4.8.4"
 
 ### system information #########################################################
 
@@ -213,7 +213,8 @@ if ! screen -list 2>&1 |
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
-printf '%b' "${LOG_DATE:?} Status() ${Y1:?}Adding nodes now! ${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+PEERS_TRIES=$(egrep "peer=[0-9]+" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1)
+printf '%b' "${LOG_DATE:?} Status() ${Y1:?}Adding nodes now!${N0:?} Tries ${G1:?}$PEERS_TRIES${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
 done <"$LOG_DIR"/addnodes
