@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # By Rainman
-# V20211112
-# 0.0.9.9
+# V20211212
+# 0.1.0.1
+
+source /usr/local/bin/include/color
 
 # non responsive
 if [[ -z "$WALLET_NODES_TOTAL" ]] &>/dev/null; then

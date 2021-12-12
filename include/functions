@@ -2,18 +2,19 @@
 
 # By Rainman
 # V20211212
-# 0.4.4.0
+# 0.4.4.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # pitrump configurations
 source /home/pi/pitrump.conf
+source /usr/local/bin/include/color
 
 # create data directory
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.3.7"
+VERSION="v0.4.4.1"
 
 ### system information #########################################################
 
