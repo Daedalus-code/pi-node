@@ -145,6 +145,9 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
     # clean up the file above (ipv4) no ports on these
     egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes.tmp 2>&1
 
+  # ticker (api price)
+  curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/ticker.tmp 2>&1
+
   if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
     # clean up ticker
     cat "$LOG_DIR"/ticker.tmp 2>&1 | tr -d '"|,' 2>&1 |
@@ -168,9 +171,6 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
   cat "$LOG_DIR"/nodes.tmp 2>&1 |
     grep -v -f /home/"$(whoami)"/addnodes >/tmp/nodes.tmp 2>&1
   mv /tmp/nodes.tmp "$LOG_DIR"/nodes.tmp 2>&1
-
-  # ticker (api price)
-  curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/ticker.tmp 2>&1
 fi
 # create a list (addnodes) from nodes.tmp
 cat "$LOG_DIR"/nodes.tmp 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
