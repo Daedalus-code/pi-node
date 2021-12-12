@@ -196,9 +196,9 @@ SUCCESS_RA="${SUCCESS_RA:?}%"
 
 printf '%b' "${LOG_DATE:?} Status() SystemMonitor - Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 printf '%b' "${LOG_DATE:?} Status() SystemMonitor - Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-printf '%b' "${LOG_DATE:?} Status() Failed/Success - Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${Y1:?}$SUCCESS_RA${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-printf '%b' "${LOG_DATE:?} Status() AddnodeSize - AddNewPeers ${CY:?}${ADDNODE_SI:?}${N0:?} AddnodePeers ${C1:?}$ADDNODE_PSI${N0:?} Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-printf '%b' "${LOG_DATE:?} Status() PeerStatus - Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩ $DOWNLOAD ${R1:?}⇧ $UPLOAD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Fail/Success  - Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${Y1:?}$SUCCESS_RA${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() AddnodeSize   - AddNewPeers ${CY:?}${ADDNODE_SI:?}${N0:?} AddnodePeers ${C1:?}$ADDNODE_PSI${N0:?} Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() PeerStatus    - Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩ $DOWNLOAD ${R1:?}⇧ $UPLOAD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 
 # create a list (addnodes) from nodes
 cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
