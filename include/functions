@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.6.7
+# 0.4.7.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -187,6 +187,9 @@ if [[ ! -f "$LOG_DIR"/nodes ]]; then
   egrep -o "connect to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
     awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $3 }' >"$LOG_DIR"/failed 2>&1
 fi
+# remove failed connections inside addnodes
+cat "$LOG_DIR"/addnodes | grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes
+mv /tmp/clean_addnodes "$LOG_DIR"/addnodes
 
 # create a list (addnodes) from nodes
 cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
