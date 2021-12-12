@@ -2,7 +2,9 @@
 
 # By Rainman
 # V20211112
-# 0.0.2.5
+# 0.0.2.7
+
+source /usr/local/bin/include/color
 
 # date for logs
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
