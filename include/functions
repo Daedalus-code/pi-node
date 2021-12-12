@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.3.0"
+VERSION="v0.4.3.1"
 
 ### system information #########################################################
 
@@ -142,8 +142,8 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
     awk '/:[0-9]+/ && !/]/ {print $1}' >>"$LOG_DIR"/nodes.tmp 2>&1
   # add node address (api) internet
   curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
-    # clean up the file above (ipv4)
-    awk '/:[0-9]+/ && !/]/ {print $1}' >>"$LOG_DIR"/nodes.tmp 2>&1
+    # clean up the file above (ipv4) no ports on these
+    aegrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes.tmp 2>&1
   # create addnodes from all
   cat "$LOG_DIR"/nodes.tmp >"$LOG_DIR"/addnodes 2>&1
 
