@@ -188,7 +188,7 @@ if [ -f "$LOG_DIR"/nodes ]; then
     bc -l 2>&1)*$SUCCESS_CO" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
   # syntax fix
-  SUCCESS_RA_SX=$(echo "$SUCCESS_RA" 2>&1 | awk -F. '{ print $1 }' 2>&1)
+  SUCCESS_RA_SX=$(echo "$SUCCESS_RA" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
   if [[ "$SUCCESS_RA_SX" -gt "0" ]]; then
     SRAC="${GR:?}${SUCCESS_RA:?}"
