@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.3.5
+# 0.4.3.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.3.5"
+VERSION="v0.4.3.6"
 
 ### system information #########################################################
 
@@ -153,7 +153,8 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
       awk '{ SUM += $1} END { print SUM }' >/tmp/ticker.tmp 2>&1
     # count lines ticker lines, create average
     TICKER_LINES=$(cat /tmp/ticker.tmp 2>&1 | wc -l 2>&1)
-    echo "$(cat /tmp/ticker.tmp)/$TICKER_LINES" 2>&1 | bc -l 2>&1 >/tmp/ticker 2>&1
+    echo "$(cat /tmp/ticker.tmp 2>&1)/$TICKER_LINES" 2>&1 |
+      bc -l 2>&1 >/tmp/ticker 2>&1
     mv /tmp/ticker "$LOG_DIR"/ticker.tmp 2>&1
   fi
 
