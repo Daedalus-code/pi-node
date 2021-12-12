@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.5.1.3
+# 0.5.1.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.1.3"
+VERSION="v0.5.1.2"
 
 ### system information #########################################################
 
@@ -207,10 +207,9 @@ if [ -f "$LOG_DIR"/nodes ]; then
 
   if ! screen -list 2>&1 |
     grep -q "addnodes" 2>&1; then
-    # indicator
-    SCREEN_IND="${Y1:?}*${N0:?}"
-  else
     SCREEN_IND="${N0:?}"
+  else
+    SCREEN_IND="${Y1:?}*${N0:?}"
   fi
 
   printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F${SCREEN_IND:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
