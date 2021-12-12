@@ -145,7 +145,7 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
     # clean up the file above (ipv4) no ports on these
     egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes.tmp 2>&1
   # create addnodes from all
-  egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+" "$LOG_DIR"/nodes.tmp >"$LOG_DIR"/addnodes 2>&1
+  mv "$LOG_DIR"/nodes.tmp "$LOG_DIR"/addnodes 2>&1
 
   if [[ -f "$LOG_DIR"/ticker.tmp ]]; then
     # clean up ticker
