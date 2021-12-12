@@ -191,7 +191,7 @@ fi
 cat "$LOG_DIR"/addnodes | grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes
 # remove old file
 rm "$LOG_DIR"/addnodes &>/dev/null
-cat /tmp/clean_addnodes >"$LOG_DIR"/addnodes 2>&1
+mv /tmp/clean_addnodes "$LOG_DIR"/addnodes 2>&1
 
 # create a list (addnodes) from nodes
 cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
