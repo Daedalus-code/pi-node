@@ -174,7 +174,7 @@ if [[ ! -f "$LOG_DIR"/nodes ]]; then
   fi
 fi
 
-if [[ -f "$LOG_DIR"/nodes ]]; then
+if [[ ! -f "$LOG_DIR"/nodes ]]; then
   # create failed connection list
   egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
     awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/failed 2>&1
