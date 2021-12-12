@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.7.2
+# 0.4.6.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -14,7 +14,7 @@ source /usr/local/bin/include/color
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.7.2"
+VERSION="v0.4.6.5"
 
 ### system information #########################################################
 
@@ -175,13 +175,6 @@ if [[ ! -f "$LOG_DIR"/nodes ]]; then
     # move new file into place
     mv /tmp/ticker "$LOG_DIR"/ticker 2>&1
   fi
-
-  # don't connect already connected nodes
-  # use connected nodes against nodes
-  # get rid of already connected peers
-  # cat "$LOG_DIR"/nodes 2>&1 |
-  # grep -v -f /home/"$(whoami)"/addnodes >/tmp/nodes 2>&1
-  # mv /tmp/nodes "$LOG_DIR"/nodes 2>&1
 fi
 
 # create failed connection list
