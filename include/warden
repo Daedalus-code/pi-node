@@ -9,6 +9,7 @@ PIDOFTRUMP=$(pidof trumpcoind 2>&1 | wc -w 2>&1)
 if echo "$PIDOFTRUMP" 2>&1 | grep -q -E "1"; then
   echo "Already running"
 else
+  truncate -s 0 /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   # pitrump configurations
   source /home/pi/pitrump.conf
   # make sure tor is installed
