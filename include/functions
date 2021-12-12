@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.3.1
+# 0.4.3.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.3.1"
+VERSION="v0.4.3.0"
 
 ### system information #########################################################
 
@@ -164,8 +164,7 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
   curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/ticker.tmp 2>&1
 fi
 # create a list (addnodes) from nodes.tmp
-egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+" "$LOG_DIR"/nodes.tmp 2>&1 |
-  shuf >"$LOG_DIR"/addnodes 2>&1
+cat "$LOG_DIR"/nodes.tmp 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
 
 # look for screen session, if not found, run one
 if ! screen -list 2>&1 |
