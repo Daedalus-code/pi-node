@@ -71,7 +71,7 @@ USED_HDD_P=$(df -h | grep -E "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
 IFCONFIG=$(ifconfig 2>&1 | grep -E "wlan*|eth*" 2>&1)
 IP_ADDRESS=$(echo "$IFCONFIG" 2>&1 | grep -E "inet " 2>&1 |
   grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
-IP_ADDRESS="${CY:?}$IP_ADDRESS${N0:?}"
+IP_ADDRESS="${C1:?}$IP_ADDRESS${N0:?}"
 INTERFACE=$(echo "$IFCONFIG" 2>&1 | grep -E "wlan*|eth*" 2>&1 |
   awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 |
   head -1 2>&1)
@@ -88,7 +88,7 @@ if [[ ! -f "$LOG_DIR"/getwan ]]; then
 fi
 PUBLIC_IP=$(grep "address" "$LOG_DIR"/getwan 2>&1 |
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
-PUBLIC_IP="${CY:?}${PUBLIC_IP:?}${N0:?}"
+PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
 
 # download
 DOWNLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
