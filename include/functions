@@ -153,8 +153,8 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
       awk '{ SUM += $1} END { print SUM }' >/tmp/ticker.tmp 2>&1
     # count lines before moving
     echo "$(cat /tmp/ticker.tmp)/$(cat /tmp/ticker.tmp 2>&1 |
-      wc -l 2>&1)" 2>&1 | bc -l 2>&1 >/tmp/ticker.tmp 2>&1
-    mv /tmp/ticker.tmp "$LOG_DIR"/ticker.tmp 2>&1
+      wc -l 2>&1)" 2>&1 | bc -l 2>&1 >/tmp/ticker 2>&1
+    mv /tmp/ticker "$LOG_DIR"/ticker.tmp 2>&1
   fi
 
   # don't connect already connected nodes
