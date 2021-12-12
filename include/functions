@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.3.7
+# 0.4.4.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -156,7 +156,10 @@ if [[ ! -f "$LOG_DIR"/nodes.tmp ]]; then
     TICKER_LINES=$(cat /tmp/ticker.tmp 2>&1 | wc -l 2>&1)
     echo "${TICKER_TOTAL:?}/${TICKER_LINES:?}" 2>&1 |
       bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >/tmp/ticker 2>&1
-    cp /tmp/ticker "$LOG_DIR"/ticker.tmp 2>&1
+    # remove old file
+    rm "$LOG_DIR"/ticker.tmp &>/dev/null
+    # move new file into place
+    mv /tmp/ticker "$LOG_DIR"/ticker.tmp 2>&1
   fi
 
   # don't connect already connected nodes
