@@ -212,7 +212,7 @@ if [ -f "$LOG_DIR"/nodes ]; then
     SCREEN_IND="${Y1:?}*${N0:?}"
   fi
 
-  printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F${SCREEN_IND:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${SCREEN_IND:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Fail/Success..: Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() AddnodeSize...: AddNewPeers ${CY:?}${ADDNODE_SI:?}${N0:?} AddnodePeers ${C1:?}$ADDNODE_PSI${N0:?} Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
