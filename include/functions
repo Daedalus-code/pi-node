@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211212
-# 0.4.2.1
+# 0.4.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.4.2.1"
+VERSION="v0.4.2.4"
 
 ### system information #########################################################
 
@@ -111,7 +111,10 @@ fi
 if ! [ -x "$(command -v screen)" ]; then
   sudo apt-get install screen -y
 fi
-if grep -q "No such file or directory" "$LOG_DIR"/nodes.tmp &>/dev/null; then
+if [ ! -s "$LOG_DIR"/addnodes ]; then
+  rm "$LOG_DIR"/addnodes &>/dev/null
+fi
+if [ ! -s "$LOG_DIR"/nodes.tmp ]; then
   rm "$LOG_DIR"/nodes.tmp &>/dev/null
 fi
 
