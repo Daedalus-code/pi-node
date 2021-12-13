@@ -37,5 +37,5 @@ else
     echo "Setup tor/wallet configurations!"
   fi
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  "$WALLET_DIR"/trumpcoind -datadir="$WALLET_LOG_DIR" -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
+  "$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -log="${WALLET_LOG_DIR:?}" -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
 fi
