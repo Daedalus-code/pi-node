@@ -10,7 +10,7 @@
 until pidof trumpcoind 2>&1 |
   wc -w 2>&1 | egrep "1" &>/dev/null; do
   clear
-  echo "Waiting for trumpcoind node .."
+  echo "Waiting on trumpcoind node .."
   sleep 2
 done
 
