@@ -12,8 +12,8 @@ source /usr/local/bin/include/color
 # non responsive
 source /usr/local/bin/include/null
 
-# create data directory
-mkdir /home/"$(whoami)"/node_data &>/dev/null
+# create data directory, ruled by configuration
+mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
 VERSION="v0.5.4.3"
