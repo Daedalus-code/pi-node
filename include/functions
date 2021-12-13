@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.3.5
+# 0.5.3.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.3.5"
+VERSION="v0.5.3.8"
 
 ### system information #########################################################
 
@@ -143,6 +143,10 @@ if [[ "$(date +%M 2>&1 | grep -Eo "00" 2>&1)" ]]; then
   rm "$LOG_DIR"/node_data/nodes &>/dev/null
 fi
 
+# create failed connection list
+egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
+  awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/node_data/failed 2>&1
+
 # get node list, ticker (api, arp)
 if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
 
@@ -189,9 +193,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
 
   # greater than n seconds
   if [[ "$(uptime_cmd)" -gt "300" ]]; then
-    # create failed connection list
-    egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
-      awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/node_data/failed 2>&1
+
     # count failed connections, feed output to debug.log
     FAIL_COUNT=$(wc -l "$LOG_DIR"/node_data/failed 2>&1 | awk '{ print $1 }' 2>&1)
     ADDNODE_SI=$(wc -l "$LOG_DIR"/node_data/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
@@ -229,15 +231,16 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
     # create a list (addnodes) from nodes
     shuf "$LOG_DIR"/node_data/nodes >"$LOG_DIR"/node_data/addnodes 2>&1
 
-    # remove failed connections inside addnodes
-    cat "$LOG_DIR"/node_data/addnodes 2>&1 |
-      grep -v -f "$LOG_DIR"/node_data/failed >/tmp/clean_addnodes 2>&1
     # setup new file
     mv /tmp/clean_addnodes "$LOG_DIR"/node_data/addnodes 2>&1
   else
     printf '%b' "${LOG_DATE:?} Status() SystemMonitor: Loading wallet..${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   fi
 fi
+
+# remove failed connections inside addnodes
+cat "$LOG_DIR"/node_data/addnodes 2>&1 |
+  grep -v -f "$LOG_DIR"/node_data/failed >/tmp/clean_addnodes 2>&1
 
 # greater than n seconds
 if [[ "$(uptime_cmd)" -gt "300" ]]; then
