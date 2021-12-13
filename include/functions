@@ -294,8 +294,8 @@ else
   WALLET_CHAIN="${CY:?}testnet${N0:?}"
 fi
 
-# if rpc in warm-up, loading block index, wait
-if ! grep -q "error" "$LOG_DIR"/getblockchaininfo &>/dev/null; then
+# less than n minutes
+if [[ "$UPTIME" -gt "05" ]]; then
   # loading is done
   RC_LOADING="${N0:?}"
   # logo turns yellow while running
