@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.5.7
+# 0.5.5.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -24,7 +24,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.5.7"
+VERSION="v0.5.5.8"
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -398,8 +398,9 @@ LAST_TX=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent 2>&1 |
 WALLET_TXLAST=$(cat "$LOG_DIR"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
   grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 |
   awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-# wallet stakes (addtowallet)
-egrep "AddToWallet [a0-z9]+" "$WALLET_LOG_DIR"/debug.log >/home/"$(whoami)"/staking
+# wallet stakes (addtowallet), remove duplicates
+egrep "AddToWallet [a0-z9]+" "$WALLET_LOG_DIR"/debug.log 2>&1 |
+  awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
 # count stakes
 WALLET_STAKES=$(grep -c "AddToWallet" /home/"$(whoami)"/staking 2>&1)
 
