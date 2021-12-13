@@ -2,13 +2,15 @@
 
 # By Rainman
 # V20211312
-# 0.0.1.4
+# 0.0.1.6
 
 # install/update
 clear
 sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
-sudo cp -R /home/"$(whoami)"/trump-node/update /usr/local/bin/ 2>&1
+sudo cp -R /home/"$(whoami)"/trump-node/include/update /usr/local/bin/ 2>&1
 sudo chmod +x /usr/local/bin/update
 echo "Updated!"
 ls -lS /usr/local/bin/include/
+
+# END
