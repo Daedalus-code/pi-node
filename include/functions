@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.6.1
+# 0.5.6.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -24,7 +24,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.6.1"
+VERSION="v0.5.6.7"
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -425,11 +425,17 @@ fi
 ### clean up debug.log, peers.dat (truncate) keep pos around ###################
 
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
-  printf '%b' "${LOG_DATE:?} Stat() CleanUp(truncate) - debug, peers ..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # truncate debug.log
   truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - debug, peers ..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # remove old backups
+  STAKE_COUNT=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
+  rm -r "${WALLET_DIR:?}"/backups/* &>/dev/null
   cat /home/"$(whoami)"/staking 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - Storing ${STAKE_COUNT:?} stakes (PoS)!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # truncate peers.dat
   truncate -s 0 "${WALLET_DIR:?}"/peers.dat 2>&1
-  printf '%b' "${LOG_DATE:?} Stat() CleanUp(truncate) - Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### timeline ###################################################################
