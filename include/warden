@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.0.3.3
+# 0.0.4.1
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -11,9 +11,17 @@ source /usr/local/bin/include/color
 # date for logs
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
+# screen indicator (is it running)
+if ! screen -list 2>&1 |
+  grep -q "addnodes" 2>&1; then
+  SCREEN_IND="${N0:?}"
+else
+  SCREEN_IND="${Y1:?}*${N0:?}"
+fi
+
 if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
   UPTIME=$(ps -p "$(pidof trumpcoind 2>&1)" -o etime 2>&1 | tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime $UPTIME${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime $UPTIME $SCREEN_IND${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 else
   # remove old files
   grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/node_data/staking
