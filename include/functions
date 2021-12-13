@@ -29,7 +29,7 @@ CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
-# uptime in minutes
+# wallet daemon uptime in minutes
 function uptime_cmd() {
   PID="$(pidof trumpcoind)"
   HZ=$(getconf CLK_TCK)
@@ -187,8 +187,8 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
     mv /tmp/ticker "$LOG_DIR"/node_data/ticker 2>&1
   fi
 
-  # greater than n minutes
-  if [[ "$(uptime_cmd)" -gt "5" ]]; then
+  # greater than n seconds
+  if [[ "$(uptime_cmd)" -gt "300" ]]; then
     # create failed connection list
     egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
       awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/node_data/failed 2>&1
@@ -248,7 +248,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
 fi
 
 # greater than n minutes
-if [[ "$(uptime_cmd)" -gt "5" ]]; then
+if [[ "$(uptime_cmd)" -gt "300" ]]; then
   # look for screen session, if not found, run one
   if ! screen -list 2>&1 |
     grep -q "addnodes" 2>&1; then
@@ -300,7 +300,7 @@ else
 fi
 
 # greater than n minutes
-if [[ "$(uptime_cmd)" -gt "5" ]]; then
+if [[ "$(uptime_cmd)" -gt "300" ]]; then
   # loading is done
   RC_LOADING="${N0:?}"
   # logo turns yellow while running
