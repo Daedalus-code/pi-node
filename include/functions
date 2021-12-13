@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.3.8
+# 0.5.3.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.3.8"
+VERSION="v0.5.3.7"
 
 ### system information #########################################################
 
@@ -28,6 +28,9 @@ LAST_LOG=$(echo "${LAST_LOG:0:188} $SIZE")
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
+# uptime in minutes
+UPTIME=$(ps -p "$(pidof trumpcoind)" -o etime 2>&1 |
+  tr -d 'ELAPSED' 2>&1 | xargs 2>&1 | egrep -o "[0-9]+:" 2>&1 | tr -d ':' 2>&1)
 
 # system load
 LOAD=$(uptime 2>&1 |
@@ -178,10 +181,6 @@ if [ ! -f "$LOG_DIR"/nodes ]; then
     mv /tmp/ticker "$LOG_DIR"/ticker 2>&1
   fi
 
-  # uptime in minutes
-  UPTIME=$(ps -p "$(pidof trumpcoind)" -o etime 2>&1 |
-    tr -d 'ELAPSED' 2>&1 | xargs 2>&1 | egrep -o "[0-9]+:" 2>&1 | tr -d ':' 2>&1)
-
   # less than n minutes
   if [[ "$UPTIME" -gt "5" ]]; then
     # create failed connection list
@@ -243,7 +242,7 @@ if [ ! -f "$LOG_DIR"/nodes ]; then
 fi
 
 # less than n minutes
-if [[ "$UPTIME" -gt "05" ]]; then
+if [ "$UPTIME" -gt "05" ]; then
   # look for screen session, if not found, run one
   if ! screen -list 2>&1 |
     grep -q "addnodes" 2>&1; then
@@ -295,7 +294,7 @@ else
 fi
 
 # less than n minutes
-if [[ "$UPTIME" -gt "05" ]]; then
+if [ "$UPTIME" -gt "5" ]; then
   # loading is done
   RC_LOADING="${N0:?}"
   # logo turns yellow while running
