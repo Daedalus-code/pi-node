@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20211112
-# 0.0.3.2
+# V20211312
+# 0.0.3.3
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -12,7 +12,8 @@ source /usr/local/bin/include/color
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
-  printf '%b' "${LOG_DATE:?} Status() WalletMonitor.: Wallet ok${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  UPTIME=$(ps -p "$(pidof trumpcoind)" -o etime 2>&1 | tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
+  printf '%b' "${LOG_DATE:?} Status() WalletMonitor.: Wallet [${G1:?}Ok${N0:?}] $UPTIME${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 else
   # remove old files
   grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/staking
