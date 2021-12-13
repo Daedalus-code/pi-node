@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20211212
-# 0.5.1.6
+# V20211312
+# 0.5.1.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.1.6"
+VERSION="v0.5.1.2"
 
 ### system information #########################################################
 
@@ -172,69 +172,71 @@ if [ ! -f "$LOG_DIR"/nodes ]; then
     # move new file into place
     mv /tmp/ticker "$LOG_DIR"/ticker 2>&1
   fi
+  if [ -f "$LOG_DIR"/nodes ]; then
+    # create failed connection list
+    egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
+      awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/failed 2>&1
+    # count failed connections, feed output to debug.log
+    FAIL_COUNT=$(wc -l "$LOG_DIR"/failed 2>&1 | awk '{ print $1 }' 2>&1)
+    ADDNODE_SI=$(wc -l "$LOG_DIR"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
+    ADDNODE_NOD=$(wc -l "$LOG_DIR"/nodes 2>&1 | awk '{ print $1 }' 2>&1)
+    ADDNODE_PSI=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
+    SUCCESS_CO=$(grep -c "New outbound peer" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1)
+    SUCCESS_RA=$(echo "100/$(echo "$FAIL_COUNT+$SUCCESS_CO" 2>&1 |
+      bc -l 2>&1)*$SUCCESS_CO" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+
+    # syntax fix
+    SUCCESS_RA_SX=$(echo "$SUCCESS_RA" 2>&1 | awk -F. '{ print $1 }' 2>&1)
+
+    if [[ "$SUCCESS_RA_SX" -ge "0" ]]; then
+      SRAC="${GR:?}${SUCCESS_RA:?}%"
+    fi
+    if [[ "$SUCCESS_RA_SX" -ge "10" ]]; then
+      SRAC="${Y0:?}${SUCCESS_RA:?}%"
+    fi
+    if [[ "$SUCCESS_RA_SX" -ge "25" ]]; then
+      SRAC="${Y1:?}${SUCCESS_RA:?}%"
+    fi
+    if [[ "$SUCCESS_RA_SX" -ge "50" ]]; then
+      SRAC="$G0:?}${SUCCESS_RA:?}%"
+    fi
+    if [[ "$SUCCESS_RA_SX" -ge "100" ]]; then
+      SRAC="${G1:?}${SUCCESS_RA:?}%"
+    fi
+
+    if ! screen -list 2>&1 |
+      grep -q "addnodes" 2>&1; then
+      SCREEN_IND="${N0:?}"
+    else
+      SCREEN_IND="${Y1:?}*${N0:?}"
+    fi
+
+    printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${SCREEN_IND:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Fail/Success..: Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() AddnodeSize...: Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() PeerStatus....: Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+
+    # create a list (addnodes) from nodes
+    cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
+
+    # remove failed connections inside addnodes
+    cat "$LOG_DIR"/addnodes | grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes
+    # setup new file
+    mv /tmp/clean_addnodes "$LOG_DIR"/addnodes 2>&1
+  else
+    printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Wallet starting..${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  fi
 fi
 
-if [ -f "$LOG_DIR"/nodes ]; then
-  # create failed connection list
-  egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
-    awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/failed 2>&1
-  # count failed connections, feed output to debug.log
-  FAIL_COUNT=$(wc -l "$LOG_DIR"/failed 2>&1 | awk '{ print $1 }' 2>&1)
-  ADDNODE_SI=$(wc -l "$LOG_DIR"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
-  ADDNODE_NOD=$(wc -l "$LOG_DIR"/nodes 2>&1 | awk '{ print $1 }' 2>&1)
-  ADDNODE_PSI=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
-  SUCCESS_CO=$(grep -c "New outbound peer" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1)
-  SUCCESS_RA=$(echo "100/$(echo "$FAIL_COUNT+$SUCCESS_CO" 2>&1 |
-    bc -l 2>&1)*$SUCCESS_CO" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-
-  # syntax fix
-  SUCCESS_RA_SX=$(echo "$SUCCESS_RA" 2>&1 | awk -F. '{ print $1 }' 2>&1)
-
-  if [[ "$SUCCESS_RA_SX" -ge "0" ]]; then
-    SRAC="${GR:?}${SUCCESS_RA:?}%"
-  fi
-  if [[ "$SUCCESS_RA_SX" -ge "10" ]]; then
-    SRAC="${Y0:?}${SUCCESS_RA:?}%"
-  fi
-  if [[ "$SUCCESS_RA_SX" -ge "25" ]]; then
-    SRAC="${Y1:?}${SUCCESS_RA:?}%"
-  fi
-  if [[ "$SUCCESS_RA_SX" -ge "50" ]]; then
-    SRAC="$G0:?}${SUCCESS_RA:?}%"
-  fi
-  if [[ "$SUCCESS_RA_SX" -ge "100" ]]; then
-    SRAC="${G1:?}${SUCCESS_RA:?}%"
-  fi
-
-  if ! screen -list 2>&1 |
-    grep -q "addnodes" 2>&1; then
-    SCREEN_IND="${N0:?}"
-  else
-    SCREEN_IND="${Y1:?}*${N0:?}"
-  fi
-
-  printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${SCREEN_IND:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Fail/Success..: Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() AddnodeSize...: Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() PeerStatus....: Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-
-  # create a list (addnodes) from nodes
-  cat "$LOG_DIR"/nodes 2>&1 | shuf >"$LOG_DIR"/addnodes 2>&1
-
-  # remove failed connections inside addnodes
-  cat "$LOG_DIR"/addnodes | grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes
-  # setup new file
-  mv /tmp/clean_addnodes "$LOG_DIR"/addnodes 2>&1
-
-  # look for screen session, if not found, run one
-  if ! screen -list 2>&1 |
-    grep -q "addnodes" 2>&1; then
-    # create screen session
-    screen -dmS addnodes 2>&1
-    # connect nodes found with addnodes list above
-    # (using tmp directory)
-    cat >/tmp/add_peers <<'EOF'
+# look for screen session, if not found, run one
+if ! screen -list 2>&1 |
+  grep -q "addnodes" 2>&1; then
+  # create screen session
+  screen -dmS addnodes 2>&1
+  # connect nodes found with addnodes list above
+  # (using tmp directory)
+  cat >/tmp/add_peers <<'EOF'
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
@@ -247,11 +249,8 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 printf '%b' "${LOG_DATE:?} Status() AddNodes......: ${G1:?}Adding nodes done! ${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 killall screen
 EOF
-    # start adding nodes, inside screen session
-    screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
-  fi
-else
-  printf '%b' "${LOG_DATE:?} Status() SystemMonitor.: Wallet starting..${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  # start adding nodes, inside screen session
+  screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
 fi
 
 ### wallet information #########################################################
