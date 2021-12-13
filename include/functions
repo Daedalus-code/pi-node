@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.2.9
+# 0.5.3.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.2.9"
+VERSION="v0.5.3.5"
 
 ### system information #########################################################
 
@@ -177,7 +177,13 @@ if [ ! -f "$LOG_DIR"/nodes ]; then
     # move new file into place
     mv /tmp/ticker "$LOG_DIR"/ticker 2>&1
   fi
-  if [ -f "$LOG_DIR"/nodes ]; then
+
+  # uptime in minutes
+  UPTIME=$(ps -p "$(pidof trumpcoind)" -o etime 2>&1 |
+    tr -d 'ELAPSED' 2>&1 | xargs 2>&1 | egrep -o "[0-9]+:" 2>&1 | tr -d ':' 2>&1)
+
+  # less than n minutes
+  if [[ ! "$UPTIME" -lt "05" ]]; then
     # create failed connection list
     egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
       awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/failed 2>&1
