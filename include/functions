@@ -243,7 +243,7 @@ if [ ! -f "$LOG_DIR"/nodes ]; then
 fi
 
 # less than n minutes
-if [[ ! "$UPTIME" -lt "05" ]]; then
+if [[ "$UPTIME" -lt "05" ]]; then
   # look for screen session, if not found, run one
   if ! screen -list 2>&1 |
     grep -q "addnodes" 2>&1; then
