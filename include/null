@@ -109,11 +109,11 @@ fi
 if [[ "$SUCCESS_RA_SX" -eq "0" ]] &>/dev/null; then
   SUCCESS_RA_SX="${GR:?}0${GR:?}"
 fi
-if [[ -z "$screen_ind" ]] &>/dev/null; then
-  screen_ind="${GR:?}0${GR:?}"
+if [[ -z "$SCREEN_IND" ]] &>/dev/null; then
+  SCREEN_IND="${GR:?}0${GR:?}"
 fi
-if [[ "$screen_ind" -eq "0" ]] &>/dev/null; then
-  screen_ind="${GR:?}0${GR:?}"
+if [[ "$SCREEN_IND" -eq "0" ]] &>/dev/null; then
+  SCREEN_IND="${GR:?}0${GR:?}"
 fi
 
 # END
