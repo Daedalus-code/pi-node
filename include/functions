@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.5.9
+# 0.5.5.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -24,7 +24,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.5.9"
+VERSION="v0.5.5.7"
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -452,13 +452,11 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="Moneysupply $TIMELINE"
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
-    TIMELINE=$(grep "unconfirmed_balance" "$LOG_DIR"/node_data/getwalletinfo 2>&1 |
-      awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    TIMELINE="$WALLET_UNCONFIRMED"
     TIMELINE="Unconfirmed ${GR:?}$TIMELINE${N0:?}"
   # immature_balance
   elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
-    TIMELINE=$(grep "immature_balance" "$LOG_DIR"/node_data/getwalletinfo 2>&1 |
-      awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    TIMELINE="$WALLET_IMMATURE"
     TIMELINE="Immature ${GR:?}$TIMELINE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "6" ]; then
     # lowest confirmation
