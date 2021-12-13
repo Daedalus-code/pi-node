@@ -235,7 +235,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   fi
 fi
 
-# remove failed connections inside addnodes
+# output connected peers, disregard with failed connections
 cat "$LOG_DIR"/node_data/addnodes 2>&1 |
   grep -v -f "$LOG_DIR"/node_data/failed >/tmp/clean_addnodes 2>&1
 # setup new file
