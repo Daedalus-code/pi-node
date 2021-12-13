@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.1.3
+# 0.5.2.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.1.3"
+VERSION="v0.5.2.6"
 
 ### system information #########################################################
 
@@ -30,7 +30,9 @@ CLOCK=$(date "+%H:%M:%S" 2>&1)
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 # system load
-LOAD=$(uptime 2>&1 | grep -Eo "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1)
+LOAD=$(uptime 2>&1 |
+  grep -Eo "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 |
+  tr -d ',' 2>&1)
 
 # cpu temp, celcius, fahrenheit, (raspberry pi)
 CPU_CTEMP=$(</sys/class/thermal/thermal_zone0/temp)
@@ -60,7 +62,8 @@ TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 |
   bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
 TOTAL_MEM="${G1:?}${TOTAL_MEM:?}${N0:?}"
 # calculate total free system free memory + used swap
-FREE_MEM=$(echo "$(echo "$TOTAL_SWAP-$USED_SWAP" 2>&1 | bc -l 2>&1)+$FREE_MEM" 2>&1 |
+FREE_MEM=$(echo "$(echo "$TOTAL_SWAP-$USED_SWAP" 2>&1 |
+  bc -l 2>&1)+$FREE_MEM" 2>&1 |
   bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
 FREE_MEM="${G1:?}${FREE_MEM:?}M${N0:?}"
 
@@ -84,7 +87,8 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | grep -E "wlan*|eth*" 2>&1 |
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   rm "$LOG_DIR"/getwan &>/dev/null
   # update repo
-  cd /home/"$(whoami)"/trump-node || exit && git pull -q && bash include/install 2>&1
+  cd /home/"$(whoami)"/trump-node || exit &&
+    git pull -q && bash include/install 2>&1
 fi
 # get wan address
 if [ ! -f "$LOG_DIR"/getwan ]; then
@@ -220,7 +224,8 @@ if [ ! -f "$LOG_DIR"/nodes ]; then
     shuf "$LOG_DIR"/nodes >"$LOG_DIR"/addnodes 2>&1
 
     # remove failed connections inside addnodes
-    cat "$LOG_DIR"/addnodes 2>&1 | grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes 2>&1
+    cat "$LOG_DIR"/addnodes 2>&1 |
+      grep -v -f "$LOG_DIR"/failed >/tmp/clean_addnodes 2>&1
     # setup new file
     mv /tmp/clean_addnodes "$LOG_DIR"/addnodes 2>&1
   else
@@ -328,7 +333,8 @@ if [ -f "$LOG_DIR"/ticker ]; then
 fi
 # wallet connections other (not latest, probably older wallets)
 WALLET_PEERS_OTHER=$(grep "subver" "$LOG_DIR"/getpeerinfo 2>&1 |
-  egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1 | grep -v "$WALLET_VERSION" 2>&1 | wc -l 2>&1)
+  egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1 |
+  grep -v "$WALLET_VERSION" 2>&1 | wc -l 2>&1)
 if [ -f "$LOG_DIR"/ticker ]; then
   WALLET_PEERS_OTHER="${G0:?}${WALLET_PEERS_OTHER:?}${N0:?}"
 fi
@@ -426,20 +432,24 @@ if [ -f "$LOG_DIR"/getblockchaininfo ]; then
     TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 |
+      bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
+    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 |
+      egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="New Input ${C1:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
     # highest confirmation
     TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
     # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 |
+      bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
+    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 |
+      egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="Old Input ${G1:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
     # average confirmation
   elif [ "$RANDOM_TIMELINE" -eq "8" ]; then
@@ -449,26 +459,29 @@ if [ -f "$LOG_DIR"/getblockchaininfo ]; then
     # average calculated
     TIMELINE_AVG=$(echo "$TIMELINE/$UNSPENT_COUNT" 2>&1 | bc 2>&1)
     # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+    TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 |
+      bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
+    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 |
+      egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="Average ${G1:?}$TIMELINE_AVG${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
     # wallet value
   elif [ "$RANDOM_TIMELINE" -eq "9" ]; then
     TIMELINE="Value${G0:?} ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
     # highest input amount
   elif [ "$RANDOM_TIMELINE" -eq "10" ]; then
-    TIMELINE=$(grep "amount" "$LOG_DIR"/listunspent 2>&1 | awk '{ print $2 }' 2>&1 |
-      sort -n 2>&1 | tail -1 2>&1)
+    TIMELINE=$(grep "amount" "$LOG_DIR"/listunspent 2>&1 |
+      awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
     TIMELINE="Highest Input ${G1:?}$TIMELINE${N0:?}"
     # lowest input amount
   elif [ "$RANDOM_TIMELINE" -eq "11" ]; then
-    TIMELINE=$(grep "amount" "$LOG_DIR"/listunspent 2>&1 | awk '{ print $2 }' 2>&1 |
-      sort -n 2>&1 | head -1 2>&1)
+    TIMELINE=$(grep "amount" "$LOG_DIR"/listunspent 2>&1 |
+      awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Lowest Input ${G1:?}$TIMELINE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
-    TIMELINE=$(ps -p "$(pidof trumpcoind)" -o etime 2>&1 | tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
+    TIMELINE=$(ps -p "$(pidof trumpcoind)" -o etime 2>&1 |
+      tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
     TIMELINE="Uptime $TIMELINE"
   fi
 else # wait on wallet
