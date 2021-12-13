@@ -19,7 +19,7 @@ else
   grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/staking
   # keep proof-of-work
   POS_COUNT=$(wc -l "$LOG_DIR"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() ProofOfWork - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() WalletWarden..: - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   cat "$LOG_DIR"/staking >>/home/"$(whoami)"/TrumpCoin/debug.log
   rm "$LOG_DIR"/*
   truncate -s 0 /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
