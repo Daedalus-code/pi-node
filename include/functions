@@ -216,7 +216,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
     if [[ "$SUCCESS_RA_SX" -ge "50" ]]; then
       SRAC="${G0:?}${SUCCESS_RA:?}%"
     fi
-    if [[ "$SUCCESS_RA_SX" -ge "100" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "75" ]]; then
       SRAC="${G1:?}${SUCCESS_RA:?}%"
     fi
 
