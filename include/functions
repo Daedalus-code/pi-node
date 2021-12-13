@@ -487,7 +487,7 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
   elif [ "$RANDOM_TIMELINE" -eq "11" ]; then
     TIMELINE=$(grep "amount" "$LOG_DIR"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
-    TIMELINE="Lowest Input ${G1:?}$TIMELINE${N0:?}"
+    TIMELINE="Lowest Input ${G0:?}$TIMELINE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
     TIMELINE_SEC=$(uptime_cmd)
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
