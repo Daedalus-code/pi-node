@@ -499,7 +499,7 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="Average $TIMELINE_AVG ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
     # wallet value
   elif [ "$RANDOM_TIMELINE" -eq "9" ]; then
-    TIMELINE="Value${G0:?} ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
+    TIMELINE="Value ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
     # highest input amount
   elif [ "$RANDOM_TIMELINE" -eq "10" ]; then
     TIMELINE=$(grep "amount" "$LOG_DIR"/node_data/listunspent 2>&1 |
