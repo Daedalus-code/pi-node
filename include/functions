@@ -453,11 +453,11 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
     TIMELINE="$WALLET_UNCONFIRMED"
-    TIMELINE="Unconfirmed ${GR:?}$TIMELINE${N0:?}"
+    TIMELINE="Unconfirmed $TIMELINE"
   # immature_balance
   elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
     TIMELINE="$WALLET_IMMATURE"
-    TIMELINE="Immature ${GR:?}$TIMELINE${N0:?}"
+    TIMELINE="Immature $TIMELINE"
   elif [ "$RANDOM_TIMELINE" -eq "6" ]; then
     # lowest confirmation
     TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent 2>&1 |
@@ -469,7 +469,7 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 |
       egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    TIMELINE="New Input ${C1:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
+    TIMELINE="New Input $TIMELINE_CONF ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
     # highest confirmation
     TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent 2>&1 |
@@ -481,7 +481,7 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 |
       egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    TIMELINE="Old Input ${G1:?}$TIMELINE_CONF${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
+    TIMELINE="Old Input $TIMELINE_CONF ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
     # average confirmation
   elif [ "$RANDOM_TIMELINE" -eq "8" ]; then
     UNSPENT_COUNT=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent | wc -l)
@@ -496,7 +496,7 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 |
       egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    TIMELINE="Average ${G1:?}$TIMELINE_AVG${N0:?} ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
+    TIMELINE="Average $TIMELINE_AVG ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
     # wallet value
   elif [ "$RANDOM_TIMELINE" -eq "9" ]; then
     TIMELINE="Value${G0:?} ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
@@ -504,12 +504,12 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
   elif [ "$RANDOM_TIMELINE" -eq "10" ]; then
     TIMELINE=$(grep "amount" "$LOG_DIR"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
-    TIMELINE="Highest Input ${G1:?}$TIMELINE${N0:?}"
+    TIMELINE="Highest Input $TIMELINE"
     # lowest input amount
   elif [ "$RANDOM_TIMELINE" -eq "11" ]; then
     TIMELINE=$(grep "amount" "$LOG_DIR"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
-    TIMELINE="Lowest Input ${G0:?}$TIMELINE${N0:?}"
+    TIMELINE="Lowest Input $TIMELINE"
   elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
     TIMELINE_SEC=$(uptime_cmd)
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
