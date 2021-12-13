@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.2.6
+# 0.5.2.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.2.6"
+VERSION="v0.5.2.9"
 
 ### system information #########################################################
 
@@ -121,13 +121,15 @@ if ! [ -x "$(command -v screen)" ]; then
   sudo apt-get install screen -y
 fi
 
+# remove empty files
 if [ ! -s "$LOG_DIR"/addnodes ]; then
   rm "$LOG_DIR"/addnodes &>/dev/null
 fi
 if [ ! -s "$LOG_DIR"/nodes ]; then
   rm "$LOG_DIR"/nodes &>/dev/null
 fi
-# update addnodes (every hour)
+
+# update addnodes, failed peers, along with ticker price (every hour)
 if [[ "$(date +%M 2>&1 | grep -Eo "00" 2>&1)" ]]; then
   rm "$LOG_DIR"/nodes &>/dev/null
 fi
@@ -207,6 +209,7 @@ if [ ! -f "$LOG_DIR"/nodes ]; then
       SRAC="${G1:?}${SUCCESS_RA:?}%"
     fi
 
+    # screen indicator (is it running)
     if ! screen -list 2>&1 |
       grep -q "addnodes" 2>&1; then
       SCREEN_IND="${N0:?}"
@@ -304,7 +307,7 @@ else # wallet is loading/syncing
   # logo turns grey while loading
   RC="${GR:?}"
   # non responsive (loading)
-  WALLET_SYNC="${GR:?}0.00${N0:?}"
+  WALLET_SYNC="${GR:?}0.00%${N0:?}"
 fi
 
 # wallet patriotnodes total
