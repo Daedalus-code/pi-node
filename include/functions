@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.4.4
+# 0.5.4.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.4.4"
+VERSION="v0.5.4.8"
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -95,8 +95,12 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | grep -E "wlan*|eth*" 2>&1 |
   awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 |
   head -1 2>&1)
 
-# update wan, update repo (everyday)
+# update wan, update repo, proof-of-work (everyday)
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
+  # keep proof-of-work
+  POS_COUNT=$(wc -l "$LOG_DIR"/node_data/staking 2>&1 | awk '{ print $1 }' 2>&1)
+  printf '%b' "${LOG_DATE:?} Stat() Wallet.Warden: - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  cat /home/"$(whoami)"/staking >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rm "$LOG_DIR"/node_data/getwan &>/dev/null
   # update repo
   cd /home/"$(whoami)"/trump-node || exit &&
