@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.4.0
+# 0.5.4.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,13 +16,18 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.4.0"
+VERSION="v0.5.4.5"
 
 ### system information #########################################################
 
 # log lines (tail debug)
 LAST_LOG=$(tail -n 1 "$WALLET_DIR"/debug.log 2>&1)
+# get log size
+LOG_SIZE=$(ls -lS --block-size=M "$WALLET_DIR"/debug.log |
+  awk '{ print $5 }' 2>/dev/null)
+SIZE=$(echo "log=$LOG_SIZE")
 LAST_LOG=$(echo "${LAST_LOG:0:188} $SIZE")
+printf '%b' "${LOG_DATE:?} Status() DEBUG.LogSize: $SIZE${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
