@@ -21,21 +21,21 @@ fi
 
 if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
   UPTIME=$(ps -p "$(pidof trumpcoind 2>&1)" -o etime 2>&1 | tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime $UPTIME $SCREEN_IND${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime $UPTIME $SCREEN_IND${N0:?}\n" >>"${WALLET_DIR:?}"/debug.log 2>&1
 else
   # remove old files
   grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/node_data/staking
   # keep proof-of-work
   POS_COUNT=$(wc -l "$LOG_DIR"/node_data/staking 2>&1 | awk '{ print $1 }' 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  cat "$LOG_DIR"/node_data/staking >>/home/"$(whoami)"/TrumpCoin/debug.log
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>"${WALLET_DIR:?}"/debug.log 2>&1
+  cat "$LOG_DIR"/node_data/staking >>"${WALLET_DIR:?}"/debug.log
   rm "$LOG_DIR"/node_data/*
-  truncate -s 0 /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  truncate -s 0 "${WALLET_DIR:?}"/debug.log 2>&1
   # make sure tor is installed
   if ! [ -x "$(command -v tor)" ]; then
     sudo apt-get install tor -y
     echo "Setup tor/wallet configurations!"
   fi
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Starting wallet daemon!${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Starting wallet daemon!${N0:?}\n" >>"${WALLET_DIR:?}"/debug.log 2>&1
   "$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
 fi
