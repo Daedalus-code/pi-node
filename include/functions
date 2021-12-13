@@ -238,7 +238,7 @@ if [ ! -f "$LOG_DIR"/nodes ]; then
     # setup new file
     mv /tmp/clean_addnodes "$LOG_DIR"/addnodes 2>&1
   else
-    printf '%b' "${LOG_DATE:?} Status() SystemMonitor: Wallet starting..${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() SystemMonitor: Loading wallet..${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   fi
 fi
 
