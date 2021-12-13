@@ -497,8 +497,8 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Lowest Input ${G1:?}$TIMELINE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
-    TIMELINE=$(ps -p "$(pidof trumpcoind)" -o etime 2>&1 |
-      tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
+    TIMELINE_SEC=$(uptime_cmd)
+    TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
     TIMELINE="Uptime $TIMELINE"
   fi
 else # wait on wallet
