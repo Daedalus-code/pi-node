@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# By Rainman
+# V20211312
+# 0.0.0.8
+
+# update repo
+cd /home/"$(whoami)"/trump-node || exit && git pull -q && bash include/install 2>&1
+
+# END
