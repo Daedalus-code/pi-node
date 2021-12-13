@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.0.4.1
+# 0.0.4.2
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -23,12 +23,13 @@ if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
   UPTIME=$(ps -p "$(pidof trumpcoind 2>&1)" -o etime 2>&1 | tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
   printf '%b' "${LOG_DATE:?} Stat() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime $UPTIME $SCREEN_IND${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
+  touch "${WALLET_LOG_DIR:?}"/debug.log
   # remove old files
-  grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/node_data/staking
+  grep "AddToWallet" "$WALLET_LOG_DIR"/debug.log >/home/"$(whoami)"/staking
   # keep proof-of-work
   POS_COUNT=$(wc -l "$LOG_DIR"/node_data/staking 2>&1 | awk '{ print $1 }' 2>&1)
   printf '%b' "${LOG_DATE:?} Stat() Wallet.Warden: - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  cat "$LOG_DIR"/node_data/staking >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  cat /home/"$(whoami)"/staking >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rm "$LOG_DIR"/node_data/* &>/dev/null
   truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # make sure tor is installed
