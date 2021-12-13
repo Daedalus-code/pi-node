@@ -419,7 +419,7 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="Difficulty $TIMELINE"
   # patriotnodes
   elif [ "$RANDOM_TIMELINE" -eq "2" ]; then
-    TIMELINE="Patriotnodes ${N0:?}${WALLET_NODES_STABLE:?}${N0:?}/${G1:?}${WALLET_NODES_TOTAL:?}${N0:?}/${G1:?}${WALLET_NODES_ENABLED:?}${N0:?}/${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}"
+    TIMELINE="Patriotnodes ${N0:?}${WALLET_NODES_STABLE:?}${N0:?}/${G1:?}${WALLET_NODES_TOTAL:?}${N0:?}/${G0:?}${WALLET_NODES_ENABLED:?}${N0:?}/${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}"
   # moneysupply
   elif [ "$RANDOM_TIMELINE" -eq "3" ]; then
     TIMELINE=$(grep "moneysupply" "$LOG_DIR"/node_data/getinfo 2>&1 |
