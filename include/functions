@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.3.7
+# 0.5.4.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.3.7"
+VERSION="v0.5.4.0"
 
 ### system information #########################################################
 
@@ -236,6 +236,9 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
 fi
 
 # output connected peers, disregard with failed connections
+egrep "192.168.1.*:15110" "$LOG_DIR"/node_data/failed 2>&1 |
+  egrep -o "192.168.1.[0-9]+" >>"$LOG_DIR"/node_data/failed 2>&1
+
 cat "$LOG_DIR"/node_data/addnodes 2>&1 |
   grep -v -f "$LOG_DIR"/node_data/failed >/tmp/clean_addnodes 2>&1
 # setup new file
