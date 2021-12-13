@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # By Rainman
-# V20211212
+# V20211312
 # 0.0.1.6
 
 # add node address (api) internet
 curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
 
   # clean up the file above (ipv4) no ports on these
-  egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/nodes 2>&1
+  egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/node_data/nodes 2>&1
 
 # ticker (api price)
-curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/ticker 2>&1
+curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/node_data/ticker 2>&1
 
 # END
