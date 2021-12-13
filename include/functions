@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.1.2
+# 0.5.1.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.1.2"
+VERSION="v0.5.1.5"
 
 ### system information #########################################################
 
@@ -397,7 +397,7 @@ fi
 if [ -f "$LOG_DIR"/getblockchaininfo ]; then
 
   # random start number
-  RANDOM_TIMELINE=$((((RANDOM % 11) + 1)))
+  RANDOM_TIMELINE=$((((RANDOM % 12) + 1)))
 
   # difficulty
   if [ "$RANDOM_TIMELINE" -eq "1" ]; then
@@ -469,6 +469,9 @@ if [ -f "$LOG_DIR"/getblockchaininfo ]; then
     TIMELINE=$(grep "amount" "$LOG_DIR"/listunspent 2>&1 | awk '{ print $2 }' 2>&1 |
       sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Lowest Input ${G1:?}$TIMELINE${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
+    TIMELINE=$(ps -p "$(pidof trumpcoind)" -o etime 2>&1 | tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
+    TIMELINE="Uptime $TIMELINE"
   fi
 else # wait on wallet
   # random start number
