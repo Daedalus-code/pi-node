@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.5.9
+# 0.5.6.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -24,7 +24,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.5.9"
+VERSION="v0.5.6.1"
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -169,6 +169,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   # clean up and use as "manually addnodes"
   awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes 2>&1 |
     awk '!a[$0]++' 2>&1 | sort -n >/tmp/an 2>&1
+  # setup file
   mv /tmp/an /home/"$(whoami)"/addnodes 2>&1
 
   # constantly adding (ipv4+manually added)
@@ -180,6 +181,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
     grep -vwE "(192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" 2>&1 |
     egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >>"$LOG_DIR"/node_data/nodes 2>&1
 
+  # curl data source
   source /usr/local/bin/include/data
 
   if [ -f "$LOG_DIR"/node_data/ticker ]; then
