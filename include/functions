@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.3.5
+# 0.5.3.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir /home/"$(whoami)"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.3.5"
+VERSION="v0.5.3.8"
 
 ### system information #########################################################
 
@@ -242,14 +242,16 @@ if [ ! -f "$LOG_DIR"/nodes ]; then
   fi
 fi
 
-# look for screen session, if not found, run one
-if ! screen -list 2>&1 |
-  grep -q "addnodes" 2>&1; then
-  # create screen session
-  screen -dmS addnodes 2>&1
-  # connect nodes found with addnodes list above
-  # (using tmp directory)
-  cat >/tmp/add_peers <<'EOF'
+# less than n minutes
+if [[ ! "$UPTIME" -lt "05" ]]; then
+  # look for screen session, if not found, run one
+  if ! screen -list 2>&1 |
+    grep -q "addnodes" 2>&1; then
+    # create screen session
+    screen -dmS addnodes 2>&1
+    # connect nodes found with addnodes list above
+    # (using tmp directory)
+    cat >/tmp/add_peers <<'EOF'
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
@@ -262,8 +264,9 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 printf '%b' "${LOG_DATE:?} Status() AddNodes......: ${G1:?}Adding nodes done! ${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 killall screen
 EOF
-  # start adding nodes, inside screen session
-  screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+    # start adding nodes, inside screen session
+    screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+  fi
 fi
 
 ### wallet information #########################################################
