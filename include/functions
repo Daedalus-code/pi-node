@@ -143,7 +143,7 @@ if [[ "$(date +%M 2>&1 | grep -Eo "00" 2>&1)" ]]; then
   rm "$LOG_DIR"/node_data/nodes &>/dev/null
 fi
 
-# create failed connection list
+# create failed connection list, remove duplicates, sort
 egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /home/"$(whoami)"/TrumpCoin/debug.log 2>&1 |
   awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/node_data/failed 2>&1
 
