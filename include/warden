@@ -16,12 +16,12 @@ if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime $UPTIME${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
 else
   # remove old files
-  grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/staking
+  grep "AddToWallet" "$WALLET_DIR"/debug.log >"$LOG_DIR"/node_data/staking
   # keep proof-of-work
-  POS_COUNT=$(wc -l "$LOG_DIR"/staking 2>&1 | awk '{ print $1 }' 2>&1)
+  POS_COUNT=$(wc -l "$LOG_DIR"/node_data/staking 2>&1 | awk '{ print $1 }' 2>&1)
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
-  cat "$LOG_DIR"/staking >>/home/"$(whoami)"/TrumpCoin/debug.log
-  rm "$LOG_DIR"/*
+  cat "$LOG_DIR"/node_data/staking >>/home/"$(whoami)"/TrumpCoin/debug.log
+  rm "$LOG_DIR"/node_data/*
   truncate -s 0 /home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   # make sure tor is installed
   if ! [ -x "$(command -v tor)" ]; then
