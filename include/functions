@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.3.8
+# 0.5.3.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.3.8"
+VERSION="v0.5.3.7"
 
 ### system information #########################################################
 
@@ -230,9 +230,6 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
 
     # create a list (addnodes) from nodes
     shuf "$LOG_DIR"/node_data/nodes >"$LOG_DIR"/node_data/addnodes 2>&1
-
-    # setup new file
-    mv /tmp/clean_addnodes "$LOG_DIR"/node_data/addnodes 2>&1
   else
     printf '%b' "${LOG_DATE:?} Status() SystemMonitor: Loading wallet..${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
   fi
@@ -241,6 +238,8 @@ fi
 # remove failed connections inside addnodes
 cat "$LOG_DIR"/node_data/addnodes 2>&1 |
   grep -v -f "$LOG_DIR"/node_data/failed >/tmp/clean_addnodes 2>&1
+# setup new file
+mv /tmp/clean_addnodes "$LOG_DIR"/node_data/addnodes 2>&1
 
 # greater than n seconds
 if [[ "$(uptime_cmd)" -gt "300" ]]; then
