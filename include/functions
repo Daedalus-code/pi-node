@@ -268,7 +268,7 @@ while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
 done <"$LOG_DIR"/node_data/addnodes
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
-printf '%b' "${LOG_DATE:?} Status() AddNodeScript: ${G1:?}Adding nodes done! ${N0:?}\n" >>"${WALLET_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() AddNodeScript: ${N0:?}Adding nodes done! ${N0:?}\n" >>"${WALLET_DIR:?}"/debug.log 2>&1
 killall screen
 EOF
     # start adding nodes, inside screen session
