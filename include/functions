@@ -2,9 +2,16 @@
 
 # By Rainman
 # V20211312
-# 0.5.4.8
+# 0.5.5.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
+
+# wait for node to start
+until pidof "$(pidof trumpcoind 2>&1)"; do
+  clear
+  echo "Waiting for trumpcoind node..."
+  sleep 2
+done
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -16,7 +23,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.4.8"
+VERSION="v0.5.5.2"
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -97,10 +104,6 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | grep -E "wlan*|eth*" 2>&1 |
 
 # update wan, update repo, proof-of-work (everyday)
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
-  # keep proof-of-work
-  POS_COUNT=$(wc -l "$LOG_DIR"/node_data/staking 2>&1 | awk '{ print $1 }' 2>&1)
-  printf '%b' "${LOG_DATE:?} Stat() Wallet.Warden: - Stored ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  cat /home/"$(whoami)"/staking >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rm "$LOG_DIR"/node_data/getwan &>/dev/null
   # update repo
   cd /home/"$(whoami)"/trump-node || exit &&
@@ -389,9 +392,10 @@ WALLET_TXLAST=$(cat "$LOG_DIR"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
   grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 |
   awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 # wallet stakes (addtowallet)
-# create staking log
-grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log >"$LOG_DIR"/node_data/staking
-WALLET_STAKES=$(grep -c "AddToWallet" "$LOG_DIR"/node_data/staking 2>&1)
+egrep "AddToWallet [a0-z9]+" "$WALLET_LOG_DIR"/debug.log >/home/"$(whoami)"/staking
+# count stakes
+WALLET_STAKES=$(grep -c "AddToWallet" /home/"$(whoami)"/staking 2>&1)
+
 if [ -f "$LOG_DIR"/node_data/ticker ]; then
   # wallet pos status
   if [[ "$(grep "Staking Active" "$LOG_DIR"/node_data/getinfo 2>&1)" ]]; then
