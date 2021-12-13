@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211312
-# 0.5.4.3
+# 0.5.3.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -16,7 +16,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.4.3"
+VERSION="v0.5.3.5"
 
 ### system information #########################################################
 
@@ -218,14 +218,6 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
     fi
     if [[ "$SUCCESS_RA_SX" -ge "75" ]]; then
       SRAC="${G1:?}${SUCCESS_RA:?}%"
-    fi
-
-    # screen indicator (is it running)
-    if ! screen -list 2>&1 |
-      grep -q "addnodes" 2>&1; then
-      SCREEN_IND="${N0:?}"
-    else
-      SCREEN_IND="${Y1:?}*${N0:?}"
     fi
 
     printf '%b' "${LOG_DATE:?} Status() SystemMonitor: Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${SCREEN_IND:?}${N0:?}\n" >>/home/"$(whoami)"/TrumpCoin/debug.log 2>&1
