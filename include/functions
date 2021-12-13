@@ -10,7 +10,7 @@
 until pidof trumpcoind 2>&1 |
   wc -w 2>&1 | egrep "1" &>/dev/null; do
   clear
-  echo "Waiting for trumpcoind node..."
+  echo "Waiting for trumpcoind node .."
   sleep 2
 done
 
@@ -245,7 +245,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
     # create a list (addnodes) from nodes
     shuf "$LOG_DIR"/node_data/nodes >"$LOG_DIR"/node_data/addnodes 2>&1
   else
-    printf '%b' "${LOG_DATE:?} Stat() SystemMonitor: Loading wallet..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Stat() SystemMonitor: Loading wallet ..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
