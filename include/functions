@@ -402,9 +402,9 @@ WALLET_TXLAST=$(cat "$LOG_DIR"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
 # note: not perfect data of proof-of-work
 # count saved stakes
 WALLET_STAKES=$(grep -c "AddToWallet" /home/"$(whoami)"/staking 2>&1)
-if egrep "AddToWallet [a0-z9]+ new" "$WALLET_LOG_DIR"/debug.log 2>&1 |
-  awk '!a[$0]++' >>/home/"$(whoami)"/staking; then
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Staking Proof of work! Total ${WALLET_STAKES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+if [[ "$WALLET_STAKES" -gt "0" ]]; then
+  egrep "AddToWallet [a0-z9]+ new" "$WALLET_LOG_DIR"/debug.log 2>&1 |
+    awk '!a[$0]++' >>/home/"$(whoami)"/staking
 fi
 
 if [ -f "$LOG_DIR"/node_data/ticker ]; then
