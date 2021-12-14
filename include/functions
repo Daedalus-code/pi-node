@@ -266,13 +266,13 @@ function peers() {
 }
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
-printf '%b' "${G0:?}${LOG_DATE:?} Status() AddNode.Script Start! Addnodes ${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${Y0:?}${LOG_DATE:?} Status() AddNode.Script Start!${N0:?} Addnodes ${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
 done <"$LOG_DIR"/node_data/addnodes
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
-printf '%b' "${G1:?}${LOG_DATE:?} Status() AddNode.Script Done! Addnodes ${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${G1:?}${LOG_DATE:?} Status() AddNode.Script Done!${N0:?} Addnodes ${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 killall screen
 EOF
     # start adding nodes, inside screen session
