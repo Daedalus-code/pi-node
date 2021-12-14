@@ -1,10 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20211312
-# 0.1.1.9
+# V20211412
+# 0.1.2.2
 
 source /usr/local/bin/include/color
+
+# missing file(s)
+touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # non responsive
 if [[ -z "$WALLET_NODES_TOTAL" ]] &>/dev/null; then
