@@ -435,7 +435,7 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   # store stakes from debug.log
   STAKE_COUNT=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
   cat /home/"$(whoami)"/staking 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - Storing ${STAKE_COUNT:?} stakes (PoS)!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - Storing ${G1:?}${STAKE_COUNT:?}${N0:?} stake(s) (PoS)!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # truncate peers.dat
   truncate -s 0 "${WALLET_DIR:?}"/peers.dat 2>&1
   printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
