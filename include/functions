@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211412
-# 0.5.8.4
+# 0.5.8.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.8.4"
+VERSION="v0.5.8.9"
 
 # wait for node to start
 until pidof trumpcoind 2>&1 |
@@ -127,6 +127,8 @@ DOWNLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
 UPLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
   grep "TX packets" 2>&1 | head -1 2>&1 |
   awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1)
+
+### tor ########################################################################
 
 # tor status
 if grep "127.0.0.1:9050" "$LOG_DIR"/node_data/getinfo &>/dev/null; then
@@ -542,7 +544,7 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="High/Low P2P $HIGH_P2P/$LOWS_P2P"
   fi
 
-else # wait on wallet
+else # wait on wallet (--DJT QUOTES - Art Of The Deal)
   # random start number
   RANDOM_TIMELINE=$((((RANDOM % 10) + 1)))
   # quotes - art of the deal
@@ -569,16 +571,19 @@ else # wait on wallet
   fi
 fi
 
+### theme ######################################################################
+
 if [[ "$DARKMODE" -eq "1" ]]; then
-  # darkmode theme
+  # darkmode theme (grey)
   RC="${GR:?}"
   TH="${RC:?}D${N0:?}"
-else # default theme
+else # default theme (yellow)
   RC="${Y1:?}"
   TH="${RC:?}D${N0:?}"
 fi
 
-# non responsive
+### null / non responsive ######################################################
+
 source /usr/local/bin/include/null
 
 # END
