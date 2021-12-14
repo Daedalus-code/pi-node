@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211412
-# 0.5.7.0
+# 0.5.7.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -24,7 +24,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.7.0"
+VERSION="v0.5.7.2"
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -400,10 +400,11 @@ LAST_TX=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent 2>&1 |
 WALLET_TXLAST=$(cat "$LOG_DIR"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
   grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 |
   awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-# wallet stakes (addtowallet), remove duplicates
+# save wallet stakes (addtowallet), remove duplicates
+# note: not perfect data of proof-of-work
 egrep "AddToWallet [a0-z9]+" "$WALLET_LOG_DIR"/debug.log 2>&1 |
   awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
-# count stakes
+# count saved stakes
 WALLET_STAKES=$(grep -c "AddToWallet" /home/"$(whoami)"/staking 2>&1)
 
 if [ -f "$LOG_DIR"/node_data/ticker ]; then
@@ -433,6 +434,7 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   fi
   printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - debug, peers ..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # save proof of work data from debug.log
+  # note: not perfect data of proof-of-work
   POS_COUNT=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
   cat /home/"$(whoami)"/staking 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - Saved ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
