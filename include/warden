@@ -26,7 +26,7 @@ else
   touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # keep proof-of-work
   POS_COUNT=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-  printf '%b' "${LOG_DATE:?} Stat() Wallet.Warden: - PoS (${G1:?}${POS_COUNT:?}${N0:?}) Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Stat() Wallet.Warden: PoS (${G1:?}${POS_COUNT:?}${N0:?}) Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   cat /home/"$(whoami)"/staking 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # remove old files
   rm "$LOG_DIR"/node_data/* &>/dev/null
