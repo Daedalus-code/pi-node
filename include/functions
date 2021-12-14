@@ -232,7 +232,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
       SRAC="${G1:?}${SUCCESS_RA:?}%"
     fi
 
-    printf '%b' "${LOG_DATE:?} Status() System.Monitor Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${SCREEN_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() System.Monitor Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() System.Monitor Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Fail/Success() Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Addnode.Size() Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
