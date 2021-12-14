@@ -10,7 +10,7 @@ curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"$LOG_DIR"/node_data/nodes.tmp 2>&1
 # count api nodes
 API_COUNT=$(wc -l "$LOG_DIR"/node_data/nodes.tmp 2>&1 | awk '{ print $1 }' 2>&1)
-printf '%b' "${LOG_DATE:?} Stat() Chainz.API(): - ${G1:?}${API_COUNT:?}${N0:?} Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Stat() Chainz.API(): - Get ${G1:?}${API_COUNT:?}${N0:?} Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 # setup nodes, fill
 cat "$LOG_DIR"/node_data/nodes.tmp >>"$LOG_DIR"/node_data/nodes
 
@@ -18,6 +18,6 @@ cat "$LOG_DIR"/node_data/nodes.tmp >>"$LOG_DIR"/node_data/nodes
 curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/node_data/ticker 2>&1
 # count api nodes
 API_VALUE=$(cat "$LOG_DIR"/node_data/ticker 2>&1)
-printf '%b' "${LOG_DATE:?} Stat() CGecko.API(): - ${G1:?}${API_VALUE:?}${N0:?} Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Stat() CGecko.API(): - Get ${G1:?}${API_VALUE:?}${N0:?} Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # END
