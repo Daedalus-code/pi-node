@@ -2,12 +2,13 @@
 
 # By Rainman
 # V20211412
-# 0.5.8.8
+# 0.5.9.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.8.8"
+VERSION="v0.5.9.1"
+UPDATE_REPO="0"
 
 # wait for node to start
 until pidof trumpcoind 2>&1 |
@@ -107,9 +108,11 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | grep -E "wlan*|eth*" 2>&1 |
 # update wan, update repo, proof-of-work (everyday)
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   rm "$LOG_DIR"/node_data/getwan &>/dev/null
-  # update repo
-  cd /home/"$(whoami)"/trump-node || exit &&
-    git pull -q && bash include/install 2>&1
+  if [[ "$UPDATE_REPO" -eq "1" ]]; then
+    # update repo
+    cd /home/"$(whoami)"/trump-node || exit &&
+      git pull -q && bash include/install 2>&1
+  fi
 fi
 # get wan address
 if [ ! -f "$LOG_DIR"/node_data/getwan ]; then
