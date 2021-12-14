@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211412
-# 0.5.7.2
+# 0.5.8.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -24,7 +24,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.7.2"
+VERSION="v0.5.8.4"
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -449,7 +449,7 @@ fi
 if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
 
   # random start number
-  RANDOM_TIMELINE=$((((RANDOM % 12) + 1)))
+  RANDOM_TIMELINE=$((((RANDOM % 14) + 1)))
 
   # difficulty
   if [ "$RANDOM_TIMELINE" -eq "1" ]; then
@@ -525,11 +525,23 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE=$(grep "amount" "$LOG_DIR"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Lowest Input $TIMELINE"
+    # daemon uptime
   elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
     TIMELINE_SEC=$(uptime_cmd)
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
     TIMELINE="Uptime $TIMELINE"
+  elif [ "$RANDOM_TIMELINE" -eq "13" ]; then
+    # highest peer count
+    HIGH_P2P=$(grep "Total" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
+      awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
+    TIMELINE="Highest Peer Count $HIGH_P2P"
+    # lowest peer count
+  elif [ "$RANDOM_TIMELINE" -eq "14" ]; then
+    LOWS_P2P=$(grep "Total" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
+      awk '{ print $5 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
+    TIMELINE="Lowest Peer Count $LOWS_P2P"
   fi
+
 else # wait on wallet
   # random start number
   RANDOM_TIMELINE=$((((RANDOM % 10) + 1)))
