@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211412
-# 0.0.2.3
+# 0.0.3.8
 
 # add node address (api) internet
 curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
@@ -10,14 +10,29 @@ curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"$LOG_DIR"/node_data/nodes.tmp 2>&1
 # count api nodes
 API_COUNT=$(wc -l "$LOG_DIR"/node_data/nodes.tmp 2>&1 | awk '{ print $1 }' 2>&1)
-printf '%b' "${LOG_DATE:?} Stat() Chainz.API(): - Get ${G1:?}${API_COUNT:?}${N0:?} Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Stat() ChainzC.API(): - Node(s) (${G1:?}${API_COUNT:?}${N0:?}) Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 # setup nodes, fill
 cat "$LOG_DIR"/node_data/nodes.tmp >>"$LOG_DIR"/node_data/nodes
 
 # ticker (api price)
 curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/node_data/ticker 2>&1
-# count api nodes
+
+# clean up ticker
+cat "$LOG_DIR"/node_data/ticker 2>&1 | tr -d '"|,' 2>&1 |
+  egrep -o "[a0-z9]+-[0-9]+usd:[0-9]+.[0-9]+" 2>&1 |
+  egrep -o "usd:[0-9]+.[0-9]+" 2>&1 | tr -d 'usd:' >/tmp/ticker 2>&1
+# count ticker lines, create average
+TICKER_TOTAL=$(cat /tmp/ticker 2>&1 |
+  awk '{ SUM += $1} END { print SUM }' 2>&1)
+TICKER_LINES=$(cat /tmp/ticker 2>&1 | wc -l 2>&1)
+echo "${TICKER_TOTAL:?}/${TICKER_LINES:?}" 2>&1 |
+  bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >/tmp/ticker 2>&1
+# remove old file
+rm "$LOG_DIR"/node_data/ticker &>/dev/null
+# move new file into place
+mv /tmp/ticker "$LOG_DIR"/node_data/ticker 2>&1
+# api value
 API_VALUE=$(cat "$LOG_DIR"/node_data/ticker 2>&1)
-printf '%b' "${LOG_DATE:?} Stat() CGecko.API(): - Get ${G1:?}${API_VALUE:?}${N0:?} Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Stat() C.Gecko.API(): - Ticker (${G1:?}${API_VALUE:?}${N0:?}) Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # END

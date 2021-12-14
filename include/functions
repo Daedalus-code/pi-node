@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211412
-# 0.5.9.2
+# 0.5.7.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -183,31 +183,10 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   ARP_COUNT=$(wc -l "$LOG_DIR"/node_data/nodes.tmp 2>&1 | awk '{ print $1 }' 2>&1)
   # setup arp file
   cat "$LOG_DIR"/node_data/nodes.tmp >>"$LOG_DIR"/node_data/nodes 2>&1
-  printf '%b' "${LOG_DATE:?} Stat() Intranet.ARP() - Get ${G1:?}${ARP_COUNT:?}${N0:?} Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Stat() Intranet.ARP() - ARP (${G1:?}${ARP_COUNT:?}${N0:?}) Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   # curl data source
   source /usr/local/bin/include/data
-
-  if [ -f "$LOG_DIR"/node_data/ticker ]; then
-
-    # clean up ticker
-    cat "$LOG_DIR"/node_data/ticker 2>&1 | tr -d '"|,' 2>&1 |
-      egrep -o "[a0-z9]+-[0-9]+usd:[0-9]+.[0-9]+" 2>&1 |
-      egrep -o "usd:[0-9]+.[0-9]+" 2>&1 | tr -d 'usd:' >/tmp/ticker 2>&1
-
-    # count ticker lines, create average
-    TICKER_TOTAL=$(cat /tmp/ticker 2>&1 |
-      awk '{ SUM += $1} END { print SUM }' 2>&1)
-    TICKER_LINES=$(cat /tmp/ticker 2>&1 | wc -l 2>&1)
-    echo "${TICKER_TOTAL:?}/${TICKER_LINES:?}" 2>&1 |
-      bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >/tmp/ticker 2>&1
-
-    # remove old file
-    rm "$LOG_DIR"/node_data/ticker &>/dev/null
-
-    # move new file into place
-    mv /tmp/ticker "$LOG_DIR"/node_data/ticker 2>&1
-  fi
 
   # greater than n seconds
   if [[ "$(uptime_cmd)" -gt "300" ]]; then
@@ -240,16 +219,16 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
       SRAC="${G1:?}${SUCCESS_RA:?}%"
     fi
 
-    printf '%b' "${LOG_DATE:?} Stat() SystemMonitor: Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${SCREEN_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Stat() SystemMonitor: Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Stat() Fail/Success.: Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Stat() AddnodeSize..: Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Stat() PeerStatus...: Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Stat() System.Monitor Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${SCREEN_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Stat() System.Monitor Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Stat() Fail/Success() Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Stat() Addnode.Size() Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Stat() Peers.Status() Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
     # create a list (addnodes) from nodes
     shuf "$LOG_DIR"/node_data/nodes >"$LOG_DIR"/node_data/addnodes 2>&1
   else
-    printf '%b' "${LOG_DATE:?} Stat() SystemMonitor: Loading wallet ..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Stat() System.Monitor Loading wallet ..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -276,12 +255,12 @@ source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 PEERS_TRIES=$(egrep -o "peer=[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+" 2>&1 | tail -1 2>&1)
-printf '%b' "${LOG_DATE:?} Stat() AddNodeScript: ${Y1:?}Adding nodes now!${N0:?} Connected ${G1:?}$PEERS_TRIES${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Stat() AddNode.Script ${Y1:?}Adding nodes now!${N0:?} Connected ${G1:?}$PEERS_TRIES${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
 done <"$LOG_DIR"/node_data/addnodes
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
-printf '%b' "${LOG_DATE:?} Stat() AddNodeScript: ${N0:?}Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Stat() AddNode.Script ${N0:?}Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 killall screen
 EOF
     # start adding nodes, inside screen session
@@ -441,10 +420,10 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   # note: not perfect data of proof-of-work
   POS_COUNT=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
   cat /home/"$(whoami)"/staking 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - Saved ${POS_COUNT:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - PoS (${G1:?}${POS_COUNT:?}${N0:?}) data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # truncate peers.dat
   truncate -s 0 "${WALLET_DIR:?}"/peers.dat 2>&1
-  printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Stat() Clean.truncate - peers.dat Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### timeline ###################################################################
