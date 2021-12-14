@@ -39,6 +39,6 @@ rm "$LOG_DIR"/node_data/ticker &>/dev/null
 mv /tmp/ticker "$LOG_DIR"/node_data/ticker 2>&1
 # api value
 API_VALUE=$(cat "$LOG_DIR"/node_data/ticker 2>&1)
-printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Ticker ${G1:?}${API_VALUE:?}${N0:?} Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Found ${G1:?}${API_VALUE:?}${N0:?} average coingecko price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # END
