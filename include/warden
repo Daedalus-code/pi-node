@@ -21,12 +21,12 @@ fi
 
 if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
   UPTIME=$(ps -p "$(pidof trumpcoind 2>&1)" -o etime 2>&1 | tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
-  printf '%b' "${LOG_DATE:?} Stat() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime $UPTIME $SCREEN_IND${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime $UPTIME $SCREEN_IND${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # keep proof-of-work
   POS_COUNT=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-  printf '%b' "${LOG_DATE:?} Stat() Wallet.Warden: PoS ${G1:?}${POS_COUNT:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PoS ${G1:?}${POS_COUNT:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   cat /home/"$(whoami)"/staking 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # remove old files
   rm "$LOG_DIR"/node_data/* &>/dev/null
@@ -36,6 +36,6 @@ else
     sudo apt-get install tor -y
     echo "Setup tor/wallet configurations!"
   fi
-  printf '%b' "${LOG_DATE:?} Stat() Wallet.Warden: Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   "$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
 fi
