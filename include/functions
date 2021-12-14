@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211412
-# 0.5.8.4
+# 0.5.8.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.8.4"
+VERSION="v0.5.8.8"
 
 # wait for node to start
 until pidof trumpcoind 2>&1 |
@@ -259,16 +259,20 @@ if [[ "$(uptime_cmd)" -gt "300" ]]; then
     cat >/tmp/add_peers <<'EOF'
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
+function peers() {
+  PEERS_TRIES=$(egrep -o "peer=[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+" 2>&1 | tail -1 2>&1)
+  PEERS_ADDNODES=$(cat "$LOG_DIR"/node_data/addnodes 2>&1 | wc -l 2>&1)
+  PEERS_FAILED=$(cat "$LOG_DIR"/node_data/failed 2>&1 | wc -l 2>&1)
+}
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
-PEERS_TRIES=$(egrep -o "peer=[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+" 2>&1 | tail -1 2>&1)
-PEERS_ADDNODES=$(cat "$LOG_DIR"/node_data/addnodes 2>&1 | wc -l 2>&1)
-printf '%b' "${LOG_DATE:?} Status() AddNode.Script Addnodes ${PEERS_ADDNODES:?} Total Connected ${PEERS_TRIES:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+peers
+printf '%b' "${G0:?}${LOG_DATE:?} Status() AddNode.Script Start! Addnodes ${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
 done <"$LOG_DIR"/node_data/addnodes
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
-PEERS_FAILED=$(cat "$LOG_DIR"/node_data/failed 2>&1 | wc -l 2>&1)
-printf '%b' "${LOG_DATE:?} Status() AddNode.Script Failed ${PEERS_FAILED:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+peers
+printf '%b' "${G1:?}${LOG_DATE:?} Status() AddNode.Script Done! Addnodes ${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 killall screen
 EOF
     # start adding nodes, inside screen session
