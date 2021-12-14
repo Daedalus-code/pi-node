@@ -137,7 +137,7 @@ UPLOAD=$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 |
 if grep "127.0.0.1:9050" "$LOG_DIR"/node_data/getinfo &>/dev/null; then
   TOR_ICON="${P1:?}P$N0"
   # running proxy (tor), do this once
-  if [ ! -f "$LOG_DIR"/node_data/onion ]; then
+  if [[ ! -f "$LOG_DIR"/node_data/onion ]]; then
     egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       tail -1 >"$LOG_DIR"/node_data/onion 2>&1
   fi
