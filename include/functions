@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211412
-# 0.5.9.3
+# 0.5.9.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.9.3"
+VERSION="v0.5.9.6"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -137,7 +137,7 @@ UPLOAD=$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 |
 if grep "127.0.0.1:9050" "$LOG_DIR"/node_data/getinfo &>/dev/null; then
   TOR_ICON="${P1:?}P$N0"
   # running proxy (tor), do this once
-  if [[ ! -f "$LOG_DIR"/node_data/onion ]]; then
+  if [ ! -f "$LOG_DIR"/node_data/onion ]; then
     egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       tail -1 >"$LOG_DIR"/node_data/onion 2>&1
   fi
@@ -157,6 +157,9 @@ fi
 # remove empty files
 if [ ! -s "$LOG_DIR"/node_data/addnodes ]; then
   rm "$LOG_DIR"/node_data/addnodes &>/dev/null
+fi
+if [ ! -s "$LOG_DIR"/node_data/onion ]; then
+  rm "$LOG_DIR"/node_data/onion &>/dev/null
 fi
 if [ ! -s "$LOG_DIR"/node_data/nodes ]; then
   rm "$LOG_DIR"/node_data/nodes &>/dev/null
