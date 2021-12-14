@@ -2,7 +2,9 @@
 
 # By Rainman
 # V20211412
-# 0.0.4.0
+# 0.0.4.4
+
+### addnodes ###################################################################
 
 # add node address (api) internet
 curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
@@ -15,6 +17,8 @@ printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Node(s) ${G1:?}${API_COUNT:?}
 cat "$LOG_DIR"/node_data/nodes.tmp >>"$LOG_DIR"/node_data/nodes
 # remove old file
 rm "$LOG_DIR"/node_data/nodes.tmp &>/dev/null
+
+### token price ################################################################
 
 # ticker (api price)
 curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/node_data/ticker 2>&1
