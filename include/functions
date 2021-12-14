@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211412
-# 0.5.8.6
+# 0.5.8.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.8.6"
+VERSION="v0.5.8.4"
 
 # wait for node to start
 until pidof trumpcoind 2>&1 |
@@ -174,14 +174,12 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
 
   # save "stable/working" peers into file (addnodes - ipv4 address)
   awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
-    grep -v "Core" 2>&1 | awk '!a[$0]++' >>/home/"$(whoami)"/addnodes 2>&1
+    grep -v "Core" 2>&1 | sort -n 2>&1 |
+    awk '!a[$0]++' >"$LOG_DIR"/node_data/success 2>&1
 
   # clean up and use as "manually addnodes"
-  awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes 2>&1 |
-    awk '!a[$0]++' 2>&1 | sort -n >/tmp/addnodes.tmp 2>&1
-
-  # setup new file
-  mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
+  awk '/:[0-9]+/ && !/]/ {print $1}' "$LOG_DIR"/node_data/success 2>&1 |
+    awk '!a[$0]++' 2>&1 | sort -n >/home/"$(whoami)"/addnodes 2>&1
 
   # constantly adding (ipv4+manually added)
   awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes 2>&1 |
@@ -244,7 +242,7 @@ cat "$LOG_DIR"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
 # $(whoami)/addnodes
 cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   # remove with failed peers file
-  grep -v -f "$LOG_DIR"/node_data/failed >>/tmp/clean_addnodes 2>&1
+  grep -v -f "$LOG_DIR"/node_data/success >>/tmp/clean_addnodes 2>&1
 
 # setup new file
 mv /tmp/clean_addnodes "$LOG_DIR"/node_data/addnodes 2>&1
