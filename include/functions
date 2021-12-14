@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211412
-# 0.5.8.4
+# 0.5.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -24,7 +24,7 @@ source /usr/local/bin/include/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 
 # script version
-VERSION="v0.5.8.4"
+VERSION="v0.5.8.6"
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -467,12 +467,14 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="Moneysupply $TIMELINE"
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
-    TIMELINE="$WALLET_UNCONFIRMED"
-    TIMELINE="Unconfirmed $TIMELINE"
+    WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$WALLET_VALUE" 2>&1 |
+      bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    TIMELINE="Immature $WALLET_UNCONFIRMED ($WALLET_UNCONFIRMED_VALUE USD)"
   # immature_balance
   elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
-    TIMELINE="$WALLET_IMMATURE"
-    TIMELINE="Immature $TIMELINE"
+    WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$WALLET_VALUE" 2>&1 |
+      bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    TIMELINE="Immature $WALLET_IMMATURE ($WALLET_IMMATURE_VALUE USD)"
   elif [ "$RANDOM_TIMELINE" -eq "6" ]; then
     # lowest confirmation
     TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent 2>&1 |
