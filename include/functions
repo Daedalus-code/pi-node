@@ -527,12 +527,12 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="Uptime $TIMELINE"
   elif [ "$RANDOM_TIMELINE" -eq "13" ]; then
     # highest peer count
-    HIGH_P2P=$(grep "Total" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
+    HIGH_P2P=$(grep "() Total" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1 |
       # remove color code
       sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" 2>&1)
     # lowest peer count
-    LOWS_P2P=$(grep "Total" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
+    LOWS_P2P=$(grep "() Total" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       awk '{ print $5 }' 2>&1 | sort -n 2>&1 | head -1 2>&1 |
       # remove color code
       sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" 2>&1)
