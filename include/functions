@@ -138,7 +138,7 @@ if grep "127.0.0.1:9050" "$LOG_DIR"/node_data/getinfo &>/dev/null; then
   fi
   PUBLIC_IP=$(egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
     tail -1 2>&1)
-  PUBLIC_IP=$(printf '%b' "${P1:?}${PUBLIC_IP:0:14}...onion${N0:?}\n" 2>&1)
+  PUBLIC_IP=$(printf '%b' "${P1:?}${PUBLIC_IP:0:10}...onion${N0:?}\n" 2>&1)
 else
   TOR_ICON=$(printf '%b' "${GR:?}P$N0")
 fi
