@@ -534,12 +534,12 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     # highest peer count
     HIGH_P2P=$(grep "Total" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
-    TIMELINE="Highest Peer Count $HIGH_P2P"
+    TIMELINE="High P2P ${N0:?}$HIGH_P2P${N0:?}"
     # lowest peer count
   elif [ "$RANDOM_TIMELINE" -eq "14" ]; then
     LOWS_P2P=$(grep "Total" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       awk '{ print $5 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
-    TIMELINE="Lowest Peer Count $LOWS_P2P"
+    TIMELINE="Low P2P ${N0:?}$LOWS_P2P${N0:?}"
   fi
 
 else # wait on wallet
