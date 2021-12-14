@@ -90,18 +90,18 @@ FREE_MEM=$(echo "$(echo "$TOTAL_SWAP-$USED_SWAP" 2>&1 |
 FREE_MEM="${G1:?}${FREE_MEM:?}M${N0:?}"
 
 # free Space, mmc block device #0, partition #2, partition #2, dev/root
-USED_HDD=$(df -h 2>&1 | grep -E "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
+USED_HDD=$(df -h 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
   awk '{ print $3 }' 2>&1)
 USED_HDD="${G1:?}${USED_HDD:?}${N0:?}"
-USED_HDD_P=$(df -h | grep -E "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
+USED_HDD_P=$(df -h | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
   awk '{ print $5 }' 2>&1)
 
 # get interface
-IFCONFIG=$(ifconfig 2>&1 | grep -E "wlan*|eth*" 2>&1)
-IP_ADDRESS=$(echo "$IFCONFIG" 2>&1 | grep -E "inet " 2>&1 |
+IFCONFIG=$(ifconfig 2>&1 | egrep "wlan*|eth*" 2>&1)
+IP_ADDRESS=$(echo "$IFCONFIG" 2>&1 | egrep "inet " 2>&1 |
   grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
 IP_ADDRESS="${C1:?}$IP_ADDRESS${N0:?}"
-INTERFACE=$(echo "$IFCONFIG" 2>&1 | grep -E "wlan*|eth*" 2>&1 |
+INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 |
   awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 |
   head -1 2>&1)
 
@@ -123,11 +123,11 @@ PUBLIC_IP=$(grep "address" "$LOG_DIR"/node_data/getwan 2>&1 |
 PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
 
 # download
-DOWNLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
+DOWNLOAD=$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 |
   grep "RX packets" 2>&1 | head -1 2>&1 |
   awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1)
 # upload
-UPLOAD=$(ifconfig 2>&1 | grep -E "wla*|eth*" 2>&1 |
+UPLOAD=$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 |
   grep "TX packets" 2>&1 | head -1 2>&1 |
   awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1)
 
