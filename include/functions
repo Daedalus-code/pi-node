@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20211412
-# 0.5.9.9
+# V20211512
+# 0.5.9.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.9.9"
+VERSION="v0.5.9.7"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -191,8 +191,9 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes 2>&1 |
     awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes
 
-  # create a list (addnodes) from nodes
-  shuf "$LOG_DIR"/node_data/nodes >"$LOG_DIR"/node_data/addnodes 2>&1
+  # fill list (addnodes) from nodes
+  shuf "$LOG_DIR"/node_data/nodes 2>&1 |
+    awk '!a[$0]++' >"$LOG_DIR"/node_data/addnodes 2>&1
 
   # curl, arp data source
   source /usr/local/bin/include/data
@@ -244,14 +245,11 @@ egrep "192.168.1.*:15110" "$LOG_DIR"/node_data/failed 2>&1 |
 # node_data/addnodes
 cat "$LOG_DIR"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   # remove with failed peers file
-  grep -v -f "$LOG_DIR"/node_data/failed >/tmp/clean_addnodes 2>&1
+  grep -v -f "$LOG_DIR"/node_data/failed >"$LOG_DIR"/node_data/addnodes 2>&1
 # $(whoami)/addnodes
 cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   # remove with failed peers file
-  grep -v -f "$LOG_DIR"/node_data/success >>/tmp/clean_addnodes 2>&1
-
-# setup new file
-mv /tmp/clean_addnodes "$LOG_DIR"/node_data/addnodes 2>&1
+  grep -v -f "$LOG_DIR"/node_data/success >"$LOG_DIR"/node_data/addnodes 2>&1
 
 # greater than n seconds
 if [[ "$(uptime_cmd)" -gt "300" ]]; then
