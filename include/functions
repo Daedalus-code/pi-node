@@ -401,7 +401,7 @@ WALLET_TXLAST=$(cat "$LOG_DIR"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
 # save wallet stakes (addtowallet), remove duplicates
 # note: not perfect data of proof-of-work
 egrep "AddToWallet [a0-z9]+ new" "$WALLET_LOG_DIR"/debug.log 2>&1 |
-  awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
+  awk '!a[$0]++' >>/home/"$(whoami)"/staking 2>&1
 # count saved stakes
 WALLET_STAKES=$(grep -c "AddToWallet" /home/"$(whoami)"/staking 2>&1)
 
