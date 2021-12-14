@@ -2,12 +2,13 @@
 
 # By Rainman
 # V20211412
-# 0.0.4.4
+# 0.0.4.5
 
 ### addnodes ###################################################################
 
 # add node address (api) internet
 curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
+
   # clean up the file above (ipv4) no ports on these
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"$LOG_DIR"/node_data/nodes.tmp 2>&1
 # count api nodes
