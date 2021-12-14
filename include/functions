@@ -236,11 +236,11 @@ fi
 egrep "192.168.1.*:15110" "$LOG_DIR"/node_data/failed 2>&1 |
   egrep -o "192.168.1.[0-9]+" >>"$LOG_DIR"/node_data/failed 2>&1
 # node_data/addnodes
-cat "$LOG_DIR"/node_data/addnodes 2>&1 |
+cat "$LOG_DIR"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   # remove with failed peers file
   grep -v -f "$LOG_DIR"/node_data/failed >/tmp/clean_addnodes 2>&1
 # $(whoami)/addnodes
-cat /home/"$(whoami)"/addnodes 2>&1 |
+cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   # remove with failed peers file
   grep -v -f "$LOG_DIR"/node_data/failed >>/tmp/clean_addnodes 2>&1
 
