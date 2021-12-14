@@ -12,7 +12,7 @@ curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"$LOG_DIR"/node_data/nodes.tmp 2>&1
 # count api nodes
 API_COUNT=$(wc -l "$LOG_DIR"/node_data/nodes.tmp 2>&1 | awk '{ print $1 }' 2>&1)
-printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Node(s) ${G1:?}${API_COUNT:?}${N0:?} Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Found ${G1:?}${API_COUNT:?}${N0:?} possible new peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 # setup nodes, fill
 cat "$LOG_DIR"/node_data/nodes.tmp >>"$LOG_DIR"/node_data/nodes
 # remove old file

@@ -194,7 +194,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   ARP_COUNT=$(wc -l "$LOG_DIR"/node_data/nodes.tmp 2>&1 | awk '{ print $1 }' 2>&1)
   # setup arp file
   cat "$LOG_DIR"/node_data/nodes.tmp >>"$LOG_DIR"/node_data/nodes 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Intranet.ARP() ARP ${G1:?}${ARP_COUNT:?}${N0:?} Data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Intranet.ARP() Found ${G1:?}${ARP_COUNT:?}${N0:?} possible new peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # remove old file
   rm "$LOG_DIR"/node_data/nodes.tmp &>/dev/null
 
