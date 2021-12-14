@@ -185,6 +185,9 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes 2>&1 |
     awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes
 
+  # create a list (addnodes) from nodes
+  shuf "$LOG_DIR"/node_data/nodes >"$LOG_DIR"/node_data/addnodes 2>&1
+
   # curl, arp data source
   source /usr/local/bin/include/data
 
@@ -224,9 +227,6 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
     printf '%b' "${LOG_DATE:?} Status() Fail/Success() Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Addnode.Size() Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Peers.Status() Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
-    # create a list (addnodes) from nodes
-    shuf "$LOG_DIR"/node_data/nodes >"$LOG_DIR"/node_data/addnodes 2>&1
   else
     printf '%b' "${LOG_DATE:?} Status() System.Monitor Loading wallet${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
