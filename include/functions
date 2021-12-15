@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211512
-# 0.5.8.4
+# 0.5.8.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.8.4"
+VERSION="v0.5.8.3"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -232,9 +232,8 @@ awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
   awk '!a[$0]++' >"$LOG_DIR"/node_data/peers/success 2>&1
 
 # disregard peers with failed and success files
-cat "$LOG_DIR"/node_data/nodes 2>&1 |
-  egrep -v -f "$LOG_DIR"/node_data/peers/* 2>&1 |
-  awk '/:[0-9]+/ && !/]/ {print $2,$3}' >"$LOG_DIR"/node_data/addnodes 2>&1
+awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/nodes 2>&1 |
+  egrep -v -f "$LOG_DIR"/node_data/peers/* >"$LOG_DIR"/node_data/addnodes 2>&1
 
 # create addnodes for addnode.script
 cp "$LOG_DIR"/node_data/peers/success /home/"$(whoami)"/addnodes 2>&1
