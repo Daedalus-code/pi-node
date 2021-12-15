@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211512
-# 0.5.9.4
+# 0.5.9.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.9.4"
+VERSION="v0.5.9.5"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -26,6 +26,7 @@ source /usr/local/bin/include/null
 
 # create data directory, ruled by configuration
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
 
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
@@ -173,7 +174,7 @@ fi
 
 # create failed connection list, remove duplicates, sort
 egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
-  awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/node_data/failed 2>&1
+  awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/node_data/peers/failed 2>&1
 
 # get node list, ticker (api, arp)
 if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
@@ -181,10 +182,10 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   # save "stable/working" peers into file (addnodes - ipv4 address)
   awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
     grep -v "Core" 2>&1 | sort -n 2>&1 |
-    awk '!a[$0]++' >"$LOG_DIR"/node_data/success 2>&1
+    awk '!a[$0]++' >"$LOG_DIR"/node_data/peers/success 2>&1
 
   # clean up and use as "manually addnodes"
-  awk '/:[0-9]+/ && !/]/ {print $1}' "$LOG_DIR"/node_data/success 2>&1 |
+  awk '/:[0-9]+/ && !/]/ {print $1}' "$LOG_DIR"/node_data/peers/success 2>&1 |
     awk '!a[$0]++' 2>&1 | sort -n >/home/"$(whoami)"/addnodes 2>&1
 
   # constantly adding (ipv4+manually added)
@@ -202,7 +203,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   if [[ "$(uptime_cmd)" -gt "300" ]]; then
 
     # count failed connections, feed output to debug.log
-    FAIL_COUNT=$(wc -l "$LOG_DIR"/node_data/failed 2>&1 | awk '{ print $1 }' 2>&1)
+    FAIL_COUNT=$(wc -l "$LOG_DIR"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
     ADDNODE_SI=$(wc -l "$LOG_DIR"/node_data/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
     ADDNODE_NOD=$(wc -l "$LOG_DIR"/node_data/nodes 2>&1 | awk '{ print $1 }' 2>&1)
     ADDNODE_PSI=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
@@ -231,7 +232,7 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
 
     printf '%b' "${LOG_DATE:?} Status() System.Monitor Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() System.Monitor Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Fail/Success() Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Fail/peers/success() Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Addnode.Size() Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Peers.Status() Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
@@ -240,16 +241,16 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
 fi
 
 # output connected peers, disregard with failed connections
-egrep "192.168.1.*:15110" "$LOG_DIR"/node_data/failed 2>&1 |
-  egrep -o "192.168.1.[0-9]+" >>"$LOG_DIR"/node_data/failed 2>&1
+egrep "192.168.1.*:15110" "$LOG_DIR"/node_data/peers/failed 2>&1 |
+  egrep -o "192.168.1.[0-9]+" >>"$LOG_DIR"/node_data/peers/failed 2>&1
 # node_data/addnodes
 cat "$LOG_DIR"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   # remove with failed peers file
-  grep -v -f "$LOG_DIR"/node_data/failed >"$LOG_DIR"/node_data/addnodes 2>&1
+  grep -v -f "$LOG_DIR"/node_data/peers/failed >"$LOG_DIR"/node_data/addnodes 2>&1
 # $(whoami)/addnodes
 cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   # remove with failed peers file
-  grep -v -f "$LOG_DIR"/node_data/success >"$LOG_DIR"/node_data/addnodes 2>&1
+  grep -v -f "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/addnodes 2>&1
 
 # greater than n seconds
 if [[ "$(uptime_cmd)" -gt "300" ]]; then
@@ -266,7 +267,7 @@ source /usr/local/bin/include/color
 function peers() {
   PEERS_TRIES=$(egrep -o "peer=[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+" 2>&1 | tail -1 2>&1)
   PEERS_ADDNODES=$(cat "$LOG_DIR"/node_data/addnodes 2>&1 | wc -l 2>&1)
-  PEERS_FAILED=$(cat "$LOG_DIR"/node_data/failed 2>&1 | wc -l 2>&1)
+  PEERS_FAILED=$(cat "$LOG_DIR"/node_data/peers/failed 2>&1 | wc -l 2>&1)
 }
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
