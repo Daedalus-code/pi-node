@@ -2,19 +2,19 @@
 
 # By Rainman
 # V20211512
-# 0.5.9.7
+# 0.5.9.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.9.7"
+VERSION="v0.5.9.4"
 UPDATE_REPO="0"
 
 # wait for node to start
 until pidof trumpcoind 2>&1 |
   wc -w 2>&1 | egrep "1" &>/dev/null; do
   clear
-  echo "Waiting on trumpcoind node .."
+  echo "Waiting on trumpcoind daemon.."
   sleep 2
 done
 
@@ -436,7 +436,7 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   fi
   # remove old files
   rm "$LOG_DIR"/node_data/onion &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Clean.truncate debug, peers${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Clean.truncate debug, onion${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # save proof of work data from debug.log
   # note: not perfect data of proof-of-work
   POS_COUNT=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
@@ -444,9 +444,6 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
     cat /home/"$(whoami)"/staking 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate PoS ${G1:?}${POS_COUNT:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-  # truncate peers.dat
-  truncate -s 0 "${WALLET_DIR:?}"/peers.dat 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Clean.truncate peers.dat Done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### timeline ###################################################################
