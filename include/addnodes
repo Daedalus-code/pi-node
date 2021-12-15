@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211512
-# 0.0.3.2
+# 0.0.3.4
 
 # create addnodes file
 function addnodes() {
@@ -30,3 +30,5 @@ function addnodes_cleanup() {
     # remove with failed peers file
     grep -v -f "$LOG_DIR"/node_data/success >"$LOG_DIR"/node_data/addnodes 2>&1
 }
+
+# END
