@@ -35,14 +35,14 @@ function addnodes() {
 
 # cleanup node files
 function addnodes_cleanup() {
-  # node_data/addnodes
-  cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
-    # remove with failed and success peers file
-    egrep -v -f "${LOG_DIR:?}"/node_data/peers/* >"${LOG_DIR:?}"/node_data/addnodes 2>&1
   # $(whoami)/addnodes
   cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
     # remove with failed peers file
     egrep -v -f "${LOG_DIR:?}"/node_data/peers/* >"${LOG_DIR:?}"/node_data/addnodes 2>&1
+  # node_data/addnodes
+  cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
+    # remove with failed and success peers file
+    egrep -v -f "${LOG_DIR:?}"/node_data/peers/* >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 }
 
 # END
