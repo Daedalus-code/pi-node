@@ -223,12 +223,12 @@ fi
 
 # create failed connection list, remove duplicates, sort
 egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
-  awk '!a[$0]++' 2>&1 | sort -n 2>&1 |
+  awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $1 }' 2>&1 |
   awk '{ print $2 }' >"$LOG_DIR"/node_data/peers/failed 2>&1
 
 # save "stable/working" peers into file (addnodes - ipv4 address)
 awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
-  grep -v "Core" 2>&1 | sort -n 2>&1 |
+  grep -v "Core" 2>&1 | sort -n 2>&1 | awk '{ print $1 }' 2>&1 |
   awk '!a[$0]++' >"$LOG_DIR"/node_data/peers/success 2>&1
 
 # disregard peers with failed and success files
