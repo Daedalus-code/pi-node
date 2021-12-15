@@ -108,7 +108,7 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 |
 
 # update wan, update repo, proof-of-work (everyday)
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
-  rm "$LOG_DIR"/node_data/getwan &>/dev/null
+  rm "${LOG_DIR:?}"/node_data/getwan &>/dev/null
   if [[ "$UPDATE_REPO" -eq "1" ]]; then
     # update repo
     cd /home/"$(whoami)"/trump-node || exit &&
@@ -116,10 +116,10 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   fi
 fi
 # get wan address
-if [ ! -f "$LOG_DIR"/node_data/getwan ]; then
-  host myip.opendns.com resolver1.opendns.com >"$LOG_DIR"/node_data/getwan
+if [ ! -f "${LOG_DIR:?}"/node_data/getwan ]; then
+  host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan
 fi
-PUBLIC_IP=$(grep "address" "$LOG_DIR"/node_data/getwan 2>&1 |
+PUBLIC_IP=$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 |
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
 PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
 
@@ -135,14 +135,14 @@ UPLOAD=$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 |
 ### tor ########################################################################
 
 # tor status
-if grep "127.0.0.1:9050" "$LOG_DIR"/node_data/getinfo &>/dev/null; then
+if grep "127.0.0.1:9050" "${LOG_DIR:?}"/node_data/getinfo &>/dev/null; then
   TOR_ICON="${P1:?}P$N0"
   # running proxy (tor), do this once
-  if [ ! -f "$LOG_DIR"/node_data/onion ]; then
+  if [ ! -f "${LOG_DIR:?}"/node_data/onion ]; then
     egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
-      tail -1 >"$LOG_DIR"/node_data/onion 2>&1
+      tail -1 >"${LOG_DIR:?}"/node_data/onion 2>&1
   fi
-  PUBLIC_IP=$(cat "$LOG_DIR"/node_data/onion 2>&1)
+  PUBLIC_IP=$(cat "${LOG_DIR:?}"/node_data/onion 2>&1)
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 else
   TOR_ICON="${GR:?}P$N0"
@@ -156,24 +156,24 @@ if ! [ -x "$(command -v screen)" ]; then
 fi
 
 # remove empty files
-if [ ! -s "$LOG_DIR"/node_data/addnodes ]; then
-  rm "$LOG_DIR"/node_data/addnodes &>/dev/null
+if [ ! -s "${LOG_DIR:?}"/node_data/addnodes ]; then
+  rm "${LOG_DIR:?}"/node_data/addnodes &>/dev/null
 fi
-if [ ! -s "$LOG_DIR"/node_data/onion ]; then
-  rm "$LOG_DIR"/node_data/onion &>/dev/null
+if [ ! -s "${LOG_DIR:?}"/node_data/onion ]; then
+  rm "${LOG_DIR:?}"/node_data/onion &>/dev/null
 fi
-if [ ! -s "$LOG_DIR"/node_data/nodes ]; then
-  rm "$LOG_DIR"/node_data/nodes &>/dev/null
+if [ ! -s "${LOG_DIR:?}"/node_data/nodes ]; then
+  rm "${LOG_DIR:?}"/node_data/nodes &>/dev/null
 fi
 
 # update addnodes, failed peers, along with ticker price (every half, & hour)
 if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]]; then
-  rm "$LOG_DIR"/node_data/nodes &>/dev/null
+  rm "${LOG_DIR:?}"/node_data/nodes &>/dev/null
   printf '%b' "${LOG_DATE:?} Status() Update.Nodes() Looking for new peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # get node list, ticker (api, arp)
-if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
+if [ ! -f "${LOG_DIR:?}"/node_data/nodes ]; then
 
   # curl, arp data source
   source /usr/local/bin/include/data
@@ -182,9 +182,9 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   if [[ "$(uptime_cmd)" -gt "300" ]]; then
 
     # count failed connections, feed output to debug.log
-    FAIL_COUNT=$(wc -l "$LOG_DIR"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
-    ADDNODE_SI=$(wc -l "$LOG_DIR"/node_data/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
-    ADDNODE_NOD=$(wc -l "$LOG_DIR"/node_data/nodes 2>&1 | awk '{ print $1 }' 2>&1)
+    FAIL_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
+    ADDNODE_SI=$(wc -l "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
+    ADDNODE_NOD=$(wc -l "${LOG_DIR:?}"/node_data/nodes 2>&1 | awk '{ print $1 }' 2>&1)
     ADDNODE_PSI=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
     SUCCESS_CO=$(grep -c "New outbound peer" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
     SUCCESS_RA=$(echo "100/$(echo "$FAIL_COUNT+$SUCCESS_CO" 2>&1 |
@@ -222,26 +222,26 @@ fi
 ### addnodes lists #############################################################
 
 # create failed connection list, remove duplicates, sort
-egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" /tmp/debug.log 2>&1 |
+egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
   awk '!a[$0]++' 2>&1 | awk '{ print $2 }' 2>&1 |
-  sort -n >"$LOG_DIR"/node_data/peers/failed 2>&1
+  sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
 
 # save "stable/working" peers into file (addnodes - ipv4 address)
-awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
+awk '/:[0-9]+/ && !/]/ {print $2,$3}' "${LOG_DIR:?}"/node_data/getpeerinfo 2>&1 |
   grep -v "Core" 2>&1 | sort -n 2>&1 | awk '{ print $1 }' 2>&1 |
-  awk '!a[$0]++' >"$LOG_DIR"/node_data/peers/success 2>&1
+  awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 
 # disregard peers with failed and success files
-cat "$LOG_DIR"/node_data/nodes 2>&1 | awk '{ print $1 }' 2>&1 |
-  egrep -v -f "$LOG_DIR"/node_data/peers/* >"$LOG_DIR"/node_data/addnodes 2>&1
+cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | awk '{ print $1 }' 2>&1 |
+  egrep -v -f "${LOG_DIR:?}"/node_data/peers/* >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # add extra addnodes from the manual addnodes file in /home
 # feed data into the addnodes file for the screen/script below
-cat /home/"$(whoami)"/addnodes 2>&1 | egrep -v -f "$LOG_DIR"/node_data/addnodes 2>&1 |
-  awk '!a[$0]++' >>"$LOG_DIR"/node_data/addnodes 2>&1
+cat /home/"$(whoami)"/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
+  awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # create addnodes for addnode.script
-cp "$LOG_DIR"/node_data/peers/success /home/"$(whoami)"/addnodes 2>&1
+cp "${LOG_DIR:?}"/node_data/peers/success /home/"$(whoami)"/addnodes 2>&1
 
 ### addnodes screen script #####################################################
 
@@ -255,7 +255,7 @@ if [[ "$(uptime_cmd)" -gt "300" ]]; then
 
     # connect nodes found with addnodes list above
     # (using tmp directory)
-    cat >/tmp/add_peers <<'EOF'
+    cat >"${LOG_DIR:?}"add_peers <<'EOF'
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/null
@@ -263,8 +263,8 @@ source /usr/local/bin/include/color
 
 function peers() {
   PEERS_TRIES=$(egrep -o "peer=[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+" 2>&1 | tail -1 2>&1)
-  PEERS_ADDNODES=$(cat "$LOG_DIR"/node_data/addnodes 2>&1 | wc -l 2>&1)
-  PEERS_FAILED=$(cat "$LOG_DIR"/node_data/peers/failed 2>&1 | wc -l 2>&1)
+  PEERS_ADDNODES=$(cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | wc -l 2>&1)
+  PEERS_FAILED=$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
 }
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
@@ -275,7 +275,7 @@ printf '%b' "${LOG_DATE:?} Status() AddNode.Script Start! Addnodes ${PEERS_ADDNO
 
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
-done <"$LOG_DIR"/node_data/addnodes
+done <"${LOG_DIR:?}"/node_data/addnodes
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
@@ -293,21 +293,21 @@ fi
 ### wallet information #########################################################
 
 # collect wallet info, on every update (loop) from client
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/node_data/getblockchaininfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/node_data/getinfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getmempoolinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/node_data/getmempoolinfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/node_data/getnetworkinfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpatriotnodecount 2>&1 | tr -d '"|,' >"$LOG_DIR"/node_data/getpatriotnodecount 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getwalletinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/node_data/getwalletinfo 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent 2>&1 | tr -d '"|,' >"$LOG_DIR"/node_data/listunspent 2>&1
-"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpeerinfo 2>&1 | tr -d '"|,' >"$LOG_DIR"/node_data/getpeerinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getnetworkinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getwalletinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getwalletinfo 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/listunspent 2>&1
+"$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpeerinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getpeerinfo 2>&1
 
 # wallet version
-WALLET_VERSION=$(grep "Core" "$LOG_DIR"/node_data/getnetworkinfo 2>&1 |
+WALLET_VERSION=$(grep "Core" "${LOG_DIR:?}"/node_data/getnetworkinfo 2>&1 |
   egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1)
 
 # running mainnet or testnet
-if ! "$(grep "main" "$LOG_DIR"/node_data/getblockchaininfo 2>&1)" -eq "main" &>/dev/null; then
+if ! "$(grep "main" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1)" -eq "main" &>/dev/null; then
   # mainnet
   WALLET_CHAIN="${G0:?}mainnet${N0:?}"
 else
@@ -322,9 +322,9 @@ if [[ "$(uptime_cmd)" -gt "300" ]]; then
   # logo turns yellow while running
   RC="${Y1:?}"
   # headers, blocks, sync
-  WALLET_HEADS=$(grep "blocks" "$LOG_DIR"/node_data/getblockchaininfo 2>&1 |
+  WALLET_HEADS=$(grep "blocks" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1 |
     grep -Eo "[0-9]+" 2>&1)
-  WALLET_BLOCK=$(grep "headers" "$LOG_DIR"/node_data/getblockchaininfo 2>&1 |
+  WALLET_BLOCK=$(grep "headers" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1 |
     grep -Eo "[0-9]+" 2>&1)
   WALLET_SYNC=$(echo "100/$WALLET_HEADS*$WALLET_BLOCK" 2>&1 |
     bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
@@ -341,68 +341,68 @@ else # wallet is loading/syncing
 fi
 
 # wallet patriotnodes total
-WALLET_NODES_TOTAL=$(grep "total" "$LOG_DIR"/node_data/getpatriotnodecount 2>&1 |
+WALLET_NODES_TOTAL=$(grep "total" "${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1 |
   egrep -o "[0-9]+" 2>&1)
 # wallet patriotnodes stable
-WALLET_NODES_STABLE=$(grep "stable" "$LOG_DIR"/node_data/getpatriotnodecount 2>&1 |
+WALLET_NODES_STABLE=$(grep "stable" "${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1 |
   egrep -o "[0-9]+" 2>&1)
 # wallet patriotnodes enabled
-WALLET_NODES_ENABLED=$(grep "enabled" "$LOG_DIR"/node_data/getpatriotnodecount 2>&1 |
+WALLET_NODES_ENABLED=$(grep "enabled" "${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1 |
   egrep -o "[0-9]+" 2>&1)
 # wallet patriotnodes inqueue
-WALLET_NODES_INQUEUE=$(grep "inqueue" "$LOG_DIR"/node_data/getpatriotnodecount 2>&1 |
+WALLET_NODES_INQUEUE=$(grep "inqueue" "${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1 |
   egrep -o "[0-9]+" 2>&1)
 # wallet connections total
-WALLET_PEERS_TOTAL=$(grep "connections" "$LOG_DIR"/node_data/getinfo 2>&1 |
+WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
   egrep -o "[0-9]+" 2>&1)
-if [ -f "$LOG_DIR"/node_data/ticker ]; then
+if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
   WALLET_PEERS_TOTAL="${P1:?}${WALLET_PEERS_TOTAL:?}${N0:?}"
 fi
 # wallet connections latest (using wallet version)
-WALLET_PEERS_LATEST=$(grep "subver" "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
+WALLET_PEERS_LATEST=$(grep "subver" "${LOG_DIR:?}"/node_data/getpeerinfo 2>&1 |
   egrep -o "$WALLET_VERSION" 2>&1 | wc -l 2>&1)
-if [ -f "$LOG_DIR"/node_data/ticker ]; then
+if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
   WALLET_PEERS_LATEST="${G1:?}${WALLET_PEERS_LATEST:?}${N0:?}"
 fi
 # wallet connections other (not latest, probably older wallets)
-WALLET_PEERS_OTHER=$(grep "subver" "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
+WALLET_PEERS_OTHER=$(grep "subver" "${LOG_DIR:?}"/node_data/getpeerinfo 2>&1 |
   egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1 |
   grep -v "$WALLET_VERSION" 2>&1 | wc -l 2>&1)
-if [ -f "$LOG_DIR"/node_data/ticker ]; then
+if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
   WALLET_PEERS_OTHER="${G0:?}${WALLET_PEERS_OTHER:?}${N0:?}"
 fi
-if [ -f "$LOG_DIR"/node_data/ticker ]; then
+if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
   # wallet balance
-  WALLET_BALANCE=$(grep "balance" "$LOG_DIR"/node_data/getinfo 2>&1 |
+  WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
     egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  WALLET_UNCONFIRMED=$(grep "unconfirmed_balance" "$LOG_DIR"/node_data/getwalletinfo 2>&1 |
+  WALLET_UNCONFIRMED=$(grep "unconfirmed_balance" "${LOG_DIR:?}"/node_data/getwalletinfo 2>&1 |
     awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  WALLET_IMMATURE=$(grep "immature_balance" "$LOG_DIR"/node_data/getwalletinfo 2>&1 |
+  WALLET_IMMATURE=$(grep "immature_balance" "${LOG_DIR:?}"/node_data/getwalletinfo 2>&1 |
     awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   WALLET_BALANCE=$(echo "$WALLET_BALANCE+$WALLET_UNCONFIRMED+$WALLET_IMMATURE" |
     bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   # wallet value
-  WALLET_VALUE=$(echo "$(tail -1 "$LOG_DIR"/node_data/ticker 2>&1)*$WALLET_BALANCE" 2>&1 |
+  WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)*$WALLET_BALANCE" 2>&1 |
     bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 fi
-if [ -f "$LOG_DIR"/node_data/ticker ]; then
+if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
   WALLET_VERSION="${G1:?}${WALLET_VERSION:?}${N0:?}"
   # wallet ticker.usd
-  WALLET_TICKER=$(cat "$LOG_DIR"/node_data/ticker 2>&1)
+  WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/ticker 2>&1)
   # wallet mempool
-  WALLET_MEMPOOL=$(grep "size" "$LOG_DIR"/node_data/getmempoolinfo 2>&1 |
+  WALLET_MEMPOOL=$(grep "size" "${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1 |
     egrep -o "[0-9]+" 2>&1)
   # wallet txcount
-  WALLET_TXCOUNT=$(grep "txcount" "$LOG_DIR"/node_data/getwalletinfo 2>&1 |
+  WALLET_TXCOUNT=$(grep "txcount" "${LOG_DIR:?}"/node_data/getwalletinfo 2>&1 |
     egrep -o "[0-9]+" 2>&1)
   # wallet inputs
-  WALLET_INPUTS=$(grep "address" "$LOG_DIR"/node_data/listunspent 2>&1 | wc -l 2>&1)
+  WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)
 # last txid, (smallest one)
 fi
-LAST_TX=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent 2>&1 |
+LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
   awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
 # wallet txid with help of last_tx var
-WALLET_TXLAST=$(cat "$LOG_DIR"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
+WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
   grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 |
   awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 # save wallet stakes (addtowallet), remove duplicates
@@ -415,9 +415,9 @@ if [[ "$POS_COUNT" -gt "0" ]]; then
     awk '!a[$0]++' >>/home/"$(whoami)"/staking 2>&1
 fi
 
-if [ -f "$LOG_DIR"/node_data/ticker ]; then
+if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
   # wallet pos status
-  if [[ "$(grep "Staking Active" "$LOG_DIR"/node_data/getinfo 2>&1)" ]]; then
+  if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/getinfo 2>&1)" ]]; then
     # pos active
     POS_STATUS="${G1:?}S${N0:?}"
     # balance is staking, highlight balance, stakes and inputs
@@ -441,7 +441,7 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
     rm -r "${WALLET_DIR:?}"/backups/* &>/dev/null
   fi
   # remove old files
-  rm "$LOG_DIR"/node_data/onion &>/dev/null
+  rm "${LOG_DIR:?}"/node_data/onion &>/dev/null
   printf '%b' "${LOG_DATE:?} Status() Clean.truncate debug, onion${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # save proof of work data from debug.log
   # note: not perfect data of proof-of-work
@@ -455,14 +455,14 @@ fi
 ### timeline ###################################################################
 
 # if rpc in warm-up, loading block index, wait
-if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
+if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
 
   # random start number
   RANDOM_TIMELINE=$((((RANDOM % 13) + 1)))
 
   # difficulty
   if [ "$RANDOM_TIMELINE" -eq "1" ]; then
-    TIMELINE=$(grep "difficulty" "$LOG_DIR"/node_data/getinfo 2>&1 |
+    TIMELINE=$(grep "difficulty" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     TIMELINE="Difficulty $TIMELINE"
   # patriotnodes
@@ -470,23 +470,23 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="Patriotnodes ${N0:?}${WALLET_NODES_STABLE:?}${N0:?}/${G1:?}${WALLET_NODES_TOTAL:?}${N0:?}/${G0:?}${WALLET_NODES_ENABLED:?}${N0:?}/${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}"
   # moneysupply
   elif [ "$RANDOM_TIMELINE" -eq "3" ]; then
-    TIMELINE=$(grep "moneysupply" "$LOG_DIR"/node_data/getinfo 2>&1 |
+    TIMELINE=$(grep "moneysupply" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1 | rev 2>&1 |
       sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
     TIMELINE="Moneysupply $TIMELINE"
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
-    WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "$LOG_DIR"/node_data/ticker 2>&1)" 2>&1 |
+    WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)" 2>&1 |
       bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     TIMELINE="Unconfirmed $WALLET_UNCONFIRMED ${GR:?}$WALLET_UNCONFIRMED_VALUE USD${N0:?}"
   # immature_balance
   elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
-    WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "$LOG_DIR"/node_data/ticker 2>&1)" 2>&1 |
+    WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)" 2>&1 |
       bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     TIMELINE="Immature $WALLET_IMMATURE ${GR:?}$WALLET_IMMATURE_VALUE USD${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "6" ]; then
     # lowest confirmation
-    TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent 2>&1 |
+    TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 |
@@ -498,7 +498,7 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="New Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
     # highest confirmation
-    TIMELINE_CONF=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent 2>&1 |
+    TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 |
@@ -510,8 +510,8 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
     # average confirmation
   elif [ "$RANDOM_TIMELINE" -eq "8" ]; then
-    UNSPENT_COUNT=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent | wc -l)
-    TIMELINE=$(grep "confirmations" "$LOG_DIR"/node_data/listunspent 2>&1 |
+    UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent | wc -l)
+    TIMELINE=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)
     # average calculated
     TIMELINE_AVG=$(echo "$TIMELINE/$UNSPENT_COUNT" 2>&1 | bc 2>&1)
@@ -528,12 +528,12 @@ if [ -f "$LOG_DIR"/node_data/getblockchaininfo ]; then
     TIMELINE="Value ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
     # highest input amount
   elif [ "$RANDOM_TIMELINE" -eq "10" ]; then
-    TIMELINE=$(grep "amount" "$LOG_DIR"/node_data/listunspent 2>&1 |
+    TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
     TIMELINE="Highest Input $TIMELINE"
     # lowest input amount
   elif [ "$RANDOM_TIMELINE" -eq "11" ]; then
-    TIMELINE=$(grep "amount" "$LOG_DIR"/node_data/listunspent 2>&1 |
+    TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Lowest Input $TIMELINE"
     # daemon uptime
