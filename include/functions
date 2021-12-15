@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211512
-# 0.5.7.7
+# 0.5.6.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.7.7"
+VERSION="v0.5.6.1"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -25,6 +25,7 @@ source /usr/local/bin/include/addnodes
 
 # create data directory, ruled by configuration
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
 
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
@@ -169,23 +170,6 @@ addnodes
 
 # get node list, ticker (api, arp)
 if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
-
-  # save "stable/working" peers into file (addnodes - ipv4 address)
-  awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
-    grep -v "Core" 2>&1 | sort -n 2>&1 |
-    awk '!a[$0]++' >"$LOG_DIR"/node_data/success 2>&1
-
-  # clean up and use as "manually addnodes"
-  awk '/:[0-9]+/ && !/]/ {print $1}' "$LOG_DIR"/node_data/success 2>&1 |
-    awk '!a[$0]++' 2>&1 | sort -n >/home/"$(whoami)"/addnodes 2>&1
-
-  # constantly adding (ipv4+manually added)
-  awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes 2>&1 |
-    awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes
-
-  # fill list (addnodes) from nodes
-  shuf "$LOG_DIR"/node_data/nodes 2>&1 |
-    awk '!a[$0]++' >"$LOG_DIR"/node_data/addnodes 2>&1
 
   # curl, arp data source
   source /usr/local/bin/include/data
