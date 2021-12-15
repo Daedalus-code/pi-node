@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211512
-# 0.5.9.5
+# 0.5.8.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.9.5"
+VERSION="v0.5.8.3"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -172,29 +172,8 @@ if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]]; 
   printf '%b' "${LOG_DATE:?} Status() Update.Nodes() Looking for new peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
-# create failed connection list, remove duplicates, sort
-egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
-  awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/node_data/peers/failed 2>&1
-
 # get node list, ticker (api, arp)
 if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
-
-  # save "stable/working" peers into file (addnodes - ipv4 address)
-  awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
-    grep -v "Core" 2>&1 | sort -n 2>&1 |
-    awk '!a[$0]++' >"$LOG_DIR"/node_data/peers/success 2>&1
-
-  # clean up and use as "manually addnodes"
-  awk '/:[0-9]+/ && !/]/ {print $1}' "$LOG_DIR"/node_data/peers/success 2>&1 |
-    awk '!a[$0]++' 2>&1 | sort -n >/home/"$(whoami)"/addnodes 2>&1
-
-  # constantly adding (ipv4+manually added)
-  awk '/:[0-9]+/ && !/]/ {print $1}' /home/"$(whoami)"/addnodes 2>&1 |
-    awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes
-
-  # fill list (addnodes) from nodes
-  shuf "$LOG_DIR"/node_data/nodes 2>&1 |
-    awk '!a[$0]++' >"$LOG_DIR"/node_data/addnodes 2>&1
 
   # curl, arp data source
   source /usr/local/bin/include/data
@@ -240,17 +219,26 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   fi
 fi
 
-# output connected peers, disregard with failed connections
-egrep "192.168.1.*:15110" "$LOG_DIR"/node_data/peers/failed 2>&1 |
-  egrep -o "192.168.1.[0-9]+" >>"$LOG_DIR"/node_data/peers/failed 2>&1
-# node_data/addnodes
-cat "$LOG_DIR"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
-  # remove with failed peers file
-  grep -v -f "$LOG_DIR"/node_data/peers/failed >"$LOG_DIR"/node_data/addnodes 2>&1
-# $(whoami)/addnodes
-cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
-  # remove with failed peers file
-  grep -v -f "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/addnodes 2>&1
+### addnodes lists #############################################################
+
+# create failed connection list, remove duplicates, sort
+egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
+  awk '!a[$0]++' 2>&1 | sort -n 2>&1 |
+  awk '{ print $2 }' >"$LOG_DIR"/node_data/peers/failed 2>&1
+
+# save "stable/working" peers into file (addnodes - ipv4 address)
+awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
+  grep -v "Core" 2>&1 | sort -n 2>&1 |
+  awk '!a[$0]++' >"$LOG_DIR"/node_data/peers/success 2>&1
+
+# disregard peers with failed and success files
+cat "$LOG_DIR"/node_data/nodes 2>&1 |
+  egrep -v -f "$LOG_DIR"/node_data/peers* >"$LOG_DIR"/node_data/addnodes 2>&1
+
+# create addnodes for addnode.script
+cp "$LOG_DIR"/node_data/peers/success /home/"$(whoami)"/addnodes 2>&1
+
+### addnodes screen script #####################################################
 
 # greater than n seconds
 if [[ "$(uptime_cmd)" -gt "300" ]]; then
