@@ -280,7 +280,7 @@ printf '%b' "${LOG_DATE:?} Status() AddNode.Script Done! Addnodes ${PEERS_ADDNOD
 killall screen
 EOF
     # start adding nodes, inside screen session (timeout n seconds)
-    timeout 900 screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+    timeout 600 screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
   fi
 fi
 
