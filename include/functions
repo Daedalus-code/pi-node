@@ -233,7 +233,7 @@ awk '/:[0-9]+/ && !/]/ {print $2,$3}' "$LOG_DIR"/node_data/getpeerinfo 2>&1 |
 
 # disregard peers with failed and success files
 cat "$LOG_DIR"/node_data/nodes 2>&1 |
-  egrep -v -f "$LOG_DIR"/node_data/peers* >"$LOG_DIR"/node_data/addnodes 2>&1
+  egrep -v -f "$LOG_DIR"/node_data/peers/* >"$LOG_DIR"/node_data/addnodes 2>&1
 
 # create addnodes for addnode.script
 cp "$LOG_DIR"/node_data/peers/success /home/"$(whoami)"/addnodes 2>&1
