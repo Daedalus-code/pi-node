@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211512
-# 0.5.9.4
+# 0.5.7.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.5.9.4"
+VERSION="v0.5.7.7"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -18,11 +18,10 @@ until pidof trumpcoind 2>&1 |
   sleep 2
 done
 
-# pitrump configurations
 source /home/pi/pitrump.conf
-source /usr/local/bin/include/color
-# non responsive
 source /usr/local/bin/include/null
+source /usr/local/bin/include/color
+source /usr/local/bin/include/addnodes
 
 # create data directory, ruled by configuration
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
@@ -165,15 +164,8 @@ if [ ! -s "$LOG_DIR"/node_data/nodes ]; then
   rm "$LOG_DIR"/node_data/nodes &>/dev/null
 fi
 
-# update addnodes, failed peers, along with ticker price (every half, & hour)
-if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]]; then
-  rm "$LOG_DIR"/node_data/nodes &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Update.Nodes() Looking for new peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-fi
-
-# create failed connection list, remove duplicates, sort
-egrep -o " to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+:[0-9]+ failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
-  awk '!a[$0]++' 2>&1 | sort -n 2>&1 | awk '{ print $2 }' >"$LOG_DIR"/node_data/failed 2>&1
+# function addnodes
+addnodes
 
 # get node list, ticker (api, arp)
 if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
@@ -239,17 +231,8 @@ if [ ! -f "$LOG_DIR"/node_data/nodes ]; then
   fi
 fi
 
-# output connected peers, disregard with failed connections
-egrep "192.168.1.*:15110" "$LOG_DIR"/node_data/failed 2>&1 |
-  egrep -o "192.168.1.[0-9]+" >>"$LOG_DIR"/node_data/failed 2>&1
-# node_data/addnodes
-cat "$LOG_DIR"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
-  # remove with failed peers file
-  grep -v -f "$LOG_DIR"/node_data/failed >"$LOG_DIR"/node_data/addnodes 2>&1
-# $(whoami)/addnodes
-cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
-  # remove with failed peers file
-  grep -v -f "$LOG_DIR"/node_data/success >"$LOG_DIR"/node_data/addnodes 2>&1
+# function addnodes_cleanup
+addnodes_cleanup
 
 # greater than n seconds
 if [[ "$(uptime_cmd)" -gt "300" ]]; then
