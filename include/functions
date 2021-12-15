@@ -255,7 +255,7 @@ if [[ "$(uptime_cmd)" -gt "300" ]]; then
 
     # connect nodes found with addnodes list above
     # (using tmp directory)
-    cat >"${LOG_DIR:?}"add_peers <<'EOF'
+    cat >"${LOG_DIR:?}"/add_peers <<'EOF'
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/null
