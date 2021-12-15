@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211512
-# 0.0.5.3
+# 0.0.4.8
 
 source /home/pi/pitrump.conf
 
@@ -35,11 +35,6 @@ function addnodes() {
 
 # cleanup node files
 function addnodes_cleanup() {
-  # output connected peers
-  # disregard with failed connections, without ports
-  egrep "192.168.1.*:15110" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 |
-    egrep -o "192.168.1.[0-9]+" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-
   # node_data/addnodes
   cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
     # remove with failed and success peers file
