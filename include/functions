@@ -279,8 +279,8 @@ peers
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Done! Addnodes ${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 killall screen
 EOF
-    # start adding nodes, inside screen session
-    screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+    # start adding nodes, inside screen session (timeout n seconds)
+    timeout 600 screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
   fi
 fi
 
