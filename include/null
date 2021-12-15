@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20211412
-# 0.1.1.9
+# V20211512
+# 0.1.2.5
 
 source /usr/local/bin/include/color
 
@@ -114,6 +114,12 @@ if [[ -z "$SCREEN_IND" ]] &>/dev/null; then
 fi
 if [[ "$SCREEN_IND" -eq "0" ]] &>/dev/null; then
   SCREEN_IND="${GR:?}0${GR:?}"
+fi
+if [[ -z "$PEERS_TRIES" ]] &>/dev/null; then
+  PEERS_TRIES="${GR:?}0${GR:?}"
+fi
+if [[ "$PEERS_TRIES" -eq "0" ]] &>/dev/null; then
+  PEERS_TRIES="${GR:?}0${GR:?}"
 fi
 
 # END
