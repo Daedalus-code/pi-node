@@ -26,7 +26,7 @@ if [[ "$(uptime_cmd)" -gt "300" ]]; then
   API_COUNT=$(wc -l /tmp/nodes 2>&1 | awk '{ print $1 }' 2>&1)
   printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Found ${G1:?}${API_COUNT:?}${N0:?} possible new peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # setup nodes, fill
-  cat /tmp/nodes >>"$LOG_DIR"/node_data/nodes
+  cat /tmp/nodes >"$LOG_DIR"/node_data/nodes
   # remove old file
   rm /tmp/nodes &>/dev/null
 
