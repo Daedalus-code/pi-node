@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.4.4
+# 0.6.4.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.4.4"
+VERSION="v0.6.4.7"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -454,10 +454,13 @@ WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
   awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 # save wallet stakes (addtowallet), remove duplicates
 # note: not perfect data of proof-of-work
-egrep "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log 2>&1 |
-  awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
+touch /home/"$(whoami)"/staking 2>&1
 # count saved stakes
 WALLET_STAKES=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
+if [[ "$WALLET_STAKES" -lt "$(egrep "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' 2>&1)" ]]; then
+  egrep "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log 2>&1 |
+    awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
+fi
 
 if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
   # wallet pos status
