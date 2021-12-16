@@ -14,9 +14,9 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 # screen indicator (is it running)
 if ! screen -list 2>&1 |
   grep -q "addnodes" 2>&1; then
-  SCREEN_IND="${GR:?} N${N0:?}"
+  SCREEN_IND="${GR:?}N${N0:?}"
 else
-  SCREEN_IND="${Y1:?} *${N0:?}"
+  SCREEN_IND="${Y1:?}*${N0:?}"
 fi
 
 if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
