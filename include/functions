@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.2.9
+# 0.6.3.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.2.9"
+VERSION="v0.6.3.5"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -251,9 +251,15 @@ cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_dat
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed 2>&1 |
   awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
-# create personal/wallet addnodes file
-cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
-  awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
+# count success and addnodes count
+SUCCESS_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
+ADDNODE_COUNT=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
+# if success count is greater than Addnode count
+if [[ "$SUCCESS_COUNT" -gt "$ADDNODE_COUNT" ]]; then
+  # create personal/wallet addnodes file
+  cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
+    awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
+fi
 
 # generate random ip address, ipv4 & ipv6
 RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
