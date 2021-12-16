@@ -6,11 +6,11 @@
 
 # wallet daemon uptime in seconds
 function uptime_cmd() {
-  PID="$(pidof trumpcoind)"
-  HZ=$(getconf CLK_TCK)
+  PID="$(pidof trumpcoind 2>&1)"
+  HZ=$(getconf CLK_TCK 2>&1)
   UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
-  STARTTIME=$(awk '{print $22}' </proc/$PID/stat)
-  echo $((${UPTIME_CMD%.*} - $STARTTIME / $HZ))
+  STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
+  echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
 
 ### addnodes ###################################################################
