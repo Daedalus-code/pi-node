@@ -223,7 +223,7 @@ fi
 
 # create connect failed ipv4:noport connection list of debug.log, remove duplicates, sort list
 egrep -o "connect to ([0-9]{1,3}[\.]){3}[0-9]{1,3}:[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
-  sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  sort -n 2>&1 | awk '!a[$0]++' | awk '{ print $3 }' >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
 # create connect() failed ipv4:noport connection list of debug.log, remove duplicates, sort list
 grep -o "connect() to .............:......" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
   awk '{ print $3 }' "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
