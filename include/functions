@@ -238,7 +238,7 @@ cat "${LOG_DIR:?}"/node_data/getpeerinfo 2>&1 | grep -v "subver" 2>&1 |
 cat "${LOG_DIR:?}"/node_data/nodes 2>&1 |
   awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
-# disregard failed peers, remove duplicates
+# disregard failed peers
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
   grep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
