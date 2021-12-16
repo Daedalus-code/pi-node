@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.0.4
+# 0.6.0.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.0.4"
+VERSION="v0.6.0.6"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -278,7 +278,9 @@ peers
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Start! Addnodes ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 while IFS= read -r ADDS; do
+  printf '%b' "${G0:?}\n"
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
+  printf '%b' "${N0:?}\n"
 done <"${LOG_DIR:?}"/node_data/addnodes
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
