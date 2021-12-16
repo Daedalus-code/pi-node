@@ -240,8 +240,8 @@ cat "${LOG_DIR:?}"/node_data/nodes 2>&1 |
   awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # failed peers, remove duplicates
-cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/success |
-  egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes 2>&1
+cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | grep -v -f "${LOG_DIR:?}"/node_data/peers/success |
+  grep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # count success and addnodes count
 SUCCESS_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
