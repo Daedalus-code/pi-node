@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.3.7
+# 0.6.4.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.3.7"
+VERSION="v0.6.4.2"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -293,6 +293,9 @@ if [[ "$(uptime_cmd)" -gt "369" ]]; then
 # V20211612
 # 0.0.3.9
 
+# exit when any command fails
+set -e
+
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/null
 source /usr/local/bin/include/color
@@ -321,7 +324,9 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
 
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Done! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
 killall screen
+exit
 
 EOF
     # start adding nodes, inside screen session (timeout n seconds)
