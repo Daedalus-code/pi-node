@@ -246,10 +246,10 @@ cat /home/"$(whoami)"/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/addno
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   egrep -v -f "${LOG_DIR:?}"/node_data/peers/* >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
-# remove empty files, else create addnodes
+# remove empty files
 if [ ! -s "${LOG_DIR:?}"/node_data/addnodes ]; then
   rm "${LOG_DIR:?}"/node_data/addnodes &>/dev/null
-else
+else # create addnodes file from success file
   cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
     awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
 fi
