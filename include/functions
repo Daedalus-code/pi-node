@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.3.7
+# 0.6.3.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.3.7"
+VERSION="v0.6.3.8"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -244,8 +244,9 @@ cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
 # again with same file, create tmp file
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
   egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed >/tmp/node_data/addnodes.tmp
-# move file into place
-mv "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes
+# again with same file, create tmp file
+cat "${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1 |
+  egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed >/tmp/node_data/addnodes
 
 # count success and addnodes count
 SUCCESS_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
