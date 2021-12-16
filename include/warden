@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20211512
-# 0.0.4.3
+# V20211612
+# 0.0.4.6
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -10,6 +10,9 @@ source /usr/local/bin/include/color
 
 # date for logs
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
+# wallet connections total
+WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
+  egrep -o "[0-9]+" 2>&1)
 
 # screen indicator (is it running)
 if ! screen -list 2>&1 |
@@ -21,7 +24,7 @@ fi
 
 if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
   UPTIME=$(ps -p "$(pidof trumpcoind 2>&1)" -o etime 2>&1 | tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime $UPTIME $SCREEN_IND${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime ${UPTIME:?} ${SCREEN_IND:?}${N0:?} Peers ${WALLET_PEERS_TOTAL:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # keep proof-of-work
