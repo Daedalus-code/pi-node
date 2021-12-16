@@ -58,7 +58,7 @@ LOAD=$(uptime 2>&1 |
   tr -d ',' 2>&1)
 
 # system user
-USER=$(users 2>&1 | awk '{ print $1 }' 2>&1)
+USER=$(whoami 2>&1 | awk '{ print $1 }' 2>&1)
 
 # cpu temp, celcius, fahrenheit, (raspberry pi)
 CPU_CTEMP=$(</sys/class/thermal/thermal_zone0/temp)
