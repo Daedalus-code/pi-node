@@ -241,10 +241,10 @@ cat "${LOG_DIR:?}"/node_data/nodes 2>&1 |
 # failed peers, remove duplicates
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   grep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes 2>&1
-
+# again with same file, create tmp file
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
   egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed >/tmp/node_data/addnodes.tmp
-
+# move file into place
 mv "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes
 
 # count success and addnodes count
