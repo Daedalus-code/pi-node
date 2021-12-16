@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20211512
-# 0.1.2.5
+# V20211612
+# 0.1.3.1
 
 source /usr/local/bin/include/color
 
@@ -120,6 +120,12 @@ if [[ -z "$PEERS_TRIES" ]] &>/dev/null; then
 fi
 if [[ "$PEERS_TRIES" -eq "0" ]] &>/dev/null; then
   PEERS_TRIES="${GR:?}0${GR:?}"
+fi
+if [[ -z "$USER" ]] &>/dev/null; then
+  USER="${GR:?}null${GR:?}"
+fi
+if [[ "$USER" -eq "0" ]] &>/dev/null; then
+  USER="${GR:?}null${GR:?}"
 fi
 
 # END
