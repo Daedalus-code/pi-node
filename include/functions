@@ -251,7 +251,7 @@ cat /home/"$(whoami)"/addnodes 2>&1 |
 
 # feed data into the addnodes file for the screen/script below
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
-  grep -v -f "${LOG_DIR:?}/node_data/peers/*" 2>&1 |
+  egrep -v -f "${LOG_DIR:?}"/node_data/peers/* 2>&1 |
   awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # generate random ip address, ipv4 & ipv6
