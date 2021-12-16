@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.3.4
+# 0.6.3.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.3.4"
+VERSION="v0.6.3.2"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -240,9 +240,7 @@ cat "${LOG_DIR:?}"/node_data/nodes 2>&1 |
 
 # failed peers, remove duplicates
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
-  grep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
-# move file into place
-mv "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes 2>&1
+  grep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # count success and addnodes count
 SUCCESS_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
