@@ -312,7 +312,7 @@ printf '%b' "${LOG_DATE:?} Status() AddNode.Script Start! Addnodes/New ${PEERS_A
 
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
-done <"${LOG_DIR:?}"/node_data/addnodes
+done | sed -r '/^.{,13}$/d' <"${LOG_DIR:?}"/node_data/addnodes
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
