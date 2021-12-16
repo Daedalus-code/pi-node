@@ -246,11 +246,11 @@ cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
   awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
 
 # add extra addnodes from the manual addnodes file in /home
-# feed data into the addnodes file for the screen/script below
 cat /home/"$(whoami)"/addnodes >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
+
+# feed data into the addnodes file for the screen/script below
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
   awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes 2>&1
-cat /home/"$(whoami)"/addnodes
 
 # generate random ip address, ipv4 & ipv6
 RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
