@@ -179,7 +179,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ]; then
   source /usr/local/bin/include/data
 
   # greater than n seconds
-  if [[ "$(uptime_cmd)" -gt "300" ]]; then
+  if [[ "$(uptime_cmd)" -gt "600" ]]; then
 
     # count failed connections, feed output to debug.log
     FAIL_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
