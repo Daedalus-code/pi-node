@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.5.4
+# 0.6.4.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.5.4"
+VERSION="v0.6.4.8"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -244,9 +244,6 @@ cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/p
 # failed peers
 cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed 2>&1 |
   awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
-# again
-cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
-  awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # addnodes, disregard peers with failed and success files
 
@@ -256,9 +253,6 @@ cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_dat
 # failed peers
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed 2>&1 |
   awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
-# again
-cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
-  awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # count success and addnodes count
 SUCCESS_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
