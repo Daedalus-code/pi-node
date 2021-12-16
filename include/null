@@ -125,7 +125,7 @@ if [[ -z "$USER" ]] &>/dev/null; then
   USER="${N0:?}"
 fi
 if [[ "$USER" -eq "0" ]] &>/dev/null; then
-  USER="${N0:?}"
+  USER="${GR:?}null${GR:?}"
 fi
 if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
   PUBLIC_IP="${N0:?}"
