@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.1.5
+# 0.6.2.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.1.5"
+VERSION="v0.6.2.0"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -246,8 +246,13 @@ cat /home/"$(whoami)"/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/addno
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   egrep -v -f "${LOG_DIR:?}"/node_data/peers/* >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
-# create addnodes for addnode.script
-cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
+# remove empty files, else create addnodes
+if [ ! -s "${LOG_DIR:?}"/node_data/addnodes ]; then
+  rm "${LOG_DIR:?}"/node_data/addnodes &>/dev/null
+else
+  cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
+    awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
+fi
 
 # generate random ip address, ipv4 & ipv6
 RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
