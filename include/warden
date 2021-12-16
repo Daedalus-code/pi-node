@@ -24,7 +24,7 @@ fi
 
 if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
   UPTIME=$(ps -p "$(pidof trumpcoind 2>&1)" -o etime 2>&1 | tr -d 'ELAPSED' 2>&1 | xargs 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime ${UPTIME:?} ${SCREEN_IND:?}${N0:?} Peers ${WALLET_PEERS_TOTAL:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] Uptime ${UPTIME:?} ${SCREEN_IND:?}${N0:?}Peers ${WALLET_PEERS_TOTAL:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # keep proof-of-work
