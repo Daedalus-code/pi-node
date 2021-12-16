@@ -249,7 +249,7 @@ cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   egrep -v -f "${LOG_DIR:?}"/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 # failed
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
-  egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes 2>&1
+  egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # create personal/wallet addnodes file
 cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
