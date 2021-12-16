@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.2.1
+# 0.6.2.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.2.1"
+VERSION="v0.6.2.2"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -251,7 +251,8 @@ cat /home/"$(whoami)"/addnodes 2>&1 |
 
 # feed data into the addnodes file for the screen/script below
 cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
-  awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes 2>&1
+  grep -v -f "${LOG_DIR:?}"/node_data/peers/* 2>&1 |
+  awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # generate random ip address, ipv4 & ipv6
 RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
