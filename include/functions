@@ -264,7 +264,7 @@ echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes
 ### addnodes screen script #####################################################
 
 # greater than n seconds
-if [[ "$(uptime_cmd)" -gt "300" ]]; then
+if [[ "$(uptime_cmd)" -gt "369" ]]; then
   # look for screen session, if not found, run one
   if ! screen -list 2>&1 |
     grep -q "addnodes" 2>&1; then
