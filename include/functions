@@ -293,7 +293,7 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 peers
 
-# feed data into the addnodes file for the screen/script below
+# feed new/live data into the addnodes file for the screen/script below
 cat /home/"$(whoami)"/addnodes 2>&1 |
 egrep -v -f "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
 awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
