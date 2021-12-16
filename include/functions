@@ -245,11 +245,6 @@ cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
 cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
   awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
 
-# feed data into the addnodes file for the screen/script below
-cat /home/"$(whoami)"/addnodes 2>&1 |
-  egrep -v -f "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
-  awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
-
 # generate random ip address, ipv4 & ipv6
 RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
 RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
@@ -287,6 +282,11 @@ function peers() {
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 peers
+
+# feed data into the addnodes file for the screen/script below
+cat /home/"$(whoami)"/addnodes 2>&1 |
+egrep -v -f "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
+awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Start! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
