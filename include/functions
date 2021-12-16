@@ -323,7 +323,7 @@ killall screen
 
 EOF
     # start adding nodes, inside screen session (timeout n seconds)
-    timeout 600 screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+    timeout 1800 screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
   fi
 fi
 
