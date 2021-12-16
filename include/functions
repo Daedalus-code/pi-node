@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.2.5
+# 0.6.3.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.2.5"
+VERSION="v0.6.3.0"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -277,6 +277,11 @@ if [[ "$(uptime_cmd)" -gt "369" ]]; then
     # connect nodes found with addnodes list above
     # (using tmp directory)
     cat >"${LOG_DIR:?}"/add_peers <<'EOF'
+#!/bin/bash
+
+# By Rainman
+# V20211612
+# 0.0.3.9
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/null
