@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.2.0
+# 0.6.1.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.2.0"
+VERSION="v0.6.1.9"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -241,8 +241,7 @@ egrep -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}:[0-9]+" "${LOG_DIR:?}"/node_data/nodes 2
 
 # add extra addnodes from the manual addnodes file in /home
 # feed data into the addnodes file for the screen/script below
-egrep -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}:[0-9]+" /home/"$(whoami)"/addnodes 2>&1 |
-  egrep -v -f "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
+cat /home/"$(whoami)"/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/addnodes 2>&1 |
   awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # disregard peers with failed and success files
