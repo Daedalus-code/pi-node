@@ -235,21 +235,21 @@ cat "${LOG_DIR:?}"/node_data/getpeerinfo 2>&1 | egrep "[a0-z9]+.[a0-z9]+.[a0-z9]
 
 # add nodes, disregard peers with failed and success files
 
-# success
-cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | awk '!a[$0]++' 2>&1 |
-  egrep -v -f "${LOG_DIR:?}"/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes 2>&1
-# failed
-cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | awk '!a[$0]++' 2>&1 |
-  egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
+# success peers
+cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
+  awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes 2>&1
+# failed peers
+cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed 2>&1 |
+  awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # disregard peers with failed and success files
 
-# success
-cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
-  egrep -v -f "${LOG_DIR:?}"/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes 2>&1
-# failed
-cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
-  egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
+# success peers
+cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
+  awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes 2>&1
+# failed peers
+cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | egrep -v -f "${LOG_DIR:?}"/node_data/peers/failed 2>&1 |
+  awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 # create personal/wallet addnodes file
 cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
