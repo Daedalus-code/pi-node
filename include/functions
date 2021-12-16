@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.4.2
+# 0.6.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.4.2"
+VERSION="v0.6.4.4"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -191,21 +191,23 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ]; then
       bc -l 2>&1)*$SUCCESS_CO" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
     # syntax fix
-    SUCCESS_RA_SX=$(echo "$SUCCESS_RA" 2>&1 | awk -F. '{ print $1 }' 2>&1)
+    SUCCESS_RA_SX=$(echo "$SUCCESS_RA" 2>&1 |
+      sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" 2>&1 |
+      awk -F. '{ print $1 }' 2>&1)
 
-    if [[ "$(echo "$SUCCESS_RA_SX" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")" -ge "0" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "0" ]]; then
       SRAC="${GR:?}${SUCCESS_RA:?}%"
     fi
-    if [[ "$(echo "$SUCCESS_RA_SX" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")" -ge "10" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "10" ]]; then
       SRAC="${Y0:?}${SUCCESS_RA:?}%"
     fi
-    if [[ "$(echo "$SUCCESS_RA_SX" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")" -ge "25" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "25" ]]; then
       SRAC="${Y1:?}${SUCCESS_RA:?}%"
     fi
-    if [[ "$(echo "$SUCCESS_RA_SX" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")" -ge "50" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "50" ]]; then
       SRAC="${G0:?}${SUCCESS_RA:?}%"
     fi
-    if [[ "$(echo "$SUCCESS_RA_SX" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")" -ge "75" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "75" ]]; then
       SRAC="${G1:?}${SUCCESS_RA:?}%"
     fi
 
