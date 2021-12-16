@@ -29,7 +29,7 @@ if pidof trumpcoind 2>&1 | wc -l 2>&1 | egrep -q "1" 2>&1; then
     echo $((${UPTIME_CMD%.*} - $STARTTIME / $HZ))
   }
   UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(uptime_cmd)/3600")) $(("$(uptime_cmd)%3600/60")) $(("$(uptime_cmd)%60")))
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] System Uptime ${UPTIME:?} ${SCREEN_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] :: System Uptime ${UPTIME:?} ${SCREEN_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # keep proof-of-work
