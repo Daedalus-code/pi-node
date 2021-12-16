@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211612
-# 0.6.3.5
+# 0.6.3.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.3.5"
+VERSION="v0.6.3.9"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -243,6 +243,10 @@ cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
   grep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
 cat "${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1 | awk '!a[$0]++' 2>&1 |
   grep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes 2>&1
+cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
+  grep -v -f "${LOG_DIR:?}"/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
+cat "${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1 | awk '!a[$0]++' 2>&1 |
+  grep -v -f "${LOG_DIR:?}"/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes 2>&1
 rm "${LOG_DIR:?}"/node_data/addnodes.tmp &>/dev/null
 
 # count success and addnodes count
