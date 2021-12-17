@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.2.5
+# 0.6.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.2.5"
+VERSION="v0.6.2.4"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -280,10 +280,9 @@ if [[ "$(uptime_cmd)" -gt "369" ]]; then
 
 # By Rainman
 # V20211712
-# 0.0.3.6
+# 0.0.3.5
 
-PATH=/home/"$(whoami)"/bin
-
+source .bashrc
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/null
 source /usr/local/bin/include/color
