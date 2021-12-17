@@ -223,15 +223,6 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ]; then
   fi
 fi
 
-# clean up personal addnodes
-cat /home/"$(whoami)"/addnodes 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/peers/failed >/tmp/addnodes.tmp 2>&1
-mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
-# clean up script addnodes
-cat "$LOG_DIR"/node_data/addnodes 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/nodes >/tmp/addnodes.tmp 2>&1
-mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
-
 ### addnodes lists #############################################################
 
 # create "failed/refusing" ipv4:ipv6 peers list, sort -n, remove duplicates
@@ -284,6 +275,15 @@ TRIES_COUNT=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tries 2>&1)
 if [[ "$TRIES_COUNT" -lt "$(debug_tries 2>&1)" ]]; then
   debug_tries >"${LOG_DIR:?}"/node_data/tries 2>&1
 fi
+
+# clean up personal addnodes
+cat /home/"$(whoami)"/addnodes 2>&1 |
+  grep -v -f "$LOG_DIR"/node_data/peers/failed >/tmp/addnodes.tmp 2>&1
+mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
+# clean up script addnodes
+cat "$LOG_DIR"/node_data/addnodes 2>&1 |
+  grep -v -f "$LOG_DIR"/node_data/nodes >/tmp/addnodes.tmp 2>&1
+mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
 
 ### addnodes screen script #####################################################
 
