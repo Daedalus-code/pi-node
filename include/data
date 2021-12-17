@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # By Rainman
-# V20211612
+# V20211712
 # 0.0.7.3
 
 # wallet daemon uptime in seconds
-function uptime_cmd() {
+function uptime_daemon() {
   PID="$(pidof trumpcoind 2>&1)"
   HZ=$(getconf CLK_TCK 2>&1)
   UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
@@ -15,7 +15,7 @@ function uptime_cmd() {
 
 ### addnodes ###################################################################
 
-if [[ "$(uptime_cmd)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # add node address (api) internet
   curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
 
