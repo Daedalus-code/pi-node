@@ -112,7 +112,6 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 |
 # echo 1 to tries file, trim it
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
   rm "${LOG_DIR:?}"/node_data/getwan &>/dev/null
-  echo "1" >"${LOG_DIR:?}"/node_data/tries 2>&1
   if [[ "$UPDATE_REPO" -eq "1" ]]; then
     # update repo
     cd /home/"$(whoami)"/trump-node || exit &&
@@ -461,6 +460,7 @@ fi
 ### clean up debug.log, peers.dat (truncate) keep pos around ###################
 
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
+  echo "$(tail -1 "${LOG_DIR:?}"/node_data/tries 2>&1)" >"${LOG_DIR:?}"/node_data/tries 2>&1
   # truncate debug.log
   truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
   if [[ "$KEEP_BACKUPS" -eq "1" ]]; then
