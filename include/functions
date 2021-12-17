@@ -396,6 +396,8 @@ else # wallet is loading/syncing
   WALLET_SYNC="${GR:?}0.00%${N0:?}"
 fi
 
+source /usr/local/bin/include/null
+
 # wallet patriotnodes total
 WALLET_NODES_TOTAL=$(grep "total" "${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1 |
   egrep -o "[0-9]+" 2>&1)
