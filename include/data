@@ -15,10 +15,12 @@ function uptime_daemon() {
 
 ### wanip ######################################################################
 
-# get wan address, if missing
-if [ ! -f "${LOG_DIR:?}"/node_data/getwan ]; then
-  host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan 2>&1
-fi
+function get_wan() {
+  # get wan address, if missing
+  if [ ! -f "${LOG_DIR:?}"/node_data/getwan ]; then
+    host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan 2>&1
+  fi
+}
 
 ### addnodes ###################################################################
 
