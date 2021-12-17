@@ -43,7 +43,7 @@ LAST_LOG="${LAST_LOG:0:188} $SIZE"
 printf '%b' "${LOG_DATE:?} Status() DEBUG.Log.Size $SIZE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # wallet daemon uptime in seconds
-function uptime_cmd() {
+function uptime_daemon() {
   PID="$(pidof trumpcoind 2>&1)"
   HZ=$(getconf CLK_TCK 2>&1)
   UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
@@ -176,7 +176,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ]; then
   source /usr/local/bin/include/data
 
   # greater than n seconds
-  if [[ "$(uptime_cmd)" -gt "600" ]]; then
+  if [[ "$(uptime_daemon)" -gt "600" ]]; then
 
     # count failed connections, feed output to debug.log
     FAIL_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
@@ -273,7 +273,7 @@ fi
 ### addnodes screen script #####################################################
 
 # greater than n seconds
-if [[ "$(uptime_cmd)" -gt "369" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]]; then
   # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
     grep -q "addnodes" 2>&1; then
@@ -347,7 +347,7 @@ else
 fi
 
 # greater than n seconds
-if [[ "$(uptime_cmd)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # loading is done
   RC_LOADING="${N0:?}"
   # logo turns yellow while running
@@ -570,7 +570,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
     TIMELINE="Lowest Input $TIMELINE"
     # daemon uptime
   elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
-    TIMELINE_SEC=$(uptime_cmd)
+    TIMELINE_SEC=$(uptime_daemon)
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
     TIMELINE="Uptime $TIMELINE"
   elif [ "$RANDOM_TIMELINE" -eq "13" ]; then

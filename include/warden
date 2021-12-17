@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20211612
+# V20211712
 # 0.0.5.2
 
 # pitrump configurations
@@ -20,7 +20,7 @@ else
 fi
 
 # wallet daemon uptime in seconds
-function uptime_cmd() {
+function uptime_daemon() {
   PID="$(pidof trumpcoind 2>&1)"
   HZ=$(getconf CLK_TCK 2>&1)
   UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
@@ -29,9 +29,9 @@ function uptime_cmd() {
 }
 
 # daemon uptime greater then n
-if [[ "$(uptime_cmd)" -gt "1" ]]; then
+if [[ "$(uptime_daemon)" -gt "1" ]]; then
   if pgrep -x trumpcoind &>/dev/null; then
-    UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(uptime_cmd)/3600")) $(("$(uptime_cmd)%3600/60")) $(("$(uptime_cmd)%60")))
+    UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(uptime_daemon)/3600")) $(("$(uptime_daemon)%3600/60")) $(("$(uptime_daemon)%60")))
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} [${G1:?}Ok${N0:?}] :: System Uptime ${UPTIME:?} ${SCREEN_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
