@@ -32,7 +32,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   if [[ "$(wc -l "$LOG_DIR"/node_data/addnodes 2>&1 |
     awk '{ print $1 }')" -lt "$(wc -l /home/"$(whoami)"/addnodes 2>&1 |
       awk '{ print $1 }' 2>&1)" ]]; then
-    # fill with extra added nodes personal addnodes
+    # fill with extra added nodes from personal addnodes
     cat /home/"$(whoami)"/addnodes >>"$LOG_DIR"/node_data/addnodes 2>&1
   fi
 
