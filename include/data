@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211712
-# 0.0.9.8
+# 0.0.9.5
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -39,9 +39,6 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # clean up personal addnodes
   cat /home/"$(whoami)"/addnodes 2>&1 |
     grep -v -f "$LOG_DIR"/node_data/peers/success >/tmp/addnodes.tmp 2>&1
-  mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
-  cat /home/"$(whoami)"/addnodes 2>&1 |
-    grep -v -f "$LOG_DIR"/node_data/peers/failed >/tmp/addnodes.tmp 2>&1
   mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
 
   # setup nodes, fill
