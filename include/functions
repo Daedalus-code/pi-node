@@ -34,6 +34,15 @@ done
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
 
+# wallet daemon uptime in seconds
+function uptime_daemon() {
+  PID="$(pidof trumpcoind 2>&1)"
+  HZ=$(getconf CLK_TCK 2>&1)
+  UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
+  STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
+  echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
+}
+
 if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # log lines (tail debug)
   LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
@@ -43,15 +52,6 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   LAST_LOG="${LAST_LOG:0:188} $SIZE"
   printf '%b' "${LOG_DATE:?} Status() DEBUG.Log.Size $SIZE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
-
-# wallet daemon uptime in seconds
-function uptime_daemon() {
-  PID="$(pidof trumpcoind 2>&1)"
-  HZ=$(getconf CLK_TCK 2>&1)
-  UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
-  STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
-  echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
-}
 
 ### system information #########################################################
 
