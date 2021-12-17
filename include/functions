@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.4.8
+# 0.6.5.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.4.8"
+VERSION="v0.6.5.2"
 
 # auto update of repository
 UPDATE_REPO="0"
@@ -284,6 +284,10 @@ mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
 cat "$LOG_DIR"/node_data/addnodes 2>&1 |
   grep -v -f "$LOG_DIR"/node_data/nodes >/tmp/addnodes.tmp 2>&1
 mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
+cat /home/"$(whoami)"/addnodes 2>&1 |
+  grep -v -f "$LOG_DIR"/node_data/peers/failed >/tmp/extra_nodes 2>&1
+cat /tmp/extra_nodes >>"$LOG_DIR"/node_data/addnodes 2>&1
+rm /tmp/extra_nodes &>/dev/null
 
 ### addnodes screen script #####################################################
 
