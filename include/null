@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20211612
-# 0.1.3.1
+# V20211712
+# 0.1.2.8
 
 source /usr/local/bin/include/color
 
@@ -20,6 +20,9 @@ if [[ -z "$WALLET_NODES_INQUEUE" ]] &>/dev/null; then
   WALLET_NODES_INQUEUE="${GR:?}0${N0:?}"
 fi
 if [[ -z "$IP_ADDRESS" ]] &>/dev/null; then
+  IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
+fi
+if [[ "$IP_ADDRESS" -eq "0" ]] &>/dev/null; then
   IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 fi
 if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
@@ -70,9 +73,6 @@ fi
 if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
   WALLET_TXCOUNT="${GR:?}0${N0:?}"
 fi
-if [[ -z "$RC_LOADING" ]] &>/dev/null; then
-  RC_LOADING=""
-fi
 if [[ -z "$WALLET_INPUTS" ]] &>/dev/null; then
   WALLET_INPUTS="${GR:?}0${N0:?}"
 fi
@@ -83,7 +83,10 @@ if [[ -z "$WALLET_STAKES" ]] &>/dev/null; then
   WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 if [[ -z "$LAST_TX" ]] &>/dev/null; then
-  LAST_TX="0"
+  LAST_TX="${GR:?}0000000000000000000000000000000000000000000000000000000000000000${N0:?}"
+fi
+if [[ "$LAST_TX" -eq "0" ]] &>/dev/null; then
+  LAST_TX="${GR:?}0000000000000000000000000000000000000000000000000000000000000000${N0:?}"
 fi
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="${N0:?}"
@@ -104,28 +107,22 @@ if [[ "$DARKMODE" -eq "0" ]] &>/dev/null; then
   DARKMODE="${GR:?}0${GR:?}"
 fi
 if [[ -z "$SUCCESS_RA_SX" ]] &>/dev/null; then
-  SUCCESS_RA_SX="${GR:?}0${GR:?}"
+  SUCCESS_RA_SX="0"
 fi
 if [[ "$SUCCESS_RA_SX" -eq "0" ]] &>/dev/null; then
-  SUCCESS_RA_SX="${GR:?}0${GR:?}"
-fi
-if [[ -z "$SCREEN_IND" ]] &>/dev/null; then
-  SCREEN_IND="${GR:?}0${GR:?}"
-fi
-if [[ "$SCREEN_IND" -eq "0" ]] &>/dev/null; then
-  SCREEN_IND="${GR:?}0${GR:?}"
+  SUCCESS_RA_SX="0"
 fi
 if [[ -z "$PEERS_TRIES" ]] &>/dev/null; then
-  PEERS_TRIES="${GR:?}0${GR:?}"
+  PEERS_TRIES="0"
 fi
 if [[ "$PEERS_TRIES" -eq "0" ]] &>/dev/null; then
-  PEERS_TRIES="${GR:?}0${GR:?}"
+  PEERS_TRIES="0"
 fi
 if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-  PUBLIC_IP="${N0:?}"
+  PUBLIC_IP="${GR:?}0.0.0.0${GR:?}"
 fi
 if [[ "$PUBLIC_IP" -eq "0" ]] &>/dev/null; then
-  PUBLIC_IP="${N0:?}"
+  PUBLIC_IP="${GR:?}0.0.0.0${GR:?}"
 fi
 
 # END
