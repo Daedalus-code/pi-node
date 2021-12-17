@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211712
-# 0.0.8.2
+# 0.0.8.9
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -12,6 +12,13 @@ function uptime_daemon() {
   STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
+
+### wanip ######################################################################
+
+# get wan address, if missing
+if [ ! -f "${LOG_DIR:?}"/node_data/getwan ]; then
+  host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan 2>&1
+fi
 
 ### addnodes ###################################################################
 

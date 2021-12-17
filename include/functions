@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.4.7
+# 0.6.4.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.4.7"
+VERSION="v0.6.4.2"
 
 # auto update of repository
 UPDATE_REPO="0"
@@ -71,12 +71,12 @@ CPU_FTEMP=$(echo "(1.8 * $CPU_CTEMP) + 32" 2>&1 |
 USED_SWAP=$(swapon -s 2>&1 | grep "/swapfile" 2>&1 |
   awk '{ print $4 }' 2>&1)
 # calculate megabytes (used swap)
-USED_SWAP=$(echo "$USED_SWAP/1024" | bc -l)
+USED_SWAP=$(echo "$USED_SWAP/1024" 2>&1 | bc -l 2>&1)
 # total swap
 TOTAL_SWAP=$(swapon -s 2>&1 | grep "/swapfile" 2>&1 |
   awk '{ print $3 }' 2>&1)
 # calculate megabytes (total swap)
-TOTAL_SWAP=$(echo "$TOTAL_SWAP/1024" | bc -l)
+TOTAL_SWAP=$(echo "$TOTAL_SWAP/1024" 2>&1 | bc -l 2>&1)
 # free Memory
 FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 |
   awk '{ print $4 }' 2>&1)
@@ -97,7 +97,7 @@ FREE_MEM="${G1:?}${FREE_MEM:?}M${N0:?}"
 USED_HDD=$(df -h 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
   awk '{ print $3 }' 2>&1)
 USED_HDD="${G1:?}${USED_HDD:?}${N0:?}"
-USED_HDD_P=$(df -h | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
+USED_HDD_P=$(df -h 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
   awk '{ print $5 }' 2>&1)
 
 # get interface
@@ -117,11 +117,6 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
     cd /home/"$(whoami)"/trump-node || exit &&
       git pull -q && bash include/install 2>&1
   fi
-fi
-
-# get wan address, if missing
-if [ ! -f "${LOG_DIR:?}"/node_data/getwan ]; then
-  host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan
 fi
 
 # public ip address
@@ -259,10 +254,10 @@ fi
 RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
 RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
 # feed random ip address into addnodes
-echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes
-echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes
+echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
+echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 # feed banned ip address
-echo "127.0.0.1" >>"${LOG_DIR:?}"/node_data/peers/failed
+echo "127.0.0.1" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
 
 function debug_tries() {
   egrep -o "peer=[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
@@ -561,7 +556,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
     TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
     # average confirmation
   elif [ "$RANDOM_TIMELINE" -eq "8" ]; then
-    UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent | wc -l)
+    UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)
     TIMELINE=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)
     # average calculated
@@ -589,7 +584,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
     TIMELINE="Lowest Input $TIMELINE"
     # daemon uptime
   elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
-    TIMELINE_SEC=$(uptime_daemon)
+    TIMELINE_SEC=$(uptime_daemon 2>&1)
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
     TIMELINE="Uptime $TIMELINE"
   elif [ "$RANDOM_TIMELINE" -eq "13" ]; then
