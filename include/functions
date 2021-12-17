@@ -2,19 +2,21 @@
 
 # By Rainman
 # V20211712
-# 0.6.3.2
+# 0.6.3.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
-# script version
-VERSION="v0.6.3.2"
+# script version for dashbord
+VERSION="v0.6.3.6"
+
+# auto update of repository
 UPDATE_REPO="0"
 
-# wait for node to start
+# wait on node (daemon) to start
 until pidof trumpcoind 2>&1 |
   wc -w 2>&1 | egrep "1" &>/dev/null; do
   clear
-  echo "Waiting on trumpcoind daemon.."
+  echo "Waiting on trumpcoind ($(pidof trumpcoind 2>&1)) daemon.."
   sleep 2
 done
 
@@ -52,7 +54,7 @@ function uptime_daemon() {
 
 # system load
 LOAD=$(uptime 2>&1 |
-  grep -Eo "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 |
+  egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 |
   tr -d ',' 2>&1)
 
 # system user
@@ -85,7 +87,7 @@ TOTAL_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 |
 TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 |
   bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
 TOTAL_MEM="${G1:?}${TOTAL_MEM:?}${N0:?}"
-# calculate total free system free memory + used swap
+# calculate total free system memory + used swap
 FREE_MEM=$(echo "$(echo "$TOTAL_SWAP-$USED_SWAP" 2>&1 |
   bc -l 2>&1)+$FREE_MEM" 2>&1 |
   bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
@@ -116,10 +118,12 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
       git pull -q && bash include/install 2>&1
   fi
 fi
-# get wan address
+
+# get wan address, if missing
 if [ ! -f "${LOG_DIR:?}"/node_data/getwan ]; then
   host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan
 fi
+
 PUBLIC_IP=$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 |
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
 PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
@@ -285,7 +289,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]]; then
 
 # By Rainman
 # V20211712
-# 0.0.3.4
+# 0.0.3.2
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/null
