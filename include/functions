@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.2.3
+# 0.6.2.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.2.3"
+VERSION="v0.6.2.8"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -33,6 +33,11 @@ CLOCK=$(date "+%H:%M:%S" 2>&1)
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 ### system information #########################################################
+
+# make sure screen is installed
+if ! [ -x "$(command -v coreutils)" ]; then
+  sudo apt-get -y install coreutils
+fi
 
 # log lines (tail debug)
 LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
