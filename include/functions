@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.4.4
+# 0.6.4.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.4.4"
+VERSION="v0.6.4.2"
 
 # auto update of repository
 UPDATE_REPO="0"
@@ -118,8 +118,6 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
       git pull -q && bash include/install 2>&1
   fi
 fi
-
-get_wan
 
 # public ip address
 PUBLIC_IP=$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 |
