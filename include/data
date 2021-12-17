@@ -29,12 +29,12 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   ARP_NEW=$(egrep -o "$LOG_DIR"/node_data/nodes 2>&1 | grep -v -f /tmp/nodes 2>&1 | wc -l 2>&1)
 
   # fill extra from personal addnodes if script addnodes are smaller
-  ADDNODES_SUCCESS="$(wc -l "$LOG_DIR"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)"
-  ADDNODES_PERSONAL="$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)"
-  if [[ "$ADDNODES_PERSONAL" -gt "$ADDNODES_SUCCESS" ]]; then
+  SUCCESS_COUNT="$(wc -l "$LOG_DIR"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)"
+  ADDNODE_COUNT="$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)"
+  if [[ "$ADDNODE_COUNT" -gt "$SUCCESS_COUNT" ]]; then
     # fill with extra added nodes from personal addnodes
     cat /home/"$(whoami)"/addnodes >>"$LOG_DIR"/node_data/nodes 2>&1
-    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Difference/New peers $(echo "${ADDNODES_PERSONAL:?}-${ADDNODES_SUCCESS:?}" 2>&1 | bc 2>&1) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Difference/New peers $(echo "${ADDNODE_COUNT:?}-${SUCCESS_COUNT:?}" 2>&1 | bc 2>&1) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   # setup nodes, fill
