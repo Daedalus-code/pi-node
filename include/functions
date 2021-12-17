@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.3.9
+# 0.6.4.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.3.9"
+VERSION="v0.6.4.8"
 
 # auto update of repository
 UPDATE_REPO="0"
@@ -222,6 +222,15 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ]; then
     printf '%b' "${LOG_DATE:?} Status() System.Monitor Loading wallet${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
+
+# clean up personal addnodes
+cat /home/"$(whoami)"/addnodes 2>&1 |
+  grep -v -f "$LOG_DIR"/node_data/peers/failed >/tmp/addnodes.tmp 2>&1
+mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
+# clean up script addnodes
+cat "$LOG_DIR"/node_data/addnodes 2>&1 |
+  grep -v -f "$LOG_DIR"/node_data/nodes >/tmp/addnodes.tmp 2>&1
+mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
 
 ### addnodes lists #############################################################
 
