@@ -282,7 +282,7 @@ if [[ "$(uptime_cmd)" -gt "369" ]]; then
 # V20211712
 # 0.0.3.6
 
-PATH=/home/user/bin
+PATH=/home/"$(whoami)"/bin
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/null
