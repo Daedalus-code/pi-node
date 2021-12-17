@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.2.4
+# 0.6.2.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.2.4"
+VERSION="v0.6.2.6"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -309,7 +309,9 @@ done <"${LOG_DIR:?}"/node_data/addnodes
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Done! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+screen -X -S addnodes quit
 killall screen
+screen -wipe
 exit
 EOF
     # start adding nodes, inside screen session (timeout n seconds)
