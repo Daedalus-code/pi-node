@@ -14,10 +14,10 @@ if [[ "$IP_ADDRESS" -eq "0" ]] &>/dev/null; then
   IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 fi
 if [[ "$WALLET_VERSION" -eq "0" ]] &>/dev/null; then
-  WALLET_VERSION="${GR:?}0.0.0${N0:?}"
+  WALLET_VERSION="${GR:?}0.0.0.0${N0:?}"
 fi
 if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
-  WALLET_VERSION="${GR:?}0.0.0${N0:?}"
+  WALLET_VERSION="${GR:?}0.0.0.0${N0:?}"
 fi
 if [[ -z "$WALLET_CHAIN" ]] &>/dev/null; then
   WALLET_CHAIN="${GR:?}0${N0:?}"
