@@ -281,7 +281,7 @@ function debug_tries() {
 }
 
 # get value from tries file
-TRIES_COUNT=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tries 2>&1)
+TRIES_COUNT=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tries 2>&1 | egrep "[0-9]+" 2>&1)
 # get peers connected overall since start
 if [[ "$TRIES_COUNT" -lt "$(debug_tries 2>&1)" ]]; then
   debug_tries >"${LOG_DIR:?}"/node_data/tries 2>&1
