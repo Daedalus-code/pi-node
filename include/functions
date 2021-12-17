@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.7.4
+# 0.6.7.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.7.4"
+VERSION="v0.6.7.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -134,13 +134,14 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   if [ ! -f "${LOG_DIR:?}"/node_data/getwan ]; then
     host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan 2>&1
     printf '%b' "${LOG_DATE:?} Status() GetWan.Data(): Found Wan Address ($(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # public ip address
+    PUBLIC_IP=$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 |
+      egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
+    PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
+  else
+    PUBLIC_IP="${GR:?}127.0.0.1${N0:?}"
   fi
 fi
-
-# public ip address
-PUBLIC_IP=$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 |
-  egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
-PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
 
 # null info
 source /usr/local/bin/include/null
