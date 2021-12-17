@@ -2,23 +2,11 @@
 
 # By Rainman
 # V20211712
-# 0.1.3.1
+# 0.1.1.0
 
 source /usr/local/bin/include/color
 
 # non responsive
-if [[ -z "$WALLET_NODES_TOTAL" ]] &>/dev/null; then
-  WALLET_NODES_TOTAL="${GR:?}0${N0:?}"
-fi
-if [[ -z "$WALLET_NODES_STABLE" ]] &>/dev/null; then
-  WALLET_NODES_STABLE="${GR:?}0${N0:?}"
-fi
-if [[ -z "$WALLET_NODES_ENABLED" ]] &>/dev/null; then
-  WALLET_NODES_ENABLED="${GR:?}0${N0:?}"
-fi
-if [[ -z "$WALLET_NODES_INQUEUE" ]] &>/dev/null; then
-  WALLET_NODES_INQUEUE="${GR:?}0${N0:?}"
-fi
 if [[ -z "$IP_ADDRESS" ]] &>/dev/null; then
   IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 fi
@@ -84,15 +72,6 @@ if [[ "$WALLET_INPUTS" -eq "0" ]] &>/dev/null; then
 fi
 if [[ -z "$WALLET_STAKES" ]] &>/dev/null; then
   WALLET_STAKES="${GR:?}0${N0:?}"
-fi
-if [[ -z "$LAST_TX" ]] &>/dev/null; then
-  LAST_TX="${GR:?}0000000000000000000000000000000000000000000000000000000000000000${N0:?}"
-fi
-if [[ "$LAST_TX" -eq "0" ]] &>/dev/null; then
-  LAST_TX="${GR:?}0000000000000000000000000000000000000000000000000000000000000000${N0:?}"
-fi
-if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
-  WALLET_TXLAST="${N0:?}"
 fi
 if [[ -z "$TIMELINE" ]] &>/dev/null; then
   TIMELINE="${N0:?}"
