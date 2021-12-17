@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211612
-# 0.0.5.7
+# 0.0.5.2
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -44,11 +44,6 @@ if [[ "$(uptime_cmd)" -gt "1" ]]; then
     # remove old files
     rm "$LOG_DIR"/node_data/* &>/dev/null
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # make sure tor is installed
-    if ! [ -x "$(command -v tor)" ]; then
-      sudo apt-get install tor -y
-      echo "Setup tor/wallet configurations!"
-    fi
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     "$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
   fi

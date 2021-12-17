@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.2.3
+# 0.6.2.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version
-VERSION="v0.6.2.3"
+VERSION="v0.6.2.6"
 UPDATE_REPO="0"
 
 # wait for node to start
@@ -153,11 +153,6 @@ fi
 
 ### adding nodes ###############################################################
 
-# make sure screen is installed
-if ! [ -x "$(command -v screen)" ]; then
-  sudo apt-get install screen -y
-fi
-
 # remove empty files
 if [ ! -s "${LOG_DIR:?}"/node_data/addnodes ]; then
   rm "${LOG_DIR:?}"/node_data/addnodes &>/dev/null
@@ -196,6 +191,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ]; then
     # syntax fix
     SUCCESS_RA_SX=$(echo "$SUCCESS_RA" 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
+    # success rate with color
     if [[ "$SUCCESS_RA_SX" -ge "0" ]]; then
       SRAC="${GR:?}${SUCCESS_RA:?}%"
     fi
@@ -212,11 +208,13 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ]; then
       SRAC="${G1:?}${SUCCESS_RA:?}%"
     fi
 
-    printf '%b' "${LOG_DATE:?} Status() System.Monitor Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() System.Monitor Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Fail/success() Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Size() Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Peers.Status() Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?}${N0:?} Status() System.Monitor Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?}${N0:?} Status() System.Monitor Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?}${N0:?} Status() Fail/success() Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?}${N0:?} Status() Addnode.Size() Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?}${N0:?} Status() Peers.Status() Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     printf '%b' "${LOG_DATE:?} Status() System.Monitor Loading wallet${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
@@ -262,18 +260,25 @@ echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes
 # feed banned ip address
 echo "127.0.0.1" >>"${LOG_DIR:?}"/node_data/peers/failed
 
+TRIES_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/tries 2>&1 | awk '{ print $1 }' 2>&1)
+# get peers connected overall since start
+if [[ "$TRIES_COUNT" -lt "$(wc -l "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
+  awk '{ print $1 }' 2>&1)" ]]; then
+  egrep -o "peer=[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 |
+    egrep -o "[0-9]+" >"${LOG_DIR:?}"/node_data/tries 2>&1
+fi
+
 ### addnodes screen script #####################################################
 
 # greater than n seconds
 if [[ "$(uptime_cmd)" -gt "369" ]]; then
-  # look for screen session, if not found, run one
+  # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
     grep -q "addnodes" 2>&1; then
     # create screen session
     screen -dmS addnodes 2>&1
 
-    # connect nodes found with addnodes list above
-    # (using tmp directory)
+    # connect nodes found with addnodes list above, (using tmp directory)
     cat >"${LOG_DIR:?}"/add_peers <<'EOF'
 #!/bin/bash
 
@@ -286,8 +291,6 @@ source /usr/local/bin/include/null
 source /usr/local/bin/include/color
 
 function peers() {
-  egrep -o "peer=[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | /usr/bin/tail -1 2>&1 |
-  egrep -o "[0-9]+" >"${LOG_DIR:?}"/node_data/tries 2>&1
   PEERS_TRIES=$(sort -n "${LOG_DIR:?}"/node_data/tries 2>&1 | /usr/bin/tail -1 2>&1)
   PEERS_ADDNODES=$(cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | wc -l 2>&1)
   PEERS_ADDNODES_P=$(cat /home/"$(whoami)"/addnodes | wc -l 2>&1)
@@ -299,7 +302,7 @@ peers
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Start! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 while IFS= read -r ADDS; do
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
 done <"${LOG_DIR:?}"/node_data/addnodes
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
@@ -310,8 +313,9 @@ killall screen
 screen -wipe
 exit
 EOF
+    # 60s 90s 120s 240s 300s 600s, 900s = 15 minutes
     # start adding nodes, inside screen session (timeout n seconds)
-    timeout 1800 screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+    timeout 900 screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
   fi
 fi
 
@@ -460,7 +464,6 @@ fi
 ### clean up debug.log, peers.dat (truncate) keep pos around ###################
 
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
-  echo "$(tail -1 "${LOG_DIR:?}"/node_data/tries 2>&1)" >"${LOG_DIR:?}"/node_data/tries 2>&1
   # truncate debug.log
   truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
   if [[ "$KEEP_BACKUPS" -eq "1" ]]; then
