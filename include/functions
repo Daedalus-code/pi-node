@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.5.8
+# 0.6.3.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.5.8"
+VERSION="v0.6.3.9"
 
 # auto update of repository
 UPDATE_REPO="0"
@@ -275,25 +275,6 @@ TRIES_COUNT=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tries 2>&1)
 if [[ "$TRIES_COUNT" -lt "$(debug_tries 2>&1)" ]]; then
   debug_tries >"${LOG_DIR:?}"/node_data/tries 2>&1
 fi
-
-# fill extra from personal addnodes if script addnodes are bigger
-SUCCESS_COUNT="$(wc -l "$LOG_DIR"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)"
-ADDNODE_COUNT="$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)"
-if [[ "$ADDNODE_COUNT" -gt "$SUCCESS_COUNT" ]]; then
-  # fill with extra added nodes from personal addnodes
-  cat /home/"$(whoami)"/addnodes 2>&1 |
-    grep -v -f "$LOG_DIR"/node_data/peers/success >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
-  printf '%b' "${LOG_DATE:?} Status() AddNode.Script Difference/New peers $(echo "${ADDNODE_COUNT:?}-${SUCCESS_COUNT:?}" 2>&1 | bc 2>&1) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-fi
-
-# clean up personal addnodes
-cat /home/"$(whoami)"/addnodes 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/peers/failed >/tmp/addnodes.tmp 2>&1
-mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
-# clean up script addnodes
-cat "$LOG_DIR"/node_data/addnodes 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/nodes >/tmp/addnodes.tmp 2>&1
-mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
 
 ### addnodes screen script #####################################################
 
