@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.4.8
+# 0.6.4.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.4.8"
+VERSION="v0.6.4.7"
 
 # auto update of repository
 UPDATE_REPO="0"
@@ -463,8 +463,7 @@ function addtowallet_new() {
 # count saved stakes
 WALLET_STAKES=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
 if [[ "$WALLET_STAKES" -lt "$(addtowallet_new 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)" ]]; then
-  addtowallet_new 2>&1 |
-    awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
+  addtowallet_new 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
