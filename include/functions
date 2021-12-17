@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.6.9
+# 0.6.7.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.6.9"
+VERSION="v0.6.7.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -34,13 +34,15 @@ done
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
 
-# log lines (tail debug)
-LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
-# get log size
-LOG_SIZE=$(ls -lS --block-size=M "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1)
-SIZE="log=$LOG_SIZE"
-LAST_LOG="${LAST_LOG:0:188} $SIZE"
-printf '%b' "${LOG_DATE:?} Status() DEBUG.Log.Size $SIZE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+if [[ "$(uptime_daemon)" -gt "300" ]]; then
+  # log lines (tail debug)
+  LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
+  # get log size
+  LOG_SIZE=$(ls -lS --block-size=M "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1)
+  SIZE="log=$LOG_SIZE"
+  LAST_LOG="${LAST_LOG:0:188} $SIZE"
+  printf '%b' "${LOG_DATE:?} Status() DEBUG.Log.Size $SIZE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
