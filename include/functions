@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.5.8
+# 0.6.5.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.5.8"
+VERSION="v0.6.5.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -15,6 +15,10 @@ source /usr/local/bin/include/null
 
 # auto update of repository
 UPDATE_REPO="0"
+# time - date, trim extra spaces with xargs
+CLOCK=$(date "+%H:%M:%S" 2>&1)
+# date for logs
+LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 # wait on node (daemon) to start
 until pidof trumpcoind 2>&1 |
@@ -23,11 +27,6 @@ until pidof trumpcoind 2>&1 |
   echo "Waiting on trumpcoind ($(pidof trumpcoind 2>&1)) daemon.."
   sleep 2
 done
-
-# time - date, trim extra spaces with xargs
-CLOCK=$(date "+%H:%M:%S" 2>&1)
-# date for logs
-LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 ### folders, logs and daemon ###################################################
 
