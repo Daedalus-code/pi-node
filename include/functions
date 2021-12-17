@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.6.5
+# 0.6.6.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.6.5"
+VERSION="v0.6.6.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -157,6 +157,7 @@ if grep "127.0.0.1:9050" "${LOG_DIR:?}"/node_data/getinfo &>/dev/null; then
   if [ ! -f "${LOG_DIR:?}"/node_data/onion ]; then
     egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       tail -1 >"${LOG_DIR:?}"/node_data/onion 2>&1
+    printf '%b' "${LOG_DATE:?} Status() GetOnion.Data: Found Onion Address ($(cat "${LOG_DIR:?}"/node_data/onion 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   PUBLIC_IP=$(cat "${LOG_DIR:?}"/node_data/onion 2>&1)
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
