@@ -26,7 +26,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # count api nodes
   API_COUNT=$(wc -l /tmp/nodes 2>&1 | awk '{ print $1 }' 2>&1)
   # get new count
-  ARP_NEW=$(egrep -o /tmp/nodes 2>&1 | grep -v -f "$LOG_DIR"/node_data/nodes 2>&1 | wc -l 2>&1)
+  ARP_NEW=$(egrep -o "$LOG_DIR"/node_data/nodes 2>&1 | grep -v -f /tmp/nodes 2>&1 | wc -l 2>&1)
 
   # fill extra from personal addnodes if script addnodes are smaller
   SUCCESS_COUNT="$(wc -l "$LOG_DIR"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)"
