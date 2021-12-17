@@ -34,7 +34,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   if [[ "$ADDNODES_CORE" -lt "$ADDNODES_NOW" ]]; then
     # fill with extra added nodes from personal addnodes
     cat /home/"$(whoami)"/addnodes >>"$LOG_DIR"/node_data/addnodes 2>&1
-    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Difference/New peers $(echo "$ADDNODES_CORE-$ADDNODES_NOW" 2>&1 | bc 2>&1) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Difference/New peers $(echo "$ADDNODES_NOW-$ADDNODES_CORE" 2>&1 | bc 2>&1) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   # setup nodes, fill
