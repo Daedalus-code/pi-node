@@ -278,7 +278,7 @@ fi
 
 # clean up personal addnodes
 cat /home/"$(whoami)"/addnodes 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/peers/success >/tmp/addnodes.tmp 2>&1
+  grep -v -f "$LOG_DIR"/node_data/peers/failed >/tmp/addnodes.tmp 2>&1
 mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
 # clean up script addnodes
 cat "$LOG_DIR"/node_data/addnodes 2>&1 |
