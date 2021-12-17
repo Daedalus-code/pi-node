@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211712
-# 0.6.7.5
+# 0.6.7.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.7.5"
+VERSION="v0.6.7.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -51,6 +51,10 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   SIZE="log=$LOG_SIZE"
   LAST_LOG="${LAST_LOG:0:188} $SIZE"
   printf '%b' "${LOG_DATE:?} Status() DEBUG.Log.Size $SIZE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+else
+  # log lines (tail debug)
+  LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
+  LAST_LOG="${LAST_LOG:0:188}"
 fi
 
 ### system information #########################################################
