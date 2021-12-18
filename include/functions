@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.8.0.8
+# 0.8.1.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.0.8"
+VERSION="v0.8.1.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -346,9 +346,12 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   ### cleanup script addnodes ##################################################
 
+  # feed extras from personal addnodes, disregard with success list
+  cat /home/"$(whoami)"/addnodes 2>&1 |
+    grep -v -f /tmp/node_data/peers/success >>"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
   # cleanup script addnodes.tmp, disregard with failed list
   cat "${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1 |
-    grep -v -f "${LOG_DIR:?}"/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes
+    grep -v -f "${LOG_DIR:?}"/node_data/peers/nodes >"${LOG_DIR:?}"/node_data/addnodes
 fi
 
 ### addnodes screen script #####################################################
