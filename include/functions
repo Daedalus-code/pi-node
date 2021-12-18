@@ -343,7 +343,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     egrep -c "[0-9]+" /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/node_data/addnodes.count 2>&1
     # create personal/wallet addnodes file, remove duplicates
     cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
-      sort -n 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
+      sort -n 2>&1 >/home/"$(whoami)"/addnodes 2>&1
     # calculate after the fact
     ADDNODE_NEW_COUNT=$(cat "${LOG_DIR:?}"/node_data/addnodes.count 2>/dev/null)
     ADDNODE_NEW_CALC=$(echo "$ADDNODE_NEW_COUNT-$ADDNODE_COUNT" 2>&1 | bc 2>&1)
