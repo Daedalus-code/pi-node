@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211812
-# 0.7.5.0
+# 0.7.5.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -340,7 +340,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]]; then
 
 # By Rainman
 # V20211812
-# 0.0.3.4
+# 0.0.3.5
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -365,6 +365,7 @@ done <"${LOG_DIR:?}"/node_data/addnodes
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
+truncate -s 0 "${LOG_DIR:?}"/node_data/addnodes 2>&1
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Done! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 screen -X -S addnodes quit
 killall screen
