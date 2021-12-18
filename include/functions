@@ -268,10 +268,10 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
       xargs -I{} date -d @{} '+%H:%M:%S')
 
     printf '%b' "${GR:?} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${GR:?}${LOG_DATE:?} Status() Script.version${N0:?} Repo [${G1:?}${LATEST_HEAD:?}${N0:?}] ${LATEST_DATE:?} ${LATEST_TIME:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemTorNet()${N0:?} Onion ${ONION_R:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemInternet${N0:?} WanIP ${WANIP_R:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemIntranet${N0:?} Local ${IP_ADDRESS_N:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() Script.version${N0:?} Repository [${G1:?}${LATEST_HEAD:?}${N0:?}] ${LATEST_DATE:?} ${LATEST_TIME:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() System.Monitor${N0:?} Load ${LOAD:?} - temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() System.Monitor${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} - HDDuse ${USED_HDD:?} (${USED_HDD_P:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Fail/success()${N0:?} Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
