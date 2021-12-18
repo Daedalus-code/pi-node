@@ -423,7 +423,7 @@ if ! "$(grep "main" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1)" -eq "main"
   # mainnet
   WALLET_CHAIN="${G0:?}mainnet${N0:?}"
 else # testnet
-  WALLET_CHAIN="${CY:?}testnet${N0:?}"
+  WALLET_CHAIN="${C1:?}testnet${N0:?}"
 fi
 
 if [[ "$(uptime_daemon)" -lt "300" ]]; then
