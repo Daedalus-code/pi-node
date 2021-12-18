@@ -335,7 +335,7 @@ fi
 ### cleanup script addnodes ####################################################
 
 cat "${LOG_DIR:?}"/node_data/addnodes.tmp |
-  grep -v -f "${LOG_DIR:?}"/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes
+  grep -v -f "${LOG_DIR:?}"/node_data/nodes >"${LOG_DIR:?}"/node_data/addnodes
 
 ### addnodes screen script #####################################################
 
