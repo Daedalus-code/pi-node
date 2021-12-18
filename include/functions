@@ -635,7 +635,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]]; then
   if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
     # truncate debug.log
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    if [[ "$KEEP_BACKUPS" -eq "1" ]]; then
+    if [[ "$KEEP_BACKUPS" -eq "0" ]]; then
       # remove old backups
       rm -r "${WALLET_DIR:?}"/backups/* &>/dev/null
     fi
