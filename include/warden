@@ -47,7 +47,7 @@ fi
 if grep -o "error: couldn't connect to server" "$LOG_DIR"/node_data/getinfo; then
   # error with server (daemon), stopping
   "$WALLET_DIR"/trumpcoin-cli -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf stop
-  printf '%b' "${R1:?}${LOG_DATE:?} Status() Wallet.Warden: Error! Couldn't connect to server! Stopping daemon now!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${R1:?}${LOG_DATE:?} Status() Wallet.Warden: Error! Couldn't connect to server! Stopping daemon now!${N0:?} ${GR:?}::${N0:?} [${R1:?}XX${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # END
