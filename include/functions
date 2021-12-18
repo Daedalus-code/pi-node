@@ -558,10 +558,10 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
     egrep -o "[0-9]+" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # wallet inputs
   WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)
-elif [[ -z "$WALLET_TXCOUNT" ]]; then
+elif [[ "$WALLET_TXCOUNT" -eq "0" ]]; then
   # non responsive
   wallet_balances
-elif [[ "$WALLET_TXCOUNT" -eq "0" ]]; then
+elif [[ -z "$WALLET_TXCOUNT" ]]; then
   # non responsive
   wallet_balances
 else # non responsive
