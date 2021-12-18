@@ -428,7 +428,7 @@ fi
 
 if [[ "$(uptime_daemon)" -lt "300" ]]; then
   # nonet
-  WALLET_CHAIN="${GR:?}nonet${N0:?}"
+  WALLET_CHAIN="${C0:?}nonet${N0:?}"
 fi
 
 # greater than n seconds
