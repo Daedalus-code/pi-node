@@ -511,7 +511,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
 elif [[ "$WALLET_PEERS_TOTAL_N" -eq "0" ]]; then
   # non responsive
   wallet_nodes
-elif [[ -z "$WALLET_PEERS_TOTAL" ]]; then
+elif [[ -z "$WALLET_PEERS_TOTAL_N" ]]; then
   # non responsive
   wallet_nodes
 else # non responsive
