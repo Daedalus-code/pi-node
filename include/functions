@@ -461,6 +461,16 @@ else # wallet is loading/syncing
   WALLET_SYNC="${GR:?}0.00%${N0:?}"
 fi
 
+function wallet_nodes() {
+  WALLET_NODES_TOTAL="${GR:?}0${N0:?}"
+  WALLET_NODES_STABLE="${GR:?}0${N0:?}"
+  WALLET_NODES_ENABLED="${GR:?}0${N0:?}"
+  WALLET_NODES_INQUEUE="${GR:?}0${N0:?}"
+  WALLET_PEERS_LATEST="${GR:?}0${N0:?}"
+  WALLET_PEERS_OTHER="${GR:?}0${N0:?}"
+  WALLET_PEERS_TOTAL="${GR:?}0${N0:?}"
+}
+
 # greater than n seconds
 if [[ "$(uptime_daemon)" -gt "300" ]]; then
 
@@ -497,16 +507,6 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
     WALLET_PEERS_OTHER="${G0:?}${WALLET_PEERS_OTHER:?}${N0:?}"
   fi
-
-  function wallet_nodes() {
-    WALLET_NODES_TOTAL="${GR:?}0${N0:?}"
-    WALLET_NODES_STABLE="${GR:?}0${N0:?}"
-    WALLET_NODES_ENABLED="${GR:?}0${N0:?}"
-    WALLET_NODES_INQUEUE="${GR:?}0${N0:?}"
-    WALLET_PEERS_LATEST="${GR:?}0${N0:?}"
-    WALLET_PEERS_OTHER="${GR:?}0${N0:?}"
-    WALLET_PEERS_TOTAL="${GR:?}0${N0:?}"
-  }
 
   if [[ "$WALLET_PEERS_TOTAL" -eq "0" ]]; then
     # non responsive
