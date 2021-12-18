@@ -394,17 +394,17 @@ if [[ "$(uptime_daemon)" -gt "369" ]]; then
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/listunspent 2>&1
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpeerinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getpeerinfo 2>&1
   # make sure data exist
-  if grep -o "error: couldn't connect to server" "$LOG_DIR"/node_data/getinfo; then
+  if grep -o "error: couldn't connect to server" "$LOG_DIR"/node_data/tmp/getinfo; then
     rm -R "${LOG_DIR:?}"/node_data/tmp/* &>/dev/null
   else # use existing data without any error(s)
-    cat "${LOG_DIR:?}"/node_data/temp/getblockchaininfo >"${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/temp/getinfo >"${LOG_DIR:?}"/node_data/getinfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/temp/getmempoolinfo >"${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/temp/getnetworkinfo >"${LOG_DIR:?}"/node_data/getnetworkinfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/temp/getpatriotnodecount >"${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1
-    cat "${LOG_DIR:?}"/node_data/temp/getwalletinfo >"${LOG_DIR:?}"/node_data/getwalletinfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/temp/listunspent >"${LOG_DIR:?}"/node_data/listunspent 2>&1
-    cat "${LOG_DIR:?}"/node_data/temp/getpeerinfo >"${LOG_DIR:?}"/node_data/getpeerinfo 2>&1
+    cat "${LOG_DIR:?}"/node_data/tmp/getblockchaininfo >"${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1
+    cat "${LOG_DIR:?}"/node_data/tmp/getinfo >"${LOG_DIR:?}"/node_data/getinfo 2>&1
+    cat "${LOG_DIR:?}"/node_data/tmp/getmempoolinfo >"${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1
+    cat "${LOG_DIR:?}"/node_data/tmp/getnetworkinfo >"${LOG_DIR:?}"/node_data/getnetworkinfo 2>&1
+    cat "${LOG_DIR:?}"/node_data/tmp/getpatriotnodecount >"${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1
+    cat "${LOG_DIR:?}"/node_data/tmp/getwalletinfo >"${LOG_DIR:?}"/node_data/getwalletinfo 2>&1
+    cat "${LOG_DIR:?}"/node_data/tmp/listunspent >"${LOG_DIR:?}"/node_data/listunspent 2>&1
+    cat "${LOG_DIR:?}"/node_data/tmp/getpeerinfo >"${LOG_DIR:?}"/node_data/getpeerinfo 2>&1
   fi
 fi
 
