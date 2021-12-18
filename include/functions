@@ -352,8 +352,10 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   ### sort & cleanup script addnodes ###########################################
 
-  cat "${LOG_DIR:?}"/node_data/peers/success | sort -n "${LOG_DIR:?}"/node_data/peers/success
-  cat "${LOG_DIR:?}"/node_data/peers/failed | sort -n "${LOG_DIR:?}"/node_data/peers/failed
+  cat "${LOG_DIR:?}"/node_data/peers/success | sort -n "${LOG_DIR:?}"/node_data/peers/success.tmp 2>&1
+  cat "${LOG_DIR:?}"/node_data/peers/failed | sort -n "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
+  mv "${LOG_DIR:?}"/node_data/peers/success.tmp "${LOG_DIR:?}"/node_data/peers/success 2>&1
+  mv "${LOG_DIR:?}"/node_data/peers/failed.tmp "${LOG_DIR:?}"/node_data/peers/failed 2>&1
 
 fi
 
