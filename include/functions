@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.8.0.0
+# 0.8.0.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.0.0"
+VERSION="v0.8.0.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -259,7 +259,16 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
       WANIP_R="none"
     fi
 
+    # repository head, date and time
+    LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 |
+      grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+    LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" |
+      xargs -I{} date -d @{} '+%Y/%m/%d')
+    LATEST_TIME=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" |
+      xargs -I{} date -d @{} '+%H:%M:%S')
+
     printf '%b' "${GR:?} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() Script.version${N0:?} Repo [${G1:?}${LATEST_HEAD:?}${N0:?}] ${LATEST_DATE:?} ${LATEST_TIME:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemTorNet()${N0:?} Onion ${ONION_R:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemInternet${N0:?} WanIP ${WANIP_R:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemIntranet${N0:?} Local ${IP_ADDRESS_N:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
