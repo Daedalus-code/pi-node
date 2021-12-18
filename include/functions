@@ -320,7 +320,7 @@ cat /home/"$(whoami)"/addnodes 2>&1 |
 mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
 # clean up script addnodes
 cat "$LOG_DIR"/node_data/addnodes 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/nodes 2>&1 |
+  grep -v -f "$LOG_DIR"/node_data/failed 2>&1 |
   awk '!a[$0]++' >/tmp/addnodes.tmp 2>&1
 mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
 
