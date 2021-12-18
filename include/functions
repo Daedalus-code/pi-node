@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211912
-# 0.8.1.4
+# 0.8.1.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.1.4"
+VERSION="v0.8.1.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -479,6 +479,9 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     WALLET_SYNC="100"
   fi
   WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
+elif [[ -z "$WALLET_HEADS" ]]; then
+  WALLET_HEADS="${GR:?}0${N0:?}"
+  WALLET_BLOCK="${GR:?}0${N0:?}"
 else # wallet is loading/syncing
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
