@@ -290,6 +290,15 @@ fi
 
 ### cleanup addnodes lists #####################################################
 
+# disregard with failed peers
+cat "${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1 |
+  grep -v -f "$(cat "${LOG_DIR:?}"/node_data/peers/* 2>&1 | awk '{ print $1 }' 2>&1)" >/tmp/addnodes_script.tmp 2>&1
+mv /tmp/addnodes_script.tmp "${LOG_DIR:?}"/node_data/addnodes 2>&1
+# disregard with failed peers
+cat /home/"$(whoami)"/addnodes 2>&1 |
+  grep -v -f "$(cat "${LOG_DIR:?}"/node_data/peers/* 2>&1 | awk '{ print $1 }' 2>&1)" >/tmp/addnodes_personal.tmp 2>&1
+mv /tmp/addnodes_personal.tmp /home/"$(whoami)"/addnodes 2>&1
+
 ### generate random address ####################################################
 
 # generate random ip address, ipv4 & ipv6
