@@ -311,24 +311,25 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     egrep -o '([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):[0-9]+|(([a-f0-9:]+:+)+[a-f0-9]+)' 2>&1 |
     awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 
-  ### feed banned ip address ###################################################
+  ### create personal, script addnodes list(s) #################################
 
-  echo "127.0.0.1" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-
-  ### create script addnodes list ##############################################
-
-  # create addnodes for script below, remove duplicates
+  # create addnodes.script for script below, remove duplicates
   cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | sort -n 2>&1 |
     awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+  # create addnodes.extra for personal use, remove duplicates
+  cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
+    grep -v -f /tmp/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes.extra
 
-  ### generate random address ##################################################
+  ### feed extra, banned, ipv4, ipv6 address ###################################
 
   # generate random ip address, ipv4 & ipv6
   RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
   RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
-  # feed random ip address into addnodes
+
   echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
   echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+  echo "127.0.0.1" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  cat "${LOG_DIR:?}"/node_data/addnodes.extra >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 
   ### personal addnodes list ###################################################
 
