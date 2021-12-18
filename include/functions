@@ -313,8 +313,8 @@ fi
 RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
 RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
 # feed random ip address into addnodes
-echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
-echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
+echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
+echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
 
 ### debug peer(s) tries/connected ##############################################
 
@@ -334,14 +334,14 @@ fi
 
 # clean up personal addnodes
 cat /home/"$(whoami)"/addnodes 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/peers/failed 2>&1 |
+  grep -v -f "${LOG_DIR:?}"/node_data/peers/failed 2>&1 |
   awk '!a[$0]++' >/tmp/addnodes.tmp 2>&1
 mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
 # clean up script addnodes
-cat "$LOG_DIR"/node_data/addnodes.tmp 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/peers/success 2>&1 |
+cat "${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1 |
+  grep -v -f "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
   awk '!a[$0]++' >/tmp/addnodes.tmp 2>&1
-mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
+mv /tmp/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes 2>&1
 
 ### addnodes screen script #####################################################
 
@@ -412,7 +412,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/listunspent 2>&1
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpeerinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getpeerinfo 2>&1
   # make sure data exist
-  if grep -o "error: couldn't connect to server" "$LOG_DIR"/node_data/tmp/getinfo; then
+  if grep -o "error: couldn't connect to server" "${LOG_DIR:?}"/node_data/tmp/getinfo; then
     rm -R "${LOG_DIR:?}"/node_data/tmp/* &>/dev/null
   else # use existing data without any error(s)
     cat "${LOG_DIR:?}"/node_data/tmp/getblockchaininfo >"${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1
