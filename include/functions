@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.7.5.3
+# 0.7.6.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.5.3"
+VERSION="v0.7.6.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -384,14 +384,27 @@ fi
 # greater than n seconds
 if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # collect wallet info, on every update (loop) from client
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getinfo 2>&1
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getnetworkinfo 2>&1
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getwalletinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getwalletinfo 2>&1
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/listunspent 2>&1
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpeerinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/getpeerinfo 2>&1
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getblockchaininfo 2>&1
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getinfo 2>&1
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getmempoolinfo 2>&1
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getnetworkinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getnetworkinfo 2>&1
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getpatriotnodecount 2>&1
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getwalletinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getwalletinfo 2>&1
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/listunspent 2>&1
+  "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpeerinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getpeerinfo 2>&1
+  # make sure data exist
+  if grep -o "error: couldn't connect to server" "$LOG_DIR"/node_data/getinfo; then
+    rm -R "${LOG_DIR:?}"/node_data/tmp/* &>/dev/null
+  else # use existing data without any error(s)
+    mv "${LOG_DIR:?}"/node_data/temp/getblockchaininfo "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1
+    mv "${LOG_DIR:?}"/node_data/temp/getinfo "${LOG_DIR:?}"/node_data/getinfo 2>&1
+    mv "${LOG_DIR:?}"/node_data/temp/getmempoolinfo "${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1
+    mv "${LOG_DIR:?}"/node_data/temp/getnetworkinfo "${LOG_DIR:?}"/node_data/getnetworkinfo 2>&1
+    mv "${LOG_DIR:?}"/node_data/temp/getpatriotnodecount "${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1
+    mv "${LOG_DIR:?}"/node_data/temp/getwalletinfo "${LOG_DIR:?}"/node_data/getwalletinfo 2>&1
+    mv "${LOG_DIR:?}"/node_data/temp/listunspent "${LOG_DIR:?}"/node_data/listunspent 2>&1
+    mv "${LOG_DIR:?}"/node_data/temp/getpeerinfo "${LOG_DIR:?}"/node_data/getpeerinfo 2>&1
+  fi
 fi
 
 # less than n seconds
