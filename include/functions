@@ -316,7 +316,8 @@ echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 echo "127.0.0.1" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
 cat "${LOG_DIR:?}"/node_data/addnodes.extra >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
-cat "${LOG_DIR:?}"/node_data/addnodes.script 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
+cat "${LOG_DIR:?}"/node_data/addnodes.script 2>&1 |
+  awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
 
 ### failed & success lists #####################################################
 
@@ -353,9 +354,6 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   ### sort & cleanup script addnodes ###########################################
 
-  comm -23 "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
-  comm -23 "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
-    sort -n >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 fi
 
 ### addnodes screen script #####################################################
