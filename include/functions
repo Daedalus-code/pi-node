@@ -170,7 +170,7 @@ if grep "127.0.0.1:9050" "${LOG_DIR:?}"/node_data/getinfo &>/dev/null; then
   if [ ! -f "${LOG_DIR:?}"/node_data/onion ]; then
     egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       tail -1 >"${LOG_DIR:?}"/node_data/onion 2>&1
-    printf '%b' "${LOG_DATE:?} Status() GetOnion.Data: Found Onion Address ($(cat "${LOG_DIR:?}"/node_data/onion 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() GetOnion.Data: Found Onion Address (${P1:?}$(cat "${LOG_DIR:?}"/node_data/onion 2>&1)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   PUBLIC_IP=$(cat "${LOG_DIR:?}"/node_data/onion 2>&1)
   if [[ -z "$PUBLIC_IP" ]]; then
