@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211912
-# 0.8.1.8
+# 0.8.1.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.1.8"
+VERSION="v0.8.1.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -483,6 +483,7 @@ elif [[ -z "$WALLET_HEADS" ]]; then
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
   WALLET_SYNC="${GR:?}0.00${N0:?}"
+  RC_LOADING="${GR:?}        Loading${N0:?}"
 else # wallet is loading/syncing
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
