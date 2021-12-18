@@ -399,7 +399,7 @@ EOF
 fi
 # remove old list(s)
 truncate -s 0 "${LOG_DIR:?}"/node_data/addnodes 2>&1
-truncate -s 0 "${LOG_DIR:?}"/node_data/nodes 2>&1
+echo "1" "${LOG_DIR:?}"/node_data/nodes 2>&1
 rm "${LOG_DIR:?}"/node_data/addnodes.tmp &>/dev/null
 
 ### wallet information #########################################################
