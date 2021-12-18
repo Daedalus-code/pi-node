@@ -315,7 +315,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # create addnodes.script for script below, remove duplicates
   cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | sort -n 2>&1 |
-    awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+    awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes.script 2>&1 # <- (connecting!)
   # create addnodes.extra for personal use, remove duplicates
   cat /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' 2>&1 |
     grep -v -f /tmp/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes.extra
@@ -346,8 +346,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
       sort -n 2>&1 >/home/"$(whoami)"/addnodes 2>&1
     # calculate after the fact
-    ADDNODE_NEW_COUNT=$(cat "${LOG_DIR:?}"/node_data/addnodes.count 2>/dev/null)
-    ADDNODE_NEW_CALC=$(echo "$ADDNODE_NEW_COUNT-$ADDNODE_COUNT" 2>&1 | bc 2>&1)
+    ADDNODE_NEW_CALC=$(echo "$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)-$(cat /tmp/node_data/addnodes.count 2>/dev/null)" | bc 2>&1)
     printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $ADDNODE_COUNT (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
@@ -392,7 +391,7 @@ printf '%b' "${LOG_DATE:?} Status() AddNode.Script Start! Addnodes/New ${PEERS_A
 
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
-done <"${LOG_DIR:?}"/node_data/addnodes
+done <"${LOG_DIR:?}"/node_data/addnodes.script # <- (connecting!)
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
