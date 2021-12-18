@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.8.1.1
+# 0.8.1.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.1.1"
+VERSION="v0.8.1.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -338,10 +338,14 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # if success count is greater than addnode count
   if [[ "$SUCCESS_COUNT" -gt "$ADDNODE_COUNT" ]] &>/dev/null; then
+    # save value, before the fact
+    egrep -c "[0-9]+" /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/node_data/addnodes.count 2>&1
     # create personal/wallet addnodes file, remove duplicates
     cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
       sort -n 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
-    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $(egrep -c "[0-9]+" /home/"$(whoami)"/addnodes 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # calculate after the fact
+    ADDNODE_NEW_COUNT=$(echo "$(echo "${ADDNODE_COUNT:?}" 2>/dev/null)-$(cat "${LOG_DIR:?}"/node_data/addnodes.count 2>/dev/null)" 2>&1 | bc 2>&1)
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $(egrep -c "[0-9]+" /home/"$(whoami)"/addnodes 2>&1) (${ADDNODE_NEW_COUNT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   ### cleanup script addnodes ##################################################
