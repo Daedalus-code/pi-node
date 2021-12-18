@@ -593,7 +593,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]]; then
     awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 else # non responsive
   LAST_TX="${N0:?}"
-  WALLET_TXLAST="${GR:?}                       Loading wallet transactions.. (tx)${N0:?}"
+  WALLET_TXLAST="${GR:?}                       Loading wallet transactions.${N0:?}"
 fi
 
 # greater than n seconds
