@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.7.4.6
+# 0.7.4.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.4.6"
+VERSION="v0.7.4.8"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -405,10 +405,12 @@ if ! "$(grep "main" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1)" -eq "main"
   # mainnet
   WALLET_CHAIN="${G0:?}mainnet${N0:?}"
 elif ! "$(grep "test" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1)" -eq "test" &>/dev/null; then
+  # testnet
   WALLET_CHAIN="${CY:?}testnet${N0:?}"
-else
-  # nonet
-  WALLET_CHAIN="${GR:?}nonet${N0:?}"
+fi
+
+if [[ "$(uptime_daemon)" -lt "300" ]]; then
+  WALLET_CHAIN="${CY:?}testnet${N0:?}"
 fi
 
 # greater than n seconds
