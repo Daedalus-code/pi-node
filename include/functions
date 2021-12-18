@@ -345,8 +345,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
       sort -n 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
     # calculate after the fact
     ADDNODE_NEW_COUNT=$(cat "${LOG_DIR:?}"/node_data/addnodes.count 2>/dev/null)
-    ADDNODE_NEW_COUNT=$(echo "$ADDNODE_NEW_COUNT-$ADDNODE_COUNT" 2>&1 | bc 2>&1)
-    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $(egrep -c "[0-9]+" /home/"$(whoami)"/addnodes 2>&1) (${ADDNODE_NEW_COUNT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    ADDNODE_NEW_CALC=$(echo "$ADDNODE_NEW_COUNT-$ADDNODE_COUNT" 2>&1 | bc 2>&1)
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $ADDNODE_COUNT (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   ### cleanup script addnodes ##################################################
