@@ -404,7 +404,7 @@ fi
 if ! "$(grep "main" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1)" -eq "main" &>/dev/null; then
   # mainnet
   WALLET_CHAIN="${G0:?}mainnet${N0:?}"
-elif ! "$(grep "test" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1)" -eq "main" &>/dev/null; then
+elif ! "$(grep "test" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1)" -eq "test" &>/dev/null; then
   WALLET_CHAIN="${CY:?}testnet${N0:?}"
 else
   # nonet
