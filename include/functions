@@ -350,7 +350,10 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $ADDNODE_COUNT (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
-  ### cleanup script addnodes ##################################################
+  ### sort & cleanup script addnodes ###########################################
+
+  cat "${LOG_DIR:?}"/node_data/peers/success | sort -n "${LOG_DIR:?}"/node_data/peers/success
+  cat "${LOG_DIR:?}"/node_data/peers/failed | sort -n "${LOG_DIR:?}"/node_data/peers/failed
 
 fi
 
