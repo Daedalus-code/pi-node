@@ -288,17 +288,6 @@ if [[ "$SUCCESS_COUNT" -gt "$ADDNODE_COUNT" ]]; then
     awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
 fi
 
-### cleanup addnodes lists #####################################################
-
-# clean up personal addnodes
-cat /home/"$(whoami)"/addnodes 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/peers/failed >/tmp/addnodes.tmp 2>&1
-mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
-# clean up script addnodes
-cat "$LOG_DIR"/node_data/addnodes 2>&1 |
-  grep -v -f "$LOG_DIR"/node_data/nodes >/tmp/addnodes.tmp 2>&1
-mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
-
 ### generate random address ####################################################
 
 # generate random ip address, ipv4 & ipv6
@@ -321,6 +310,17 @@ TRIES_COUNT=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tries 2>&1 | egrep -o "[0-
 if [[ "$TRIES_COUNT" -lt "$(debug_tries 2>&1)" ]]; then
   debug_tries >"${LOG_DIR:?}"/node_data/tries 2>&1
 fi
+
+### cleanup addnodes lists #####################################################
+
+# clean up personal addnodes
+cat /home/"$(whoami)"/addnodes 2>&1 |
+  grep -v -f "$LOG_DIR"/node_data/peers/failed >/tmp/addnodes.tmp 2>&1
+mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
+# clean up script addnodes
+cat "$LOG_DIR"/node_data/addnodes 2>&1 |
+  grep -v -f "$LOG_DIR"/node_data/nodes >/tmp/addnodes.tmp 2>&1
+mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
 
 ### addnodes screen script #####################################################
 
