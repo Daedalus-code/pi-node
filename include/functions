@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.7.7.3
+# 0.7.7.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.7.3"
+VERSION="v0.7.7.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -529,6 +529,13 @@ else
   WALLET_UNCONFIRMED="${GR:?}0.00${N0:?}"
 fi
 
+function wallet_balances() {
+  WALLET_TICKER="${GR:?}0${N0:?}"
+  WALLET_MEMPOOL="${GR:?}0${N0:?}"
+  WALLET_TXCOUNT="${GR:?}0${N0:?}"
+  WALLET_INPUTS="${GR:?}0${N0:?}"
+}
+
 # greater than n seconds
 if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # wallet ticker.usd
@@ -543,15 +550,12 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)
 elif [[ -z "$WALLET_TXCOUNT" ]]; then
   # non responsive
-  WALLET_TXCOUNT="${GR:?}0${N0:?}"
+  wallet_balances
 elif [[ "$WALLET_TXCOUNT" -eq "0" ]]; then
   # non responsive
-  WALLET_TXCOUNT="${GR:?}0${N0:?}"
-else
-  WALLET_TICKER="${GR:?}0${N0:?}"
-  WALLET_MEMPOOL="${GR:?}0${N0:?}"
-  WALLET_TXCOUNT="${GR:?}0${N0:?}"
-  WALLET_INPUTS="${GR:?}0${N0:?}"
+  wallet_balances
+else # non responsive
+  wallet_balances
 fi
 
 # greater than n seconds
