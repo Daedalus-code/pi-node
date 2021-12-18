@@ -404,13 +404,13 @@ fi
 if ! "$(grep "main" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1)" -eq "main" &>/dev/null; then
   # mainnet
   WALLET_CHAIN="${G0:?}mainnet${N0:?}"
-elif ! "$(grep "test" "${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1)" -eq "test" &>/dev/null; then
-  # testnet
+else # testnet
   WALLET_CHAIN="${CY:?}testnet${N0:?}"
 fi
 
 if [[ "$(uptime_daemon)" -lt "300" ]]; then
-  WALLET_CHAIN="${CY:?}testnet${N0:?}"
+  # nonet
+  WALLET_CHAIN="${GR:?}nonet${N0:?}"
 fi
 
 # greater than n seconds
