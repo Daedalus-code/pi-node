@@ -547,7 +547,7 @@ function wallet_balances() {
 }
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]]; then
   # wallet ticker.usd
   WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/ticker 2>&1)
   # wallet mempool
@@ -569,7 +569,7 @@ else # non responsive
 fi
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]]; then
   # last confirmation (smallest one)
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
     awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
@@ -583,7 +583,7 @@ else # non responsive
 fi
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]]; then
   # save wallet stakes (addtowallet), remove duplicates
   # note: not perfect data of proof-of-work
   touch /home/"$(whoami)"/staking 2>&1
@@ -620,7 +620,7 @@ fi
 ### clean up debug.log, peers.dat (truncate) keep pos around ###################
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]]; then
   if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
     # truncate debug.log
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
