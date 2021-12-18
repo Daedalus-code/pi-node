@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.8.0.2
+# 0.7.9.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.0.2"
+VERSION="v0.7.9.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -503,7 +503,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # wallet connections total
   WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
     awk '{ print $2 }' 2>&1)
-  WALLET_PEERS_TOTAL_N="${GR:?}0${N0:?}"
+  WALLET_PEERS_TOTAL_N="$WALLET_PEERS_TOTAL"
   WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
 
   # wallet connections latest (using wallet version)
@@ -749,15 +749,9 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
     # create a list this time
     echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/connections
     # highest peer count
-    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 |
-      sort -n 2>&1 | tail -1 2>&1 |
-      # remove color code
-      sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" 2>&1)
+    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 | head -1)
     # lowest peer count
-    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 |
-      sort -n 2>&1 | head -1 2>&1 |
-      # remove color code
-      sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" 2>&1)
+    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 | tail -1)
     TIMELINE="High/Low P2P $HIGH_P2P/$LOWS_P2P"
   fi
 
