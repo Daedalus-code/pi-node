@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.7.5.1
+# 0.7.5.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.5.0"
+VERSION="v0.7.5.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -465,6 +465,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # wallet connections total
   WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
     awk '{ print $2 }' 2>&1)
+  WALLET_PEERS_TOTAL_N="$WALLET_PEERS_TOTAL"
   WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
 
   # wallet connections latest (using wallet version)
@@ -696,7 +697,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
     TIMELINE="Uptime $TIMELINE"
   elif [ "$RANDOM_TIMELINE" -eq "13" ]; then
     # create a list this time
-    echo "$WALLET_PEERS_TOTAL" >>"${LOG_DIR:?}"/node_data/connections
+    echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/connections
     # highest peer count
     HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 |
       sort -n 2>&1 | tail -1 2>&1 |
