@@ -45,7 +45,7 @@ function uptime_daemon() {
 }
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # log lines (tail debug)
   LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
   # get log size
@@ -128,9 +128,9 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 |
   head -1 2>&1)
 
 # update wan, update repo, proof-of-work (everyday)
-if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
+if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/getwan &>/dev/null
-  if [[ "$UPDATE_REPO" -eq "1" ]]; then
+  if [[ "$UPDATE_REPO" -eq "1" ]] &>/dev/null; then
     # update repo, if set
     cd /home/"$(whoami)"/trump-node || exit &&
       git pull -q && bash include/install 2>&1
@@ -138,7 +138,7 @@ if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
 fi
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # get wan address, if missing
   if [ ! -f "${LOG_DIR:?}"/node_data/getwan ]; then
     host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan 2>&1
@@ -175,7 +175,7 @@ if grep "127.0.0.1:9050" "${LOG_DIR:?}"/node_data/getinfo &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() GetOnion.Data: Found Onion Address (${P1:?}$(cat "${LOG_DIR:?}"/node_data/onion 2>&1)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   PUBLIC_IP=$(cat "${LOG_DIR:?}"/node_data/onion 2>&1)
-  if [[ -z "$PUBLIC_IP" ]]; then
+  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
     # random onion (cryptography)
     PUBLIC_IP=$(openssl rand -base64 12 2>&1)
   fi # output onion address (short version)
@@ -199,7 +199,7 @@ if [ ! -s "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
 fi
 
 # update addnodes, failed peers, along with ticker price (every half, & hour)
-if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]]; then
+if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/nodes &>/dev/null
   printf '%b' "${LOG_DATE:?} Status() Update.Nodes() Looking for new peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
@@ -211,7 +211,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
   source /usr/local/bin/include/data
 
   # greater than n seconds
-  if [[ "$(uptime_daemon)" -gt "600" ]]; then
+  if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
 
     # count failed connections, feed output to debug.log
     FAIL_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
@@ -230,19 +230,19 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
     fi
 
     # success rate with color
-    if [[ "$SUCCESS_RA_SX" -ge "0" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "0" ]] &>/dev/null; then
       SRAC="${GR:?}${SUCCESS_RA:?}%"
     fi
-    if [[ "$SUCCESS_RA_SX" -ge "10" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "10" ]] &>/dev/null; then
       SRAC="${Y0:?}${SUCCESS_RA:?}%"
     fi
-    if [[ "$SUCCESS_RA_SX" -ge "25" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "25" ]] &>/dev/null; then
       SRAC="${Y1:?}${SUCCESS_RA:?}%"
     fi
-    if [[ "$SUCCESS_RA_SX" -ge "50" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "50" ]] &>/dev/null; then
       SRAC="${G0:?}${SUCCESS_RA:?}%"
     fi
-    if [[ "$SUCCESS_RA_SX" -ge "75" ]]; then
+    if [[ "$SUCCESS_RA_SX" -ge "75" ]] &>/dev/null; then
       SRAC="${G1:?}${SUCCESS_RA:?}%"
     fi
 
@@ -250,11 +250,11 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
     WANIP_R=$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 |
       egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
 
-    if [[ -z "$ONION_R" ]]; then
+    if [[ -z "$ONION_R" ]] &>/dev/null; then
       # non responsive
       ONION_R="none"
     fi
-    if [[ -z "$WANIP_R" ]]; then
+    if [[ -z "$WANIP_R" ]] &>/dev/null; then
       # non responsive
       WANIP_R="none"
     fi
@@ -284,14 +284,14 @@ function debug_tries() {
 # get value from tries file
 TRIES_COUNT=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tries 2>&1 | egrep -o "[0-9]+" 2>&1)
 # get peers connected overall since start
-if [[ "$TRIES_COUNT" -lt "$(debug_tries 2>&1)" ]]; then
+if [[ "$TRIES_COUNT" -lt "$(debug_tries 2>&1)" ]] &>/dev/null; then
   debug_tries >"${LOG_DIR:?}"/node_data/tries 2>&1
 fi
 
 ### failed & success lists #####################################################
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # create "failed/refusing" ipv4:ipv6 peers list, sort -n, remove duplicates
   cat "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
     egrep -o '([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):[0-9]+|(([a-f0-9:]+:+)+[a-f0-9]+) failed' 2>&1 |
@@ -327,7 +327,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   SUCCESS_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
   ADDNODE_COUNT=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
   # if success count is greater than addnode count
-  if [[ "$SUCCESS_COUNT" -gt "$ADDNODE_COUNT" ]]; then
+  if [[ "$SUCCESS_COUNT" -gt "$ADDNODE_COUNT" ]] &>/dev/null; then
     # create personal/wallet addnodes file, remove duplicates
     cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
       sort -n 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
@@ -342,7 +342,7 @@ fi
 ### addnodes screen script #####################################################
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "369" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
     grep -q "addnodes" 2>&1; then
@@ -396,7 +396,7 @@ fi
 ### wallet information #########################################################
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # collect wallet info, on every update (loop) from client
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getblockchaininfo 2>&1
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getinfo 2>&1
@@ -422,7 +422,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
 fi
 
 # less than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # wallet version
   WALLET_VERSION=$("$WALLET_DIR"/trumpcoin-cli -version 2>&1 |
     egrep -o "v[0-9]+.[0-9]+.[0-9]+" 2>&1)
@@ -439,13 +439,13 @@ else # testnet
   WALLET_CHAIN="${C1:?}testnet${N0:?}"
 fi
 
-if [[ "$(uptime_daemon)" -lt "300" ]]; then
+if [[ "$(uptime_daemon)" -lt "300" ]] &>/dev/null; then
   # nonet
   WALLET_CHAIN="${CY:?}nonet${N0:?}"
 fi
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # loading is done
   RC_LOADING="${N0:?}"
   # logo turns yellow while running
@@ -457,7 +457,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
     grep -Eo "[0-9]+" 2>&1)
   WALLET_SYNC=$(echo "100/$WALLET_HEADS*$WALLET_BLOCK" 2>&1 |
     bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  if [[ $(egrep -o "progress=1.000000" "$WALLET_LOG_DIR"/debug.log) ]]; then
+  if [[ $(egrep -o "progress=1.000000" "$WALLET_LOG_DIR"/debug.log) ]] &>/dev/null; then
     WALLET_SYNC="100"
   fi
   WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
@@ -485,7 +485,7 @@ function wallet_nodes() {
 }
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # wallet patriotnodes total
   WALLET_NODES_TOTAL=$(grep "total" "${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1 |
@@ -521,10 +521,10 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
     WALLET_PEERS_OTHER="${G0:?}${WALLET_PEERS_OTHER:?}${N0:?}"
   fi
 
-elif [[ "$WALLET_PEERS_TOTAL_N" -eq "0" ]]; then
+elif [[ "$WALLET_PEERS_TOTAL_N" -eq "0" ]] &>/dev/null; then
   # non responsive
   wallet_nodes
-elif [[ -z "$WALLET_PEERS_TOTAL_N" ]]; then
+elif [[ -z "$WALLET_PEERS_TOTAL_N" ]] &>/dev/null; then
   # non responsive
   wallet_nodes
 else # non responsive
@@ -532,7 +532,7 @@ else # non responsive
 fi
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # wallet balance
   WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
     egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
@@ -560,7 +560,7 @@ function wallet_balances() {
 }
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "369" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # wallet ticker.usd
   WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/ticker 2>&1)
   # wallet mempool
@@ -572,10 +572,10 @@ if [[ "$(uptime_daemon)" -gt "369" ]]; then
   # wallet inputs
   WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)
 
-elif [[ "$WALLET_TXCOUNT" -eq "0" ]]; then
+elif [[ "$WALLET_TXCOUNT" -eq "0" ]] &>/dev/null; then
   # non responsive
   wallet_balances
-elif [[ -z "$WALLET_TXCOUNT" ]]; then
+elif [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
   # non responsive
   wallet_balances
 else # non responsive
@@ -583,7 +583,7 @@ else # non responsive
 fi
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "369" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # last confirmation (smallest one)
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
     awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
@@ -597,7 +597,7 @@ else # non responsive
 fi
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "369" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # save wallet stakes (addtowallet), remove duplicates
   # note: not perfect data of proof-of-work
   touch /home/"$(whoami)"/staking 2>&1
@@ -608,7 +608,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]]; then
 
   # count saved stakes
   WALLET_STAKES=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-  if [[ "$WALLET_STAKES" -lt "$(addtowallet_new 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)" ]]; then
+  if [[ "$WALLET_STAKES" -lt "$(addtowallet_new 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)" ]] &>/dev/null; then
     addtowallet_new 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
   fi
 else
@@ -617,7 +617,7 @@ fi
 
 if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
   # wallet pos status
-  if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/getinfo 2>&1)" ]]; then
+  if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/getinfo 2>&1)" ]] &>/dev/null; then
     # pos active
     POS_STATUS="${G1:?}S${N0:?}"
     # balance is staking, highlight balance, stakes and inputs
@@ -634,11 +634,11 @@ fi
 ### clean up debug.log, peers.dat (truncate) keep pos around ###################
 
 # greater than n seconds
-if [[ "$(uptime_daemon)" -gt "369" ]]; then
-  if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]]; then
+if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
+  if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
     # truncate debug.log
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    if [[ "$KEEP_BACKUPS" -eq "0" ]]; then
+    if [[ "$KEEP_BACKUPS" -eq "0" ]] &>/dev/null; then
       # remove old backups
       rm -r "${WALLET_DIR:?}"/backups/* &>/dev/null
       printf '%b' "${LOG_DATE:?} Status() Clean.remove() Deleting wallet backups${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -649,7 +649,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]]; then
     # save proof of work data from debug.log
     # note: not perfect data of proof-of-work
     WALLET_STAKES=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-    if [[ "$WALLET_STAKES" -gt "$(addtowallet_new 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)" ]]; then
+    if [[ "$WALLET_STAKES" -gt "$(addtowallet_new 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)" ]] &>/dev/null; then
       cat /home/"$(whoami)"/staking 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       printf '%b' "${LOG_DATE:?} Status() Clean.truncate PoS ${G1:?}${WALLET_STAKES:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
@@ -790,7 +790,7 @@ fi
 
 ### theme ######################################################################
 
-if [[ "$DARKMODE" -eq "1" ]]; then
+if [[ "$DARKMODE" -eq "1" ]] &>/dev/null; then
   # darkmode theme (grey)
   RC="${GR:?}"
   TH="${RC:?}D${N0:?}"
