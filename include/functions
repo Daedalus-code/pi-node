@@ -332,19 +332,6 @@ if [[ "$TRIES_COUNT" -lt "$(debug_tries 2>&1)" ]]; then
   debug_tries >"${LOG_DIR:?}"/node_data/tries 2>&1
 fi
 
-### cleanup addnodes lists #####################################################
-
-# clean up personal addnodes
-cat /home/"$(whoami)"/addnodes 2>&1 |
-  grep -v -f "${LOG_DIR:?}"/node_data/peers/failed 2>&1 |
-  awk '!a[$0]++' >/tmp/addnodes.tmp 2>&1
-mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
-# clean up script addnodes
-cat "${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1 |
-  grep -v -f "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
-  awk '!a[$0]++' >/tmp/addnodes.tmp 2>&1
-mv /tmp/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes 2>&1
-
 ### addnodes screen script #####################################################
 
 # greater than n seconds
