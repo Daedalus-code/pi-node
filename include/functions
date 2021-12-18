@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.8.0.5
+# 0.8.0.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.0.5"
+VERSION="v0.8.0.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -338,7 +338,7 @@ cat /home/"$(whoami)"/addnodes 2>&1 |
   awk '!a[$0]++' >/tmp/addnodes.tmp 2>&1
 mv /tmp/addnodes.tmp /home/"$(whoami)"/addnodes 2>&1
 # clean up script addnodes
-cat "$LOG_DIR"/node_data/addnodes 2>&1 |
+cat "$LOG_DIR"/node_data/addnodes.tmp 2>&1 |
   grep -v -f "$LOG_DIR"/node_data/peers/failed 2>&1 |
   awk '!a[$0]++' >/tmp/addnodes.tmp 2>&1
 mv /tmp/addnodes.tmp "$LOG_DIR"/node_data/addnodes 2>&1
@@ -359,7 +359,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]]; then
 
 # By Rainman
 # V20211812
-# 0.0.3.5
+# 0.0.3.4
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -384,7 +384,6 @@ done <"${LOG_DIR:?}"/node_data/addnodes
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
-truncate -s 0 "${LOG_DIR:?}"/node_data/addnodes 2>&1
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Done! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 screen -X -S addnodes quit
 killall screen
@@ -396,6 +395,8 @@ EOF
     timeout 900 screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
   fi
 fi
+truncate -s 0 "${LOG_DIR:?}"/node_data/addnodes 2>&1
+rm "${LOG_DIR:?}"/node_data/addnodes.tmp &>/dev/null
 
 ### wallet information #########################################################
 
