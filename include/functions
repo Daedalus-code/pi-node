@@ -542,9 +542,9 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
     grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 |
     awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-else
-  LAST_TX=" "
-  WALLET_TXLAST=" "
+else # non responsive
+  LAST_TX="${N0:?}"
+  WALLET_TXLAST="${N0:?}"
 fi
 
 # greater than n seconds
