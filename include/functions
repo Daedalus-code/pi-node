@@ -352,13 +352,13 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # feed extras from personal addnodes, disregard with success list
   cat /home/"$(whoami)"/addnodes 2>&1 |
-    grep -v -f /tmp/node_data/peers/success >>"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
+    grep -v -f "${LOG_DIR:?}"/node_data/peers/success >>"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
   # cleanup script addnodes.tmp, disregard with failed list
   cat "${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1 |
     grep -v -f "${LOG_DIR:?}"/node_data/peers/nodes >"${LOG_DIR:?}"/node_data/addnodes 2>&1
   # feed extras from personal addnodes, disregard with success list, again
   cat /home/"$(whoami)"/addnodes 2>&1 |
-    grep -v -f /tmp/node_data/peers/success >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
+    grep -v -f "${LOG_DIR:?}"/node_data/peers/success >>"${LOG_DIR:?}"/node_data/addnodes 2>&1
 fi
 
 ### addnodes screen script #####################################################
