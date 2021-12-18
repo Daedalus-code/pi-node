@@ -490,7 +490,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # wallet connections total
   WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
     awk '{ print $2 }' 2>&1)
-  WALLET_PEERS_TOTAL_N="$WALLET_PEERS_TOTAL"
+  WALLET_PEERS_TOTAL_N="${GR:?}0${N0:?}"
   WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
 
   # wallet connections latest (using wallet version)
