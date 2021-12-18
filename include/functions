@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.8.2.1
+# 0.8.1.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.2.1"
+VERSION="v0.8.1.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -297,7 +297,7 @@ if [[ "$TRIES_COUNT" -lt "$(debug_tries 2>&1)" ]] &>/dev/null; then
   debug_tries >"${LOG_DIR:?}"/node_data/tries 2>&1
 fi
 
-### create personal, script addnodes list(s) #################################
+### create personal, script addnodes list(s) ###################################
 
 # create addnodes.script for script below, remove duplicates
 cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | sort -n 2>&1 |
@@ -306,7 +306,7 @@ cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | sort -n 2>&1 |
 cat /home/"$(whoami)"/addnodes 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 |
   grep -v -f /tmp/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes.extra
 
-### create, feed first extra, banned, ipv4, ipv6 address #######################
+### create, feed first extra, banned, ipv4, ipv6 address, sort #################
 
 # generate random ip address, ipv4 & ipv6
 RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
@@ -315,7 +315,8 @@ RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $(
 echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 echo "127.0.0.1" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-cat "${LOG_DIR:?}"/node_data/addnodes.extra >"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+cat "${LOG_DIR:?}"/node_data/addnodes.extra >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+cat "${LOG_DIR:?}"/node_data/addnodes.script 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
 
 ### failed & success lists #####################################################
 
@@ -352,6 +353,9 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   ### sort & cleanup script addnodes ###########################################
 
+  comm -23 "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+  comm -23 "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
+    sort -n >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 fi
 
 ### addnodes screen script #####################################################
