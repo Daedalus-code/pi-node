@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211912
-# 0.8.1.5
+# 0.8.1.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.1.5"
+VERSION="v0.8.1.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -188,9 +188,6 @@ fi
 ### adding nodes ###############################################################
 
 # remove empty files
-if [ ! -s "${LOG_DIR:?}"/node_data/addnodes ] &>/dev/null; then
-  rm "${LOG_DIR:?}"/node_data/addnodes &>/dev/null
-fi
 if [ ! -s "${LOG_DIR:?}"/node_data/onion ] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/onion &>/dev/null
 fi
@@ -215,7 +212,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
 
     # count failed connections, feed output to debug.log
     FAIL_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
-    ADDNODE_SI=$(wc -l "${LOG_DIR:?}"/node_data/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
+    ADDNODE_SI=$(wc -l "${LOG_DIR:?}"/node_data/addnodes.script 2>&1 | awk '{ print $1 }' 2>&1)
     ADDNODE_NOD=$(wc -l "${LOG_DIR:?}"/node_data/nodes 2>&1 | awk '{ print $1 }' 2>&1)
     ADDNODE_PSI=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
     SUCCESS_CO=$(grep -c "New outbound peer" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
@@ -384,7 +381,7 @@ PEERS_TRIES="0"
 
 function peers() {
   PEERS_TRIES=$(sort -n "${LOG_DIR:?}"/node_data/tries 2>&1 | /usr/bin/tail -1 2>&1)
-  PEERS_ADDNODES=$(cat "${LOG_DIR:?}"/node_data/addnodes 2>&1 | wc -l 2>&1)
+  PEERS_ADDNODES=$(cat "${LOG_DIR:?}"/node_data/addnodes.script 2>&1 | wc -l 2>&1)
   PEERS_ADDNODES_P=$(cat /home/"$(whoami)"/addnodes | wc -l 2>&1)
   PEERS_FAILED=$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
 }
