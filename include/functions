@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211812
-# 0.8.0.9
+# 0.8.1.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.0.9"
+VERSION="v0.8.1.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -340,6 +340,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     # create personal/wallet addnodes file, remove duplicates
     cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
       sort -n 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $(egrep -c "[0-9]+" /home/"$(whoami)"/addnodes 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   ### cleanup script addnodes ####################################################
@@ -348,8 +349,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   cat /home/"$(whoami)"/addnodes 2>&1 |
     grep -v -f /tmp/node_data/peers/success >>"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
   # cleanup script addnodes, disregard with failed list
-  cat "${LOG_DIR:?}"/node_data/peers/failed 2>&1 |
-    grep -v -f "${LOG_DIR:?}"/node_data/addnodes.tmp >"${LOG_DIR:?}"/node_data/addnodes
+  cat "${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1 |
+    grep -v -f "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/addnodes
 fi
 
 ### addnodes screen script #####################################################
