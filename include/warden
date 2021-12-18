@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211812
-# 0.0.5.5
+# 0.0.5.7
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -28,6 +28,17 @@ function uptime_daemon() {
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
 
+if [[ "$(uptime_daemon)" -gt "1" ]]; then
+  # error: couldn't connect to server
+  if grep -o "error: couldn't connect to server" "$LOG_DIR"/node_data/getinfo; then
+    # error with server (daemon), stopping
+    printf '%b' "${R1:?}${LOG_DATE:?} Status() Wallet.Warden: Error! Couldn't connect to server! Stopping daemon now!${N0:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    "$WALLET_DIR"/trumpcoin-cli -datadir=./ stop
+    printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: ${GR:?}::${N0:?} [${R1:?}XX${N0:?}] ${GR:?}::${N0:?} Rebooting system now!${N0:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    sudo reboot 2>&1
+  fi
+fi
+
 # daemon uptime greater then n
 if [[ "$(uptime_daemon)" -gt "1" ]]; then
   if pgrep -x trumpcoind &>/dev/null; then
@@ -41,15 +52,6 @@ if [[ "$(uptime_daemon)" -gt "1" ]]; then
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ? Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     "$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
   fi
-fi
-
-# error: couldn't connect to server
-if grep -o "error: couldn't connect to server" "$LOG_DIR"/node_data/getinfo; then
-  # error with server (daemon), stopping
-  printf '%b' "${R1:?}${LOG_DATE:?} Status() Wallet.Warden: Error! Couldn't connect to server! Stopping daemon now!${N0:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  "$WALLET_DIR"/trumpcoin-cli -datadir=./ stop
-  printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: ${GR:?}::${N0:?} [${R1:?}XX${N0:?}] ${GR:?}::${N0:?} Rebooting system now!${N0:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  sudo reboot 2>&1
 fi
 
 # END
