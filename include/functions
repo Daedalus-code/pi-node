@@ -302,7 +302,7 @@ cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | sort -n 2>&1 |
 
 # create addnodes.extra for personal use, remove duplicates
 cat /home/"$(whoami)"/addnodes 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 |
-  grep -vf /tmp/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes.extra
+  grep -vf /tmp/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes.extra 2>&1
 
 ### create, feed first extra, banned, ipv4, ipv6 address, sort #################
 
