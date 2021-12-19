@@ -342,12 +342,12 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # if success count is greater than addnode count
   if [[ "$SUCCESS_COUNT" -gt "$ADDNODE_COUNT" ]] &>/dev/null; then
     # save value, before the fact
-    egrep -c "[0-9]+" /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/node_data/addnodes.count 2>&1
+    egrep -c "[0-9]+" /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/node_data/addnodes.value 2>&1
     # create personal/wallet addnodes file, remove duplicates
     cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
       sort -n 2>&1 >/home/"$(whoami)"/addnodes 2>&1
     # calculate after the fact
-    ADDNODE_NEW_CALC=$(echo "$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)-$(cat /tmp/node_data/addnodes.count 2>/dev/null)" | bc 2>&1)
+    ADDNODE_NEW_CALC=$(echo "$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)-$(cat /tmp/node_data/addnodes.value 2>/dev/null)" | bc 2>&1)
     printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $ADDNODE_COUNT (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
