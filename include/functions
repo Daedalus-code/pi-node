@@ -117,7 +117,7 @@ USED_HDD_P=$(df -h 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 |
 
 # if non responsive
 IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
-# get interface
+# get interface and then ip address
 IFCONFIG=$(ifconfig 2>&1 | egrep "wlan*|eth*" 2>&1)
 IP_ADDRESS=$(echo "$IFCONFIG" 2>&1 | egrep "inet " 2>&1 |
   grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
