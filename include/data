@@ -93,13 +93,13 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
 
   # get interface and then ip address
   IFCONFIG=$(ifconfig 2>&1 | egrep "wlan*|eth*" 2>&1)
-  IP_ADDRESS=$(echo "$IFCONFIG" 2>&1 | egrep "inet " 2>&1 |
+  IP_ADDRESS_PING=$(echo "$IFCONFIG" 2>&1 | egrep "inet " 2>&1 |
     grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 |
     egrep "[0-9]+.[0-9]+.[0-9]+" 2>&1)
   # just ping it all
   printf '%b' "${LOG_DATE:?} Status() Intranet.Ping: Pinging network!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-  for ip in "${IP_ADDRESS:?}".{1..254}; do
+  for ip in "${IP_ADDRESS_PING:?}".{1..254}; do
     ping -c 1 -W 1 $ip | grep "64 bytes" |
       awk '{ print $4 }' | tr -d ':' &
   done >"$LOG_DIR"/node_data/nodes.ping
