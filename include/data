@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211912
-# 0.1.4.7
+# 0.1.4.6
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -66,9 +66,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   TICKER_LINES=$(cat /tmp/ticker 2>&1 | wc -l 2>&1)
   echo "${TICKER_TOTAL:?}/${TICKER_LINES:?}" 2>&1 |
     bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >/tmp/ticker 2>&1
-  # remove old file
-  rm "$LOG_DIR"/node_data/ticker &>/dev/null
-  # move new file into place
+
+  # setup ticker file
   mv /tmp/ticker "$LOG_DIR"/node_data/ticker 2>&1
   # api value
   API_VALUE=$(cat "$LOG_DIR"/node_data/ticker 2>&1 | tail -1 2>&1)
