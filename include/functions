@@ -719,12 +719,12 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
     WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)" 2>&1 |
-      bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+      bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     TIMELINE="Unconfirmed $WALLET_UNCONFIRMED ${GR:?}$WALLET_UNCONFIRMED_VALUE USD${N0:?}"
   # immature_balance
   elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
     WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)" 2>&1 |
-      bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+      bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     TIMELINE="Immature $WALLET_IMMATURE ${GR:?}$WALLET_IMMATURE_VALUE USD${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "6" ]; then
     # lowest confirmation
