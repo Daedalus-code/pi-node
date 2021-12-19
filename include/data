@@ -31,7 +31,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # get new count
   API_NEW=$(cat "$LOG_DIR"/node_data/nodes.api 2>/dev/null | wc -l 2>&1)
   # calculate api values
-  API_DIFF=$(echo "$API_COUNT-$API_NEW" 2>&1 | bc 2>&1)
+  API_DIFF=$(echo "$API_NEW-$API_COUNT" 2>&1 | bc 2>&1)
 
   # setup api file
   cat /tmp/nodes.api 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes
