@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211912
-# 0.1.4.2
+# 0.1.4.7
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -110,6 +110,11 @@ fi
 # save original value, make sure file exist before the fact
 touch "$LOG_DIR"/node_data/nodes.ping &>/dev/null
 egrep -c "[0-9]+" "$LOG_DIR"/node_data/nodes.ping >"$LOG_DIR"/node_data/nodes.ping.value 2>&1
+
+# if zero, make it so
+if [ ! -s "$LOG_DIR"/node_data/nodes.ping ] &>/dev/null; then
+  echo "0" >"$LOG_DIR"/node_data/nodes.ping 2>&1
+fi
 
 # get interface and then ip address
 IP_ADDRESS_PING=$(echo "$(ifconfig 2>&1 | egrep "wlan*|eth*" 2>&1)" 2>&1 |
