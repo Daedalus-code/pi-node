@@ -772,9 +772,9 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
     # create a list this time
     echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/connections
     # highest peer count
-    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 | head -1)
+    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 | tail -1)
     # lowest peer count
-    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 | tail -1)
+    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 | head -1)
     TIMELINE="High/Low P2P $HIGH_P2P/$LOWS_P2P"
   fi
 
