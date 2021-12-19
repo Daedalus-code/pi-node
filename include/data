@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211912
-# 0.0.9.7
+# 0.1.0.0
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -16,7 +16,9 @@ function uptime_daemon() {
 ### addnodes ###################################################################
 
 if [[ "$(uptime_daemon)" -gt "300" ]]; then
-  # save original value
+
+  # save original value, make sure file exist before the fact
+  touch "$LOG_DIR"/node_data/nodes.api.value &>/dev/null
   egrep -c "[0-9]+" "$LOG_DIR"/node_data/nodes.api >"$LOG_DIR"/node_data/nodes.api.value 2>&1
 
   # if zero, make it so
@@ -67,7 +69,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
 
   ### arp -a intranet ##########################################################
 
-  # save original value
+  # save original value, make sure file exist before the fact
+  touch "$LOG_DIR"/node_data/nodes.arp.value &>/dev/null
   egrep -c "[0-9]+" "$LOG_DIR"/node_data/nodes.arp >"$LOG_DIR"/node_data/nodes.arp.value 2>&1
 
   # if zero, make it so
