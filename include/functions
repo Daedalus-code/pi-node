@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211912
-# 0.8.2.5
+# 0.8.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.2.5"
+VERSION="v0.8.3.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -172,9 +172,9 @@ if grep "127.0.0.1:9050" "${LOG_DIR:?}"/node_data/getinfo &>/dev/null; then
   if [ ! -f "${LOG_DIR:?}"/node_data/onion ]; then
     egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       tail -1 >"${LOG_DIR:?}"/node_data/onion 2>&1
-    printf '%b' "${LOG_DATE:?} Status() GetOnion.Data: Found Onion Address (${P1:?}$(cat "${LOG_DIR:?}"/node_data/onion 2>&1)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() GetOnion.Data: Found Onion Address (${P1:?}$(cat "${LOG_DIR:?}"/node_data/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-  PUBLIC_IP=$(cat "${LOG_DIR:?}"/node_data/onion 2>&1)
+  PUBLIC_IP=$(cat "${LOG_DIR:?}"/node_data/onion 2>/dev/null)
   if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
     # random onion (cryptography)
     PUBLIC_IP=$(openssl rand -base64 12 2>&1)
@@ -243,7 +243,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
       SRAC="${G1:?}${SUCCESS_RA:?}%"
     fi
 
-    ONION_R=$(cat "${LOG_DIR:?}"/node_data/onion 2>&1)
+    ONION_R=$(cat "${LOG_DIR:?}"/node_data/onion 2>/dev/null)
     WANIP_R=$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 |
       egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
 
@@ -297,11 +297,11 @@ fi
 ### create personal, script addnodes list(s) ###################################
 
 # create addnodes.script for script below, remove duplicates
-cat "${LOG_DIR:?}"/node_data/nodes 2>&1 | sort -n 2>&1 |
+cat "${LOG_DIR:?}"/node_data/nodes 2>/dev/null | sort -n 2>&1 |
   awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes.script 2>&1 # <- (connecting!)
 
 # create addnodes.extra for personal use, remove duplicates
-cat /home/"$(whoami)"/addnodes 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 |
+cat /home/"$(whoami)"/addnodes 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' 2>&1 |
   grep -vf /tmp/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes.extra 2>&1
 
 ### create, feed first extra, banned, ipv4, ipv6 address, sort #################
@@ -313,8 +313,8 @@ RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $(
 echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 echo "127.0.0.1" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-cat "${LOG_DIR:?}"/node_data/addnodes.extra >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
-cat "${LOG_DIR:?}"/node_data/addnodes.script 2>&1 |
+cat "${LOG_DIR:?}"/node_data/addnodes.extra >>"${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null
+cat "${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null |
   awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 
@@ -328,12 +328,12 @@ touch "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # create "failed/refusing" ipv4:ipv6 peers list, sort -n, remove duplicates
-  cat "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
+  cat "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null |
     egrep -o '([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):[0-9]+|(([a-f0-9:]+:+)+[a-f0-9]+) failed' 2>&1 |
     awk '{ print $1 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
 
   # create "stable/working" ipv4/ipv6 peers list, sort -n, remove duplicates
-  cat "${LOG_DIR:?}"/node_data/getpeerinfo 2>&1 | grep -v "subver" 2>&1 |
+  cat "${LOG_DIR:?}"/node_data/getpeerinfo 2>/dev/null | grep -v "subver" 2>&1 |
     egrep -o '([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):[0-9]+|(([a-f0-9:]+:+)+[a-f0-9]+)' 2>&1 |
     awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 
@@ -349,8 +349,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     # save value, before the fact
     egrep -c "[0-9]+" /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/node_data/addnodes.value 2>&1
     # create personal/wallet addnodes file, remove duplicates
-    cat "${LOG_DIR:?}"/node_data/peers/success 2>&1 |
-      sort -n 2>&1 >/home/"$(whoami)"/addnodes 2>&1
+    cat "${LOG_DIR:?}"/node_data/peers/success 2>/dev/null |
+      sort -n >/home/"$(whoami)"/addnodes 2>&1
     # calculate after the fact
     ADDNODE_NEW_CALC=$(echo "$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)-$(cat /tmp/node_data/addnodes.value 2>/dev/null)" | bc 2>&1)
     printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $ADDNODE_COUNT (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -391,9 +391,9 @@ PEERS_TRIES="0"
 
 function peers() {
   PEERS_TRIES=$(sort -n "${LOG_DIR:?}"/node_data/tries 2>&1 | /usr/bin/tail -1 2>&1)
-  PEERS_ADDNODES=$(cat "${LOG_DIR:?}"/node_data/addnodes.script 2>&1 | wc -l 2>&1)
-  PEERS_ADDNODES_P=$(cat /home/"$(whoami)"/addnodes | wc -l 2>&1)
-  PEERS_FAILED=$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
+  PEERS_ADDNODES=$(cat "${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null | wc -l 2>&1)
+  PEERS_ADDNODES_P=$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)
+  PEERS_FAILED=$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null | wc -l 2>&1)
 }
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
@@ -436,14 +436,14 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   if grep -o "error: couldn't connect to server" "${LOG_DIR:?}"/node_data/tmp/getinfo; then
     rm -R "${LOG_DIR:?}"/node_data/tmp/* &>/dev/null
   else # use existing data without any error(s)
-    cat "${LOG_DIR:?}"/node_data/tmp/getblockchaininfo >"${LOG_DIR:?}"/node_data/getblockchaininfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/tmp/getinfo >"${LOG_DIR:?}"/node_data/getinfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/tmp/getmempoolinfo >"${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/tmp/getnetworkinfo >"${LOG_DIR:?}"/node_data/getnetworkinfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/tmp/getpatriotnodecount >"${LOG_DIR:?}"/node_data/getpatriotnodecount 2>&1
-    cat "${LOG_DIR:?}"/node_data/tmp/getwalletinfo >"${LOG_DIR:?}"/node_data/getwalletinfo 2>&1
-    cat "${LOG_DIR:?}"/node_data/tmp/listunspent >"${LOG_DIR:?}"/node_data/listunspent 2>&1
-    cat "${LOG_DIR:?}"/node_data/tmp/getpeerinfo >"${LOG_DIR:?}"/node_data/getpeerinfo 2>&1
+    cat "${LOG_DIR:?}"/node_data/tmp/getblockchaininfo >"${LOG_DIR:?}"/node_data/getblockchaininfo 2>/dev/null
+    cat "${LOG_DIR:?}"/node_data/tmp/getinfo >"${LOG_DIR:?}"/node_data/getinfo 2>/dev/null
+    cat "${LOG_DIR:?}"/node_data/tmp/getmempoolinfo >"${LOG_DIR:?}"/node_data/getmempoolinfo 2>/dev/null
+    cat "${LOG_DIR:?}"/node_data/tmp/getnetworkinfo >"${LOG_DIR:?}"/node_data/getnetworkinfo 2>/dev/null
+    cat "${LOG_DIR:?}"/node_data/tmp/getpatriotnodecount >"${LOG_DIR:?}"/node_data/getpatriotnodecount 2>/dev/null
+    cat "${LOG_DIR:?}"/node_data/tmp/getwalletinfo >"${LOG_DIR:?}"/node_data/getwalletinfo 2>/dev/null
+    cat "${LOG_DIR:?}"/node_data/tmp/listunspent >"${LOG_DIR:?}"/node_data/listunspent 2>/dev/null
+    cat "${LOG_DIR:?}"/node_data/tmp/getpeerinfo >"${LOG_DIR:?}"/node_data/getpeerinfo 2>/dev/null
   fi
 fi
 
@@ -591,7 +591,7 @@ function wallet_balances() {
 # greater than n seconds
 if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # wallet ticker.usd
-  WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/ticker 2>&1)
+  WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/ticker 2>/dev/null)
   # wallet mempool
   WALLET_MEMPOOL=$(grep "size" "${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1 |
     egrep -o "[0-9]+" 2>&1)
@@ -617,8 +617,8 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
     awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # last wallet txid with help of last_tx var
-  WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/listunspent 2>&1 | tr -d ':' 2>&1 |
-    grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 |
+  WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/listunspent 2>/dev/null |
+    tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 |
     awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 else # non responsive
   LAST_TX="${N0:?}"
@@ -629,14 +629,20 @@ fi
 if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # save wallet stakes (addtowallet), remove duplicates
   # note: not perfect data of proof-of-work
-  touch /home/"$(whoami)"/staking 2>&1
+
+  # make sure file exist before the fact
+  touch "$LOG_DIR"/node_data/nodes.arp.value &>/dev/null
+  touch /home/"$(whoami)"/staking &>/dev/null
 
   function addtowallet_new() {
     egrep "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log
   }
 
+  # count wallet stakes
+  egrep -c "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log >"${LOG_DIR:?}"/node_data/staking.value 2>&1
   # count saved stakes
-  WALLET_STAKES=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
+  SAVED_STAKES=$(cat /home/"$(whoami)"/staking 2>/dev/null)
+  WALLET_STAKES=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
   if [[ "$WALLET_STAKES" -lt "$(addtowallet_new 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)" ]] &>/dev/null; then
     addtowallet_new 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
   fi
@@ -679,7 +685,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     # note: not perfect data of proof-of-work
     WALLET_STAKES=$(wc -l /home/"$(whoami)"/staking 2>&1 | awk '{ print $1 }' 2>&1)
     if [[ "$WALLET_STAKES" -gt "$(addtowallet_new 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)" ]] &>/dev/null; then
-      cat /home/"$(whoami)"/staking 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      cat /home/"$(whoami)"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       printf '%b' "${LOG_DATE:?} Status() Clean.truncate PoS ${G1:?}${WALLET_STAKES:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
@@ -778,9 +784,9 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
     # create a list this time
     echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/connections
     # highest peer count
-    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 | tail -1)
+    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | tail -1 2>&1)
     # lowest peer count
-    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>&1 | head -1)
+    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | head -1 2>&1)
     TIMELINE="High/Low P2P $HIGH_P2P/$LOWS_P2P"
   fi
 
