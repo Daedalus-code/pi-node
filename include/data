@@ -137,6 +137,6 @@ printf '%b' "${LOG_DATE:?} Status() Intranet.Ping: Found ${G1:?}${PING_COUNT:?}$
 
 # remove duplicates
 cat "$LOG_DIR"/node_data/nodes.tmp 2>/dev/null |
-  sort -n 2>&1 | awk '!a[$0]++' "$LOG_DIR"/node_data/nodes 2>&1
+  sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes 2>&1
 
 # END
