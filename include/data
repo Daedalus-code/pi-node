@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211912
-# 0.1.3.5
+# 0.1.4.2
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -46,7 +46,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   API_DIFF=$(echo "$API_COUNT-$API_NEW" 2>&1 | bc 2>&1)
 
   # setup api file
-  cat "$LOG_DIR"/node_data/nodes.api 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes
+  cat "$LOG_DIR"/node_data/nodes.api 2>/dev/null |
+    sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.tmp 2>&1
   printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Found ${G1:?}${API_COUNT:?}${N0:?} New peers! (${API_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   ### token price ##############################################################
@@ -99,7 +100,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   ARP_DIFF=$(echo "$ARP_COUNT-$ARP_NEW" 2>&1 | bc 2>&1)
 
   # setup arp file
-  cat /tmp/nodes.arp 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes 2>&1
+  cat /tmp/nodes.arp 2>/dev/null |
+    sort -n 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes.tmp 2>&1
   printf '%b' "${LOG_DATE:?} Status() Intranet.ARP() Found ${G1:?}${ARP_COUNT:?}${N0:?} New peers! (${ARP_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
@@ -122,14 +124,19 @@ for ip in "${IP_ADDRESS_PING:?}".{1..254}; do
 done >"$LOG_DIR"/node_data/nodes.ping
 
 # count arp nodes
-PING_COUNT=$(cat "$LOG_DIR"/node_data/nodes.ping.value 2>&1)
+PING_COUNT=$(cat "$LOG_DIR"/node_data/nodes.ping.value 2>/dev/null)
 # get new.arp count
 PING_NEW=$(cat "$LOG_DIR"/node_data/nodes.ping 2>/dev/null | wc -l 2>&1)
 # calculate arp values
 PING_DIFF=$(echo "$PING_COUNT-$PING_NEW" 2>&1 | bc 2>&1)
 
+# setup ping file
+cat "$LOG_DIR"/node_data/nodes.ping 2>/dev/null |
+  sort -n 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes.tmp 2>&1
 printf '%b' "${LOG_DATE:?} Status() Intranet.Ping: Found ${G1:?}${PING_COUNT:?}${N0:?} New peers! (${PING_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-# feed ping list to nodes.arp list
-cat "$LOG_DIR"/node_data/nodes.ping >>"$LOG_DIR"/node_data/nodes.arp
+
+# remove duplicates
+cat "$LOG_DIR"/node_data/nodes.tmp 2>/dev/null |
+  sort -n 2>&1 | awk '!a[$0]++' "$LOG_DIR"/node_data/nodes 2>&1
 
 # END
