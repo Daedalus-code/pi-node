@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211912
-# 0.0.8.2
+# 0.0.9.0
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -24,11 +24,11 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
     awk '!a[$0]++' >/tmp/nodes.api 2>&1
 
   # save original value
-  cat /tmp/nodes.api 2>/dev/null | wc -l >"$LOG_DIR"/node_data/nodes.value 2>&1
+  cat /tmp/nodes.api 2>/dev/null | wc -l >"$LOG_DIR"/node_data/nodes.api.value 2>&1
   # count api nodes
-  API_COUNT=$(wc -l "$LOG_DIR"/node_data/nodes.value 2>&1 | awk '{ print $1 }' 2>&1)
+  API_COUNT=$(cat "$LOG_DIR"/node_data/nodes.api.value 2>&1)
   # get new count
-  API_NEW=$(egrep -o "$LOG_DIR"/node_data/nodes 2>&1 | grep -v -f /tmp/nodes 2>&1 | wc -l 2>&1)
+  API_NEW=$(cat "$LOG_DIR"/node_data/nodes.api 2>/dev/null | wc -l 2>&1)
   # calculate api values
   API_DIFF=$(echo "$API_COUNT-$API_NEW" 2>&1 | bc 2>&1)
 
@@ -74,9 +74,9 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # save original value
   cat /tmp/nodes.arp 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.arp.value 2>&1
   # count arp nodes
-  ARP_COUNT=$(wc -l "$LOG_DIR"/node_data/nodes.arp.value 2>&1 | awk '{ print $1 }' 2>&1)
+  ARP_COUNT=$(cat "$LOG_DIR"/node_data/nodes.arp.value 2>&1)
   # get new.arp count
-  ARP_NEW=$(egrep -o /tmp/nodes.arp 2>&1 | grep -v -f "$LOG_DIR"/node_data/nodes 2>&1 | wc -l 2>&1)
+  ARP_NEW=$(cat /tmp/nodes.arp 2>/dev/null | wc -l 2>&1)
   # calculate arp values
   ARP_DIFF=$(echo "$ARP_COUNT-$ARP_NEW" 2>&1 | bc 2>&1)
 
