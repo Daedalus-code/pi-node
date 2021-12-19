@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20211912
-# 0.8.3.1
+# 0.8.3.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.3.1"
+VERSION="v0.8.3.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -209,6 +209,9 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
 
   # greater than n seconds
   if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
+
+    # make sure script addnodes list exist
+    touch "${LOG_DIR:?}"/node_data/addnodes.script &>/dev/null
 
     # count failed connections, feed output to debug.log
     FAIL_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
