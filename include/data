@@ -24,7 +24,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
     awk '!a[$0]++' >/tmp/nodes.api 2>&1
 
   # save original value
-  cat /tmp/nodes.api 2>/dev/null | wc -l >"$LOG_DIR"/node_data/nodes.api.value 2>&1
+  egrep -c "[0-9]+" /tmp/nodes.api >"$LOG_DIR"/node_data/nodes.api.value 2>&1
   # count api nodes
   API_COUNT=$(cat "$LOG_DIR"/node_data/nodes.api.value 2>&1)
   # get new count
@@ -72,7 +72,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
     awk '!a[$0]++' >/tmp/nodes.arp 2>&1
 
   # save original value
-  cat /tmp/nodes.arp 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.arp.value 2>&1
+  egrep -c "[0-9]+" /tmp/nodes.arp >"$LOG_DIR"/node_data/nodes.arp.value 2>&1
   # count arp nodes
   ARP_COUNT=$(cat "$LOG_DIR"/node_data/nodes.arp.value 2>&1)
   # get new.arp count
