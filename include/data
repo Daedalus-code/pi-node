@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20211912
-# 0.1.1.9
+# 0.1.2.2
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -12,6 +12,9 @@ function uptime_daemon() {
   STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
+
+source /home/pi/pitrump.conf
+source /usr/local/bin/include/color
 
 # date for logs
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
