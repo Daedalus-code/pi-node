@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212012
-# 0.0.6.0
+# 0.0.6.1
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -47,7 +47,8 @@ if [[ "$(uptime_daemon)" -gt "1" ]]; then
   else
     # restore personal addnodes list from wallet directory
     cp "${WALLET_LOG_DIR:?}"/addnodes /home/"$(whoami)"/addnodes 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Restoring personal addnodes!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    WALLET_ADDNODES=$(cat "${WALLET_LOG_DIR:?}"/addnodes 2>/dev/null | tail -1 2>&1)
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Restoring personal addnodes! (${GR:?}${WALLET_ADDNODES:?}${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # remove old files
     rm -R "$LOG_DIR"/node_data/* &>/dev/null
