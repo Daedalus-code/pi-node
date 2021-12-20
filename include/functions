@@ -227,14 +227,14 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
     ADDNODE_PSI=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
 
     # note: heavy reading, with time
-    if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+5:[0-9]+" 2>&1)" ]] &>/dev/null; then
-      grep -c "New outbound peer" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/peers/success.value 2>&1
-      SUCCESS_CO=$(cat "${LOG_DIR:?}"/node_data/peers/success.value 2>/dev/null)
+    if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+5:[0-9]+|[0-9]+:[0-9]+0:[0-9]+" 2>&1)" ]] &>/dev/null; then
+      grep -c "New outbound peer" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/success.value 2>&1
+      SUCCESS_CO=$(cat "${LOG_DIR:?}"/node_data/success.value 2>/dev/null)
     elif [[ -z "$SUCCESS_CO" ]]; then
       # non responsive
       SUCCESS_CO="0"
     else
-      SUCCESS_CO=$(cat "${LOG_DIR:?}"/node_data/peers/success.value 2>/dev/null)
+      SUCCESS_CO=$(cat "${LOG_DIR:?}"/node_data/success.value 2>/dev/null)
     fi
 
     SUCCESS_RA=$(echo "100/$(echo "$FAIL_COUNT+$SUCCESS_CO" 2>&1 |
