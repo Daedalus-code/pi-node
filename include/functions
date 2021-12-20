@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20211912
+# V20212012
 # 0.8.3.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -362,7 +362,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     cat "${LOG_DIR:?}"/node_data/peers/success 2>/dev/null |
       sort -n >/home/"$(whoami)"/addnodes 2>&1
     # calculate after the fact
-    ADDNODE_NEW_CALC=$(echo "$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)-$(cat /tmp/node_data/addnodes.value 2>/dev/null)" | bc 2>&1)
+    ADDNODE_NEW_CALC=$(echo "$ADDNODE_COUNT-$(cat /tmp/node_data/addnodes.value 2>/dev/null)" | bc 2>&1)
     printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $ADDNODE_COUNT (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
@@ -372,7 +372,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   comm -23 <(sort "${LOG_DIR:?}"/node_data/addnodes.script) <(sort "${LOG_DIR:?}"/node_data/peers/*) >"${LOG_DIR:?}"/node_data/addnodes.tmp
   # again with newly created file with nodes list
   comm -23 <(sort "${LOG_DIR:?}"/node_data/addnodes.tmp) <(sort "${LOG_DIR:?}"/node_data/nodes) >"${LOG_DIR:?}"/node_data/addnodes.script
-  # end game: constantly connect successfully peers from personal addnodes list
+  # connect successfully peers from personal addnodes list when missing
 fi
 
 ### addnodes screen script #####################################################
