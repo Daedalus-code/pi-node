@@ -676,12 +676,12 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   egrep -c "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log |
     awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/staking.value 2>&1
   # count saved vs wallet stakes
-  SAVED_STAKES=$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)
-  WALLET_STAKES=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
-  if [[ "$WALLET_STAKES" -gt "$SAVED_STAKES" ]] &>/dev/null; then
+  SAVED_POS=$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)
+  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
+  if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
     egrep "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log 2>&1 |
       awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Saved ${G1:?}${WALLET_STAKES:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Saved ${G1:?}${WALLET_POS:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else
   WALLET_STAKES="${GR:?}0${N0:?}"
@@ -709,11 +709,11 @@ if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+5:[0-9]+|[0-9]+:[0-9]+0:[0-9]+" 2
   # save proof of work data from debug.log
   # note: not perfect data of proof-of-work
   # count saved vs wallet stakes
-  SAVED_STAKES=$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)
-  WALLET_STAKES=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
-  if [[ "$WALLET_STAKES" -lt "$SAVED_STAKES" ]] &>/dev/null; then
+  SAVED_POS=$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)
+  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
+  if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
     cat /home/"$(whoami)"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Restored ${G1:?}${SAVED_STAKES:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Restored ${G1:?}${SAVED_POS:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
