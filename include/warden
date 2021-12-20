@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20211812
-# 0.0.5.7
+# V20212012
+# 0.0.6.0
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -45,6 +45,9 @@ if [[ "$(uptime_daemon)" -gt "1" ]]; then
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(uptime_daemon)/3600")) $(("$(uptime_daemon)%3600/60")) $(("$(uptime_daemon)%60")))
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
+    # restore personal addnodes list from wallet directory
+    cp "${WALLET_LOG_DIR:?}"/addnodes /home/"$(whoami)"/addnodes 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Restoring personal addnodes!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # remove old files
     rm -R "$LOG_DIR"/node_data/* &>/dev/null
