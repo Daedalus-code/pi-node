@@ -385,7 +385,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     # calculate after the fact
     ADDNODE_COUNT=$(cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | wc -l 2>&1)
     ADDNODE_NEW_CALC=$(echo "${ADDNODE_COUNT:?}-${SUCCESS_VALUE:?}" 2>&1 | bc 2>&1)
-    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating personal addnodes! Total $ADDNODE_COUNT (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating personal addnodes! Total ${G1:?}$ADDNODE_COUNT${N0:?} (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   ### sort & cleanup script addnodes ###########################################
