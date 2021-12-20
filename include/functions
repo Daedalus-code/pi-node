@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212012
-# 0.8.5.2
+# 0.8.5.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.5.2"
+VERSION="v0.8.5.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -333,6 +333,8 @@ RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $(
 # feed address
 echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+echo "127.0.0.1" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
 cat "${LOG_DIR:?}"/node_data/addnodes.extra >>"${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null
 cat "${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null |
   awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
