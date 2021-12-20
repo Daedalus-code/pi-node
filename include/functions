@@ -140,7 +140,7 @@ fi
 # greater than n seconds
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # get wan address, if missing
-  if [ ! -f "${LOG_DIR:?}"/node_data/getwan ]; then
+  if [ ! -f "${LOG_DIR:?}"/node_data/getwan ] &>/dev/null; then
     host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan 2>&1
     printf '%b' "${LOG_DATE:?} Status() GetWan.Data(): Found Wan Address (${CY:?}$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # public ip address
@@ -169,7 +169,7 @@ UPLOAD=$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 |
 if grep "127.0.0.1:9050" "${LOG_DIR:?}"/node_data/getinfo &>/dev/null; then
   TOR_ICON="${P1:?}P$N0"
   # running proxy (tor), do this once
-  if [ ! -f "${LOG_DIR:?}"/node_data/onion ]; then
+  if [ ! -f "${LOG_DIR:?}"/node_data/onion ] &>/dev/null; then
     egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       tail -1 >"${LOG_DIR:?}"/node_data/onion 2>&1
     printf '%b' "${LOG_DATE:?} Status() GetOnion.Data: Found Onion Address (${P1:?}$(cat "${LOG_DIR:?}"/node_data/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -230,7 +230,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
     if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+5:[0-9]+|[0-9]+:[0-9]+0:[0-9]+" 2>&1)" ]] &>/dev/null; then
       grep -c "New outbound peer" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/success.value 2>&1
       SUCCESS_CO=$(cat "${LOG_DIR:?}"/node_data/success.value 2>/dev/null)
-    elif [[ -z "$SUCCESS_CO" ]]; then
+    elif [[ -z "$SUCCESS_CO" ]] &>/dev/null; then
       # non responsive
       SUCCESS_CO="0"
     else
@@ -328,7 +328,7 @@ RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $(
 echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 # already existing, don't add more
-if ! grep "127.0.0.1" /tmp/node_data/peers/failed; then
+if ! grep "127.0.0.1" "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null; then
   echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   echo "127.0.0.1" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
 fi
@@ -394,7 +394,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/tries.value ]] &>/dev/null; then
   if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     # look for screen session, if not found, start one
     if ! screen -list 2>&1 |
-      grep -q "addnodes" 2>&1; then
+      grep -q "addnodes" &>/dev/null; then
       # create screen session
       screen -dmS addnodes 2>&1
 
@@ -457,7 +457,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/listunspent 2>&1
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -conf="$WALLET_DIR"/trumpcoin.conf getpeerinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/tmp/getpeerinfo 2>&1
   # make sure data exist
-  if grep -o "error: couldn't connect to server" "${LOG_DIR:?}"/node_data/tmp/getinfo; then
+  if grep -o "error: couldn't connect to server" "${LOG_DIR:?}"/node_data/tmp/getinfo &>/dev/null; then
     rm -R "${LOG_DIR:?}"/node_data/tmp/* &>/dev/null
   else # use existing data without any error(s)
     cat "${LOG_DIR:?}"/node_data/tmp/getblockchaininfo >"${LOG_DIR:?}"/node_data/getblockchaininfo 2>/dev/null
@@ -511,7 +511,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     WALLET_SYNC="100"
   fi
   WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
-elif [[ -z "$WALLET_HEADS" ]]; then
+elif [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
   WALLET_SYNC="${GR:?}0.00${N0:?}"
@@ -670,7 +670,7 @@ else
   WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 
-if [ -f "${LOG_DIR:?}"/node_data/ticker ]; then
+if [ -f "${LOG_DIR:?}"/node_data/ticker ] &>/dev/null; then
   # wallet pos status
   if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/getinfo 2>&1)" ]] &>/dev/null; then
     # pos active
@@ -714,36 +714,36 @@ fi
 ### timeline ###################################################################
 
 # if rpc in warm-up, loading block index, wait
-if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
+if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
 
   # random start number
   RANDOM_TIMELINE=$((((RANDOM % 13) + 1)))
 
   # difficulty
-  if [ "$RANDOM_TIMELINE" -eq "1" ]; then
+  if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
     TIMELINE=$(grep "difficulty" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     TIMELINE="Difficulty $TIMELINE"
   # patriotnodes
-  elif [ "$RANDOM_TIMELINE" -eq "2" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "2" ] &>/dev/null; then
     TIMELINE="Patriotnodes ${N0:?}${WALLET_NODES_STABLE:?}${N0:?}/${G1:?}${WALLET_NODES_TOTAL:?}${N0:?}/${G0:?}${WALLET_NODES_ENABLED:?}${N0:?}/${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}"
   # moneysupply
-  elif [ "$RANDOM_TIMELINE" -eq "3" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "3" ] &>/dev/null; then
     TIMELINE=$(grep "moneysupply" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1 | rev 2>&1 |
       sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
     TIMELINE="Moneysupply $TIMELINE"
   # unconfirmed_balance
-  elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
     WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)" 2>&1 |
       bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     TIMELINE="Unconfirmed $WALLET_UNCONFIRMED ${GR:?}$WALLET_UNCONFIRMED_VALUE USD${N0:?}"
   # immature_balance
-  elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "5" ] &>/dev/null; then
     WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)" 2>&1 |
       bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     TIMELINE="Immature $WALLET_IMMATURE ${GR:?}$WALLET_IMMATURE_VALUE USD${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "6" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "6" ] &>/dev/null; then
     # lowest confirmation
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
@@ -755,7 +755,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 |
       egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="New Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "7" ] &>/dev/null; then
     # highest confirmation
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
@@ -768,7 +768,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
       egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
     # average confirmation
-  elif [ "$RANDOM_TIMELINE" -eq "8" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "8" ] &>/dev/null; then
     UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)
     TIMELINE=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)
@@ -783,20 +783,20 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
       egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="Average $TIMELINE_AVG ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
     # wallet value
-  elif [ "$RANDOM_TIMELINE" -eq "9" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
     TIMELINE="Value ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
     # highest input amount
-  elif [ "$RANDOM_TIMELINE" -eq "10" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
     TIMELINE="Highest Input $TIMELINE"
     # lowest input amount
-  elif [ "$RANDOM_TIMELINE" -eq "11" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "11" ] &>/dev/null; then
     TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/listunspent 2>&1 |
       awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Lowest Input $TIMELINE"
     # daemon uptime
-  elif [ "$RANDOM_TIMELINE" -eq "12" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
     TIMELINE_SEC=$(uptime_daemon 2>&1)
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
     TIMELINE="Uptime $TIMELINE"
@@ -814,25 +814,25 @@ else # wait on wallet (--DJT QUOTES - Art Of The Deal)
   # random start number
   RANDOM_TIMELINE=$((((RANDOM % 10) + 1)))
   # quotes - art of the deal
-  if [ "$RANDOM_TIMELINE" -eq "1" ]; then
+  if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
     TIMELINE="${GR}Think big${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "2" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "2" ] &>/dev/null; then
     TIMELINE="${GR}Maximize your options${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "3" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "3" ] &>/dev/null; then
     TIMELINE="${GR}Know your market${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "4" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
     TIMELINE="${GR}Use your leverage${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "5" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "5" ] &>/dev/null; then
     TIMELINE="${GR}Enhance your location${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "6" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "6" ] &>/dev/null; then
     TIMELINE="${GR}Get the word out${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "7" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "7" ] &>/dev/null; then
     TIMELINE="${GR}Fight back${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "8" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "8" ] &>/dev/null; then
     TIMELINE="${GR}Deliver the goods${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "9" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
     TIMELINE="${GR}Contain the costs${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "10" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
   fi
 fi
