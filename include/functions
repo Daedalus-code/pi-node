@@ -658,9 +658,9 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # count wallet stakes
   egrep -c "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log >"${LOG_DIR:?}"/node_data/staking.value 2>&1
   # count saved stakes
-  SAVED_STAKES=$(cat /home/"$(whoami)"/staking 2>/dev/null)
+  SAVED_STAKES=$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)
   WALLET_STAKES=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
-  if [[ "$WALLET_STAKES" -lt "$(addtowallet_new 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)" ]] &>/dev/null; then
+  if [[ "$WALLET_STAKES" -lt "$SAVED_STAKES" ]] &>/dev/null; then
     addtowallet_new 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
   fi
 else
