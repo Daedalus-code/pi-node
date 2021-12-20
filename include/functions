@@ -386,7 +386,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     cat "${LOG_DIR:?}"/node_data/peers/success 2>/dev/null |
       sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes.personal 2>&1
     # create backup of personal addnodes inside wallet directory
-    cp "${LOG_DIR:?}"/node_data/addnodes.personal "${WALLET_LOG_DIR:?}"/addnodes 2>&1 2>&1
+    cp "${LOG_DIR:?}"/node_data/addnodes.personal "${WALLET_LOG_DIR:?}"/addnodes 2>&1
     printf '%b' "${LOG_DATE:?} Status() AddNode.Script Creating backup of personal addnodes! Total ${G1:?}$ADDNODE_COUNT${N0:?} (${ADDNODE_NEW_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # calculate after the fact
     ADDNODE_COUNT=$(cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | wc -l 2>&1)
