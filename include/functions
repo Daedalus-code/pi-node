@@ -321,7 +321,7 @@ cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | sort -n 2>&1 | awk 
 # make sure user addnodes exist
 touch /home/"$(whoami)"/addnodes &>/dev/null
 # get user addnodes
-if [[ ! -s /home/"$(whoami)"/addnodes ]]; then
+if [[ -s /home/"$(whoami)"/addnodes ]]; then
   egrep -o " to [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+ failed| to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+ failed" /home/"$(whoami)"/addnodes 2>&1 |
     sort -n 2>&1 | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes.extra 2>&1
   printf '%b' "${LOG_DATE:?} Status() AddNode.Script Adding extra nodes from personal list! Total ${G1:?}$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
