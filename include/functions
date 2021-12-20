@@ -660,7 +660,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   if [[ "$WALLET_STAKES" -gt "$SAVED_STAKES" ]] &>/dev/null; then
     egrep "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log 2>&1 |
       awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: PoS ${G1:?}${WALLET_STAKES:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Saved ${G1:?}${WALLET_STAKES:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else
   WALLET_STAKES="${GR:?}0${N0:?}"
