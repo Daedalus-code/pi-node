@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212012
-# 0.8.6.1
+# 0.8.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.6.1"
+VERSION="v0.8.6.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -324,6 +324,7 @@ touch /home/"$(whoami)"/addnodes &>/dev/null
 if [[ ! -s /home/"$(whoami)"/addnodes ]]; then
   egrep -o " to [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+ failed| to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+ failed" /home/"$(whoami)"/addnodes 2>&1 |
     sort -n 2>&1 | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes.extra 2>&1
+  printf '%b' "${LOG_DATE:?} Status() AddNode.Script Adding extra nodes from personal list! Total ${G1:?}$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 # empty out user addnodes after the fact
 truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
