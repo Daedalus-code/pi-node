@@ -656,7 +656,7 @@ else # non responsive
   LAST_TX="${N0:?}"
   # random onion (cryptography)
   RANDOM_TX=$(openssl rand -base64 12 2>&1)
-  WALLET_TXLAST="${GR:?}                       Loading wallet transactions (${RANDOM_TX:?})${N0:?}"
+  WALLET_TXLAST="${GR:?}                       Loading wallet transactions (${RANDOM_TX:0:8})${N0:?}"
 fi
 
 # greater than n seconds
