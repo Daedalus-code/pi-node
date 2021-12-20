@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212012
-# 0.8.4.7
+# 0.8.4.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.4.7"
+VERSION="v0.8.4.8"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -365,12 +365,13 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   if [[ "$SUCCESS_COUNT" -gt "$ADDNODE_COUNT" ]] &>/dev/null; then
     # save value, before the fact
     egrep -c "[0-9]+" /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/node_data/addnodes.value 2>&1
+    SUCCESS_VALUE=$(cat "${LOG_DIR:?}"/node_data/addnodes.value 2>/dev/null)
     # create personal/wallet addnodes file, sort, remove duplicates
     cat "${LOG_DIR:?}"/node_data/peers/success 2>/dev/null |
       sort -n 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/addnodes 2>&1
     # calculate after the fact
-    ADDNODE_NEW_CALC=$(echo "${ADDNODE_COUNT:?}-$(cat /tmp/node_data/addnodes.value 2>/dev/null)" | bc 2>&1)
-    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! New nodes! Total $ADDNODE_COUNT (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    ADDNODE_NEW_CALC=$(echo "${ADDNODE_COUNT:?}-$SUCCESS_VALUE" | bc 2>&1)
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating personal addnodes! Total $ADDNODE_COUNT (${ADDNODE_NEW_CALC:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   ### sort & cleanup script addnodes ###########################################
