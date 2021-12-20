@@ -303,16 +303,16 @@ fi
 
 ### debug peer(s) tries/connected ##############################################
 
-function debug_tries() {
+# note: heavy reading, with time
+if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+5:[0-9]+" 2>&1)" ]] &>/dev/null; then
   egrep -o "peer=[0-9]+" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
-    egrep -o "[0-9]+" 2>&1 | tail -1 2>&1
-}
-
-# get value from tries file
-TRIES_COUNT=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tries 2>&1 | egrep -o "[0-9]+" 2>&1)
-# get peers connected overall since start
-if [[ "$TRIES_COUNT" -lt "$(debug_tries 2>&1)" ]] &>/dev/null; then
-  debug_tries >"${LOG_DIR:?}"/node_data/tries 2>&1
+    egrep -o "[0-9]+" 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/tries.value 2>&1
+  TRIES_COUNT=$(cat "${LOG_DIR:?}"/node_data/tries.value 2>/dev/null)
+elif [[ -z "$TRIES_COUNT" ]]; then
+  # non responsive
+  TRIES_COUNT="0"
+else
+  TRIES_COUNT=$(cat "${LOG_DIR:?}"/node_data/tries.value 2>/dev/null)
 fi
 
 ### create personal, script addnodes list(s) ###################################
