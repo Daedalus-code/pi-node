@@ -807,7 +807,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ]; then
     HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | tail -1 2>&1)
     # lowest peer count
     LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | head -1 2>&1)
-    TIMELINE="High/Low P2P $HIGH_P2P / $LOWS_P2P"
+    TIMELINE="High/Low P2P $HIGH_P2P-${GR:?}$LOWS_P2P${N0:?}"
   fi
 
 else # wait on wallet (--DJT QUOTES - Art Of The Deal)
