@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212012
-# 0.8.7.6
+# 0.8.7.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.7.6"
+VERSION="v0.8.7.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -204,12 +204,11 @@ if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &
   cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null |
     grep -vf "${LOG_DIR:?}"/node_data/peers/failed | sort -n 2>&1 |
     awk '!a[$0]++' >/tmp/addnodes.tmp
+  mv /tmp/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.personal 2>&1
   PERSONAL_ADDNODES_C02=$(cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | wc -l 2>&1)
   # calculate personal addnodes difference
   PERSONAL_ADDNODES_DIFF=$(echo "${PERSONAL_ADDNODES_C01:?}-${PERSONAL_ADDNODES_C02:?}" 2>&1 | bc 2>&1)
   printf '%b' "${LOG_DATE:?} Status() Update.Nodes() Cleaning personal addnodes! Removed ${GR:?}${PERSONAL_ADDNODES_DIFF:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  mv /tmp/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.personal 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Update.Nodes() Looking for peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # get node list, ticker (api, arp)
