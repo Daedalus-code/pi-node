@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212012
-# 0.8.6.6
+# 0.8.6.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.6.6"
+VERSION="v0.8.6.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -701,6 +701,16 @@ fi
 
 ### clean up debug.log, peers.dat (truncate) keep pos around ###################
 
+# save proof of work data from debug.log
+# note: not perfect data of proof-of-work
+# count saved vs wallet stakes
+SAVED_STAKES=$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)
+WALLET_STAKES=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
+if [[ "$WALLET_STAKES" -lt "$SAVED_STAKES" ]] &>/dev/null; then
+  cat /home/"$(whoami)"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Restored ${G1:?}${WALLET_STAKES:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
+
 # greater than n seconds
 if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
@@ -714,15 +724,6 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     # remove old files
     rm "${LOG_DIR:?}"/node_data/onion &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate debug, onion${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # save proof of work data from debug.log
-    # note: not perfect data of proof-of-work
-    # count saved vs wallet stakes
-    SAVED_STAKES=$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)
-    WALLET_STAKES=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
-    if [[ "$WALLET_STAKES" -lt "$SAVED_STAKES" ]] &>/dev/null; then
-      cat /home/"$(whoami)"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Restored ${G1:?}${WALLET_STAKES:?}${N0:?} Proof of work data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
   fi
 fi
 
