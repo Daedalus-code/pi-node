@@ -851,7 +851,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE="Low/High P2P $LOWS_P2P/$HIGH_P2P"
   fi
 
-else # wait on wallet (--DJT QUOTES - Art Of The Deal)
+else # wait on wallet (--donald john trump quotes - art of the deal)
   # random start number
   RANDOM_TIMELINE=$((((RANDOM % 10) + 1)))
   # quotes - art of the deal
