@@ -410,6 +410,9 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   ### sort & cleanup script addnodes ###########################################
 
+  # debug filing
+  cp "${LOG_DIR:?}"/node_data/addnodes.script /tmp/addnodes.test
+
   # disregard with all list(s) from peers directory
   comm -23 <(sort "${LOG_DIR:?}"/node_data/addnodes.script) <(sort "${LOG_DIR:?}"/node_data/peers/*) >"${LOG_DIR:?}"/node_data/addnodes.tmp
   # again with newly created file with nodes list
