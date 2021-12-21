@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20212112
-# 0.8.9.1
+# V20212212
+# 0.8.9.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.9.1"
+VERSION="v0.8.9.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -836,9 +836,8 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE="Lowest Input $TIMELINE"
     # daemon uptime
   elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
-    TIMELINE_SEC=$(uptime_daemon 2>&1)
-    TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
-    TIMELINE_DAYS=$(echo "$TIMELINE/24" 2>&1 | bc 2>&1)
+    TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(uptime_daemon)/3600")) $(("$(uptime_daemon)%3600/60")) $(("$(uptime_daemon)%60")))
+    TIMELINE_DAYS=$(echo "$(uptime_daemon)/1440" 2>&1 | bc 2>&1)
     TIMELINE="Uptime (${TIMELINE_DAYS:?}d) ${GR:?}$TIMELINE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "13" ]; then
     # create a list this time
