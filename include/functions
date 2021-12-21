@@ -413,7 +413,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # disregard with all list(s) from peers directory
   comm -23 <(sort "${LOG_DIR:?}"/node_data/addnodes.script) <(sort "${LOG_DIR:?}"/node_data/peers/*) >"${LOG_DIR:?}"/node_data/addnodes.tmp
   # again with newly created file with nodes list
-  comm -23 <(sort "${LOG_DIR:?}"/node_data/addnodes.tmp) <(sort "${LOG_DIR:?}"/node_data/nodes) >"${LOG_DIR:?}"/node_data/addnodes.script
+#  comm -23 <(sort "${LOG_DIR:?}"/node_data/addnodes.tmp) <(sort "${LOG_DIR:?}"/node_data/nodes) >"${LOG_DIR:?}"/node_data/addnodes.script
   # connect successfully peers from personal addnodes list when missing
 fi
 
