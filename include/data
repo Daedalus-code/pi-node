@@ -105,27 +105,27 @@ touch "$LOG_DIR"/node_data/nodes.ping &>/dev/null
 # empty the file before the fact, each round
 truncate -s 0 "$LOG_DIR"/node_data/nodes.ping &>/dev/null
 
-function ip_address_ping() {
-  # ping local network using ip_address_ping01 var
+# ping local network using ip_address_ping var
+for ip in "${IP_ADDRESS_PING:?}".{1..254}; do
+  ping -c 1 -W 1 $ip 2>&1 | grep "64 bytes" 2>&1 |
+    awk '{ print $4 }' 2>&1 | tr -d ':' &
+done >"$LOG_DIR"/node_data/nodes.ping
+
+if ! echo "$IP_ADDRESS_PING" | grep "192.168.1" &>/dev/null; then
+  IP_ADDRESS_PING="192.168.0"
+  # ping local network using ip_address_ping var
   for ip in "${IP_ADDRESS_PING:?}".{1..254}; do
     ping -c 1 -W 1 $ip 2>&1 | grep "64 bytes" 2>&1 |
       awk '{ print $4 }' 2>&1 | tr -d ':' &
   done >>"$LOG_DIR"/node_data/nodes.ping
-}
+fi
 
-# mix it up, ruled by reality of the network used
-if echo "$IP_ADDRESS_PING" 2>&1 | egrep -o "192.168.1" &>/dev/null; then
-  IP_ADDRESS_PING="192.168.0"
-  ip_address_ping
-fi
-if echo "$IP_ADDRESS_PING" 2>&1 | egrep -o "192.168.0|192.168.1" &>/dev/null; then
-  IP_ADDRESS_PING="10.0.0"
-  ip_address_ping
-fi
-if echo "$IP_ADDRESS_PING" 2>&1 | egrep -o "192.168.0" &>/dev/null; then
-  IP_ADDRESS_PING="192.168.1"
-  ip_address_ping
-fi
+IP_ADDRESS_PING="10.0.0"
+# ping local network using ip_address_ping var
+for ip in "${IP_ADDRESS_PING:?}".{1..254}; do
+  ping -c 1 -W 1 $ip 2>&1 | grep "64 bytes" 2>&1 |
+    awk '{ print $4 }' 2>&1 | tr -d ':' &
+done >>"$LOG_DIR"/node_data/nodes.ping
 
 # count arp nodes
 PING_COUNT=$(cat "$LOG_DIR"/node_data/nodes.ping.value 2>/dev/null)
