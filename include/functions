@@ -460,7 +460,7 @@ done <"${LOG_DIR:?}"/node_data/addnodes.script # <- (connecting w shell)
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
-printf '%b' "${LOG_DATE:?} Status() AddNode.Script Done! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?} ${R1:?}<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() AddNode.Script Done! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?} ${GR:?}<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 screen -X -S addnodes quit
 killall screen
