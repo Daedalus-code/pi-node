@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212112
-# 0.8.9.2
+# 0.8.9.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.9.2"
+VERSION="v0.8.9.3"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -840,7 +840,8 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
   elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
     TIMELINE_SEC=$(uptime_daemon 2>&1)
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")) $(("$TIMELINE_SEC%60")))
-    TIMELINE="Uptime $TIMELINE"
+    TIMELINE_DAYS=$(echo "$TIMELINE/24" 2>&1 | bc 2>&1)
+    TIMELINE="Uptime (${TIMELINE_DAYS:?}d) ${GR:?}$TIMELINE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "13" ]; then
     # create a list this time
     echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/connections
