@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212012
-# 0.8.7.5
+# 0.8.8.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.7.5"
+VERSION="v0.8.8.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -288,6 +288,13 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
     LATEST_TIME=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" |
       xargs -I{} date -d @{} '+%H:%M:%S')
 
+    # average confirmations (average staking/reward time)
+    if [[ -f "${LOG_DIR:?}"/node_data/avgconfirmation.value ]]; then
+      WALLET_STAKES_AVG=$(cat "${LOG_DIR:?}"/node_data/avgconfirmation.value 2>/dev/null)
+    else
+      WALLET_STAKES_AVG="${GR:?}No average data, please wait.${N0:?}"
+    fi
+
     printf '%b' "${GR:?} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemTorNet()${N0:?} Onion ${ONION_R:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemInternet${N0:?} WanIP ${WANIP_R:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -298,6 +305,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Fail/success()${N0:?} Fail ${R1:?}${FAIL_COUNT:?}${N0:?} Success ${G1:?}$SUCCESS_CO${N0:?} Success Rate ${SRAC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Addnode.Size()${N0:?} Add New Peers ${CY:?}${ADDNODE_SI:?}${N0:?} Addnode Peers ${C1:?}$ADDNODE_PSI${N0:?} Curl/Arp Nodes ${G1:?}$ADDNODE_NOD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Peers.Status()${N0:?} Total ${WALLET_PEERS_TOTAL:?} New ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} $DOWNLOAD ${R1:?}⇧${N0:?} $UPLOAD${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() Proof.Of.Work:${N0:?} PoS ${WALLET_STAKES:?} ${WALLET_STAKES_AVG:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     printf '%b' "${LOG_DATE:?} Status() System.Monitor Loading wallet${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -327,7 +335,7 @@ touch /home/"$(whoami)"/addnodes &>/dev/null
 if [[ -s /home/"$(whoami)"/addnodes ]]; then
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+" /home/"$(whoami)"/addnodes 2>&1 |
     sort -n 2>&1 | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes.extra 2>&1
-  printf '%b' "${LOG_DATE:?} Status() AddNode.Script Adding extra nodes from personal list! Total ${G1:?}$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() AddNode.Script Adding extra nodes! Total ${G1:?}$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 # empty out user addnodes after the fact
 truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
@@ -387,11 +395,11 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
       sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/addnodes.personal 2>&1
     # create backup of personal addnodes inside wallet directory
     cp "${LOG_DIR:?}"/node_data/addnodes.personal "${WALLET_DIR:?}"/addnodes 2>&1
-    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Creating backup of personal addnodes! Total ${G1:?}$ADDNODE_COUNT${N0:?} (${ADDNODE_NEW_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Creating backup! Total ${G1:?}$ADDNODE_COUNT${N0:?} (${ADDNODE_NEW_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # calculate after the fact
     ADDNODE_COUNT=$(cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | wc -l 2>&1)
     ADDNODE_NEW_DIFF=$(echo "${ADDNODE_COUNT:?}-${SUCCESS_VALUE:?}" 2>&1 | bc 2>&1)
-    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating personal addnodes! Total ${G1:?}$ADDNODE_COUNT${N0:?} (${ADDNODE_NEW_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Updating! Total ${G1:?}$ADDNODE_COUNT${N0:?} (${ADDNODE_NEW_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   ### sort & cleanup script addnodes ###########################################
@@ -438,7 +446,7 @@ function peers() {
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
-printf '%b' "${LOG_DATE:?} Status() AddNode.Script Start! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() AddNode.Script Starting! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
@@ -803,6 +811,8 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
       bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
+    # save the value
+    echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/avgconfirmation.value
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 |
       egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     TIMELINE="Average $TIMELINE_AVG ${INPUT_AGE_D:?}d ${GR:?}$INPUT_AGE${N0:?}"
