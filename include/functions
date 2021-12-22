@@ -494,7 +494,7 @@ else
   cat "${LOG_DIR:?}"/node_data/peers/worked.failed 2>/dev/null |
     awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
 
-  WF_PEERS=$(cat "${LOG_DIR:?}"/node_data/peers/worked.failed 2>/dev/null | wc -l 2>&1)
+  WF_PEERS=$(cat "${LOG_DIR:?}"/node_data/peers/worked.failed 2>/dev/null | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
   printf '%b' "${LOG_DATE:?} Status() AddNode.Script Banning non working address! ${G1:?}${WF_PEERS:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
