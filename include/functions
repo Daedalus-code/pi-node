@@ -353,7 +353,7 @@ cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | sort -n 2>&1 | awk 
 # make sure user addnodes exist
 touch /home/"$(whoami)"/addnodes &>/dev/null
 # get user addnodes
-if [[ -s /home/"$(whoami)"/addnodes ]]; then
+if [[ -s /home/"$(whoami)"/addnodes ]] &>/dev/null; then
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+" /home/"$(whoami)"/addnodes 2>&1 |
     sort -n 2>&1 | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/addnodes.extra 2>&1
   printf '%b' "${LOG_DATE:?} Status() AddNode.Script Adding extra nodes! Total ${G1:?}$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -466,7 +466,7 @@ function peers() {
 }
 
 # if non responsive
-if [[ -z "$PEERS_TRIES" ]]; then
+if [[ -z "$PEERS_TRIES" ]] &>/dev/null; then
   PEERS_TRIES="0"
 fi
 
@@ -881,7 +881,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(uptime_daemon)/3600")) $(("$(uptime_daemon)%3600/60")) $(("$(uptime_daemon)%60")))
     TIMELINE_DAYS=$(echo "$(uptime_daemon)/86400" 2>&1 | bc 2>&1)
     TIMELINE="Uptime (${TIMELINE_DAYS:?}d) ${GR:?}$TIMELINE${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "13" ]; then
+  elif [ "$RANDOM_TIMELINE" -eq "13" ] &>/dev/null; then
     # create a list this time
     echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/connections
     # highest peer count

@@ -1,25 +1,26 @@
 #!/bin/bash
 
 # By Rainman
-# V20211712
-# 0.0.3.2
+# V20212212
+# 0.0.3.3
 
 source /home/pi/pitrump.conf
 
 # dependencies
 
 # make sure screen is installed
-if ! [ -x "$(command -v screen)" ]; then
+if ! [ -x "$(command -v screen)" ] &>/dev/null; then
   sudo apt-get install screen -y
 fi
 # make sure tor is installed
-if ! [ -x "$(command -v tor)" ]; then
+if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   sudo apt-get install tor -y
   echo "Setup tor/wallet configurations!"
 fi
 
 # install/update
 clear
+mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/include/update /usr/local/bin/ 2>&1

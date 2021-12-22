@@ -21,7 +21,7 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 ### addnodes ###################################################################
 
-if [[ "$(uptime_daemon)" -gt "300" ]]; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   printf '%b' "${LOG_DATE:?} Status() Update.Nodes() Looking for peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
