@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212212
-# 0.9.4.2
+# 0.9.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -896,9 +896,11 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     # create a list this time
     echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/connections
     # highest peer count
-    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | tail -1 2>&1)
+    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null |
+      sort -n 2>&1 | tail -1 2>&1)
     # lowest peer count
-    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | head -1 2>&1)
+    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null |
+      sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Low/High P2P $LOWS_P2P/$HIGH_P2P"
   fi
 else # wait on wallet (--donald john trump quotes - art of the deal)
