@@ -475,7 +475,7 @@ printf '%b' "${LOG_DATE:?} Status() AddNode.Script Starting! Addnodes/New ${PEER
 
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
-done <"$(cat "${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null | shuf 2>&1)" # <- (connecting w shell)
+done | shuf <"${LOG_DIR:?}"/node_data/addnodes.script # <- (connecting w shell)
 
 LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
