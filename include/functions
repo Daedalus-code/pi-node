@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212212
-# 0.9.3.9
+# 0.9.4.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.3.9"
+VERSION="v0.9.4.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -214,8 +214,9 @@ if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &
   ADDNODE_NEW_DIFF=$(echo "${ADDNODE_COUNT:?}-${SUCCESS_VALUE:?}" 2>&1 | bc 2>&1)
 
   # if found, if bigger than original, update
-  if [[ ! -f "${LOG_DIR:?}"/node_data/addnodes.personal ]]; then
-    if [[ "$SUCCESS_VALUE" -gt "$ADDNODE_COUNT" ]]; then
+  ADDNODE_BACKUP=$(cat "${WALLET_DIR:?}"/addnodes)
+  if [[ ! -f "${WALLET_DIR:?}"/addnodes ]] &>/dev/null; then
+    if [[ "$SUCCESS_VALUE" -gt "$ADDNODE_BACKUP" ]]; then
       cp "${LOG_DIR:?}"/node_data/addnodes.personal "${WALLET_DIR:?}"/addnodes 2>&1
       printf '%b' "${LOG_DATE:?} Status() AddNode.Script Creating Addnodes backup list! Total ${G1:?}$ADDNODE_COUNT${N0:?} (${ADDNODE_NEW_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
