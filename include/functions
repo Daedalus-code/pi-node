@@ -376,7 +376,7 @@ fi
 cat "${LOG_DIR:?}"/node_data/addnodes.extra >>"${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null
 cat "${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null |
   awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
-mv "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+cp "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.script 2>&1
 
 ### failed & success lists #####################################################
 
