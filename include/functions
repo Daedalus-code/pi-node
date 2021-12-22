@@ -316,7 +316,6 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
       touch "${LOG_DIR:?}"/node_data/avgconfirmation.value &>/dev/null
       WALLET_STAKES_AVG="${GR:?}N/A${N0:?}"
     fi
-
     printf '%b' "${GR:?} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemTorNet()${N0:?} Onion ${ONION_R:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemInternet${N0:?} WanIP ${WANIP_R:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -396,7 +395,6 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
       awk '{ print $2 }' | sort -n | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
     printf '%b' "${LOG_DATE:?} Status() AddNode.Script Creating failed peers list! ${G1:?}$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null | wc -l 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-
   # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
   # note: only addr, disregard addrlocal
   egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo |
@@ -430,6 +428,9 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     sort) >"${LOG_DIR:?}"/node_data/addnodes.script
   comm -23 <(sort "${LOG_DIR:?}"/node_data/addnodes.tmp) <(egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' "${LOG_DIR:?}"/node_data/peers/failed |
     sort) >"${LOG_DIR:?}"/node_data/addnodes.script
+  # make sure node ip is out
+  grep -v "$IP_ADDRESS_N" "${LOG_DIR:?}"/node_data/addnodes.script >"${LOG_DIR:?}"/node_data/addnodes.tmp
+  cp "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.script
   # create a raw format to look at, of what went through add_peers script below
   cp "${LOG_DIR:?}"/node_data/addnodes.script "${LOG_DIR:?}"/node_data/addnodes.raw
 fi
@@ -869,7 +870,6 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | head -1 2>&1)
     TIMELINE="Low/High P2P $LOWS_P2P/$HIGH_P2P"
   fi
-
 else # wait on wallet (--donald john trump quotes - art of the deal)
   # random start number
   RANDOM_TIMELINE=$((((RANDOM % 10) + 1)))
