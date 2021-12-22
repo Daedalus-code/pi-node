@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212212
-# 0.9.0.8
+# 0.9.0.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.0.8"
+VERSION="v0.9.0.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -784,9 +784,10 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE=$(grep "moneysupply" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
       awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1 | rev 2>&1 |
       sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
-    TIMELINE_VALUE=$(echo "$(echo "$TIMELINE" 2>&1 | tr -d ',' 2>&1)*$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)" | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE_VALUE=$(echo "$TIMELINE_VALUE" 2>&1 | sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 |
-      rev 2>&1 | sed 's/^,//g' 2>&1)
+    TIMELINE_VALUE=$(echo "$(echo "$TIMELINE" 2>&1 |
+      tr -d ',' 2>&1)*$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)" 2>&1 | bc 2>&1)
+    TIMELINE_VALUE=$(echo "$TIMELINE_VALUE" 2>&1 |
+      sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
     TIMELINE="Moneysupply $TIMELINE ${GR:?}${TIMELINE_VALUE:?} USD${N0:?}"
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
