@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212212
-# 0.9.0.9
+# 0.9.1.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.0.9"
+VERSION="v0.9.1.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -307,11 +307,13 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
       xargs -I{} date -d @{} '+%H:%M:%S')
 
     # average confirmations (average staking/reward time)
-    if [[ -f "${LOG_DIR:?}"/node_data/avgconfirmation.value ]]; then
+    if [[ -f "${LOG_DIR:?}"/node_data/avgconfirmation.value ]] &>/dev/null; then
       WALLET_STAKES_AVG=$(cat "${LOG_DIR:?}"/node_data/avgconfirmation.value 2>/dev/null)
       WALLET_STAKES_AGE=$(echo "$(echo "$WALLET_STAKES_AVG" 2>&1 |
         egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     else
+      # make sure avgconfirmation exist
+      touch "${LOG_DIR:?}"/node_data/avgconfirmation.value &>/dev/null
       WALLET_STAKES_AVG="${GR:?}N/A${N0:?}"
     fi
 
