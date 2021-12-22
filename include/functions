@@ -24,7 +24,7 @@ until pidof trumpcoind 2>&1 |
   wc -w 2>&1 | egrep "1" &>/dev/null; do
   RANDOM_PID=$((((RANDOM % 999) + 1)))
   clear
-  printf '%b' "Waiting on trumpcoind (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
+  printf '%b' "Waiting on trumpcoin (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
   sleep 2
 done
 
