@@ -852,7 +852,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     # daemon uptime
   elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(uptime_daemon)/3600")) $(("$(uptime_daemon)%3600/60")) $(("$(uptime_daemon)%60")))
-    TIMELINE_DAYS=$(echo "$(uptime_daemon)/1440" 2>&1 | bc 2>&1)
+    TIMELINE_DAYS=$(echo "$(uptime_daemon)/86400" 2>&1 | bc 2>&1)
     TIMELINE="Uptime (${TIMELINE_DAYS:?}d) ${GR:?}$TIMELINE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "13" ]; then
     # create a list this time
