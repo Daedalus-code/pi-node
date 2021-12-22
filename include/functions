@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212212
-# 0.9.4.0
+# 0.9.4.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.4.0"
+VERSION="v0.9.4.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -462,7 +462,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/tries.value ]] &>/dev/null; then
 
 # By Rainman
 # V20212212
-# 0.0.5.3
+# 0.0.5.6
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -507,6 +507,8 @@ else
     awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   printf '%b' "${LOG_DATE:?} Status() AddNode.Script Banning non working address! ${GR:?}${TF_PEERS:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
+FAILED_PEERS=$(egrep "$(cat /tmp/node_data/addnodes.raw 2>/dev/null)" /tmp/debug.log 2>&1 | wc -l 2>&1)
+printf '%b' "${LOG_DATE:?} Status() AddNode.Script Failed peers from last round! ${GR:?}${FAILED_PEERS:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 screen -X -S addnodes quit
 killall screen
