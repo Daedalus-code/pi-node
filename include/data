@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20212112
-# 0.1.6.9
+# V20212212
+# 0.1.7.2
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -32,6 +32,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # if zero, make it so
   if [ ! -s "$LOG_DIR"/node_data/nodes.api.value ] &>/dev/null; then
     echo "0" >"$LOG_DIR"/node_data/nodes.api.value 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() Chainz.C.API() Note: First Round! Need more data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   # add node address (api) internet
@@ -61,6 +62,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]]; then
   # if zero, make it so
   if [ ! -s "$LOG_DIR"/node_data/nodes.arp.value ] &>/dev/null; then
     echo "0" >"$LOG_DIR"/node_data/nodes.arp.value 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() Intranet.ARP() Note: First Round! Need more data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   # add local address (arp) intranet, no ports on these
@@ -92,6 +94,7 @@ egrep -c "[0-9]+" "$LOG_DIR"/node_data/nodes.ping >"$LOG_DIR"/node_data/nodes.pi
 # if zero, make it so
 if [ ! -s "$LOG_DIR"/node_data/nodes.ping ] &>/dev/null; then
   echo "0" >"$LOG_DIR"/node_data/nodes.ping 2>&1
+  printf '%b' "${GR:?}${LOG_DATE:?} Status() Intranet.Ping: Note: First Round! Need more data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # get interface and then ip address
