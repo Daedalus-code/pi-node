@@ -484,7 +484,7 @@ printf '%b' "${LOG_DATE:?} Status() AddNode.Script Stopping! Addnodes/New ${PEER
 
 if echo "$(cat "${LOG_DIR:?}"/node_data/peers/worked.failed 2>/dev/null)" 2>&1 |
   grep "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" &>/dev/null; then
-  #statements
+  # nothing todo, wait
   printf '%b' "${LOG_DATE:?} Status() AddNode.Script Already banned, waiting.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   # which one did work, fail the rest (worked = worked (tried to connect) but failed)
