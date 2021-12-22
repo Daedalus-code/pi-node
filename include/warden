@@ -2,7 +2,7 @@
 
 # By Rainman
 # V202122212
-# 0.0.6.4
+# 0.0.6.6
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -49,6 +49,8 @@ if [[ "$(uptime_daemon)" -gt "1" ]]; then
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?} ${GR:?}$SCR_CALC${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # restore personal addnodes list from wallet directory
+    RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
+    echo "$RIP_IPV4" >"${WALLET_DIR:?}"/addnodes 2>&1
     cp "${WALLET_DIR:?}"/addnodes /home/"$(whoami)"/addnodes 2>&1
     WALLET_ADDNODES=$(cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | tail -1 2>&1)
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Restoring personal addnodes! (${GR:?}${WALLET_ADDNODES:?}${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
