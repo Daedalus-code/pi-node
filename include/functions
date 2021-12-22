@@ -402,7 +402,7 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
     # create "failed/refusing" ipv4:ipv6 peers list, sort, remove duplicates
     egrep -o " to [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+ failed| to [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+ failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 |
       awk '{ print $2 }' | sort -n | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Creating failed peers list! ${G1:?}$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null | wc -l 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() FunctionScript Creating failed peers list! ${G1:?}$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null | wc -l 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
   # note: only addr, disregard addrlocal
