@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20212212
-# 0.0.3.3
+# V20212312
+# 0.0.4.7
 
 source /home/pi/pitrump.conf
 
@@ -21,13 +21,27 @@ fi
 # install/update
 clear
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+mkdir "${LOG_DIR:?}"/node_data/repo &>/dev/null
 sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/include/update /usr/local/bin/ 2>&1
 sudo chmod +x /usr/local/bin/update
 sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pitrump /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/* 2>&1
 sudo chown "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
-echo "Updated!"
+# update repo
+cd /home/"$(whoami)"/trump-node || exit
+# fetch date, time and head commit
+REPO_HEAD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+# save values, make it old next round
+echo "$REPO_HEAD" >"${LOG_DIR:?}"/node_data/repo/head 2>&1
+# if files above exist use
+if [[ ! -f "${LOG_DIR:?}"/node_data/repo/head ]]; then
+  # fetch date, time and head commit
+  REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head 2>/dev/null)
+else
+  REPO_HEAD_OLD="${GR:?}0000000${N0:?}"
+fi
+printf '%b' "Updated! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${G1:?}${REPO_HEAD:?}${N0:?}]${N0:?}\n"
 ls -lS /usr/local/bin/include/
 
 # END
