@@ -22,6 +22,7 @@ fi
 
 # fetch date, time and head commit
 # save values, make it old next round
+cd /home/"$(whoami)"/trump-node || exit
 echo "$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
 REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
 
@@ -51,7 +52,6 @@ if git diff --quiet remotes/origin/HEAD &>/dev/null; then
   if ! tail -10 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "UpdatingRepo()" &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() UpdatingRepo() [${G1:?}Ok${N0:?}] [${G1:?}${REPO_HEAD:?}${N0:?}] ${GR:?}${REPO_DATE:?}${N0:?} ${REPO_TIME:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-  REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
   printf '%b' "Upgraded! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${P1:?}${REPO_HEAD:?}${N0:?}]${N0:?}\n"
   ls -lS /usr/local/bin/include/
 fi
