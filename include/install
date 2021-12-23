@@ -28,7 +28,7 @@ sudo cp -R /home/"$(whoami)"/trump-node/include/update /usr/local/bin/ 2>&1
 sudo chmod +x /usr/local/bin/update
 sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pitrump /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/* 2>&1
 sudo chown "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
-echo "Updated!"
+echo "Updated! [$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d')]"
 ls -lS /usr/local/bin/include/
 
 # END
