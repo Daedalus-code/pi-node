@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20212212
-# 0.9.4.4
+# V20212312
+# 0.9.4.4a
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.4.4"
+VERSION="v0.9.4.4a"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -230,8 +230,8 @@ if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &
   PERSONAL_ADDNODES_C01=$(cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | wc -l 2>&1)
   cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null |
     grep -vf "${LOG_DIR:?}"/node_data/peers/failed | sort -n 2>&1 |
-    awk '!a[$0]++' >/tmp/addnodes.tmp
-  mv /tmp/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.personal 2>&1
+    awk '!a[$0]++' >"${LOG_DIR:?}"/addnodes.tmp
+  mv "${LOG_DIR:?}"/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.personal 2>&1
   PERSONAL_ADDNODES_C02=$(cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | wc -l 2>&1)
   # calculate personal addnodes difference
   PERSONAL_ADDNODES_DIFF=$(echo "${PERSONAL_ADDNODES_C01:?}-${PERSONAL_ADDNODES_C02:?}" 2>&1 | bc 2>&1)
@@ -358,7 +358,7 @@ cat "${LOG_DIR:?}"/node_data/nodes 2>/dev/null | sort -n 2>&1 |
 
 # create addnodes.extra for personal use, sort, remove duplicates
 cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' 2>&1 |
-  grep -vf /tmp/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes.extra 2>&1
+  grep -vf "${LOG_DIR:?}"/node_data/peers/success >"${LOG_DIR:?}"/node_data/addnodes.extra 2>&1
 # make sure user addnodes exist
 touch /home/"$(whoami)"/addnodes &>/dev/null
 # get user addnodes
@@ -500,14 +500,14 @@ if echo "$(cat "${LOG_DIR:?}"/node_data/peers/total.failed 2>/dev/null)" 2>&1 |
   printf '%b' "${LOG_DATE:?} Status() AddNode.Script Already banned, waiting. ${GR:?}${TF_PEERS:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   # which one did work, fail the rest (worked = worked (tried to connect) but failed)
-  egrep -o "$(cat "${LOG_DIR:?}"/node_data/addnodes.raw 2>/dev/null)" /tmp/debug.log >"${LOG_DIR:?}"/node_data/peers/worked
+  egrep -o "$(cat "${LOG_DIR:?}"/node_data/addnodes.raw 2>/dev/null)" "${LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/peers/worked
   comm -23 <(sort "${LOG_DIR:?}"/node_data/addnodes.script) <(egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' "${LOG_DIR:?}"/node_data/peers/worked |
     sort) >"${LOG_DIR:?}"/node_data/peers/total.failed
   cat "${LOG_DIR:?}"/node_data/peers/total.failed 2>/dev/null |
     awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   printf '%b' "${LOG_DATE:?} Status() AddNode.Script Banning non working address! ${GR:?}${TF_PEERS:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
-FAILED_PEERS=$(egrep "$(cat /tmp/node_data/addnodes.raw 2>/dev/null)" /tmp/debug.log 2>&1 | wc -l 2>&1)
+FAILED_PEERS=$(egrep "$(cat "${LOG_DIR:?}"/node_data/addnodes.raw 2>/dev/null)" "${LOG_DIR:?}"/debug.log 2>&1 | wc -l 2>&1)
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Failed peers from last round! ${GR:?}${FAILED_PEERS:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 screen -X -S addnodes quit
@@ -517,7 +517,7 @@ exit
 EOF
       # 60s 90s 120s 240s 300s 600s, 900s = 15 minutes
       # start adding nodes, inside screen session (timeout n seconds)
-      timeout 900 screen -S addnodes -X -p 0 stuff $'bash /tmp/add_peers\n'
+      timeout 900 screen -S addnodes -X -p 0 stuff $'bash "${LOG_DIR:?}"/add_peers\n'
     fi
   fi
 fi
