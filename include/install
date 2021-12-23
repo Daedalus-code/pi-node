@@ -35,7 +35,7 @@ if ! grep "$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head
   cd /home/"$(whoami)"/trump-node || exit && git pull -q
   sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
   sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
-  sudo cp -R /home/"$(whoami)"/trump-node/include/install /usr/local/bin/update 2>&1
+  sudo cp /home/"$(whoami)"/trump-node/include/install /usr/local/bin/update 2>&1
   sudo chmod +x /usr/local/bin/update
   sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pitrump /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/* 2>&1
   sudo chown "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
