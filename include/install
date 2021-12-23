@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212312
-# 0.0.6.7
+# 0.0.6.4
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -21,10 +21,7 @@ fi
 
 # update repo
 cd /home/"$(whoami)"/trump-node || exit
-if git checkout master &>/dev/null &&
-  git fetch origin master &>/dev/null &&
-  [ "$(git rev-list HEAD...origin/master --count)" != 0 ] &&
-  git merge origin/master; then
+if git fetch origin; then
   clear
   # fetch date, time and head commit
   REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
