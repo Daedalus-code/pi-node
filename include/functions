@@ -34,8 +34,8 @@ mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/tmp &>/dev/null
 
-# wallet daemon uptime in seconds
-# wait with stuff before a limit (seconds) is reached
+# wallet daemon uptime function
+# function for waiting with stuff before a limit (seconds) is reached
 function uptime_daemon() {
   PID="$(pidof trumpcoind 2>&1)"
   HZ=$(getconf CLK_TCK 2>&1)
