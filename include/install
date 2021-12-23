@@ -2,12 +2,13 @@
 
 # By Rainman
 # V20212312
-# 0.0.4.9
+# 0.0.5.5
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
-# dependencies
+# date for logs
+LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 # make sure screen is installed
 if ! [ -x "$(command -v screen)" ] &>/dev/null; then
@@ -23,12 +24,20 @@ fi
 REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
 # save values, make it old next round
 echo "$REPO_HEAD_OLD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
-REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
 
 # update repo
 cd /home/"$(whoami)"/trump-node || exit
 if git diff --quiet remotes/origin/HEAD; then
   clear
+  # update repo
+  cd /home/"$(whoami)"/trump-node || exit && git pull -q && bash include/install 2>&1
+  # fetch date, time and head commit
+  REPO_HEAD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+  REPO_DATE=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d')
+  REPO_TIME=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%H:%M:%S')
+  if ! tail -10 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "UpdatingRepo()" &>/dev/null; then
+    printf '%b' "${LOG_DATE:?} Status() UpdatingRepo() [${G1:?}Ok${N0:?}] [${G1:?}${REPO_HEAD:?}${N0:?}] ${GR:?}${REPO_DATE:?}${N0:?} ${REPO_TIME:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
   # install/update
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
   mkdir "${LOG_DIR:?}"/node_data/repo &>/dev/null
@@ -38,10 +47,7 @@ if git diff --quiet remotes/origin/HEAD; then
   sudo chmod +x /usr/local/bin/update
   sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pitrump /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/* 2>&1
   sudo chown "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
-  # update repo
-  cd /home/"$(whoami)"/trump-node || exit
-  # fetch date, time and head commit
-  REPO_HEAD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+
   printf '%b' "Upgrade! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${P1:?}${REPO_HEAD:?}${N0:?}]${N0:?}\n"
   ls -lS /usr/local/bin/include/
 fi
