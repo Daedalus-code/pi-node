@@ -2,8 +2,9 @@
 
 # By Rainman
 # V20212312
-# 0.0.2.0
+# 0.0.2.1
 
+source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
 # date for logs
