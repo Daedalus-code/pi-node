@@ -45,7 +45,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/repo/head ]] &>/dev/null; then
 else
   REPO_HEAD_OLD="${GR:?}0000000${N0:?}"
 fi
-printf '%b' "Updated! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${G1:?}${REPO_HEAD:?}${N0:?}]${N0:?}\n"
+printf '%b' "Updated! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${P1:?}${REPO_HEAD:?}${N0:?}]${N0:?}\n"
 ls -lS /usr/local/bin/include/
 
 # END
