@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212312
-# 0.0.6.4a
+# 0.0.6.6
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -21,7 +21,9 @@ fi
 
 # update repo
 cd /home/"$(whoami)"/trump-node || exit
-if git ls-remote origin -h refs/heads/master; then
+CHANGED=0
+git remote update && git status -uno | grep -q 'Your branch is behind' && CHANGED=1
+if [ $CHANGED = 1 ]; then
   clear
   # fetch date, time and head commit
   REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
