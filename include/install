@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212312
-# 0.0.6.0
+# 0.0.6.6
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -18,19 +18,17 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   sudo apt-get install tor -y
   echo "Setup tor/wallet configurations!"
 fi
-function repo_head_old() {
-  # fetch date, time and head commit
-  REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
-  # save values, make it old next round
-  echo "$REPO_HEAD_OLD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
-}
+
 # update repo
 cd /home/"$(whoami)"/trump-node || exit
 if git checkout master &>/dev/null &&
   git fetch origin master &>/dev/null &&
   [ "$(git rev-list HEAD...origin/master --count)" != 0 ] &&
   git merge origin/master; then
-  repo_head_old
+  # fetch date, time and head commit
+  REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+  # save values, make it old next round
+  echo "$REPO_HEAD_OLD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
   # install/update
   clear
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
@@ -46,12 +44,20 @@ if git checkout master &>/dev/null &&
   # fetch date, time and head commit
   git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/repo/head.new 2>&1
   REPO_HEAD=$(cat "${LOG_DIR:?}"/node_data/repo/head.new 2>/dev/null)
+  REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
   printf '%b' "Upgrade! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${P1:?}${REPO_HEAD:?}${N0:?}]${N0:?}\n"
   ls -lS /usr/local/bin/include/
 else
-  repo_head_old
+  # fetch date, time and head commit
+  REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+  # save values, make it old next round
+  echo "$REPO_HEAD_OLD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
   # fetch old date, time and head commit
   REPO_HEAD=$(cat "${LOG_DIR:?}"/node_data/repo/head.new 2>/dev/null)
+  if [[ -z "$REPO_HEAD" ]]; then
+    # non responsive
+    REPO_HEAD="000000"
+  fi
   REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
   printf '%b' "Updated! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${P1:?}${REPO_HEAD:?}${N0:?}]${N0:?}\n"
   ls -lS /usr/local/bin/include/
