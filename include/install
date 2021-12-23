@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212312
-# 0.0.4.8
+# 0.0.4.9
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -19,15 +19,16 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   echo "Setup tor/wallet configurations!"
 fi
 
+# fetch date, time and head commit
+REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+# save values, make it old next round
+echo "$REPO_HEAD_OLD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
+REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
+
 # update repo
 cd /home/"$(whoami)"/trump-node || exit
 if git diff --quiet remotes/origin/HEAD; then
   clear
-  # fetch date, time and head commit
-  REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
-  # save values, make it old next round
-  echo "$REPO_HEAD_OLD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
-  REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
   # install/update
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
   mkdir "${LOG_DIR:?}"/node_data/repo &>/dev/null
