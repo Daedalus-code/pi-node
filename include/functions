@@ -109,7 +109,6 @@ INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }'
 
 # update repository
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
-  rm "${LOG_DIR:?}"/node_data/getwan &>/dev/null
   if [[ "$UPDATE_REPO" -eq "1" ]] &>/dev/null; then
     # update repo, if set
     cd /home/"$(whoami)"/trump-node || exit &&
@@ -749,6 +748,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     if [[ "$KEEP_BACKUPS" -eq "0" ]] &>/dev/null; then
       # remove old backups
       rm -r "${WALLET_DIR:?}"/backups/* &>/dev/null
+      rm "${LOG_DIR:?}"/node_data/getwan &>/dev/null
       printf '%b' "${LOG_DATE:?} Status() Clean.remove() Deleting wallet backups${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
     # remove old files
