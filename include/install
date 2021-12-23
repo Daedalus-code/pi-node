@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212312
-# 0.0.6.6
+# 0.0.6.7
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -25,12 +25,12 @@ if git checkout master &>/dev/null &&
   git fetch origin master &>/dev/null &&
   [ "$(git rev-list HEAD...origin/master --count)" != 0 ] &&
   git merge origin/master; then
+  clear
   # fetch date, time and head commit
   REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
   # save values, make it old next round
   echo "$REPO_HEAD_OLD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
   # install/update
-  clear
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
   mkdir "${LOG_DIR:?}"/node_data/repo &>/dev/null
   sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
@@ -48,6 +48,7 @@ if git checkout master &>/dev/null &&
   printf '%b' "Upgrade! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${P1:?}${REPO_HEAD:?}${N0:?}]${N0:?}\n"
   ls -lS /usr/local/bin/include/
 else
+  clear
   # fetch date, time and head commit
   REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
   # save values, make it old next round
