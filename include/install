@@ -57,7 +57,7 @@ else
   REPO_HEAD=$(cat "${LOG_DIR:?}"/node_data/repo/head.new 2>/dev/null)
   if [[ -z "$REPO_HEAD" ]]; then
     # non responsive
-    REPO_HEAD="000000"
+    REPO_HEAD="${GR:?}000000${N0:?}"
   fi
   REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
   printf '%b' "Updated! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${P1:?}${REPO_HEAD:?}${N0:?}]${N0:?}\n"
