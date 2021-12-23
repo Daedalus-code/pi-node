@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212312
-# 0.0.2.1
+# 0.0.2.3
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -16,6 +16,8 @@ cd /home/"$(whoami)"/trump-node || exit && git pull -q && bash include/install 2
 REPO_HEAD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
 REPO_DATE=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d')
 REPO_TIME=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%H:%M:%S')
-printf '%b' "${LOG_DATE:?} Status() UpdatingRepo() [${G1:?}Ok${N0:?}] [${G1:?}${REPO_HEAD:?}${N0:?}] ${GR:?}${REPO_DATE:?}${N0:?} ${REPO_TIME:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+if ! tail -10 2>&1 | grep "UpdatingRepo()" &>/dev/null; then
+  printf '%b' "${LOG_DATE:?} Status() UpdatingRepo() [${G1:?}Ok${N0:?}] [${G1:?}${REPO_HEAD:?}${N0:?}] ${GR:?}${REPO_DATE:?}${N0:?} ${REPO_TIME:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
 
 # END
