@@ -36,7 +36,7 @@ REPO_HEAD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head 
 # save values, make it old next round
 echo "$REPO_HEAD" >"${LOG_DIR:?}"/node_data/repo/head 2>&1
 # if files above exist use
-if [[ ! -f "${LOG_DIR:?}"/node_data/repo/head ]]; then
+if [[ -f "${LOG_DIR:?}"/node_data/repo/head ]] &>/dev/null; then
   # fetch date, time and head commit
   REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head 2>/dev/null)
 else
