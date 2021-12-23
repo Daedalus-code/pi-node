@@ -2,9 +2,10 @@
 
 # By Rainman
 # V20212312
-# 0.0.4.7
+# 0.0.4.8
 
-source /home/pi/pitrump.conf
+source /home/"$(whoami)"/pitrump.conf
+source /usr/local/bin/include/color
 
 # dependencies
 
