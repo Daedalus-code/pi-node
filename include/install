@@ -4,7 +4,7 @@
 # V20212312
 # 0.0.4.8
 
-source /home/"$(whoami)"/pitrump.conf
+source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
 # dependencies
