@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212312
-# 0.0.4.8
+# 0.0.5.1
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -18,7 +18,12 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   sudo apt-get install tor -y
   echo "Setup tor/wallet configurations!"
 fi
-
+# update repo
+cd /home/"$(whoami)"/trump-node || exit
+# fetch date, time and head commit
+REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+# save values, make it old next round
+echo "$REPO_HEAD_OLD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
 # install/update
 clear
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
@@ -33,8 +38,6 @@ sudo chown "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
 cd /home/"$(whoami)"/trump-node || exit
 # fetch date, time and head commit
 REPO_HEAD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
-# save values, make it old next round
-echo "$REPO_HEAD" >"${LOG_DIR:?}"/node_data/repo/head 2>&1
 # if files above exist use
 if [[ -f "${LOG_DIR:?}"/node_data/repo/head ]] &>/dev/null; then
   # fetch date, time and head commit
