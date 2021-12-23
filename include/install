@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212312
-# 0.0.6.3
+# 0.0.5.9
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -29,13 +29,9 @@ echo "$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/repo &>/dev/null
 
-BRANCH="<your branch name>"
-LAST_UPDATE=$(git show --no-notes --format=format:"%H" $BRANCH | head -n 1)
-LAST_COMMIT=$(git show --no-notes --format=format:"%H" origin/$BRANCH | head -n 1)
-
-cd /home/"$(whoami)"/trump-node || exit
-git remote update
-if [ $LAST_COMMIT != $LAST_UPDATE ]; then
+STR=$(cd /home/"$(whoami)"/trump-node || exit && git status)
+if [[ $STR =~ .*Your\ branch\ is\ behind.*by.*commits,\ and\ can\ be\ fast-forwarded ]]; then
+  echo $(date "+%Y-%m-%d %H:%M:%S") "Needs pull"
   clear
   # update repo
   cd /home/"$(whoami)"/trump-node || exit && git pull -q
@@ -57,7 +53,7 @@ if [ $LAST_COMMIT != $LAST_UPDATE ]; then
   # new old
   echo "$REPO_HEAD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
 else
-  echo "No updates available"
+  echo "Code is up to date"
 fi
 
 # END
