@@ -205,7 +205,7 @@ if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &
   # make sure addnodes.value exist
   touch "${LOG_DIR:?}"/node_data/addnodes.value &>/dev/null
   # get successfully connected peers value (addnodes.value)
-  SUCCESS_VALUE=$(cat "${LOG_DIR:?}"/node_data/addnodes.value 2>/dev/null)
+  SUCCESS_VALUE=$(cat "${WALLET_DIR:?}"/addnodes 2>/dev/null)
   # get addnodes.personal count
   ADDNODE_COUNT=$(cat "${LOG_DIR:?}"/node_data/addnodes.personal 2>/dev/null | wc -l 2>&1)
   # calculate difference
