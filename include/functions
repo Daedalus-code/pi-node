@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20212212
-# 0.9.4.4
+# V20212312
+# 0.9.4.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.4.4"
+VERSION="v0.9.4.8"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -324,6 +324,10 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
       # make sure avgconfirmation exist
       touch "${LOG_DIR:?}"/node_data/avgconfirmation.value &>/dev/null
       WALLET_STAKES_AVG="${GR:?}N/A${N0:?}"
+    fi
+    if [[ -z "$WALLET_STAKES_AVG" ]]; then
+      # non responsive
+      WALLET_STAKES_AVG="0"
     fi
     printf '%b' "${GR:?} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() SystemTorNet()${N0:?} Onion ${ONION_R:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
