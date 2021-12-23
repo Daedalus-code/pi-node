@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212312
-# 0.0.6.0
+# 0.0.5.9
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -21,9 +21,8 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
 fi
 
 # fetch date, time and head commit
-REPO_HEAD_OLD=$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
 # save values, make it old next round
-echo "$REPO_HEAD_OLD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
+echo "$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
 REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
 
 function install_update() {
