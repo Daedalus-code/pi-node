@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20212212
-# 0.0.3.3
+# V20212312
+# 0.0.3.4
 
 source /home/pi/pitrump.conf
 
@@ -21,6 +21,7 @@ fi
 # install/update
 clear
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+sudo mkdir /usr/local/bin/include &>/dev/null
 sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/include/update /usr/local/bin/ 2>&1
