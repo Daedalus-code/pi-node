@@ -1,14 +1,12 @@
 #!/bin/bash
 
 # By Rainman
-# V20212312
-# 0.0.5.9
+# V20212212
+# 0.0.3.3
 
 source /home/pi/pitrump.conf
-source /usr/local/bin/include/color
 
-# date for logs
-LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
+# dependencies
 
 # make sure screen is installed
 if ! [ -x "$(command -v screen)" ] &>/dev/null; then
@@ -20,40 +18,16 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   echo "Setup tor/wallet configurations!"
 fi
 
-# fetch date, time and head commit
-# save values, make it old next round
-cd /home/"$(whoami)"/trump-node || exit
-echo "$(git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
-
-# create directories
+# install/update
+clear
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
-mkdir "${LOG_DIR:?}"/node_data/repo &>/dev/null
-
-STR=$(cd /home/"$(whoami)"/trump-node || exit && git status)
-if [[ $STR =~ .*Your\ branch\ is\ behind.*by.*commits,\ and\ can\ be\ fast-forwarded ]]; then
-  echo $(date "+%Y-%m-%d %H:%M:%S") "Needs pull"
-  clear
-  # update repo
-  cd /home/"$(whoami)"/trump-node || exit && git pull -q
-  sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
-  sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
-  sudo cp /home/"$(whoami)"/trump-node/include/install /usr/local/bin/update 2>&1
-  sudo chmod +x /usr/local/bin/update
-  sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pitrump /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/* 2>&1
-  sudo chown "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
-  # fetch date, time and head commit
-  REPO_DATE=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d')
-  REPO_TIME=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%H:%M:%S')
-  if ! tail -10 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "UpdatingRepo()" &>/dev/null; then
-    printf '%b' "${LOG_DATE:?} Status() UpdatingRepo() [${G1:?}Ok${N0:?}] [${G1:?}${LAST_COMMIT:?}${N0:?}] ${GR:?}${REPO_DATE:?}${N0:?} ${REPO_TIME:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-  REPO_HEAD_OLD=$(cat "${LOG_DIR:?}"/node_data/repo/head.old 2>/dev/null)
-  printf '%b' "Upgraded! [${G1:?}Ok${N0:?}] [${G0:?}${REPO_HEAD_OLD:?}${N0:?}] -> [${P1:?}${LAST_COMMIT:?}${N0:?}]${N0:?}\n"
-  ls -lS /usr/local/bin/include/
-  # new old
-  echo "$REPO_HEAD" >"${LOG_DIR:?}"/node_data/repo/head.old 2>&1
-else
-  echo "Code is up to date"
-fi
+sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
+sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
+sudo cp -R /home/"$(whoami)"/trump-node/include/update /usr/local/bin/ 2>&1
+sudo chmod +x /usr/local/bin/update
+sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pitrump /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/* 2>&1
+sudo chown "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
+echo "Updated!"
+ls -lS /usr/local/bin/include/
 
 # END
