@@ -31,7 +31,7 @@ mkdir "${LOG_DIR:?}"/node_data/repo &>/dev/null
 
 # update repo
 cd /home/"$(whoami)"/trump-node || exit
-if git diff -q remotes/origin/HEAD &>/dev/null; then
+if echo "$(git diff -q remotes/origin/HEAD &>/dev/null)"; then
   clear
   # update repo
   cd /home/"$(whoami)"/trump-node || exit && git pull -q
