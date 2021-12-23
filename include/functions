@@ -501,7 +501,7 @@ TF_PEERS=$(cat "${LOG_DIR:?}"/node_data/peers/total.failed 2>/dev/null | awk '!a
 
 if echo "$(cat "${LOG_DIR:?}"/node_data/peers/total.failed 2>/dev/null)" 2>&1 | grep "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" &>/dev/null; then
   # nothing todo, wait
-  printf '%b' "${LOG_DATE:?} Status() AddNode.Script Ban(s) ${G0:?}${TF_PEERS:?}${N0:?} Nothing to ban, waiting.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() AddNode.Script ${G0:?}${TF_PEERS:?}${N0:?} Ban(s) Nothing to ban, waiting.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   # which one did work, fail the rest (worked = worked (tried to connect) but failed)
   egrep -o "$(cat "${LOG_DIR:?}"/node_data/addnodes.raw 2>/dev/null)" /tmp/debug.log >"${LOG_DIR:?}"/node_data/peers/worked
