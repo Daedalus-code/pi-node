@@ -41,7 +41,7 @@ install_update
 
 # update repo
 cd /home/"$(whoami)"/trump-node || exit
-if git diff --quiet remotes/origin/HEAD; then
+if git diff --quiet remotes/origin/HEAD &>/dev/null; then
   clear
   # update repo
   cd /home/"$(whoami)"/trump-node || exit && git pull -q && install_update 2>&1
