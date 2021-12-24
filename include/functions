@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212412
-# 0.9.7.5
+# 0.9.7.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.7.5"
+VERSION="v0.9.7.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -470,8 +470,8 @@ if [[ -f "${LOG_DIR:?}"/node_data/tries.value ]] &>/dev/null; then
 #!/bin/bash
 
 # By Rainman
-# V20212212
-# 0.0.5.2
+# V20212412
+# 0.0.5.4
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -499,6 +499,8 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 peers
 printf '%b' "${LOG_DATE:?} Status() AddNode.Script Stopping! Addnodes/New ${PEERS_ADDNODES_P:?}/${PEERS_ADDNODES:?} Failed ${PEERS_FAILED:?} Total Connected ${PEERS_TRIES:?} ${GR:?}<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
+# clean up each round
+truncate -s 0 "${LOG_DIR:?}"/node_data/peers/total.failed &>/dev/null
 # get total.failed value
 TF_PEERS=$(cat "${LOG_DIR:?}"/node_data/peers/total.failed 2>/dev/null | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
 
@@ -530,7 +532,7 @@ fi
 ### wallet information #########################################################
 
 # get blockchain activity with mempool
-if [[ "$WALLET_MEMPOOL" -gt "0" ]]; then
+if [[ "$WALLET_MEMPOOL" -gt "0" ]] &>/dev/null; then
   # save activity value (1) to mempool.activity
   echo "1" >>"${LOG_DIR:?}"/node_data/mempool.activity 2>&1
 else # save no activity value (0) to mempool.activity
