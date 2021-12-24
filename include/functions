@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212412
-# 0.9.7.7
+# 0.9.8.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.7.7"
+VERSION="v0.9.8.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -186,6 +186,16 @@ fi
 # update addnodes, failed peers, along with ticker price (every half, & hour)
 if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
 
+  # get addnodes backup value
+  ADDNODE_BACKUP=$(cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | wc -l 2>&1)
+  # get successfully connected peers value (addnodes.value)
+  ADDNODE_VALUE=$(cat "${LOG_DIR:?}"/node_data/peers/success 2>/dev/null | wc -l 2>&1)
+  # if smaller than original, use backup list
+  if [[ "$ADDNODE_VALUE" -lt "$ADDNODE_BACKUP" ]]; then
+    cat "${WALLET_DIR:?}"/addnodes >"${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() AddNode.Script Using addnodes backup! (${G1}${ADDNODE_BACKUP:?}${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+
   # get time now
   NOW_TIME=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
   # get screen start time
@@ -248,7 +258,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/nodes ] &>/dev/null; then
     # curl, arp data source
     source /usr/local/bin/include/data
 
-    # make sure addnodes.script list, avgconfirmation exist
+    # make sure addnodes.script list
     touch "${LOG_DIR:?}"/node_data/addnodes.script &>/dev/null
 
     # count failed connections, feed output to debug.log
