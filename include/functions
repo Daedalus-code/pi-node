@@ -929,7 +929,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE_ACTIVE=$(grep "1" "${LOG_DIR:?}"/node_data/mempool.activity 2>&1 | wc -l 2>&1)
     TIMELINE_NOACTIVE=$(grep "0" "${LOG_DIR:?}"/node_data/mempool.activity 2>&1 | wc -l 2>&1)
     TIMELINE_PERC_ACTIVE=$(echo "100/$TIMELINE_LINES*$TIMELINE_ACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE_PERC_NOACTIVE=$(echo "100/$TIMELINE_ACTIVE*$TIMELINE_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    TIMELINE_PERC_NOACTIVE=$(echo "100/$TIMELINE_LINES*$TIMELINE_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     TIMELINE_PERC_ACTIVE="${TIMELINE_PERC_ACTIVE:?}%"
     TIMELINE_PERC_NOACTIVE="${TIMELINE_PERC_NOACTIVE:?}%"
     TIMELINE="${N0:?}Alive ${TIMELINE_PERC_ACTIVE:?} Dead ${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
