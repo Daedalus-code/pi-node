@@ -932,7 +932,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE_PERC_NOACTIVE=$(echo "100/$TIMELINE_ACTIVE*$TIMELINE_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     TIMELINE_PERC_ACTIVE="${TIMELINE_PERC_ACTIVE:?}%"
     TIMELINE_PERC_NOACTIVE="${TIMELINE_PERC_NOACTIVE:?}%"
-    TIMELINE="${N0:?}Blockchain Activity ${TIMELINE_PERC_ACTIVE:?}${N0:?} Dead ${GR:?}${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
+    TIMELINE="${N0:?}Alive ${TIMELINE_PERC_ACTIVE:?} Dead ${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
   fi
 else # wait on wallet (--donald john trump quotes - art of the deal)
   # random start number
