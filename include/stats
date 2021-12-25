@@ -304,8 +304,8 @@ rrdtool graph /var/www/html/network_graph.png \
 --color SHADEB#565875 \
 DEF:net_received=/tmp/node_stats/net_received.rrd:net_received:MAX \
 DEF:net_send=/tmp/node_stats/net_send.rrd:net_send:MAX \
-GPRINT:net_received:AVERAGE:%.2lf\ Download\ bytes\ AVG \
-GPRINT:net_send:AVERAGE:%.2lf\ Upload\ bytes\ AVG \
+GPRINT:net_received:AVERAGE:%.2lf\ Download \
+GPRINT:net_send:AVERAGE:%.2lf\ Upload \
 LINE1:net_received#00FF00 \
 LINE1:net_send#FF3A00
 
@@ -372,7 +372,7 @@ LINE1:temp#FF2D00:"CPUTemp"
 
 # mempool (24hour)
 rrdtool graph /var/www/html/mempool_graph.png \
--w 1394 -h 100 -a PNG \
+-w 1000 -h 100 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "Wallet Mempool" \
