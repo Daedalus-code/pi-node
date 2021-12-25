@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20212512
-# 0.9.9.6
+# V20212612
+# 0.9.9.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.6"
+VERSION="v0.9.9.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -71,26 +71,15 @@ CPU_FTEMP=$(echo "(1.8 * $CPU_CTEMP) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\
 
 ### system memory ##############################################################
 
-# get used swap
-USED_SWAP=$(swapon -s 2>&1 | grep "/swapfile" 2>&1 | awk '{ print $4 }' 2>&1)
-# calculate megabytes (used swap)
-USED_SWAP=$(echo "$USED_SWAP/1024" 2>&1 | bc -l 2>&1)
-# get total swap
-TOTAL_SWAP=$(swapon -s 2>&1 | grep "/swapfile" 2>&1 | awk '{ print $3 }' 2>&1)
-# calculate megabytes (total swap)
-TOTAL_SWAP=$(echo "$TOTAL_SWAP/1024" 2>&1 | bc -l 2>&1)
-# get free Memory
-FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $4 }' 2>&1)
 # get total Memory
 TOTAL_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)
-# calculate total system total memory + total swap
-TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
-# total mem (colors)
-TOTAL_MEM="${G1:?}${TOTAL_MEM:?}${N0:?}"
-# calculate total free system memory + used swap
-FREE_MEM=$(echo "$(echo "$TOTAL_SWAP-$USED_SWAP" 2>&1 | bc -l 2>&1)+$FREE_MEM" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
-# free mem (colors)
-FREE_MEM="${G1:?}${FREE_MEM:?}M${N0:?}"
+TOTAL_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)
+# get free Memory
+FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $4 }' 2>&1)
+FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)
+# calculate
+TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1)
+FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
 
 ### system space ###############################################################
 
@@ -980,6 +969,15 @@ else # wait on wallet (--donald john trump quotes - art of the deal)
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
   fi
+fi
+
+### collect data for rrdtool (round robin databases) ###########################
+
+if [[ "$GRAPH_STATS" -eq "1" ]]; then
+  # setup graphs
+  echo "$TOTAL_MEM" >"${LOG_DIR:?}"/node_data/stats.total_mem
+  echo "$FREE_MEM" >"${LOG_DIR:?}"/node_data/stats.free_mem
+  bash /usr/local/bin/include/stats
 fi
 
 ### theme ######################################################################
