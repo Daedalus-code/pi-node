@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212612
-# 0.9.9.7
+# 1.0.0.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.7"
+VERSION="v1.0.0.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -80,6 +80,11 @@ FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)
 # calculate
 TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1)
 FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
+# total and free (rrdtool)
+if [[ "$GRAPH_STATS" -eq "1" ]]; then
+  TOTAL_MEM_RR="$TOTAL_MEM_RR"
+  FREE_MEM_RR="$FREE_MEM_RR"
+fi
 # total and free (colors)
 TOTAL_MEM="${G0:?}$TOTAL_MEM${N0:?}"
 FREE_MEM="${G1:?}$FREE_MEM${N0:?}"
