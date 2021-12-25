@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212512
-# 0.3.9.9
+# 0.3.9.7
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -345,10 +345,8 @@ rrdtool graph /var/www/html/memory_graph.png \
 --color SHADEB#565875 \
 DEF:memory_total=/tmp/node_stats/memory_total.rrd:memory_total:MAX \
 DEF:memory_free=/tmp/node_stats/memory_free.rrd:memory_free:MAX \
-GPRINT:memory_total:MAX:%.2lf\M\ Max \
-GPRINT:memory_free:LAST:%.2lf\M\ Now \
-GPRINT:memory_free:MAX:%.2lf\M\ Max \
-GPRINT:memory_free:MIN:%.2lf\M\ Min \
+GPRINT:memory_total:MAX:%.2lf\M\ Total \
+GPRINT:memory_free:LAST:%.2lf\M\ Free \
 LINE1:memory_total#33CEFF:"Total" \
 LINE1:memory_free#4FFF33:"Free"
 
