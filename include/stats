@@ -394,6 +394,6 @@ GPRINT:mempool:LAST:%.2lf\ Now \
 GPRINT:mempool:AVERAGE:%.2lf\ AVG \
 GPRINT:mempool:MAX:%.2lf\ Max \
 GPRINT:mempool:MIN:%.2lf\ Min \
-LINE1:mempool#FF0000' >"${LOGDIR:?}"/graphs
+LINE1:mempool#FF0000' >"${LOG_DIR:?}"/graphs
 
 # END
