@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212512
-# 0.4.0.2
+# 0.4.0.5
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -398,5 +398,8 @@ GPRINT:mempool:AVERAGE:%.2lf\ AVG \
 GPRINT:mempool:MAX:%.2lf\ Max \
 GPRINT:mempool:MIN:%.2lf\ Min \
 LINE1:mempool#FF0000' >"${LOG_DIR:?}"/graphs
+
+# run graphs script
+bash "${LOGDIR:?}"/graphs 2>&1 && clear
 
 # END
