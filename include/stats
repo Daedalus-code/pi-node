@@ -306,8 +306,8 @@ DEF:net_received=/tmp/node_stats/net_received.rrd:net_received:MAX \
 DEF:net_send=/tmp/node_stats/net_send.rrd:net_send:MAX \
 GPRINT:net_received:AVERAGE:%.2lf\ Download \
 GPRINT:net_send:AVERAGE:%.2lf\ Upload \
-LINE1:net_received#00FF00 \
-LINE1:net_send#FF3A00
+LINE1:net_received#00FF00:"Down" \
+LINE1:net_send#FF3A00:"Up"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
@@ -389,7 +389,7 @@ GPRINT:mempool:LAST:%.0lf\ Now \
 GPRINT:mempool:AVERAGE:%.0lf\ AVG \
 GPRINT:mempool:MAX:%.0lf\ Max \
 GPRINT:mempool:MIN:%.0lf\ Min \
-LINE1:mempool#FF0000' >/tmp/graphs
+LINE1:mempool#FF0000:"Mempool"' >/tmp/graphs
 
 # run graphs script
 bash /tmp/graphs 2>&1 && clear
