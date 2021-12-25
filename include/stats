@@ -1,0 +1,396 @@
+#!/bin/bash
+
+# By Rainman
+# V20212512
+# 0.3.9.6
+
+### install needed packages ####################################################
+
+# rrdtool setup (graphs, round robin database)
+if ! [ -x "$(command -v rrdtool)" ]; then
+  sudo mkdir /var/lib/rrd &>/dev/null
+  sudo mkdir /var/www/html/rrdtool &>/dev/null
+  sudo chown -R "$(whoami)":"$(whoami)" /var/lib/rrd
+  sudo apt-get install librrds-perl rrdtool -y 2>&1
+else
+  printf '%b' "[${G1:?}OK${N0:?}] RRDTool\n"
+fi
+
+# apache2 setup (webserver, php)
+if ! [ -x "$(command -v apache2)" ]; then
+  sudo apt-get install apache2 php libapache2-mod-php -y 2>&1
+  sudo chown -R "$(whoami)":"$(whoami)" /var/www/html
+  printf '%b' "[${G1:?}OK${N0:?}] Restarting Apache\n"
+  sudo systemctl restart apache2 2>&1
+  LOCAL=$(ifconfig 2>&1 | grep "inet" 2>&1 | head -1 2>&1 |
+    sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' 2>&1)
+  echo "[!!] Try your $LOCAL IP Address"
+  echo
+  read -r -p "Press Enter to continue" </dev/tty
+  echo
+else
+  printf '%b' "[${G1:?}OK${N0:?}] Webserver\n"
+fi
+
+### create round robin databases for system (rrdtool) ##########################
+
+# load 1
+if [ ! -f "/home/$(whoami)/load.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/load.rrd \
+    --step=60 \
+    DS:load:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# load 5
+if [ ! -f "/home/$(whoami)/load5.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/load5.rrd \
+    --step=60 \
+    DS:load5:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# load 15
+if [ ! -f "/home/$(whoami)/load15.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/load15.rrd \
+    --step=60 \
+    DS:load15:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# temp
+if [ ! -f "/home/$(whoami)/temp.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/temp.rrd \
+    --step=60 \
+    DS:temp:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# memory available
+if [ ! -f "/home/$(whoami)/memory_available.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/memory_available.rrd \
+    --step=60 \
+    DS:memory_available:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# memory free
+if [ ! -f "/home/$(whoami)/memory_free.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/memory_free.rrd \
+    --step=60 \
+    DS:memory_free:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# hdd
+if [ ! -f "/home/$(whoami)/hdd.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/hdd.rrd \
+    --step=60 \
+    DS:hdd:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# download
+if [ ! -f "/home/$(whoami)/net_received.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/net_received.rrd \
+    --step=60 \
+    DS:net_received:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# upload
+if [ ! -f "/home/$(whoami)/net_send.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/net_send.rrd \
+    --step=60 \
+    DS:net_send:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+
+### create round robin databases for wallet (rrdtool) ##########################
+
+# balance
+if [ ! -f "/home/$(whoami)/balance.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/balance.rrd \
+    --step=60 \
+    DS:balance:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# stakes
+if [ ! -f "/home/$(whoami)/stakes.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/stakes.rrd \
+    --step=60 \
+    DS:stakes:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# inputs
+if [ ! -f "/home/$(whoami)/inputs.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/inputs.rrd \
+    --step=60 \
+    DS:inputs:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+# mempool
+if [ ! -f "/home/$(whoami)/mempool.rrd" ]; then
+  rrdtool create /home/"$(whoami)"/mempool.rrd \
+    --step=60 \
+    DS:mempool:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:86400 \
+    RRA:AVERAGE:0.5:1440:400
+fi
+
+### update rrdtool databases ###################################################
+
+# wallet daemon uptime function
+# function for waiting with stuff before a limit (seconds) is reached
+function uptime_daemon() {
+  PID="$(pidof trumpcoind 2>&1)"
+  HZ=$(getconf CLK_TCK 2>&1)
+  UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
+  STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
+  echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
+}
+
+# greater than n seconds, continue
+if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
+
+  rrdtool update /home/"$(whoami)"/load1.rrd N:"$(uptime 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1 | awk '{ print $1 }')"
+  rrdtool update /home/"$(whoami)"/load5.rrd N:"$(uptime 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1 | awk '{ print $2 }')"
+  rrdtool update /home/"$(whoami)"/load15.rrd N:"$(uptime 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1 | awk '{ print $3 }')"
+  rrdtool update /home/"$(whoami)"/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" | bc)"
+  rrdtool update /home/"$(whoami)"/memory_total.rrd N:"$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)"
+  rrdtool update /home/"$(whoami)"/memory_free.rrd N:"$(echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)-$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $4 }' 2>&1)" | bc)"
+  rrdtool update /home/"$(whoami)"/hdd.rrd N:"$(df -h 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d 'G')"
+  rrdtool update /home/"$(whoami)"/download.rrd N:"$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 | grep "RX packets" 2>&1 | head -1 2>&1 | awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1 | egrep "[0-9]+.[0-9]+")"
+  rrdtool update /home/"$(whoami)"/upload.rrd N:"$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 | grep "TX packets" 2>&1 | head -1 2>&1 | awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1 | egrep "[0-9]+.[0-9]+")"
+  rrdtool update /home/"$(whoami)"/balance.rrd N:"$(grep "balance" "${LOG_DIR:?}"/node_data/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)"
+  rrdtool update /home/"$(whoami)"/stakes.rrd N:"$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)"
+  rrdtool update /home/"$(whoami)"/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)"
+  rrdtool update /home/"$(whoami)"/mempool.rrd N:"$(grep "size" "${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1 | egrep -o "[0-9]+" 2>&1)"
+
+fi
+
+#### create index.php ##########################################################
+
+cat >/var/www/html/index.php <<'EOF'
+<div id="content" align="center">
+<?php
+  header("refresh: 60;");
+?>
+<?php
+  // background color (dark blue)
+  echo "<body style='background-color:2D3037'>";
+  // graphs
+  echo "<img src='load_graph.png' alt='Wallet' />";
+  echo "<img src='temp_graph.png' alt='V2 Price' />";
+  echo "<img src='memory_graph.png' alt='Holders' />";
+  echo "<img src='hdd_graph.png' alt='Rank' />";
+  echo "<img src='download_graph.png' alt='Watchlist' />";
+  echo "<img src='upload_graph.png' alt='Reflections' />";
+  echo "<img src='balance_graph.png' alt='Reflections' />";
+  echo "<img src='stakes_burns_graph.png' alt='Reflections' />";
+  echo "<img src='inputs_graph.png' alt='Token' />";
+  echo "<img src='mempool_graph.png' alt='Value' />";
+EOF
+
+#### create shell (graphs) #####################################################
+
+cat <<<'#!/bin/bash
+
+# loadavg 1,5,15m (24hour)
+rrdtool graph /var/www/html/load_graph.png \
+-w 400 -h 164 -a PNG \
+--slope-mode \
+--start -24hour --end now \
+--vertical-label "System Load" \
+--color BACK#565875 \
+--color FONT#FFFFFF \
+--color CANVAS#42445F \
+--color GRID#565875 \
+--color FRAME#565875 \
+--color SHADEA#565875 \
+--color SHADEB#565875 \
+DEF:load1=/var/lib/rpimonitor/stat/load1.rrd:load1:MAX \
+DEF:load5=/var/lib/rpimonitor/stat/load5.rrd:load5:MAX \
+DEF:load15=/var/lib/rpimonitor/stat/load15.rrd:load15:MAX \
+GPRINT:load1:LAST:%.2lf\ Now \
+GPRINT:load5:AVERAGE:%.2lf\ AVG \
+GPRINT:load15:AVERAGE:%.2lf\ AVG \
+LINE1:load1#00FF33:"Load 1m" \
+LINE1:load5#FFE000:"Load 5m" \
+LINE1:load15#FF5100:"Load 15m"
+
+# inputs (24hour)
+rrdtool graph /var/www/html/inputs_graph.png \
+-w 649 -h 145 -a PNG \
+--slope-mode \
+--start -24hour --end now \
+--vertical-label "Wallet Inputs" \
+--alt-autoscale-max --lower-limit=1 \
+--color BACK#565875 \
+--color FONT#FFFFFF \
+--color CANVAS#42445F \
+--color GRID#565875 \
+--color FRAME#565875 \
+--color SHADEA#565875 \
+--color SHADEB#565875 \
+DEF:inputs=/home/"$(whoami)"/inputs.rrd:inputs:MAX \
+GPRINT:inputs:LAST:%.14lf\ Now \
+GPRINT:inputs:AVERAGE:%.14lf\ AVG \
+GPRINT:inputs:MAX:%.14lf\ Max \
+GPRINT:inputs:MIN:%.14lf\ Min \
+LINE1:inputs#3FFF33
+
+# stakes (24hour)
+rrdtool graph /var/www/html/stakes_graph.png \
+-w 400 -h 145 -a PNG \
+--slope-mode \
+--start -24hour --end now \
+--vertical-label "Wallet Stakes" \
+--alt-autoscale-max --lower-limit=1 \
+--color BACK#565875 \
+--color FONT#FFFFFF \
+--color CANVAS#42445F \
+--color GRID#565875 \
+--color FRAME#565875 \
+--color SHADEA#565875 \
+--color SHADEB#565875 \
+DEF:stakes=/home/"$(whoami)"/stakes.rrd:stakes:MAX \
+GPRINT:stakes:LAST:%.2lf\ Now \
+GPRINT:stakes:AVERAGE:%.2lf\ AVG \
+GPRINT:stakes:MAX:%.2lf\ Max \
+GPRINT:stakes:MIN:%.2lf\ Min \
+LINE1:stakes#9633FF
+
+# balance (24hour)
+rrdtool graph /var/www/html/balance_graph.png \
+-w 400 -h 145 -a PNG \
+--slope-mode \
+--start -24hour --end now \
+--vertical-label "Wallet Balance" \
+--alt-autoscale-max --lower-limit=1 \
+--color BACK#565875 \
+--color FONT#FFFFFF \
+--color CANVAS#42445F \
+--color GRID#565875 \
+--color FRAME#565875 \
+--color SHADEA#565875 \
+--color SHADEB#565875 \
+DEF:balance=/home/"$(whoami)"/balance.rrd:balance:MAX \
+GPRINT:balance:LAST:%.2lf\ Now \
+GPRINT:balance:MAX:%.2lf\ Max \
+GPRINT:balance:MIN:%.2lf\ Min \
+LINE1:balance#3F79E5
+
+# network (24hour)
+rrdtool graph /var/www/html/network_graph.png \
+-w 400 -h 164 -a PNG \
+--slope-mode \
+--start -24hour --end now \
+--vertical-label "Network" \
+--color BACK#565875 \
+--color FONT#FFFFFF \
+--color CANVAS#42445F \
+--color GRID#565875 \
+--color FRAME#565875 \
+--color SHADEA#565875 \
+--color SHADEB#565875 \
+DEF:net_received=/var/lib/rpimonitor/stat/net_received.rrd:net_received:MAX \
+DEF:net_send=/var/lib/rpimonitor/stat/net_send.rrd:net_send:MAX \
+GPRINT:net_received:AVERAGE:%.2lf\ Download\ bytes\ AVG \
+GPRINT:net_send:AVERAGE:%.2lf\ Upload\ bytes\ AVG \
+LINE1:net_received#00FF00 \
+LINE1:net_send#FF3A00
+
+# hdd (24hour)
+rrdtool graph /var/www/html/hdd_graph.png \
+-w 400 -h 145 -a PNG \
+--slope-mode \
+--start -24hour --end now \
+--vertical-label "System Drive" \
+--alt-autoscale-max --lower-limit=1 \
+--color BACK#565875 \
+--color FONT#FFFFFF \
+--color CANVAS#42445F \
+--color GRID#565875 \
+--color FRAME#565875 \
+--color SHADEA#565875 \
+--color SHADEB#565875 \
+DEF:hdd=/home/"$(whoami)"/hdd.rrd:hdd:MAX \
+GPRINT:hdd:LAST:%.2lf\ Now \
+GPRINT:hdd:AVERAGE:%.2lf\ AVG \
+GPRINT:hdd:MAX:%.2lf\ Max \
+GPRINT:hdd:MIN:%.2lf\ Min \
+LINE1:hdd#F17EFF
+
+# memory (24hour)
+rrdtool graph /var/www/html/memory_graph.png \
+-w 400 -h 150 -a PNG \
+--slope-mode \
+--start -24hour --end now \
+--vertical-label "Memory (MB)" \
+--color BACK#565875 \
+--color FONT#FFFFFF \
+--color CANVAS#42445F \
+--color GRID#565875 \
+--color FRAME#565875 \
+--color SHADEA#565875 \
+--color SHADEB#565875 \
+DEF:memory_total=/var/lib/rpimonitor/stat/memory_total.rrd:memory_total:MAX \
+DEF:memory_free=/var/lib/rpimonitor/stat/memory_free.rrd:memory_free:MAX \
+GPRINT:memory_total:LAST:%.2lf\M\ Now \
+GPRINT:memory_total:AVERAGE:%.2lf\M\ AVG \
+GPRINT:memory_total:MAX:%.2lf\M\ Max \
+GPRINT:memory_total:MIN:%.2lf\M\ Min \
+GPRINT:memory_free:LAST:%.2lf\M\ Now \
+GPRINT:memory_free:AVERAGE:%.2lf\M\ AVG \
+GPRINT:memory_free:MAX:%.2lf\M\ Max \
+GPRINT:memory_free:MIN:%.2lf\M\ Min \
+LINE1:memory_total#33CEFF:"Total" \
+LINE1:memory_free#4FFF33:"Free"
+
+# cpu temperature (24hour)
+rrdtool graph /var/www/html/cpu_graph.png \
+-w 400 -h 150 -a PNG \
+--slope-mode \
+--start -24hour --end now \
+--vertical-label "CPU Temp (°C)" \
+--color BACK#565875 \
+--color FONT#FFFFFF \
+--color CANVAS#42445F \
+--color GRID#565875 \
+--color FRAME#565875 \
+--color SHADEA#565875 \
+--color SHADEB#565875 \
+DEF:temp=/var/lib/rpimonitor/stat/temp.rrd:temp:MAX \
+GPRINT:temp:LAST:%.2lf\°C\ Now \
+GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
+GPRINT:temp:MAX:%.2lf\°C\ Max \
+GPRINT:temp:MIN:%.2lf\°C\ Min \
+LINE1:temp#FF2D00:"CPUTemp"
+
+# mempool (24hour)
+rrdtool graph /var/www/html/mempool_graph.png \
+-w 1394 -h 100 -a PNG \
+--slope-mode \
+--start -24hour --end now \
+--vertical-label "Wallet Mempool" \
+--alt-autoscale-max --lower-limit=1 \
+--color BACK#565875 \
+--color FONT#FFFFFF \
+--color CANVAS#42445F \
+--color GRID#565875 \
+--color FRAME#565875 \
+--color SHADEA#565875 \
+--color SHADEB#565875 \
+DEF:mempool=/home/"$(whoami)"/mempool.rrd:mempool:MAX \
+GPRINT:mempool:LAST:%.2lf\ Now \
+GPRINT:mempool:AVERAGE:%.2lf\ AVG \
+GPRINT:mempool:MAX:%.2lf\ Max \
+GPRINT:mempool:MIN:%.2lf\ Min \
+LINE1:mempool#FF0000' >"${LOGDIR:?}"/graphs
+
+# END
