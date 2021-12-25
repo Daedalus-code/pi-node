@@ -2,8 +2,9 @@
 
 # By Rainman
 # V20212512
-# 0.3.9.8
+# 0.3.9.9
 
+source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
 ### install needed packages ####################################################
@@ -37,72 +38,72 @@ fi
 ### create round robin databases for system (rrdtool) ##########################
 
 # load 1
-if [ ! -f "/home/$(whoami)/load.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/load.rrd \
+if [ ! -f "/tmp/node_stats/load.rrd" ]; then
+  rrdtool create /tmp/node_stats/load.rrd \
     --step=60 \
     DS:load:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # load 5
-if [ ! -f "/home/$(whoami)/load5.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/load5.rrd \
+if [ ! -f "/tmp/node_stats/load5.rrd" ]; then
+  rrdtool create /tmp/node_stats/load5.rrd \
     --step=60 \
     DS:load5:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # load 15
-if [ ! -f "/home/$(whoami)/load15.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/load15.rrd \
+if [ ! -f "/tmp/node_stats/load15.rrd" ]; then
+  rrdtool create /tmp/node_stats/load15.rrd \
     --step=60 \
     DS:load15:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # temp
-if [ ! -f "/home/$(whoami)/temp.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/temp.rrd \
+if [ ! -f "/tmp/node_stats/temp.rrd" ]; then
+  rrdtool create /tmp/node_stats/temp.rrd \
     --step=60 \
     DS:temp:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # memory available
-if [ ! -f "/home/$(whoami)/memory_available.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/memory_available.rrd \
+if [ ! -f "/tmp/node_stats/memory_available.rrd" ]; then
+  rrdtool create /tmp/node_stats/memory_available.rrd \
     --step=60 \
     DS:memory_available:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # memory free
-if [ ! -f "/home/$(whoami)/memory_free.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/memory_free.rrd \
+if [ ! -f "/tmp/node_stats/memory_free.rrd" ]; then
+  rrdtool create /tmp/node_stats/memory_free.rrd \
     --step=60 \
     DS:memory_free:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # hdd
-if [ ! -f "/home/$(whoami)/hdd.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/hdd.rrd \
+if [ ! -f "/tmp/node_stats/hdd.rrd" ]; then
+  rrdtool create /tmp/node_stats/hdd.rrd \
     --step=60 \
     DS:hdd:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # download
-if [ ! -f "/home/$(whoami)/net_received.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/net_received.rrd \
+if [ ! -f "/tmp/node_stats/net_received.rrd" ]; then
+  rrdtool create /tmp/node_stats/net_received.rrd \
     --step=60 \
     DS:net_received:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # upload
-if [ ! -f "/home/$(whoami)/net_send.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/net_send.rrd \
+if [ ! -f "/tmp/node_stats/net_send.rrd" ]; then
+  rrdtool create /tmp/node_stats/net_send.rrd \
     --step=60 \
     DS:net_send:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
@@ -112,32 +113,32 @@ fi
 ### create round robin databases for wallet (rrdtool) ##########################
 
 # balance
-if [ ! -f "/home/$(whoami)/balance.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/balance.rrd \
+if [ ! -f "/tmp/node_stats/balance.rrd" ]; then
+  rrdtool create /tmp/node_stats/balance.rrd \
     --step=60 \
     DS:balance:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # stakes
-if [ ! -f "/home/$(whoami)/stakes.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/stakes.rrd \
+if [ ! -f "/tmp/node_stats/stakes.rrd" ]; then
+  rrdtool create /tmp/node_stats/stakes.rrd \
     --step=60 \
     DS:stakes:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # inputs
-if [ ! -f "/home/$(whoami)/inputs.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/inputs.rrd \
+if [ ! -f "/tmp/node_stats/inputs.rrd" ]; then
+  rrdtool create /tmp/node_stats/inputs.rrd \
     --step=60 \
     DS:inputs:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
 # mempool
-if [ ! -f "/home/$(whoami)/mempool.rrd" ]; then
-  rrdtool create /home/"$(whoami)"/mempool.rrd \
+if [ ! -f "/tmp/node_stats/mempool.rrd" ]; then
+  rrdtool create /tmp/node_stats/mempool.rrd \
     --step=60 \
     DS:mempool:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
@@ -159,19 +160,19 @@ function uptime_daemon() {
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
 
-  rrdtool update /home/"$(whoami)"/load1.rrd N:"$(uptime 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1 | awk '{ print $1 }')"
-  rrdtool update /home/"$(whoami)"/load5.rrd N:"$(uptime 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1 | awk '{ print $2 }')"
-  rrdtool update /home/"$(whoami)"/load15.rrd N:"$(uptime 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1 | awk '{ print $3 }')"
-  rrdtool update /home/"$(whoami)"/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" | bc)"
-  rrdtool update /home/"$(whoami)"/memory_total.rrd N:"$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)"
-  rrdtool update /home/"$(whoami)"/memory_free.rrd N:"$(echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)-$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $4 }' 2>&1)" | bc)"
-  rrdtool update /home/"$(whoami)"/hdd.rrd N:"$(df -h 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d 'G')"
-  rrdtool update /home/"$(whoami)"/download.rrd N:"$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 | grep "RX packets" 2>&1 | head -1 2>&1 | awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1 | egrep "[0-9]+.[0-9]+")"
-  rrdtool update /home/"$(whoami)"/upload.rrd N:"$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 | grep "TX packets" 2>&1 | head -1 2>&1 | awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1 | egrep "[0-9]+.[0-9]+")"
-  rrdtool update /home/"$(whoami)"/balance.rrd N:"$(grep "balance" "${LOG_DIR:?}"/node_data/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)"
-  rrdtool update /home/"$(whoami)"/stakes.rrd N:"$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)"
-  rrdtool update /home/"$(whoami)"/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)"
-  rrdtool update /home/"$(whoami)"/mempool.rrd N:"$(grep "size" "${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1 | egrep -o "[0-9]+" 2>&1)"
+  rrdtool update /tmp/node_stats/load1.rrd N:"$(uptime 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1 | awk '{ print $1 }')"
+  rrdtool update /tmp/node_stats/load5.rrd N:"$(uptime 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1 | awk '{ print $2 }')"
+  rrdtool update /tmp/node_stats/load15.rrd N:"$(uptime 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1 | awk '{ print $3 }')"
+  rrdtool update /tmp/node_stats/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" | bc)"
+  rrdtool update /tmp/node_stats/memory_total.rrd N:"$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)"
+  rrdtool update /tmp/node_stats/memory_free.rrd N:"$(echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)-$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $4 }' 2>&1)" | bc)"
+  rrdtool update /tmp/node_stats/hdd.rrd N:"$(df -h 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d 'G')"
+  rrdtool update /tmp/node_stats/download.rrd N:"$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 | grep "RX packets" 2>&1 | head -1 2>&1 | awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1 | egrep "[0-9]+.[0-9]+")"
+  rrdtool update /tmp/node_stats/upload.rrd N:"$(ifconfig 2>&1 | egrep "wla*|eth*" 2>&1 | grep "TX packets" 2>&1 | head -1 2>&1 | awk '{ print $6 $7 }' 2>&1 | tr -d '()' 2>&1 | egrep "[0-9]+.[0-9]+")"
+  rrdtool update /tmp/node_stats/balance.rrd N:"$(grep "balance" "${LOG_DIR:?}"/node_data/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)"
+  rrdtool update /tmp/node_stats/stakes.rrd N:"$(cat /tmp/node_stats/staking 2>/dev/null | wc -l 2>&1)"
+  rrdtool update /tmp/node_stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)"
+  rrdtool update /tmp/node_stats/mempool.rrd N:"$(grep "size" "${LOG_DIR:?}"/node_data/getmempoolinfo 2>&1 | egrep -o "[0-9]+" 2>&1)"
 
 fi
 
@@ -239,7 +240,7 @@ rrdtool graph /var/www/html/inputs_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:inputs=/home/"$(whoami)"/inputs.rrd:inputs:MAX \
+DEF:inputs=/tmp/node_stats/inputs.rrd:inputs:MAX \
 GPRINT:inputs:LAST:%.14lf\ Now \
 GPRINT:inputs:AVERAGE:%.14lf\ AVG \
 GPRINT:inputs:MAX:%.14lf\ Max \
@@ -260,7 +261,7 @@ rrdtool graph /var/www/html/stakes_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:stakes=/home/"$(whoami)"/stakes.rrd:stakes:MAX \
+DEF:stakes=/tmp/node_stats/stakes.rrd:stakes:MAX \
 GPRINT:stakes:LAST:%.2lf\ Now \
 GPRINT:stakes:AVERAGE:%.2lf\ AVG \
 GPRINT:stakes:MAX:%.2lf\ Max \
@@ -281,7 +282,7 @@ rrdtool graph /var/www/html/balance_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:balance=/home/"$(whoami)"/balance.rrd:balance:MAX \
+DEF:balance=/tmp/node_stats/balance.rrd:balance:MAX \
 GPRINT:balance:LAST:%.2lf\ Now \
 GPRINT:balance:MAX:%.2lf\ Max \
 GPRINT:balance:MIN:%.2lf\ Min \
@@ -321,7 +322,7 @@ rrdtool graph /var/www/html/hdd_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:hdd=/home/"$(whoami)"/hdd.rrd:hdd:MAX \
+DEF:hdd=/tmp/node_stats/hdd.rrd:hdd:MAX \
 GPRINT:hdd:LAST:%.2lf\ Now \
 GPRINT:hdd:AVERAGE:%.2lf\ AVG \
 GPRINT:hdd:MAX:%.2lf\ Max \
@@ -388,7 +389,7 @@ rrdtool graph /var/www/html/mempool_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:mempool=/home/"$(whoami)"/mempool.rrd:mempool:MAX \
+DEF:mempool=/tmp/node_stats/mempool.rrd:mempool:MAX \
 GPRINT:mempool:LAST:%.2lf\ Now \
 GPRINT:mempool:AVERAGE:%.2lf\ AVG \
 GPRINT:mempool:MAX:%.2lf\ Max \
