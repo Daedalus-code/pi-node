@@ -100,7 +100,7 @@ fi
 if [ ! -f "/tmp/node_stats/net_down.rrd" ]; then
   rrdtool create /tmp/node_stats/net_down.rrd \
     --step=60 \
-    DS:net_received:GAUGE:300:U:U \
+    DS:net_down:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
@@ -108,7 +108,7 @@ fi
 if [ ! -f "/tmp/node_stats/net_up.rrd" ]; then
   rrdtool create /tmp/node_stats/net_up.rrd \
     --step=60 \
-    DS:net_send:GAUGE:300:U:U \
+    DS:net_up:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
 fi
@@ -302,12 +302,12 @@ rrdtool graph /var/www/html/network_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:net_received=/tmp/node_stats/net_down.rrd:net_received:MAX \
-DEF:net_send=/tmp/node_stats/net_up.rrd:net_send:MAX \
-GPRINT:net_received:AVERAGE:%.2lf\ Download \
-GPRINT:net_send:AVERAGE:%.2lf\ Upload \
-LINE1:net_received#00FF00:"Down" \
-LINE1:net_send#FF3A00:"Up"
+DEF:net_down=/tmp/node_stats/net_down.rrd:net_down:MAX \
+DEF:net_up=/tmp/node_stats/net_up.rrd:net_up:MAX \
+GPRINT:net_down:AVERAGE:%.2lf\ Download \
+GPRINT:net_up:AVERAGE:%.2lf\ Upload \
+LINE1:net_down#00FF00:"Down" \
+LINE1:net_up#FF3A00:"Up"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
