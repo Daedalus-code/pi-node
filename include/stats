@@ -372,7 +372,7 @@ LINE1:temp#FF2D00:"CPUTemp"
 
 # mempool (24hour)
 rrdtool graph /var/www/html/mempool_graph.png \
--w 1000 -h 100 -a PNG \
+-w 648 -h 145 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "Wallet Mempool" \
