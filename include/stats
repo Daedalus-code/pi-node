@@ -400,6 +400,6 @@ GPRINT:mempool:MIN:%.2lf\ Min \
 LINE1:mempool#FF0000' >"${LOG_DIR:?}"/graphs
 
 # run graphs script
-bash "${LOGDIR:?}"/graphs 2>&1 && clear
+bash "${LOG_DIR:?}"/graphs 2>&1 && clear
 
 # END
