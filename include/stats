@@ -219,9 +219,9 @@ rrdtool graph /var/www/html/load_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:load=/var/lib/rpimonitor/stat/load.rrd:load:MAX \
-DEF:load5=/var/lib/rpimonitor/stat/load5.rrd:load5:MAX \
-DEF:load15=/var/lib/rpimonitor/stat/load15.rrd:load15:MAX \
+DEF:load=${LOG_DIR:?}/node_stats/load.rrd:load:MAX \
+DEF:load5=${LOG_DIR:?}/node_stats/load5.rrd:load5:MAX \
+DEF:load15=${LOG_DIR:?}/node_stats/load15.rrd:load15:MAX \
 GPRINT:load:LAST:%.2lf\ Now \
 GPRINT:load5:AVERAGE:%.2lf\ AVG \
 GPRINT:load15:AVERAGE:%.2lf\ AVG \
@@ -304,8 +304,8 @@ rrdtool graph /var/www/html/network_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:net_received=/var/lib/rpimonitor/stat/net_received.rrd:net_received:MAX \
-DEF:net_send=/var/lib/rpimonitor/stat/net_send.rrd:net_send:MAX \
+DEF:net_received=${LOG_DIR:?}/node_stats/net_received.rrd:net_received:MAX \
+DEF:net_send=${LOG_DIR:?}/node_stats/net_send.rrd:net_send:MAX \
 GPRINT:net_received:AVERAGE:%.2lf\ Download\ bytes\ AVG \
 GPRINT:net_send:AVERAGE:%.2lf\ Upload\ bytes\ AVG \
 LINE1:net_received#00FF00 \
@@ -345,8 +345,8 @@ rrdtool graph /var/www/html/memory_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:memory_total=/var/lib/rpimonitor/stat/memory_total.rrd:memory_total:MAX \
-DEF:memory_free=/var/lib/rpimonitor/stat/memory_free.rrd:memory_free:MAX \
+DEF:memory_total=${LOG_DIR:?}/node_stats/memory_total.rrd:memory_total:MAX \
+DEF:memory_free=${LOG_DIR:?}/node_stats/memory_free.rrd:memory_free:MAX \
 GPRINT:memory_total:LAST:%.2lf\M\ Now \
 GPRINT:memory_total:AVERAGE:%.2lf\M\ AVG \
 GPRINT:memory_total:MAX:%.2lf\M\ Max \
@@ -371,7 +371,7 @@ rrdtool graph /var/www/html/cpu_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
-DEF:temp=/var/lib/rpimonitor/stat/temp.rrd:temp:MAX \
+DEF:temp=${LOG_DIR:?}/node_stats/temp.rrd:temp:MAX \
 GPRINT:temp:LAST:%.2lf\°C\ Now \
 GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
 GPRINT:temp:MAX:%.2lf\°C\ Max \
