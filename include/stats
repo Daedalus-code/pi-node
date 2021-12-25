@@ -190,16 +190,16 @@ cat >/var/www/html/index.php <<'EOF'
   // background color (dark blue)
   echo "<body style='background-color:2D3037'>";
   // graphs
-  echo "<img src='load_graph.png' alt='Wallet' />";
-  echo "<img src='temp_graph.png' alt='V2 Price' />";
-  echo "<img src='memory_graph.png' alt='Holders' />";
-  echo "<img src='hdd_graph.png' alt='Rank' />";
-  echo "<img src='download_graph.png' alt='Watchlist' />";
-  echo "<img src='upload_graph.png' alt='Reflections' />";
-  echo "<img src='balance_graph.png' alt='Reflections' />";
-  echo "<img src='stakes_burns_graph.png' alt='Reflections' />";
-  echo "<img src='inputs_graph.png' alt='Token' />";
-  echo "<img src='mempool_graph.png' alt='Value' />";
+  echo "<img src='load_graph.png' alt='Load' />";
+  echo "<img src='temp_graph.png' alt='CPUTemp' />";
+  echo "<img src='memory_graph.png' alt='Memory' />";
+  echo "<img src='hdd_graph.png' alt='Drive' />";
+  echo "<img src='download_graph.png' alt='Download' />";
+  echo "<img src='upload_graph.png' alt='Upload' />";
+  echo "<img src='balance_graph.png' alt='Balance' />";
+  echo "<img src='stakes_burns_graph.png' alt='Stakes' />";
+  echo "<img src='inputs_graph.png' alt='Inputs' />";
+  echo "<img src='mempool_graph.png' alt='Mempool' />";
 EOF
 
 #### create shell (graphs) #####################################################
@@ -231,7 +231,7 @@ LINE1:load15#FF5100:"Load 15m"
 
 # inputs (24hour)
 rrdtool graph /var/www/html/inputs_graph.png \
--w 649 -h 145 -a PNG \
+-w 400 -h 164 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "Wallet Inputs" \
@@ -252,7 +252,7 @@ LINE1:inputs#3FFF33
 
 # stakes (24hour)
 rrdtool graph /var/www/html/stakes_graph.png \
--w 400 -h 145 -a PNG \
+-w 400 -h 164 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "Wallet Stakes" \
@@ -273,7 +273,7 @@ LINE1:stakes#9633FF
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
--w 400 -h 145 -a PNG \
+-w 400 -h 164 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "Wallet Balance" \
@@ -313,7 +313,7 @@ LINE1:net_send#FF3A00
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
--w 400 -h 145 -a PNG \
+-w 400 -h 164 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "System Drive" \
@@ -334,7 +334,7 @@ LINE1:hdd#F17EFF
 
 # memory (24hour)
 rrdtool graph /var/www/html/memory_graph.png \
--w 400 -h 150 -a PNG \
+-w 400 -h 164 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "Memory (MB)" \
@@ -360,7 +360,7 @@ LINE1:memory_free#4FFF33:"Free"
 
 # cpu temperature (24hour)
 rrdtool graph /var/www/html/cpu_graph.png \
--w 400 -h 150 -a PNG \
+-w 400 -h 164 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "CPU Temp (°C)" \
@@ -380,7 +380,7 @@ LINE1:temp#FF2D00:"CPUTemp"
 
 # mempool (24hour)
 rrdtool graph /var/www/html/mempool_graph.png \
--w 1394 -h 100 -a PNG \
+-w 400 -h 164 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "Wallet Mempool" \
