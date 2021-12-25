@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212512
-# 0.4.0.5
+# 0.4.0.1
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -243,10 +243,9 @@ rrdtool graph /var/www/html/inputs_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 DEF:inputs=/tmp/node_stats/inputs.rrd:inputs:MAX \
-GPRINT:inputs:LAST:%.14lf\ Now \
-GPRINT:inputs:AVERAGE:%.14lf\ AVG \
-GPRINT:inputs:MAX:%.14lf\ Max \
-GPRINT:inputs:MIN:%.14lf\ Min \
+GPRINT:inputs:LAST:%.0lf\ Now \
+GPRINT:inputs:MAX:%.0lf\ Max \
+GPRINT:inputs:MIN:%.0lf\ Min \
 LINE1:inputs#3FFF33
 
 # stakes (24hour)
@@ -347,11 +346,9 @@ rrdtool graph /var/www/html/memory_graph.png \
 DEF:memory_total=/tmp/node_stats/memory_total.rrd:memory_total:MAX \
 DEF:memory_free=/tmp/node_stats/memory_free.rrd:memory_free:MAX \
 GPRINT:memory_total:LAST:%.2lf\M\ Now \
-GPRINT:memory_total:AVERAGE:%.2lf\M\ AVG \
 GPRINT:memory_total:MAX:%.2lf\M\ Max \
 GPRINT:memory_total:MIN:%.2lf\M\ Min \
 GPRINT:memory_free:LAST:%.2lf\M\ Now \
-GPRINT:memory_free:AVERAGE:%.2lf\M\ AVG \
 GPRINT:memory_free:MAX:%.2lf\M\ Max \
 GPRINT:memory_free:MIN:%.2lf\M\ Min \
 LINE1:memory_total#33CEFF:"Total" \
@@ -392,10 +389,10 @@ rrdtool graph /var/www/html/mempool_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 DEF:mempool=/tmp/node_stats/mempool.rrd:mempool:MAX \
-GPRINT:mempool:LAST:%.2lf\ Now \
-GPRINT:mempool:AVERAGE:%.2lf\ AVG \
-GPRINT:mempool:MAX:%.2lf\ Max \
-GPRINT:mempool:MIN:%.2lf\ Min \
+GPRINT:mempool:LAST:%.0lf\ Now \
+GPRINT:mempool:AVERAGE:%.0lf\ AVG \
+GPRINT:mempool:MAX:%.0lf\ Max \
+GPRINT:mempool:MIN:%.0lf\ Min \
 LINE1:mempool#FF0000' >/tmp/graphs
 
 # run graphs script
