@@ -983,8 +983,8 @@ fi
 
 if [[ "$GRAPH_STATS" -eq "1" ]]; then
   # setup graphs
-  echo "$TOTAL_MEM" >"${LOG_DIR:?}"/node_data/stats.total_mem
-  echo "$FREE_MEM" >"${LOG_DIR:?}"/node_data/stats.free_mem
+  echo "$TOTAL_MEM_RR" >"${LOG_DIR:?}"/node_data/stats.total_mem
+  echo "$FREE_MEM_RR" >"${LOG_DIR:?}"/node_data/stats.free_mem
   bash /usr/local/bin/include/stats
 fi
 
