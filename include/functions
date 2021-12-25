@@ -463,7 +463,7 @@ if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &
   # get successfully connected peers value (addnodes.value)
   ADDNODE_VALUE=$(cat "${LOG_DIR:?}"/node_data/peers/success 2>/dev/null | wc -l 2>&1)
   # if smaller than original, use backup list
-  if [[ "$ADDNODE_VALUE" -lt "$ADDNODE_BACKUP" ]]; then
+  if [[ "$ADDNODE_VALUE" -lt "$ADDNODE_BACKUP" ]] &>/dev/null; then
     cat "${WALLET_DIR:?}"/addnodes >"${LOG_DIR:?}"/node_data/addnodes.script 2>/dev/null
     printf '%b' "${LOG_DATE:?} Status() AddNode.Script Using addnodes backup! (${G1}${ADDNODE_BACKUP:?}${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
@@ -499,7 +499,7 @@ if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &
   # calculate new bakcup difference
   ADDNODE_NEW_DIFF=$(echo "${ADDNODE_BACKUP:?}-${ADDNODE_VALUE:?}" 2>&1 | bc 2>&1)
   # if bigger than original, update
-  if [[ "$ADDNODE_VALUE" -gt "$ADDNODE_BACKUP" ]]; then
+  if [[ "$ADDNODE_VALUE" -gt "$ADDNODE_BACKUP" ]] &>/dev/null; then
     # get addnodes backup value
     ADDNODE_BACKUP=$(cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | wc -l 2>&1)
     # copy successfully connected peers over to wallet directory -> addnodes backup
