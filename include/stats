@@ -269,10 +269,10 @@ rrdtool graph /var/www/html/peers_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 DEF:peers=/tmp/node_stats/peers.rrd:peers:MAX \
-GPRINT:peers:LAST:%.2lf\ Now \
-GPRINT:peers:AVERAGE:%.2lf\ AVG \
-GPRINT:peers:MAX:%.2lf\ Max \
-GPRINT:peers:MIN:%.2lf\ Min \
+GPRINT:peers:LAST:%.0lf\ Now \
+GPRINT:peers:AVERAGE:%.0lf\ AVG \
+GPRINT:peers:MAX:%.0lf\ Max \
+GPRINT:peers:MIN:%.0lf\ Min \
 LINE1:peers#F17EFF
 
 # stakes (24hour)
