@@ -82,8 +82,8 @@ TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1)
 FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
 # total and free (rrdtool)
 if [[ "$GRAPH_STATS" -eq "1" ]]; then
-  TOTAL_MEM_RR="$TOTAL_MEM_RR"
-  FREE_MEM_RR="$FREE_MEM_RR"
+  TOTAL_MEM_RR="$TOTAL_MEM"
+  FREE_MEM_RR="$FREE_MEM"
 fi
 # total and free (colors)
 TOTAL_MEM="${G0:?}$TOTAL_MEM${N0:?}"
