@@ -2,10 +2,13 @@
 
 # By Rainman
 # V20212512
-# 0.3.9.9
+# 0.4.0.2
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
+
+# node_stats directory, ruled by configuration
+mkdir "${LOG_DIR:?}"/node_stats &>/dev/null
 
 ### install needed packages ####################################################
 
