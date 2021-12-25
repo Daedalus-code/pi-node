@@ -284,7 +284,7 @@ rrdtool graph /var/www/html/balance_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 DEF:balance=/tmp/node_stats/balance.rrd:balance:MAX \
-GPRINT:balance:LAST:%.2lf\ Now \
+GPRINT:balance:LAST:%.2lf\ Trump \
 GPRINT:balance:MAX:%.2lf\ Max \
 GPRINT:balance:MIN:%.2lf\ Min \
 LINE1:balance#3F79E5
