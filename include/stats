@@ -194,8 +194,7 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<img src='temp_graph.png' alt='CPUTemp' />";
   echo "<img src='memory_graph.png' alt='Memory' />";
   echo "<img src='hdd_graph.png' alt='Drive' />";
-  echo "<img src='download_graph.png' alt='Download' />";
-  echo "<img src='upload_graph.png' alt='Upload' />";
+  echo "<img src='network_graph.png' alt='Network' />";
   echo "<img src='balance_graph.png' alt='Balance' />";
   echo "<img src='stakes_graph.png' alt='Stakes' />";
   echo "<img src='inputs_graph.png' alt='Inputs' />";
@@ -359,7 +358,7 @@ LINE1:memory_total#33CEFF:"Total" \
 LINE1:memory_free#4FFF33:"Free"
 
 # cpu temperature (24hour)
-rrdtool graph /var/www/html/cpu_graph.png \
+rrdtool graph /var/www/html/temp_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
 --start -24hour --end now \
