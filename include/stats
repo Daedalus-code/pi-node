@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212612
-# 0.4.3.3
+# 0.4.3.4
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -27,6 +27,7 @@ fi
 if ! [ -x "$(command -v apache2)" ]; then
   sudo apt-get install apache2 php libapache2-mod-php -y 2>&1
   sudo chown -R "$(whoami)":"$(whoami)" /var/www/html
+  rm /var/www/html/index.html &>/dev/null
   printf '%b' "[${G1:?}OK${N0:?}] Restarting Apache\n"
   sudo systemctl restart apache2 2>&1
   LOCAL=$(ifconfig 2>&1 | grep "inet" 2>&1 | head -1 2>&1 |
