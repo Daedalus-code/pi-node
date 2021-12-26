@@ -94,7 +94,7 @@ USED_HDD=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ prin
 # get bytes from kilo
 USED_HDD=$(echo "$USED_HDD*1024" 2>&1 | bc -l 2>&1)
 # human-readable format
-USED_HDD=$(numfmt --to iec --format "%8.2f" "$USED_HDD" 2>&1 | xargs 2>&1)
+USED_HDD=$(numfmt --to iec --format "%8.3f" "$USED_HDD" 2>&1 | xargs 2>&1)
 # get used hdd percentage
 USED_HDD_P=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $5 }' 2>&1)
 # get used hdd (color)
