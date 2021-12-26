@@ -80,6 +80,9 @@ FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)
 # calculate
 TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1)
 FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
+# rrdtool, total and free memory (no color)
+TOTAL_MEM_RR="$TOTAL_MEM"
+FREE_MEM_RR="$FREE_MEM"
 # total and free (colors)
 TOTAL_MEM="${G0:?}$TOTAL_MEM${N0:?}"
 FREE_MEM="${G1:?}$FREE_MEM${N0:?}"
@@ -977,9 +980,6 @@ fi
 ### collect data for rrdtool (round robin databases) ###########################
 
 if [[ "$GRAPH_STATS" -eq "1" ]]; then
-  # total and free memory (no color)
-  TOTAL_MEM_RR="$TOTAL_MEM"
-  FREE_MEM_RR="$FREE_MEM"
   # echo values into files (no color)
   echo "$TOTAL_MEM_RR" >"${LOG_DIR:?}"/node_data/stats.total_mem
   echo "$FREE_MEM_RR" >"${LOG_DIR:?}"/node_data/stats.free_mem
