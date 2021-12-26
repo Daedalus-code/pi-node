@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212612
-# 1.0.0.6
+# 1.0.1.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.0.6"
+VERSION="v1.0.1.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -90,9 +90,13 @@ FREE_MEM="${G1:?}$FREE_MEM${N0:?}"
 ### system space ###############################################################
 
 # get free Space, mmc block device #0, partition #2, partition #2, dev/root
-USED_HDD=$(df -k | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)
-# get used hdd (no color)
-USED_HDD_P="$USED_HDD"
+USED_HDD=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)
+# get bytes from kilo
+USED_HDD=$(echo "$USED_HDD*1024" 2>&1 | bc -l 2>&1)
+# human-readable format
+USED_HDD=$(numfmt --to iec --format "%8.2f" "$USED_HDD" 2>&1 | xargs 2>&1)
+# get used hdd percentage
+USED_HDD_P=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $5 }' 2>&1)
 # get used hdd (color)
 USED_HDD="${G1:?}${USED_HDD:?}${N0:?}"
 
