@@ -227,7 +227,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # get wallet version
   WALLET_VERSION=$("$WALLET_DIR"/trumpcoin-cli -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+" 2>&1)
 else # wallet version, grey, waiting on daemon data
-  WALLET_VERSION="${GR:?}vLoading:?}${N0:?}"
+  WALLET_VERSION="${GR:?}vLoading${N0:?}"
 fi
 
 # running mainnet or testnet
