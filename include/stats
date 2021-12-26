@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212612
-# 0.4.3.4
+# 0.4.3.8
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -335,8 +335,8 @@ rrdtool graph /var/www/html/network_graph.png \
 --color SHADEB#565875 \
 DEF:net_down=/tmp/node_stats/net_down.rrd:net_down:MAX \
 DEF:net_up=/tmp/node_stats/net_up.rrd:net_up:MAX \
-GPRINT:net_down:LAST:%.2lf\ Download \
-GPRINT:net_up:LAST:%.2lf\ Upload \
+GPRINT:net_down:LAST:%.3lf\ Download \
+GPRINT:net_up:LAST:%.3lf\ Upload \
 LINE1:net_down#00FF00:"Down" \
 LINE1:net_up#FF3A00:"Up"
 
@@ -422,13 +422,17 @@ GPRINT:mempool:MAX:%.0lf\ Max \
 GPRINT:mempool:MIN:%.0lf\ Min \
 LINE1:mempool#FF0000:"Mempool"' >/tmp/graphs
 
-# note: heavy reading, do interval reading with date:time
-if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+5:[0-9]+|[0-9]+:[0-9]+0:[0-9]+" 2>&1)" ]] &>/dev/null; then
-  # run graphs script
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating graphs..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  bash /tmp/graphs &>/dev/null && clear
-else
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Getting data..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+# greater than n seconds, continue
+if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
+
+  # note: heavy reading, do interval reading with date:time
+  if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+5:[0-9]+|[0-9]+:[0-9]+0:[0-9]+" 2>&1)" ]] &>/dev/null; then
+    # run graphs script
+    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating graphs..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    bash /tmp/graphs &>/dev/null && clear
+  else
+    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Getting data..${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 fi
 
 # END
