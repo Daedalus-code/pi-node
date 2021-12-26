@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212612
-# 1.0.0.5
+# 1.0.0.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.0.5"
+VERSION="v1.0.0.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -83,17 +83,18 @@ FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
 # rrdtool, total and free memory (no color)
 TOTAL_MEM_RR="$TOTAL_MEM"
 FREE_MEM_RR="$FREE_MEM"
-# total and free (colors)
+# total and free (color)
 TOTAL_MEM="${G0:?}$TOTAL_MEM${N0:?}"
 FREE_MEM="${G1:?}$FREE_MEM${N0:?}"
 
 ### system space ###############################################################
 
 # get free Space, mmc block device #0, partition #2, partition #2, dev/root
-USED_HDD=$(df -h 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)
-# get used hdd (colors)
+USED_HDD=$(df -k | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)
+# get used hdd (no color)
+USED_HDD_P="$USED_HDD"
+# get used hdd (color)
 USED_HDD="${G1:?}${USED_HDD:?}${N0:?}"
-USED_HDD_P=$(df -h 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $5 }' 2>&1)
 
 ### get wan/lan.ip, internet/intranet ##########################################
 
@@ -103,9 +104,9 @@ IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 IFCONFIG=$(ifconfig 2>&1 | egrep "wlan*|eth*" 2>&1)
 # get ip address from interface
 IP_ADDRESS=$(echo "$IFCONFIG" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
-# get ip address (no colors)
+# get ip address (no color)
 IP_ADDRESS_N="$IP_ADDRESS"
-# get ip address (colors)
+# get ip address (color)
 IP_ADDRESS="${C1:?}$IP_ADDRESS${N0:?}"
 # interface icon (top right)
 INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
@@ -129,11 +130,11 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     # get public ip address
     PUBLIC_IP=$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 |
       egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
-    # public ip (colors)
+    # public ip (color)
     PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
   fi
 else # output localhost (127.0.0.1) if not found
-  # waiting on daemon data (colors)
+  # waiting on daemon data (color)
   PUBLIC_IP="${GR:?}127.0.0.1${N0:?}"
 fi
 
@@ -272,7 +273,7 @@ else # wallet is loading/syncing
   WALLET_SYNC="${GR:?}0.00%${N0:?}"
 fi
 
-# non responsive function (colors)
+# non responsive function (color)
 function wallet_nodes() {
   WALLET_NODES_TOTAL="${GR:?}0${N0:?}"
   WALLET_NODES_STABLE="${GR:?}0${N0:?}"
@@ -302,9 +303,9 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # get wallet connections (peers) total
   WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/getinfo 2>&1 |
     awk '{ print $2 }' 2>&1)
-  # wallet peers total (no colors)
+  # wallet peers total (no color)
   WALLET_PEERS_TOTAL_N="$WALLET_PEERS_TOTAL"
-  # wallet peers total (colors)
+  # wallet peers total (color)
   WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
 
   # get wallet connections latest (using wallet version)
@@ -312,12 +313,12 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # get wallet connections other (not latest, probably older wallets)
   WALLET_PEERS_OTHER=$(grep "subver" "${LOG_DIR:?}"/node_data/getpeerinfo 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1 | tr -d 'v' 2>&1 | grep -v "$(echo "$WALLET_VERSION" | tr -d 'v' 2>&1)" 2>&1 | wc -l 2>&1)
 
-  # wallet peers latest (colors)
+  # wallet peers latest (color)
   WALLET_PEERS_LATEST="${G1:?}${WALLET_PEERS_LATEST:?}${N0:?}"
-  # wallet peers other (colors)
+  # wallet peers other (color)
   WALLET_PEERS_OTHER="${G0:?}${WALLET_PEERS_OTHER:?}${N0:?}"
 
-# non responsive (no colors)
+# non responsive (no color)
 elif [[ "$WALLET_PEERS_TOTAL_N" -eq "0" ]] &>/dev/null; then
   # non responsive
   wallet_nodes
@@ -341,14 +342,14 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   WALLET_BALANCE=$(echo "$WALLET_BALANCE+$WALLET_UNCONFIRMED+$WALLET_IMMATURE" | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   # get wallet value
   WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-else # non responsive (colors)
+else # non responsive (color)
   WALLET_VALUE="${GR:?}0.00${N0:?}"
   WALLET_BALANCE="${GR:?}0.00${N0:?}"
   WALLET_IMMATURE="${GR:?}0.00${N0:?}"
   WALLET_UNCONFIRMED="${GR:?}0.00${N0:?}"
 fi
 
-# non responsive function (colors)
+# non responsive function (color)
 function wallet_balances() {
   WALLET_TICKER="${GR:?}0${N0:?}"
   WALLET_MEMPOOL="${GR:?}0${N0:?}"
@@ -416,7 +417,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     egrep "AddToWallet [a0-z9]+  new" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
     printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof of work data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-else # non responsive (colors)
+else # non responsive (color)
   WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 
@@ -426,17 +427,17 @@ if [ -f "${LOG_DIR:?}"/node_data/ticker ] &>/dev/null; then
   if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/getinfo 2>&1)" ]] &>/dev/null; then
     # pos active
     POS_STATUS="${G1:?}S${N0:?}"
-    # balance is staking, highlight balance, stakes and inputs (colors)
+    # balance is staking, highlight balance, stakes and inputs (color)
     WALLET_BALANCE="${G1:?}${WALLET_BALANCE:?}${N0:?}"
     WALLET_STAKES="${G1:?}${WALLET_STAKES:?}${N0:?}"
     WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
-  else # pos not active (colors) waiting on daemon data
+  else # pos not active (color) waiting on daemon data
     POS_STATUS="${GR:?}S${N0:?}"
     WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
     WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
     WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
   fi
-else # pos not active (colors) waiting on daemon data
+else # pos not active (color) waiting on daemon data
   POS_STATUS="${GR:?}S${N0:?}"
   WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
   WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
