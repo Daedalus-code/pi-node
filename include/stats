@@ -297,7 +297,7 @@ GPRINT:stakes:LAST:%.2lf\ Now \
 GPRINT:stakes:AVERAGE:%.2lf\ AVG \
 GPRINT:stakes:MAX:%.2lf\ Max \
 GPRINT:stakes:MIN:%.2lf\ Min \
-LINE1:stakes#9633FF
+LINE1:stakes#F7FA2A
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
