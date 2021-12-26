@@ -256,7 +256,7 @@ DEF:inputs=/tmp/node_stats/inputs.rrd:inputs:MAX \
 GPRINT:inputs:LAST:%.0lf\ Now \
 GPRINT:inputs:MAX:%.0lf\ Max \
 GPRINT:inputs:MIN:%.0lf\ Min \
-LINE1:inputs#3FFF33
+LINE1:inputs#3FFF33:"Inputs"
 
 # peers (24hour)
 rrdtool graph /var/www/html/peers_graph.png \
@@ -318,7 +318,7 @@ DEF:balance=/tmp/node_stats/balance.rrd:balance:MAX \
 GPRINT:balance:LAST:%.2lf\ Trump \
 GPRINT:balance:MAX:%.2lf\ Max \
 GPRINT:balance:MIN:%.2lf\ Min \
-LINE1:balance#3F79E5
+LINE1:balance#3F79E5:"Balance"
 
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
