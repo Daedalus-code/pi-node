@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212612
-# 1.0.1.5
+# 1.0.1.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.1.5"
+VERSION="v1.0.1.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -865,6 +865,8 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     # truncate old logs, lists, internet data
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/addnodes.* &>/dev/null
+    truncate -s 0 "${LOG_DIR:?}"/tmp/node_data/peers/worked &>/dev/null
+    truncate -s 0 "${LOG_DIR:?}"/tmp/node_data/peers/total.failed &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate logs, lists, internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
