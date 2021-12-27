@@ -80,7 +80,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   ARP_DIFF=$(echo "$ARP_COUNT-$ARP_NEW" 2>&1 | bc 2>&1)
 
   # setup arp file
-  cat /tmp/nodes.arp 2>/dev/null |
+  cat "$LOG_DIR"/node_data/nodes.arp 2>/dev/null |
     sort -n 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes.tmp 2>&1
   printf '%b' "${LOG_DATE:?} Status() Intranet.ARP() Found ${G1:?}${ARP_COUNT:?}${N0:?} Peers! (${ARP_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
