@@ -489,7 +489,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   cp "$LOG_DIR"/node_data/nodes "$LOG_DIR"/node_data/nodes.tmp 2>&1
 
   # disregard already connected peers
-  grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/nodes 2>&1
+  grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/peers 2>&1
 
   # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
@@ -515,7 +515,7 @@ printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! ($(egr
 
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
-done <"${LOG_DIR:?}"/node_data/nodes 2>&1 | shuf 2>&1
+done <"${LOG_DIR:?}"/node_data/peers 2>&1 | shuf 2>&1
 
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}||${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
