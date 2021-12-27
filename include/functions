@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20212612
+# V20212712
 # 0.7.1.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -476,7 +476,7 @@ RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RA
 # generate random ip address (ipv6)
 RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
 # feed address to addnodes.script
-echo "$RIP_IPV6" >"${LOG_DIR:?}"/node_data/nodes 2>&1
+echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/nodes 2>&1
 echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/nodes 2>&1
 
 ### add_peers screen script ####################################################
