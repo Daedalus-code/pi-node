@@ -397,8 +397,8 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 else # non responsive
   LAST_TX="${N0:?}"
   # get random onion (cryptography)
-  RANDOM_TX=$(openssl rand -base64 12 2>&1)
-  WALLET_TXLAST="${GR:?}                       Loading transactions (tx) (${RANDOM_TX:0:11})${N0:?}"
+  RANDOM_TX=$(openssl rand -base64 21 2>&1 | tr -d '+|=|/' 2>&1)
+  WALLET_TXLAST="${GR:?}                       ${RANDOM_TX:?}${N0:?}"
 fi
 
 # greater than n seconds, continue
