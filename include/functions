@@ -517,7 +517,7 @@ while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
 done <"${LOG_DIR:?}"/node_data/peers 2>&1 | shuf 2>&1
 
-printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}||${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 screen -X -S add_peers quit
 killall screen
