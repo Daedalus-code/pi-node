@@ -19,7 +19,7 @@ LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
 
 # wait on node (daemon) to start
 until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
-  RANDOM_PID=$((((RANDOM % 999) + 1)))
+  RANDOM_PID=$((((RANDOM % 9999) + 1)))
   clear
   printf '%b' "Waiting on trumpcoin (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
   sleep 2
@@ -45,7 +45,7 @@ function uptime_daemon() {
 }
 
 # greater than n seconds, continue
-if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
+if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
   # tail last line in debug.log
   LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
   # get log size from debug.log
