@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212712
-# 0.1.6.6
+# 0.1.6.9
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -139,6 +139,9 @@ printf '%b' "${LOG_DATE:?} Status() Intranet.Ping: Found ${G1:?}${PING_COUNT:?}$
 # remove duplicates
 cat "$LOG_DIR"/node_data/nodes.tmp 2>/dev/null |
   sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes 2>&1
+# disregard already connected peers
+grep -vf "$LOG_DIR"/node_data/nodes "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/nodes.tmp
+mv "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/nodes
 
 ### token price ##############################################################
 
