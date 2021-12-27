@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20212212
-# 0.1.7.2
+# V20212712
+# 0.1.6.6
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -23,17 +23,17 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
-  printf '%b' "${LOG_DATE:?} Status() Update.Nodes() Looking for peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
   # save original value, make sure file exist before the fact
   touch "$LOG_DIR"/node_data/nodes.api &>/dev/null
   egrep -c "[0-9]+" "$LOG_DIR"/node_data/nodes.api >"$LOG_DIR"/node_data/nodes.api.value 2>&1
 
   # if zero, make it so
-  if [ ! -s "$LOG_DIR"/node_data/nodes.api.value ] &>/dev/null; then
-    echo "0" >"$LOG_DIR"/node_data/nodes.api.value 2>&1
-    printf '%b' "${GR:?}${LOG_DATE:?} Status() Chainz.C.API() Note: First Round! Need more data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  if [ ! -s "$LOG_DIR"/node_data/nodes.ping ] &>/dev/null; then
+    echo "0" >"$LOG_DIR"/node_data/nodes.ping 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() Intranet.Ping: Note: First Round! Need more data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
+
+  printf '%b' "${LOG_DATE:?} Status() Update.Nodes() Looking for peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   # add node address (api) internet
   curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
@@ -90,12 +90,6 @@ fi
 # save original value, make sure file exist before the fact
 touch "$LOG_DIR"/node_data/nodes.ping &>/dev/null
 egrep -c "[0-9]+" "$LOG_DIR"/node_data/nodes.ping >"$LOG_DIR"/node_data/nodes.ping.value 2>&1
-
-# if zero, make it so
-if [ ! -s "$LOG_DIR"/node_data/nodes.ping ] &>/dev/null; then
-  echo "0" >"$LOG_DIR"/node_data/nodes.ping 2>&1
-  printf '%b' "${GR:?}${LOG_DATE:?} Status() Intranet.Ping: Note: First Round! Need more data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-fi
 
 # get interface and then ip address
 IP_ADDRESS_PING=$(echo "$(ifconfig 2>&1 | egrep "wlan*|eth*" 2>&1)" 2>&1 |
