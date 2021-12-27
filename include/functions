@@ -487,10 +487,10 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]]; then
     cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes.tmp
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! ($(egrep -c "[0-9]+" "${WALLET_DIR:?}"/addnodes 2>&1)) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  else
+    # disregard already connected peers
+    grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/add_peers 2>&1
   fi
-
-  # disregard already connected peers
-  grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/add_peers 2>&1
 
   ### random address ###########################################################
 
