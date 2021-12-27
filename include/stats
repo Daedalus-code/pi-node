@@ -277,7 +277,7 @@ GPRINT:peers:LAST:%.0lf\ Now \
 GPRINT:peers:AVERAGE:%.0lf\ AVG \
 GPRINT:peers:MAX:%.0lf\ Max \
 GPRINT:peers:MIN:%.0lf\ Min \
-LINE1:peers#F17EFF
+LINE1:peers#F17EFF:"Peers"
 
 # stakes (24hour)
 rrdtool graph /var/www/html/stakes_graph.png \
@@ -298,7 +298,7 @@ GPRINT:stakes:LAST:%.2lf\ Now \
 GPRINT:stakes:AVERAGE:%.2lf\ AVG \
 GPRINT:stakes:MAX:%.2lf\ Max \
 GPRINT:stakes:MIN:%.2lf\ Min \
-LINE1:stakes#F7FA2A
+LINE1:stakes#F7FA2A:"Stakes"
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
@@ -359,7 +359,7 @@ GPRINT:hdd:LAST:%.2lf\ Now \
 GPRINT:hdd:AVERAGE:%.2lf\ AVG \
 GPRINT:hdd:MAX:%.2lf\ Max \
 GPRINT:hdd:MIN:%.2lf\ Min \
-LINE1:hdd#F17EFF
+LINE1:hdd#F17EFF:"UsedHDD"
 
 # memory (24hour)
 rrdtool graph /var/www/html/memory_graph.png \
