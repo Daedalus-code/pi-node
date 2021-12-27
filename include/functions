@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212612
-# 0.6.8.4
+# 0.6.8.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.8.4"
+VERSION="v0.6.8.8"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -56,6 +56,10 @@ else # log lines (tail debug)
   LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
   # log max :n characters, no log size
   LAST_LOG="${LAST_LOG:0:188}"
+fi
+if [[ -z "$LAST_LOG" ]]; then
+  # non responsive
+  LAST_LOG=" "
 fi
 
 ### system information, load, user, cpu temp ###################################
