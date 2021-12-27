@@ -486,7 +486,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
   touch "$LOG_DIR"/node_data/peers/success 2>&1
 
-  cp "$LOG_DIR"/node_data/nodes "$LOG_DIR"/node_data/nodes.tmp 2>&1
+  cp "$LOG_DIR"/node_data/peers.tmp "$LOG_DIR"/node_data/nodes.tmp 2>&1
 
   # disregard already connected peers
   grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/peers 2>&1
