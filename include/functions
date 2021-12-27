@@ -464,7 +464,7 @@ fi
 # update addnodes, failed peers, along with ticker price (every half, & hour)
 if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
 
-  truncate -s 0 "${LOG_DIR:?}"/node_data/addnodes.* &>/dev/null
+  truncate -s 0 "${LOG_DIR:?}"/node_data/addnodes* &>/dev/null
   truncate -s 0 "${LOG_DIR:?}"/tmp/node_data/peers/worked &>/dev/null
   truncate -s 0 "${LOG_DIR:?}"/tmp/node_data/peers/total.failed &>/dev/null
 
