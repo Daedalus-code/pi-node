@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20212312
-# 0.0.7.0
+# V20212712
+# 0.0.6.1
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -13,7 +13,7 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 # screen indicator (is it running)
 if ! screen -list 2>&1 |
-  grep -q "addnodes" 2>&1; then
+  grep -q "add_peers" 2>&1; then
   SCREEN_IND="${GR:?}N${N0:?}"
 else
   NOW_TIME=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
@@ -53,15 +53,6 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
     # remove old files
     rm -R "$LOG_DIR"/node_data/* &>/dev/null
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # restore personal addnodes list from wallet directory
-    if [[ ! -f "${WALLET_DIR:?}"/addnodes ]]; then
-      RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
-      echo "$RIP_IPV4" >>"${WALLET_DIR:?}"/addnodes 2>&1
-    fi
-    cp "${WALLET_DIR:?}"/addnodes /home/"$(whoami)"/addnodes 2>&1
-    cp "${WALLET_DIR:?}"/addnodes "${LOG_DIR:?}"/node_data/addnodes.script
-    WALLET_ADDNODES=$(cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | wc -l 2>&1)
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Restoring personal addnodes! (${GR:?}${WALLET_ADDNODES:?}${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     "$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
