@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212612
-# 0.6.9.3
+# 0.6.8.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.6.9.3"
+VERSION="v0.6.8.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -428,22 +428,14 @@ else # non responsive (color)
   WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 
-# if ticker is found
-if [ -f "${LOG_DIR:?}"/node_data/ticker ] &>/dev/null; then
-  # wallet pos status
-  if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/getinfo 2>&1)" ]] &>/dev/null; then
-    # pos active
-    POS_STATUS="${G1:?}S${N0:?}"
-    # balance is staking, highlight balance, stakes and inputs (color)
-    WALLET_BALANCE="${G1:?}${WALLET_BALANCE:?}${N0:?}"
-    WALLET_STAKES="${G1:?}${WALLET_STAKES:?}${N0:?}"
-    WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
-  else # pos not active (color) waiting on daemon data
-    POS_STATUS="${GR:?}S${N0:?}"
-    WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
-    WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
-    WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
-  fi
+# wallet pos status
+if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/getinfo 2>&1)" ]] &>/dev/null; then
+  # pos active
+  POS_STATUS="${G1:?}S${N0:?}"
+  # balance is staking, highlight balance, stakes and inputs (color)
+  WALLET_BALANCE="${G1:?}${WALLET_BALANCE:?}${N0:?}"
+  WALLET_STAKES="${G1:?}${WALLET_STAKES:?}${N0:?}"
+  WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
 else # pos not active (color) waiting on daemon data
   POS_STATUS="${GR:?}S${N0:?}"
   WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
