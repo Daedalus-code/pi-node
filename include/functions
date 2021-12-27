@@ -348,7 +348,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # get total balance, regardless of immature, unconfirmed values (combine them all)
   WALLET_BALANCE=$(echo "$WALLET_BALANCE+$WALLET_UNCONFIRMED+$WALLET_IMMATURE" | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   # get wallet value
-  WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+  WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/ticker 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
 else # non responsive (color)
   WALLET_VALUE="${GR:?}0.00${N0:?}"
   WALLET_BALANCE="${GR:?}0.00${N0:?}"
