@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212712
-# 0.7.1.4
+# 0.7.2.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.1.4"
+VERSION="v0.7.2.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -476,7 +476,18 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
   touch "$LOG_DIR"/node_data/peers/success 2>&1
 
+  # copy arp, api and ping address found each 30 minutes into nodes.tmp (every round)
   cp "$LOG_DIR"/node_data/peers.tmp "$LOG_DIR"/node_data/nodes.tmp 2>&1
+
+  # count backup peers
+  AN_BACKUP_COUNT=$(egrep -c "[0-9]+" "${WALLET_DIR:?}"/addnodes 2>&1)
+  # count success peers
+  CONNECTED_COUNT=$(egrep -c "[0-9]+" "$LOG_DIR"/node_data/peers/success 2>&1)
+  # backup greater than success, add
+  if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]]; then
+    cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes.tmp
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! (${G1:?}+${N0:?}$(egrep -c "[0-9]+" "${WALLET_DIR:?}"/addnodes 2>&1)) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 
   # disregard already connected peers
   grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/add_peers 2>&1
@@ -487,7 +498,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
   # generate random ip address (ipv6)
   RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
-  # feed address to addnodes.script
+  # feed address to add_peers list
   echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
   echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
