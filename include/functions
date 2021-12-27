@@ -469,16 +469,6 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
   fi
 fi
 
-### random address #############################################################
-
-# generate random ip address (ipv4)
-RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
-# generate random ip address (ipv6)
-RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
-# feed address to addnodes.script
-echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/nodes 2>&1
-echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/nodes 2>&1
-
 ### add_peers screen script ####################################################
 
 # greater than n seconds, continue
@@ -490,6 +480,16 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
   # disregard already connected peers
   grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/peers 2>&1
+
+  ### random address ###########################################################
+
+  # generate random ip address (ipv4)
+  RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
+  # generate random ip address (ipv6)
+  RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
+  # feed address to addnodes.script
+  echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/peers 2>&1
+  echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/peers 2>&1
 
   # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
