@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20212612
-# 1.0.1.6
+# V20212712
+# 1.0.2.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -743,10 +743,15 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
   comm -23 <(sort "${LOG_DIR:?}"/node_data/addnodes.tmp) <(egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' "${LOG_DIR:?}"/node_data/peers/failed | sort) >"${LOG_DIR:?}"/node_data/addnodes.script
 
   # make sure node ip is out
-  grep -v "$IP_ADDRESS_N" "${LOG_DIR:?}"/node_data/addnodes.script >"${LOG_DIR:?}"/node_data/addnodes.tmp
-  cp "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.script
+  grep -v "$IP_ADDRESS_N" "${LOG_DIR:?}"/node_data/addnodes.script >"${LOG_DIR:?}"/node_data/addnodes.tmp 2>&1
+
+  cp "${LOG_DIR:?}"/node_data/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+
+  grep -vf "${LOG_DIR:?}"/node_data/addnodes.script "${LOG_DIR:?}"/node_data/peers/total.failed >/tmp/addnodes.tmp 2>&1
+  mv /tmp/addnodes.tmp "${LOG_DIR:?}"/node_data/addnodes.script 2>&1
+
   # create a raw format to look at, of what went through add_peers script below
-  cp "${LOG_DIR:?}"/node_data/addnodes.script "${LOG_DIR:?}"/node_data/addnodes.raw
+  cp "${LOG_DIR:?}"/node_data/addnodes.script "${LOG_DIR:?}"/node_data/addnodes.raw 2>&1
 fi
 
 ### addnodes screen script #####################################################
