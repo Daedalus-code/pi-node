@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212612
-# 0.7.0.6
+# 0.7.0.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.0.6"
+VERSION="v0.7.0.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -486,9 +486,10 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
   touch "$LOG_DIR"/node_data/peers/success 2>&1
 
+  cp "$LOG_DIR"/node_data/nodes "$LOG_DIR"/node_data/nodes.tmp 2>&1
+
   # disregard already connected peers
-  grep -vf "$LOG_DIR"/node_data/nodes "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/nodes.tmp 2>&1
-  cp "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/nodes 2>&1
+  grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/nodes 2>&1
 
   # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
