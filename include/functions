@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212812
-# 0.7.5.1
+# 0.7.5.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.5.1"
+VERSION="v0.7.5.3"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/proc
@@ -284,12 +284,14 @@ elif [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
 else # wallet is loading/syncing
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
+
   if [[ -f "${LOG_DIR:?}"/node_data/tmp/proc ]] &>/dev/null; then
     # sync progress from proc
     if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tmp/proc 2>&1)" -eq "100" ]]; then
       WALLET_TXLAST="$SYNC_PROGRESS_BAR"
     fi
   fi
+
   # logo turns grey while loading
   RC="${GR:?}"
   # non responsive (loading)
