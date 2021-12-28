@@ -176,7 +176,7 @@ if grep "127.0.0.1:9050" "${LOG_DIR:?}"/node_data/getinfo &>/dev/null; then
   PUBLIC_IP=$(cat "${LOG_DIR:?}"/node_data/onion 2>/dev/null)
   if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
     # random onion (cryptography)
-    PUBLIC_IP=$(openssl rand -base64 12 2>&1 | tr -d '+|=|/' 2>&1)
+    PUBLIC_IP=$(openssl rand -base64 12 2>&1 | tr -d '+|=|/|-' 2>&1)
   fi # output onion address (short version)
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 else # tor icon (top right)
@@ -403,7 +403,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 else # non responsive
   LAST_TX="${N0:?}"
   # get random onion (cryptography)
-  RANDOM_TX=$(openssl rand -base64 23 2>&1 | tr -d '+|=|/' 2>&1)
+  RANDOM_TX=$(openssl rand -base64 23 2>&1 | tr -d '+|=|/|-' 2>&1)
   WALLET_TXLAST="${GR:?}                       ${RANDOM_TX:?}${N0:?}"
 fi
 
