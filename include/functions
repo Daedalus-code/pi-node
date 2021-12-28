@@ -2,14 +2,15 @@
 
 # By Rainman
 # V20212812
-# 0.7.4.0
+# 0.7.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.4.0"
+VERSION="v0.7.4.6"
 
 source /home/pi/pitrump.conf
+source /usr/local/bin/include/proc
 source /usr/local/bin/include/color
 
 # time - date, trim extra spaces with xargs
@@ -712,6 +713,11 @@ else # wait on wallet (--donald john trump quotes - art of the deal)
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
   fi
+fi
+
+# sync progress from proc
+if [[ ! "$SYNC_PROGRESS_BAR" -eq "100" ]]; then
+  LAST_TX=$(echo "$SYNC_PROGRESS_BAR")
 fi
 
 ### collect data for rrdtool (round robin databases) ###########################
