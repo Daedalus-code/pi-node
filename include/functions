@@ -413,6 +413,11 @@ else # non responsive
   WALLET_TXLAST="${GR:?}                       ${RANDOM_TX:?}${N0:?}"
 fi
 
+# sync progress from proc
+if [[ ! "$SYNC_PROGRESS_BAR_N" -eq "100" ]]; then
+  WALLET_TXLAST="$SYNC_PROGRESS_BAR"
+fi
+
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
@@ -713,11 +718,6 @@ else # wait on wallet (--donald john trump quotes - art of the deal)
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
   fi
-fi
-
-# sync progress from proc
-if [[ ! "$SYNC_PROGRESS_BAR_N" -eq "100" ]]; then
-  LAST_TX="$SYNC_PROGRESS_BAR"
 fi
 
 ### collect data for rrdtool (round robin databases) ###########################
