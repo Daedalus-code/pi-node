@@ -428,19 +428,19 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
   # make sure file exist before the fact
   touch "$LOG_DIR"/node_data/nodes.arp.value &>/dev/null
-  touch /home/"$(whoami)"/staking &>/dev/null
+  touch "${WALLET_DIR:?}"/staking &>/dev/null
 
   # get wallet stakes count
   grep -c "BitcoinMiner : proof-of-stake block was signed" "$WALLET_LOG_DIR"/debug.log | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/staking.value 2>&1
   # get wallet proof of work value
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
   # count saved vs wallet stakes
-  SAVED_POS=$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)
+  SAVED_POS=$(cat "${WALLET_DIR:?}"/staking 2>/dev/null | wc -l 2>&1)
   WALLET_STAKES="${WALLET_POS:?}"
   # wallet pos value greater then saved pos value
   if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
     # get addtowallet, remove duplicates
-    grep "BitcoinMiner : proof-of-stake block was signed" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' >/home/"$(whoami)"/staking 2>&1
+    grep "BitcoinMiner : proof-of-stake block was signed" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/staking 2>&1
     printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof of work data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else # non responsive (color)
@@ -586,13 +586,13 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # save proof of work data from debug.log
   # note: not perfect data of proof-of-work
   # count saved vs wallet stakes
-  SAVED_POS=$(cat /home/"$(whoami)"/staking 2>/dev/null | wc -l 2>&1)
+  SAVED_POS=$(cat "${WALLET_DIR:?}"/staking 2>/dev/null | wc -l 2>&1)
   # get wallet proof of work value
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
   # if wallet pos is less than saved pos
   if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
     # restore missing proof of work data
-    cat /home/"$(whoami)"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    cat "${WALLET_DIR:?}"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Restored ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}Proof of work data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
