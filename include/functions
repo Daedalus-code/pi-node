@@ -414,7 +414,7 @@ else # non responsive
 fi
 
 # sync progress from proc
-if [[ ! "$SYNC_PROGRESS_BAR_N" -eq "100" ]]; then
+if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tmp/proc 2>&1)" -eq "100" ]]; then
   WALLET_TXLAST="$SYNC_PROGRESS_BAR"
 fi
 
