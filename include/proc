@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212812
-# 0.3.4.3
+# 0.3.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -32,310 +32,311 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
 
   # syncing blockchain with progress bar
   SYNC_PROGRESS_BAR=$(
-    # is less than 99
-    if [ "$SYNCING_REPLACE_TX" -lt "1" ]; then
-      echo -ne "       Loading                                             \\r"
-    fi
-    # is equal to
-    if [ "$SYNCING_REPLACE_TX" -eq "1" ]; then
-      echo -ne "     ▓·················································· 1%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "2" ]; then
-      echo -ne "     ▓▓················································· 2%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "3" ]; then
-      echo -ne "     ▓▓▓················································ 3%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "4" ]; then
-      echo -ne "     ▓▓▓▓··············································· 4%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "5" ]; then
-      echo -ne "     ▓▓▓▓▓·············································· 5%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "6" ]; then
-      echo -ne "     ▓▓▓▓▓▓············································· 6%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "7" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓············································ 7%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "8" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓··········································· 8%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "9" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓·········································· 9%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "10" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· 10%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "11" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· 11%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "12" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 12%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "13" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 13%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "14" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 14%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "15" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· 15%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "16" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· 16%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "17" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 17%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "18" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 18%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "19" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 19%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "20" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· 20%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "21" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· 21%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "22" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 22%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "23" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 23%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "24" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 24%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "25" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· 25%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "26" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· 26%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "27" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 27%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "28" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 28%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "29" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 29%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "30" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· 30%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "31" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· 31%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "32" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 32%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "33" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 33%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "34" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 34%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "35" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· 35%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "36" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· 36%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "37" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 37%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "38" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 38%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "39" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 39%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "40" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· 40%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "41" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· 41%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "42" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 42%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "43" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 43%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "44" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 44%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "45" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· 45%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "46" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· 46%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "47" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 47%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "48" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 48%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "49" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 49%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "50" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· 50%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "51" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· 51%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "52" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 52%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "53" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 53%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "54" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 54%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "55" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· 55%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "56" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· 56%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "57" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 57%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "58" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 58%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "59" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 59%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "60" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· 60%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "61" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· 61%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "62" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 62%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "63" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 63%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "64" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 64%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "65" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· 65%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "66" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· 66%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "67" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 67%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "68" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 68%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "69" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 69%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "70" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· 70%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "71" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· 71%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "72" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 72%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "73" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 73%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "74" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 74%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "75" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· 75%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "76" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· 76%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "77" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 77%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "78" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 78%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "79" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 79%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "80" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· 80%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "81" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· 81%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "82" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 82%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "83" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 83%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "84" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 84%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "85" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· 85%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "86" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· 86%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "87" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 87%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "88" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 88%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "89" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 89%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "90" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········· 90%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "91" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········ 91%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "92" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······· 92%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "93" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······ 93%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "94" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····· 94%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "95" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···· 95%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "96" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··· 96%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "97" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·· 97%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "98" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓· 98%\\r"
-    fi
-    if [ "$SYNCING_REPLACE_TX" -eq "99" ]; then
-      echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 99%\\r"
-    fi
     if [ "$SYNCING_REPLACE_TX" -eq "100" ]; then
       echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%\\r"
+
+      # is less than 99
+      if [ "$SYNCING_REPLACE_TX" -lt "1" ]; then
+        echo -ne "       Loading                                             \\r"
+      fi
+      # is equal to
+      if [ "$SYNCING_REPLACE_TX" -eq "1" ]; then
+        echo -ne "     ▓·················································· 1%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "2" ]; then
+        echo -ne "     ▓▓················································· 2%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "3" ]; then
+        echo -ne "     ▓▓▓················································ 3%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "4" ]; then
+        echo -ne "     ▓▓▓▓··············································· 4%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "5" ]; then
+        echo -ne "     ▓▓▓▓▓·············································· 5%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "6" ]; then
+        echo -ne "     ▓▓▓▓▓▓············································· 6%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "7" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓············································ 7%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "8" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓··········································· 8%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "9" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓·········································· 9%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "10" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· 10%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "11" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· 11%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "12" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 12%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "13" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 13%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "14" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 14%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "15" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· 15%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "16" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· 16%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "17" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 17%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "18" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 18%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "19" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 19%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "20" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· 20%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "21" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· 21%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "22" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 22%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "23" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 23%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "24" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 24%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "25" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· 25%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "26" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· 26%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "27" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 27%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "28" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 28%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "29" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 29%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "30" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· 30%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "31" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· 31%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "32" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 32%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "33" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 33%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "34" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 34%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "35" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· 35%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "36" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· 36%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "37" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 37%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "38" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 38%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "39" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 39%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "40" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· 40%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "41" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· 41%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "42" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 42%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "43" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 43%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "44" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 44%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "45" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· 45%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "46" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· 46%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "47" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 47%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "48" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 48%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "49" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 49%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "50" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· 50%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "51" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· 51%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "52" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 52%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "53" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 53%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "54" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 54%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "55" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· 55%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "56" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· 56%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "57" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 57%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "58" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 58%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "59" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 59%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "60" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· 60%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "61" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· 61%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "62" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 62%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "63" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 63%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "64" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 64%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "65" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· 65%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "66" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· 66%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "67" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 67%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "68" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 68%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "69" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 69%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "70" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· 70%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "71" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· 71%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "72" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 72%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "73" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 73%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "74" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 74%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "75" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· 75%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "76" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· 76%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "77" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 77%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "78" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 78%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "79" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 79%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "80" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· 80%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "81" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· 81%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "82" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 82%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "83" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 83%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "84" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 84%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "85" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· 85%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "86" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· 86%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "87" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 87%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "88" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 88%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "89" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 89%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "90" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········· 90%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "91" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········ 91%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "92" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······· 92%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "93" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······ 93%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "94" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····· 94%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "95" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···· 95%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "96" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··· 96%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "97" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·· 97%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "98" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓· 98%\\r"
+      fi
+      if [ "$SYNCING_REPLACE_TX" -eq "99" ]; then
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 99%\\r"
+      fi
     fi
   ) ### sync should be done ####################################################
 fi
