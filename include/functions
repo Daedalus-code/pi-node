@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212812
-# 0.7.7.2
+# 0.7.7.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.7.2"
+VERSION="v0.7.7.8"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/proc
@@ -517,6 +517,12 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     grep "$(cat "$LOG_DIR"/node_data/add_peers)" "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/peers.connected 2>&1
     grep -vf "$LOG_DIR"/node_data/peers.connected "$LOG_DIR"/node_data/add_peers >"$LOG_DIR"/node_data/add_peers.tmp 2>&1
     mv "$LOG_DIR"/node_data/add_peers.tmp "$LOG_DIR"/node_data/add_peers 2>&1
+  fi
+
+  # create addnodes backup if success is greater
+  if [[ "$AN_BACKUP_COUNT" -lt "$CONNECTED_COUNT" ]] &>/dev/null; then
+    cp "$LOG_DIR"/node_data/peers/success "${WALLET_DIR:?}"/addnodes 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/peers/success 2>&1)) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   # backup ticker price
