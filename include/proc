@@ -12,9 +12,9 @@ source /home/pi/pitrump.conf
 
 ########## sync_progress_bar ###################################################
 
-grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
+if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
-if [ ! -f "${LOG_DIR:?}"/node_data/synced ]; then
+  grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
 
   # wallet daemon uptime function
   # function for waiting with command(s) before a limit (seconds) is reached
