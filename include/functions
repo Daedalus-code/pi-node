@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212812
-# 0.7.3.0
+# 0.7.3.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.3.0"
+VERSION="v0.7.3.8"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -466,7 +466,7 @@ fi
 
 # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
 # note: only use addr, disregard addrlocal
-egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 
 ### add_peers screen script ####################################################
 
@@ -479,13 +479,13 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   cp "$LOG_DIR"/node_data/peers.tmp "$LOG_DIR"/node_data/nodes.tmp 2>&1
 
   # count backup peers
-  AN_BACKUP_COUNT=$(egrep -c "[0-9]+" "${WALLET_DIR:?}"/addnodes 2>&1)
+  AN_BACKUP_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${WALLET_DIR:?}"/addnodes 2>&1)
   # count success peers
-  CONNECTED_COUNT=$(egrep -c "[0-9]+" "$LOG_DIR"/node_data/peers/success 2>&1)
+  CONNECTED_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/peers/success 2>&1)
   # backup greater than success, add
-  if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]]; then
+  if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]] &>/dev/null; then
     cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.tmp
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! ($(egrep -c "[0-9]+" "${WALLET_DIR:?}"/addnodes 2>&1)) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${WALLET_DIR:?}"/addnodes 2>&1)) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     cp "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/add_peers 2>&1
   else
     # disregard already connected peers
@@ -494,6 +494,14 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     grep "$(cat "$LOG_DIR"/node_data/add_peers)" "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/peers.connected 2>&1
     grep -vf "$LOG_DIR"/node_data/peers.connected "$LOG_DIR"/node_data/add_peers >"$LOG_DIR"/node_data/add_peers.tmp 2>&1
     mv "$LOG_DIR"/node_data/add_peers.tmp "$LOG_DIR"/node_data/add_peers 2>&1
+  fi
+
+  # use personal addnodes if any data
+  touch /home/"$(whoami)"/addnodes
+  if [[ "$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)" -gt "0" ]] &>/dev/null; then
+    # add extra(s)
+    egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" /home/"$(whoami)"/addnodes >>"$LOG_DIR"/node_data/add_peers 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" /home/"$(whoami)"/addnodes 2>&1)) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   ### random address ###########################################################
@@ -526,7 +534,7 @@ LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
-printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! ($(egrep -c "[0-9]+" "$LOG_DIR"/node_data/add_peers 2>&1)) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/add_peers 2>&1)) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
