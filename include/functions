@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212812
-# 0.7.3.5
+# 0.7.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.3.5"
+VERSION="v0.7.3.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -471,7 +471,7 @@ fi
 
 # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
 # note: only use addr, disregard addrlocal
-egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+|addrlocal: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*|addrlocal: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 
 ### add_peers screen script ####################################################
 
@@ -495,10 +495,6 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   else
     # disregard already connected peers
     grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/add_peers 2>&1
-    # already on connected (addrlocal)
-    grep "$(cat "$LOG_DIR"/node_data/add_peers)" "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/peers.connected 2>&1
-    grep -vf "$LOG_DIR"/node_data/peers.connected "$LOG_DIR"/node_data/add_peers >"$LOG_DIR"/node_data/add_peers.tmp 2>&1
-    mv "$LOG_DIR"/node_data/add_peers.tmp "$LOG_DIR"/node_data/add_peers 2>&1
   fi
 
   ### random address ###########################################################
