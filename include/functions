@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20212812
-# 0.7.8.2
+# V20212912
+# 0.7.8.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.8.2"
+VERSION="v0.7.8.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -627,7 +627,6 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
       printf '%b' "${LOG_DATE:?} Status() Clean.remove() Deleting wallet backups${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
     # remove old files
-    rm "${LOG_DIR:?}"/node_data/onion &>/dev/null
     rm "${LOG_DIR:?}"/node_data/getwan &>/dev/null
     rm "${LOG_DIR:?}"/node_data/peers/* &>/dev/null
     # truncate old logs, lists, internet data
