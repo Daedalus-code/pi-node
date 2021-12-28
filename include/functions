@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212812
-# 0.7.5.3
+# 0.7.5.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.5.3"
+VERSION="v0.7.5.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/proc
@@ -473,9 +473,12 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
   fi
 fi
 
-# create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
-# note: only use addr, disregard addrlocal
-egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
+
+  # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
+  # note: only use addr, disregard addrlocal
+  egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+fi
 
 ### add_peers screen script ####################################################
 
