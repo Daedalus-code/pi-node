@@ -431,7 +431,7 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating graphs.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     bash /tmp/graphs &>/dev/null && clear
   else
-    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Getting data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Saving data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
