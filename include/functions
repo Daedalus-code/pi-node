@@ -492,7 +492,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     # disregard already connected peers
     grep -vf "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/add_peers 2>&1
     # already on connected (addrlocal)
-    grep "$(cat "$LOG_DIR"/node_data/add_peers)" 2>/dev/null | awk '!a[$0]++' >"$LOG_DIR"/node_data/peers.connected 2>&1
+    grep "$(cat "$LOG_DIR"/node_data/add_peers)" "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/peers.connected 2>&1
     grep -vf "$LOG_DIR"/node_data/add_peers "$LOG_DIR"/node_data/peers.connected >"$LOG_DIR"/node_data/peers.success 2>&1
   fi
 
