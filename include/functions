@@ -10,7 +10,6 @@
 VERSION="v0.7.8.2"
 
 source /home/pi/pitrump.conf
-source /usr/local/bin/include/proc
 source /usr/local/bin/include/color
 
 # time - date, trim extra spaces with xargs
@@ -411,7 +410,8 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
 else # non responsive
   LAST_TX="${N0:?}"
   if [[ ! "$WALLET_SYNC_N" -eq "100" ]]; then
-    if [ -f "${LOG_DIR:?}"/node_data/tmp/proc ] &>/dev/null; then
+    if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+      source /usr/local/bin/include/proc
       # sync progress from proc
       if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tmp/proc 2>&1)" -eq "100" ]] &>/dev/null; then
         WALLET_TXLAST="$SYNC_PROGRESS_BAR"
