@@ -355,10 +355,10 @@ rrdtool graph /var/www/html/hdd_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
-GPRINT:hdd:LAST:%.2lf\ Now \
-GPRINT:hdd:AVERAGE:%.2lf\ AVG \
-GPRINT:hdd:MAX:%.2lf\ Max \
-GPRINT:hdd:MIN:%.2lf\ Min \
+GPRINT:hdd:LAST:%.3lf\ Now \
+GPRINT:hdd:AVERAGE:%.3lf\ AVG \
+GPRINT:hdd:MAX:%.3lf\ Max \
+GPRINT:hdd:MIN:%.3lf\ Min \
 LINE1:hdd#F17EFF:"UsedHDD"
 
 # memory (24hour)
