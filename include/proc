@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212812
-# 0.3.4.3
+# 0.3.4.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -333,8 +333,7 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
     if [ "$SYNCING_REPLACE_TX" -eq "99" ]; then
       echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 99%\\r"
     fi
-    if echo "$MNSYNC_STATUS_E" 2>/dev/null |
-      grep -q -E "IsSynced.*.true" 2>/dev/null; then
+    if [ "$SYNCING_REPLACE_TX" -eq "100" ]; then
       echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%\\r"
     fi
   ) ### sync should be done ####################################################
