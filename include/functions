@@ -716,8 +716,8 @@ else # wait on wallet (--donald john trump quotes - art of the deal)
 fi
 
 # sync progress from proc
-if [[ ! "$SYNC_PROGRESS_BAR" -eq "100" ]]; then
-  LAST_TX=$(echo "$SYNC_PROGRESS_BAR")
+if [[ ! "$SYNC_PROGRESS_BAR_N" -eq "100" ]]; then
+  LAST_TX="$SYNC_PROGRESS_BAR"
 fi
 
 ### collect data for rrdtool (round robin databases) ###########################
