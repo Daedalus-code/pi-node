@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212812
-# 0.7.5.3
+# 0.7.5.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.5.3"
+VERSION="v0.7.5.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/proc
@@ -284,14 +284,6 @@ elif [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
 else # wallet is loading/syncing
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
-
-  if [[ -f "${LOG_DIR:?}"/node_data/tmp/proc ]] &>/dev/null; then
-    # sync progress from proc
-    if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tmp/proc 2>&1)" -eq "100" ]]; then
-      WALLET_TXLAST="$SYNC_PROGRESS_BAR"
-    fi
-  fi
-
   # logo turns grey while loading
   RC="${GR:?}"
   # non responsive (loading)
@@ -408,17 +400,22 @@ else # non responsive
 fi
 
 # greater than n seconds, continue
-if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
+if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
 
+  # make sure listunspent exist
+  touch "${LOG_DIR:?}"/node_data/listunspent &>/dev/null
   # get last confirmation (smallest one)
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # get last wallet txid with help of last_tx var
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 else # non responsive
   LAST_TX="${N0:?}"
-  # get random onion (cryptography)
-  RANDOM_TX=$(openssl rand -base64 23 2>&1 | tr -d '+|=|/|-' 2>&1)
-  WALLET_TXLAST="${GR:?}                       ${RANDOM_TX:?}${N0:?}"
+  if [[ -f "${LOG_DIR:?}"/node_data/tmp/proc ]] &>/dev/null; then
+    # sync progress from proc
+    if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tmp/proc 2>&1)" -eq "100" ]]; then
+      WALLET_TXLAST="$SYNC_PROGRESS_BAR"
+    fi
+  fi
 fi
 
 # greater than n seconds, continue
