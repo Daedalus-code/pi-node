@@ -520,7 +520,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   fi
 
   # create addnodes backup if success is greater
-  if [[ "$AN_BACKUP_COUNT" -lt "$CONNECTED_COUNT" ]] &>/dev/null; then
+  if [[ "$(cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | wc -l)" -lt "$CONNECTED_COUNT" ]] &>/dev/null; then
     cp "$LOG_DIR"/node_data/peers/success "${WALLET_DIR:?}"/addnodes 2>&1
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/peers/success 2>&1)) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
