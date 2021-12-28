@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212812
-# 0.7.6.3
+# 0.7.7.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.6.3"
+VERSION="v0.7.7.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/proc
@@ -516,6 +516,14 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     grep "$(cat "$LOG_DIR"/node_data/add_peers)" "$LOG_DIR"/node_data/peers/success >"$LOG_DIR"/node_data/peers.connected 2>&1
     grep -vf "$LOG_DIR"/node_data/peers.connected "$LOG_DIR"/node_data/add_peers >"$LOG_DIR"/node_data/add_peers.tmp 2>&1
     mv "$LOG_DIR"/node_data/add_peers.tmp "$LOG_DIR"/node_data/add_peers 2>&1
+  fi
+
+  # backup ticker price
+  if [ -f "$LOG_DIR"/node_data/ticker ]; then
+    cp "$LOG_DIR"/node_data/ticker "${WALLET_DIR:?}"/ticker 2>&1
+  else # restore it
+    cp "${WALLET_DIR:?}"/ticker "$LOG_DIR"/node_data/ticker 2>&1
+    printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Restored API Price! ($(egrep "[0-9]+" "$LOG_DIR"/node_data/ticker 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   # make sure addnodes exist
