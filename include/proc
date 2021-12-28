@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212812
-# 0.3.4.9
+# 0.3.5.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -22,6 +22,8 @@ function uptime_daemon() {
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
 
+# make sure proc exist
+touch "${LOG_DIR:?}"/node_data/tmp/proc &>/dev/null
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
   # save progress
