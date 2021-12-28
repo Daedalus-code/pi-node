@@ -34,7 +34,7 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
   SYNC_PROGRESS_BAR=$(
     if [ "$SYNCING_REPLACE_TX" -eq "100" ]; then
       echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%\\r"
-
+    else
       # is less than 99
       if [ "$SYNCING_REPLACE_TX" -lt "1" ]; then
         echo -ne "       Loading                                             \\r"
