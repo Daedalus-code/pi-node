@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212812
-# 0.7.5.0
+# 0.7.4.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.5.0"
+VERSION="v0.7.4.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/proc
@@ -284,8 +284,12 @@ elif [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
 else # wallet is loading/syncing
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
-  # loading while waiting on deamon data
-  RC_LOADING="${GR:?}        Loading${N0:?}"
+  if [[ -f "${LOG_DIR:?}"/node_data/tmp/proc ]] &>/dev/null; then
+    # sync progress from proc
+    if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tmp/proc 2>&1)" -eq "100" ]]; then
+      WALLET_TXLAST="$SYNC_PROGRESS_BAR"
+    fi
+  fi
   # logo turns grey while loading
   RC="${GR:?}"
   # non responsive (loading)
@@ -413,13 +417,6 @@ else # non responsive
   WALLET_TXLAST="${GR:?}                       ${RANDOM_TX:?}${N0:?}"
 fi
 
-if [[ -f "${LOG_DIR:?}"/node_data/tmp/proc ]] &>/dev/null; then
-  # sync progress from proc
-  if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/tmp/proc 2>&1)" -eq "100" ]]; then
-    WALLET_TXLAST="$SYNC_PROGRESS_BAR"
-  fi
-fi
-
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
@@ -481,6 +478,7 @@ egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|addr: [a0-z9]+.[a0-z9]+.[
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
+  # make sure success exist
   touch "$LOG_DIR"/node_data/peers/success 2>&1
 
   if [[ -f "$LOG_DIR"/node_data/peers.tmp ]]; then
@@ -506,8 +504,9 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     mv "$LOG_DIR"/node_data/add_peers.tmp "$LOG_DIR"/node_data/add_peers 2>&1
   fi
 
-  # use personal addnodes if any data
+  # make sure addnodes exist
   touch /home/"$(whoami)"/addnodes &>/dev/null
+  # use personal addnodes if any data
   if [[ "$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)" -gt "0" ]] &>/dev/null; then
     # add extra(s)
     egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" /home/"$(whoami)"/addnodes >>"$LOG_DIR"/node_data/add_peers 2>&1
