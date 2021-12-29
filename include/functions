@@ -781,10 +781,10 @@ if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
   # echo values into files (no color)
   echo "$TOTAL_MEM_RR" >"${LOG_DIR:?}"/node_data/stats.total_mem 2>&1
   echo "$FREE_MEM_RR" >"${LOG_DIR:?}"/node_data/stats.free_mem 2>&1
-  echo "$DOWNLOAD_RR" >>"${LOG_DIR:?}"/node_data/stats.download.list 2>&1
-  echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats.download.list)-$(tail -2 2>&1 | head -1 "${LOG_DIR:?}"/node_data/stats.download.list)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/stats.download 2>&1
-  echo "$UPLOAD_RR" >>"${LOG_DIR:?}"/node_data/stats.upload.list 2>&1
-  echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats.upload.list)-$(tail -2 2>&1 | head -1 "${LOG_DIR:?}"/node_data/stats.upload.list)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/stats.upload 2>&1
+  echo "$DOWNLOAD_RR" 2>&1 | egrep -v "syntax|-" >>"${LOG_DIR:?}"/node_data/stats.download.list 2>&1
+  echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats.download.list)-$(tail -2 2>&1 | head -1 "${LOG_DIR:?}"/node_data/stats.download.list)" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats.download 2>&1
+  echo "$UPLOAD_RR" 2>&1 | egrep -v "syntax|-" >>"${LOG_DIR:?}"/node_data/stats.upload.list 2>&1
+  echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats.upload.list)-$(tail -2 2>&1 | head -1 "${LOG_DIR:?}"/node_data/stats.upload.list)" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats.upload 2>&1
 
   # setup graphs
   bash /usr/local/bin/include/stats
