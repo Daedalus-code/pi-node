@@ -637,7 +637,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
     # restore missing proof of work data
     cat "${WALLET_DIR:?}"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Restored ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}Proof of work data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Restored PoS Data! - ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}Proof of work data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
