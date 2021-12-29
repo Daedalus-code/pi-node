@@ -337,7 +337,7 @@ DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
 DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
 GPRINT:net_down:LAST:%.3lf\ Download \
 GPRINT:net_up:LAST:%.3lf\ Upload \
-AREA:net_down#00FF00:"Down" \
+LINE3:net_down#00FF00:"Down" \
 AREA:net_up#FF3A00:"Up"
 
 # hdd (24hour)
