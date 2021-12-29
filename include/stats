@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212912
-# 0.4.3.8
+# 0.4.5.2
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -42,6 +42,7 @@ fi
 
 # load 1
 if [ ! -f "/home/$(whoami)/stats/load.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/load.rrd \
     --step=60 \
     DS:load:GAUGE:300:U:U \
@@ -50,6 +51,7 @@ if [ ! -f "/home/$(whoami)/stats/load.rrd" ]; then
 fi
 # load 5
 if [ ! -f "/home/$(whoami)/stats/load5.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load5.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/load5.rrd \
     --step=60 \
     DS:load5:GAUGE:300:U:U \
@@ -58,6 +60,7 @@ if [ ! -f "/home/$(whoami)/stats/load5.rrd" ]; then
 fi
 # load 15
 if [ ! -f "/home/$(whoami)/stats/load15.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load15.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/load15.rrd \
     --step=60 \
     DS:load15:GAUGE:300:U:U \
@@ -66,6 +69,7 @@ if [ ! -f "/home/$(whoami)/stats/load15.rrd" ]; then
 fi
 # temp
 if [ ! -f "/home/$(whoami)/stats/temp.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating temp.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/temp.rrd \
     --step=60 \
     DS:temp:GAUGE:300:U:U \
@@ -74,6 +78,7 @@ if [ ! -f "/home/$(whoami)/stats/temp.rrd" ]; then
 fi
 # memory available
 if [ ! -f "/home/$(whoami)/stats/memory_total.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating memory_total.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/memory_total.rrd \
     --step=60 \
     DS:memory_total:GAUGE:300:U:U \
@@ -82,6 +87,7 @@ if [ ! -f "/home/$(whoami)/stats/memory_total.rrd" ]; then
 fi
 # memory free
 if [ ! -f "/home/$(whoami)/stats/memory_free.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating memory_free.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/memory_free.rrd \
     --step=60 \
     DS:memory_free:GAUGE:300:U:U \
@@ -90,6 +96,7 @@ if [ ! -f "/home/$(whoami)/stats/memory_free.rrd" ]; then
 fi
 # hdd
 if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating hdd.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/hdd.rrd \
     --step=60 \
     DS:hdd:GAUGE:300:U:U \
@@ -98,6 +105,7 @@ if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ]; then
 fi
 # download
 if [ ! -f "/home/$(whoami)/stats/net_down.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating net_down.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/net_down.rrd \
     --step=60 \
     DS:net_down:GAUGE:300:U:U \
@@ -106,6 +114,7 @@ if [ ! -f "/home/$(whoami)/stats/net_down.rrd" ]; then
 fi
 # upload
 if [ ! -f "/home/$(whoami)/stats/net_up.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating net_up.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/net_up.rrd \
     --step=60 \
     DS:net_up:GAUGE:300:U:U \
@@ -117,6 +126,7 @@ fi
 
 # balance
 if [ ! -f "/home/$(whoami)/stats/balance.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating balance.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/balance.rrd \
     --step=60 \
     DS:balance:GAUGE:300:U:U \
@@ -125,6 +135,7 @@ if [ ! -f "/home/$(whoami)/stats/balance.rrd" ]; then
 fi
 # stakes
 if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating stakes.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/stakes.rrd \
     --step=60 \
     DS:stakes:GAUGE:300:U:U \
@@ -133,6 +144,7 @@ if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ]; then
 fi
 # inputs
 if [ ! -f "/home/$(whoami)/stats/inputs.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating inputs.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/inputs.rrd \
     --step=60 \
     DS:inputs:GAUGE:300:U:U \
@@ -141,6 +153,7 @@ if [ ! -f "/home/$(whoami)/stats/inputs.rrd" ]; then
 fi
 # peers
 if [ ! -f "/home/$(whoami)/stats/peers.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating peers.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/peers.rrd \
     --step=60 \
     DS:peers:GAUGE:300:U:U \
@@ -149,6 +162,7 @@ if [ ! -f "/home/$(whoami)/stats/peers.rrd" ]; then
 fi
 # mempool
 if [ ! -f "/home/$(whoami)/stats/mempool.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating mempool.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/mempool.rrd \
     --step=60 \
     DS:mempool:GAUGE:300:U:U \

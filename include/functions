@@ -567,10 +567,10 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
   echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
-  # disregard already connected peers
+  # disregard already connected peers (success)
   grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
   mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-  # disregard failed peers
+  # disregard failed peers (failed)
   grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
   mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
 
