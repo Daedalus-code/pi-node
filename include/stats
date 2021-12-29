@@ -308,10 +308,10 @@ rrdtool graph /var/www/html/stakes_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
-GPRINT:stakes:LAST:%.2lf\ Now \
-GPRINT:stakes:AVERAGE:%.2lf\ AVG \
-GPRINT:stakes:MAX:%.2lf\ Max \
-GPRINT:stakes:MIN:%.2lf\ Min \
+GPRINT:stakes:LAST:%.0lf\ Now \
+GPRINT:stakes:AVERAGE:%.0lf\ AVG \
+GPRINT:stakes:MAX:%.0lf\ Max \
+GPRINT:stakes:MIN:%.0lf\ Min \
 AREA:stakes#F7FA2A:"Stakes"
 
 # balance (24hour)
