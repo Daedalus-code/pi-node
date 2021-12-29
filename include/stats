@@ -234,9 +234,9 @@ DEF:load15=/home/"$(whoami)"/stats/load15.rrd:load15:MAX \
 GPRINT:load:LAST:%.2lf\ Now \
 GPRINT:load5:AVERAGE:%.2lf\ AVG \
 GPRINT:load15:AVERAGE:%.2lf\ AVG \
-AREA:load#00FF33:"Load 1m" \
-AREA:load5#FFE000:"Load 5m" \
-AREA:load15#FF5100:"Load 15m"
+LINE3:load#00FF33:"Load 1m" \
+LINE2:load5#FFE000:"Load 5m" \
+LINE1:load15#FF5100:"Load 15m"
 
 # inputs (24hour)
 rrdtool graph /var/www/html/inputs_graph.png \
@@ -337,8 +337,8 @@ DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
 DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
 GPRINT:net_down:LAST:%.3lf\ Download \
 GPRINT:net_up:LAST:%.3lf\ Upload \
-LINE1:net_down#00FF00:"Down" \
-LINE1:net_up#FF3A00:"Up"
+LINE2:net_down#00FF00:"Down" \
+LINE2:net_up#FF3A00:"Up"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
