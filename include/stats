@@ -245,7 +245,7 @@ rrdtool graph /var/www/html/load_graph.png \
 DEF:load=/home/"$(whoami)"/stats/load.rrd:load:MAX \
 DEF:load5=/home/"$(whoami)"/stats/load5.rrd:load5:MAX \
 DEF:load15=/home/"$(whoami)"/stats/load15.rrd:load15:MAX \
-GPRINT:load:LAST:%.2lf\ 1M \
+GPRINT:load:LAST:%.2lf \
 GPRINT:load5:AVERAGE:%.2lf \
 GPRINT:load15:AVERAGE:%.2lf \
 LINE1:load#00FF33:"Load 1m" \
