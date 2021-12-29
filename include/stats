@@ -352,7 +352,7 @@ DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
 GPRINT:net_down:LAST:%.0lf\ Bytes\ Down \
 GPRINT:net_up:LAST:%.0lf\ Bytes\ Up \
 LINE1:net_down#00FF00:"Down" \
-LINE2:net_up#FF3A00:"Up"
+LINE1:net_up#FF3A00:"Up"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
