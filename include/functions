@@ -561,7 +561,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
   # disregard already connected peers
-  awk 'NR==FNR{a[$0];next} !($0 in a)' "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/nodes.tmp 2>&1
+  awk 'NR==FNR{a[$0];next} !($0 in a){print > FILENAME".clean"}' "${LOG_DIR:?}"/node_data/nodes.tmp "${LOG_DIR:?}"/node_data/peers/success 2>&1
 
   # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
