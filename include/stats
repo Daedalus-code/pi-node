@@ -277,7 +277,7 @@ GPRINT:peers:LAST:%.0lf\ Now \
 GPRINT:peers:AVERAGE:%.0lf\ AVG \
 GPRINT:peers:MAX:%.0lf\ Max \
 GPRINT:peers:MIN:%.0lf\ Min \
-AREA:peers#F17EFF:"Peers"
+AREA:peers#9633FF:"Peers"
 
 # stakes (24hour)
 rrdtool graph /var/www/html/stakes_graph.png \
