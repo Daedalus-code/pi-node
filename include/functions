@@ -609,9 +609,9 @@ killall screen
 screen -wipe
 exit
 EOF
-    # 60s 90s 120s 240s 300s 600s, 900s = 15 minutes
+    # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
     # start adding nodes, inside screen session (timeout n seconds)
-    timeout 900 screen -S add_peers -X -p 0 stuff $'bash /tmp/add_peers\n'
+    timeout 1800 screen -S add_peers -X -p 0 stuff $'bash /tmp/add_peers\n'
   fi
 fi
 
