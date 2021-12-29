@@ -613,7 +613,7 @@ EOF
   fi
 fi
 
-### clean up debug.log, peers.dat (truncate) keep pos around ###################
+### clean up debug.log (truncate) keep pos around ##############################
 
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
