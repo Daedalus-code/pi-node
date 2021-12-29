@@ -478,6 +478,11 @@ fi
 
 ### backup values ##############################################################
 
+# count backup peers
+AN_BACKUP_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${WALLET_DIR:?}"/addnodes 2>&1)
+# count success peers
+CONNECTED_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/peers/success 2>&1)
+
 # backup ticker price
 if [ -f "$LOG_DIR"/node_data/ticker ]; then
   cp "$LOG_DIR"/node_data/ticker "${WALLET_DIR:?}"/ticker 2>&1
@@ -544,11 +549,6 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   if [ -f "$LOG_DIR"/node_data/peers.tmp ] &>/dev/null; then
     cp "$LOG_DIR"/node_data/peers.tmp "$LOG_DIR"/node_data/nodes.tmp 2>&1
   fi
-
-  # count backup peers
-  AN_BACKUP_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${WALLET_DIR:?}"/addnodes 2>&1)
-  # count success peers
-  CONNECTED_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/peers/success 2>&1)
 
   ### random address ###########################################################
 
