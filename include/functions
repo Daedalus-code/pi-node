@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212912
-# 0.7.9.8
+# 0.7.9.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.9.8"
+VERSION="v0.7.9.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -412,7 +412,7 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 else # non responsive
   LAST_TX="${N0:?}"
-  if [[ ! "$WALLET_SYNC_N" -eq "100" ]]; then
+  if [[ ! "$WALLET_SYNC_N" -eq "100" ]] &>/dev/null; then
     if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       source /usr/local/bin/include/proc
       # sync progress from proc
@@ -423,7 +423,7 @@ else # non responsive
   fi
 fi
 
-if [[ -z "$WALLET_TXLAST" ]]; then
+if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   # non responsive
   WALLET_TXLAST="${N0:?}"
 fi
@@ -434,7 +434,6 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # save wallet stakes (addtowallet), remove duplicates
 
   # make sure file exist before the fact
-  touch "$LOG_DIR"/node_data/nodes.arp.value &>/dev/null
   touch "${WALLET_DIR:?}"/staking &>/dev/null
 
   # get wallet stakes count
@@ -454,7 +453,7 @@ else # non responsive (color)
   WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 
-if [ -f "${LOG_DIR:?}"/node_data/getinfo ]; then
+if [ -f "${LOG_DIR:?}"/node_data/getinfo ] &>/dev/null; then
   # wallet pos status
   if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/getinfo 2>&1)" ]] &>/dev/null; then
     # pos active
@@ -487,7 +486,7 @@ AN_BACKUP_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[
 CONNECTED_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/peers/success 2>&1)
 
 # backup ticker price
-if [ -f "$LOG_DIR"/node_data/ticker ]; then
+if [ -f "$LOG_DIR"/node_data/ticker ] &>/dev/null; then
   cp "$LOG_DIR"/node_data/ticker "${WALLET_DIR:?}"/ticker 2>&1
 else # restore it
   cp "${WALLET_DIR:?}"/ticker "$LOG_DIR"/node_data/ticker 2>&1
