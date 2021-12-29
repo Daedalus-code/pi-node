@@ -597,14 +597,14 @@ LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
-printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! ($(wc -l "$LOG_DIR"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! (+$(wc -l "$LOG_DIR"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
 done <"${LOG_DIR:?}"/node_data/add_peers 2>&1 | shuf 2>&1
 
 FAILED=$(grep -o "$(cat "${LOG_DIR:?}"/node_data/p2p.check 2>/dev/null)" "$WALLET_LOG_DIR"/debug.log | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
-printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}$FAILED${N0:?} Failed ${GR:?}<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}+$FAILED${N0:?} Failed ${GR:?}<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 screen -X -S add_peers quit
 killall screen
