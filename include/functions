@@ -153,9 +153,9 @@ fi
 ### download and upload ########################################################
 
 # get download from wlan(*) - eth(*)
-DOWNLOAD=$(ifconfig 2>&1 | egrep "RX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort 2>&1 | tail -1 2>&1)
+DOWNLOAD=$(ifconfig 2>&1 | egrep "RX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
 # get upload from wlan(*) - eth(*)
-UPLOAD=$(ifconfig 2>&1 | egrep "TX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort 2>&1 | tail -1 2>&1)
+UPLOAD=$(ifconfig 2>&1 | egrep "TX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
 # human-readable format
 DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
 UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
@@ -407,7 +407,7 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
   # make sure listunspent exist
   touch "${LOG_DIR:?}"/node_data/listunspent &>/dev/null
   # get last confirmation (smallest one)
-  LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort 2>&1 | head -1 2>&1)
+  LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # get last wallet txid with help of last_tx var
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 else # non responsive
@@ -536,14 +536,14 @@ fi
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # create "failed/refusing" ipv4:ipv6 peers list, sort, remove duplicates
   if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+5:[0-9]+|[0-9]+:[0-9]+0:[0-9]+" 2>&1)" ]] &>/dev/null; then
-    egrep -o " to .*. failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+    egrep -o " to .*. failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
     # add system ip address
     echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)) ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
   # note: only use addr, disregard addrlocal
-  egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+  egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 fi
 
 ### add_peers screen script ####################################################
@@ -686,7 +686,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE="Immature $WALLET_IMMATURE ${GR:?}$WALLET_IMMATURE_VALUE USD${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "6" ] &>/dev/null; then
     # lowest confirmation
-    TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort 2>&1 | head -1 2>&1)
+    TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
@@ -695,7 +695,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE="New Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "7" ] &>/dev/null; then
     # highest confirmation
-    TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort 2>&1 | tail -1 2>&1)
+    TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
@@ -721,11 +721,11 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE="Value ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
     # highest input amount
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
-    TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort 2>&1 | tail -1 2>&1)
+    TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
     TIMELINE="Highest Input $TIMELINE"
     # lowest input amount
   elif [ "$RANDOM_TIMELINE" -eq "11" ] &>/dev/null; then
-    TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort 2>&1 | head -1 2>&1)
+    TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Lowest Input $TIMELINE"
     # daemon uptime
   elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
@@ -736,9 +736,9 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     # create a list this time
     echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/connections
     # highest peer count
-    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | sort 2>&1 | tail -1 2>&1)
+    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | sort -n 2>&1 | tail -1 2>&1)
     # lowest peer count
-    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | sort 2>&1 | head -1 2>&1)
+    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Low/High P2P $LOWS_P2P/$HIGH_P2P"
   elif [ "$RANDOM_TIMELINE" -eq "14" ] &>/dev/null; then
     TIMELINE_LINES=$(cat "${LOG_DIR:?}"/node_data/mempool.activity 2>/dev/null | wc -l 2>&1)
