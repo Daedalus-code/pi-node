@@ -563,15 +563,8 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
   # disregard already connected peers
-  function remove_lines() {
-    REMOVE_LINES="$1"
-    ALL_LINES="$2"
-    TMP_FILE="$(mktemp)"
-    grep -Fvxf "$REMOVE_LINES" "$ALL_LINES" >"$TMP_FILE"
-    mv "$TMP_FILE" "$ALL_LINES"
-  }
-  # run function above
-#  remove_lines "$LOG_DIR"/node_data/peers/success "$LOG_DIR"/node_data/add_peers 2>&1
+
+
 
   # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
