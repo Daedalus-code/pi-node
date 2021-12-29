@@ -234,9 +234,9 @@ DEF:load15=/home/"$(whoami)"/stats/load15.rrd:load15:MAX \
 GPRINT:load:LAST:%.2lf\ Now \
 GPRINT:load5:AVERAGE:%.2lf\ AVG \
 GPRINT:load15:AVERAGE:%.2lf\ AVG \
-LINE3:load#00FF33:"Load 1m" \
+LINE1:load#00FF33:"Load 1m" \
 LINE2:load5#FFE000:"Load 5m" \
-LINE1:load15#FF5100:"Load 15m"
+LINE3:load15#FF5100:"Load 15m"
 
 # inputs (24hour)
 rrdtool graph /var/www/html/inputs_graph.png \
