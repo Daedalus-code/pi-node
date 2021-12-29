@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212912
-# 0.7.8.8
+# 0.7.9.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.8.8"
+VERSION="v0.7.9.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -561,8 +561,15 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
   # disregard already connected peers
-  comm -23 <(sort "$LOG_DIR"/node_data/add_peers) <(sort "$LOG_DIR"/node_data/peers/success) >"$LOG_DIR"/node_data/add_peers.tmp 2>&1
-  cat "$LOG_DIR"/node_data/add_peers.tmp 2>/dev/null | sort 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/add_peers 2>&1
+  function remove() {
+    REMOVE_LINES="$1"
+    ALL_LINES="$2"
+    TMP_FILE="$(mktemp)"
+    grep -Fvxf "$REMOVE_LINES" "$ALL_LINES" >"$TMP_FILE"
+    mv "$TMP_FILE" "$ALL_LINES"
+  }
+  # run function above
+  remove-lines "$LOG_DIR"/node_data/peers/success "$LOG_DIR"/node_data/add_peers 2>&1
 
   # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
