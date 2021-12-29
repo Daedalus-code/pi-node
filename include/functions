@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212912
-# 0.7.9.9
+# 0.8.0.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.7.9.9"
+VERSION="v0.8.0.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -539,6 +539,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     egrep -o " to .*. failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
     # add system ip address
     echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
   # note: only use addr, disregard addrlocal
