@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20212912
-# 0.8.1.3
+# 0.8.0.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.1.3"
+VERSION="v0.8.0.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -485,17 +485,6 @@ else # restore it
   printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Restored API Price! ${G1:?}$(egrep "[0-9]+" "$LOG_DIR"/node_data/ticker 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
-# make sure addnodes exist
-touch /home/"$(whoami)"/addnodes &>/dev/null
-# use personal addnodes if any data
-if [[ "$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)" -gt "0" ]] &>/dev/null; then
-  # add extra(s)
-  egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" /home/"$(whoami)"/addnodes >>"$LOG_DIR"/node_data/nodes.tmp 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! (+$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # truncate file, now old
-  truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
-fi
-
 ### adding nodes, create failed and success lists ##############################
 
 cp "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/add_peers 2>&1
@@ -566,6 +555,8 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # feed address to add_peers list
   echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
   echo "$RIP_IPV4" 2>&1 | egrep -v "127|${IP_ADDRESS_N:?}" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+
+  ### remove failed and connected peers ########################################
 
   # disregard already connected peers (success)
   grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
