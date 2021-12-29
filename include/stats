@@ -270,7 +270,7 @@ DEF:inputs=/home/"$(whoami)"/stats/inputs.rrd:inputs:MAX \
 GPRINT:inputs:LAST:%.0lf\ Now \
 GPRINT:inputs:MAX:%.0lf\ Max \
 GPRINT:inputs:MIN:%.0lf\ Min \
-AREA:inputs#3FFF33:"Inputs"
+AREA:inputs#6CE564:"Inputs"
 
 # peers (24hour)
 rrdtool graph /var/www/html/peers_graph.png \
@@ -392,8 +392,8 @@ DEF:memory_total=/home/"$(whoami)"/stats/memory_total.rrd:memory_total:MAX \
 DEF:memory_free=/home/"$(whoami)"/stats/memory_free.rrd:memory_free:MAX \
 GPRINT:memory_total:MAX:%.2lf\M\ Total \
 GPRINT:memory_free:LAST:%.2lf\M\ Free \
-AREA:memory_total#33CEFF:"Total" \
-AREA:memory_free#4FFF33:"Free"
+AREA:memory_total#3BBCE5:"Total" \
+AREA:memory_free#5BE545:"Free"
 
 # cpu temperature (24hour)
 rrdtool graph /var/www/html/temp_graph.png \
