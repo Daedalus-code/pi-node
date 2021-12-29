@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20212912
-# 0.8.0.4
+# V20213012
+# 0.8.0.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.0.4"
+VERSION="v0.8.0.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -487,6 +487,8 @@ fi
 
 ### adding nodes, create failed and success lists ##############################
 
+# make sure nodes.tmp exist
+touch "$LOG_DIR"/node_data/nodes.tmp &>/dev/null
 cp "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/add_peers 2>&1
 
 # greater than n seconds, continue
@@ -519,6 +521,9 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
   fi
 fi
 
+# make sure success and failed exist
+touch "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null
+touch "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
 # run data with intervals, every n minutes, update api, arp, ping and ticker
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # create "failed/refusing" ipv4:ipv6 peers list, sort, remove duplicates
