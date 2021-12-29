@@ -491,15 +491,15 @@ else # restore it
   printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Restored API Price! ${G1:?}$(egrep "[0-9]+" "$LOG_DIR"/node_data/ticker 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
-# backup greater than success, add
+# add addnodes backup if backup is greater
 if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]] &>/dev/null; then
   cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.tmp
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${WALLET_DIR:?}"/addnodes 2>&1)) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   cp "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/add_peers 2>&1
 fi
 
-# create addnodes backup if success is greater
-if [[ "$(cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | wc -l)" -lt "$CONNECTED_COUNT" ]] &>/dev/null; then
+# create addnodes backup if backup is less
+if [[ "$AN_BACKUP_COUNT" -lt "$CONNECTED_COUNT" ]] &>/dev/null; then
   cp "$LOG_DIR"/node_data/peers/success "${WALLET_DIR:?}"/addnodes 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/peers/success 2>&1)) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
