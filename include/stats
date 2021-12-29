@@ -399,7 +399,7 @@ GPRINT:temp:LAST:%.2lf\°C\ Now \
 GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
 GPRINT:temp:MAX:%.2lf\°C\ Max \
 GPRINT:temp:MIN:%.2lf\°C\ Min \
-LINE1:temp#FF2D00:"CPUTemp"
+AREA:temp#FF2D00:"CPUTemp"
 
 # mempool (24hour)
 rrdtool graph /var/www/html/mempool_graph.png \
