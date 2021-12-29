@@ -104,7 +104,7 @@ printf '%b' "${LOG_DATE:?} Status() Intranet.Ping: Found ${G1:?}${PING_NEW:?}${N
 cat "$LOG_DIR"/node_data/all_nodes.tmp 2>/dev/null |
   sort 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/peers.tmp 2>&1
 
-### token price ##############################################################
+### token price ################################################################
 
 # ticker (api price)
 curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/node_data/ticker 2>&1
