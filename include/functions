@@ -476,6 +476,14 @@ else
   WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
 fi
 
+# backup ticker price
+if [ -f "$LOG_DIR"/node_data/ticker ]; then
+  cp "$LOG_DIR"/node_data/ticker "${WALLET_DIR:?}"/ticker 2>&1
+else # restore it
+  cp "${WALLET_DIR:?}"/ticker "$LOG_DIR"/node_data/ticker 2>&1
+  printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Restored API Price! ${G1:?}$(egrep "[0-9]+" "$LOG_DIR"/node_data/ticker 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
+
 ### adding nodes, create failed and success lists ##############################
 
 # greater than n seconds, continue
@@ -524,14 +532,6 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   if [[ "$(cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | wc -l)" -lt "$CONNECTED_COUNT" ]] &>/dev/null; then
     cp "$LOG_DIR"/node_data/peers/success "${WALLET_DIR:?}"/addnodes 2>&1
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/peers/success 2>&1)) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-
-  # backup ticker price
-  if [ -f "$LOG_DIR"/node_data/ticker ]; then
-    cp "$LOG_DIR"/node_data/ticker "${WALLET_DIR:?}"/ticker 2>&1
-  else # restore it
-    cp "${WALLET_DIR:?}"/ticker "$LOG_DIR"/node_data/ticker 2>&1
-    printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Restored API Price! ${G1:?}$(egrep "[0-9]+" "$LOG_DIR"/node_data/ticker 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   # make sure addnodes exist
