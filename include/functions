@@ -565,7 +565,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
   # feed address to add_peers list
   echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
-  echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+  echo "$RIP_IPV4" 2>&1 | grep -v "127|$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
   # disregard already connected peers (success)
   grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
