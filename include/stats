@@ -369,9 +369,9 @@ rrdtool graph /var/www/html/hdd_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
-GPRINT:hdd:LAST:%.3lf\ Now \
-GPRINT:hdd:MAX:%.3lf\ Max \
-GPRINT:hdd:MIN:%.3lf\ Min \
+GPRINT:hdd:LAST:%.0lf\ Now \
+GPRINT:hdd:MAX:%.0lf\ Max \
+GPRINT:hdd:MIN:%.0lf\ Min \
 AREA:hdd#F17EFF:"UsedHDD"
 
 # memory (24hour)
