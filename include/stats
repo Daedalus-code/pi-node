@@ -234,9 +234,9 @@ DEF:load15=/home/"$(whoami)"/stats/load15.rrd:load15:MAX \
 GPRINT:load:LAST:%.2lf\ Now \
 GPRINT:load5:AVERAGE:%.2lf\ AVG \
 GPRINT:load15:AVERAGE:%.2lf\ AVG \
-LINE1:load#00FF33:"Load 1m" \
-LINE1:load5#FFE000:"Load 5m" \
-LINE1:load15#FF5100:"Load 15m"
+AREA:load#00FF33:"Load 1m" \
+AREA:load5#FFE000:"Load 5m" \
+AREA:load15#FF5100:"Load 15m"
 
 # inputs (24hour)
 rrdtool graph /var/www/html/inputs_graph.png \
@@ -256,7 +256,7 @@ DEF:inputs=/home/"$(whoami)"/stats/inputs.rrd:inputs:MAX \
 GPRINT:inputs:LAST:%.0lf\ Now \
 GPRINT:inputs:MAX:%.0lf\ Max \
 GPRINT:inputs:MIN:%.0lf\ Min \
-LINE1:inputs#3FFF33:"Inputs"
+AREA:inputs#3FFF33:"Inputs"
 
 # peers (24hour)
 rrdtool graph /var/www/html/peers_graph.png \
@@ -277,7 +277,7 @@ GPRINT:peers:LAST:%.0lf\ Now \
 GPRINT:peers:AVERAGE:%.0lf\ AVG \
 GPRINT:peers:MAX:%.0lf\ Max \
 GPRINT:peers:MIN:%.0lf\ Min \
-LINE1:peers#F17EFF:"Peers"
+AREA:peers#F17EFF:"Peers"
 
 # stakes (24hour)
 rrdtool graph /var/www/html/stakes_graph.png \
@@ -318,7 +318,7 @@ DEF:balance=/home/"$(whoami)"/stats/balance.rrd:balance:MAX \
 GPRINT:balance:LAST:%.2lf\ Trump \
 GPRINT:balance:MAX:%.2lf\ Max \
 GPRINT:balance:MIN:%.2lf\ Min \
-LINE1:balance#3F79E5:"Balance"
+AREA:balance#3F79E5:"Balance"
 
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
@@ -337,8 +337,8 @@ DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
 DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
 GPRINT:net_down:LAST:%.3lf\ Download \
 GPRINT:net_up:LAST:%.3lf\ Upload \
-LINE1:net_down#00FF00:"Down" \
-LINE1:net_up#FF3A00:"Up"
+AREA:net_down#00FF00:"Down" \
+AREA:net_up#FF3A00:"Up"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
@@ -359,7 +359,7 @@ GPRINT:hdd:LAST:%.3lf\ Now \
 GPRINT:hdd:AVERAGE:%.3lf\ AVG \
 GPRINT:hdd:MAX:%.3lf\ Max \
 GPRINT:hdd:MIN:%.3lf\ Min \
-LINE1:hdd#F17EFF:"UsedHDD"
+AREA:hdd#F17EFF:"UsedHDD"
 
 # memory (24hour)
 rrdtool graph /var/www/html/memory_graph.png \
@@ -378,8 +378,8 @@ DEF:memory_total=/home/"$(whoami)"/stats/memory_total.rrd:memory_total:MAX \
 DEF:memory_free=/home/"$(whoami)"/stats/memory_free.rrd:memory_free:MAX \
 GPRINT:memory_total:MAX:%.2lf\M\ Total \
 GPRINT:memory_free:LAST:%.2lf\M\ Free \
-LINE1:memory_total#33CEFF:"Total" \
-LINE1:memory_free#4FFF33:"Free"
+AREA:memory_total#33CEFF:"Total" \
+AREA:memory_free#4FFF33:"Free"
 
 # cpu temperature (24hour)
 rrdtool graph /var/www/html/temp_graph.png \
@@ -399,7 +399,7 @@ GPRINT:temp:LAST:%.2lf\°C\ Now \
 GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
 GPRINT:temp:MAX:%.2lf\°C\ Max \
 GPRINT:temp:MIN:%.2lf\°C\ Min \
-LINE1:temp#FF2D00:"CPUTemp"
+AREA:temp#FF2D00:"CPUTemp"
 
 # mempool (24hour)
 rrdtool graph /var/www/html/mempool_graph.png \
@@ -420,7 +420,7 @@ GPRINT:mempool:LAST:%.0lf\ Now \
 GPRINT:mempool:AVERAGE:%.0lf\ AVG \
 GPRINT:mempool:MAX:%.0lf\ Max \
 GPRINT:mempool:MIN:%.0lf\ Min \
-LINE1:mempool#FF0000:"Mempool"' >/tmp/graphs
+AREA:mempool#FF0000:"Mempool"' >/tmp/graphs
 
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
