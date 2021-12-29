@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20212912
-# 0.4.5.2
+# 0.4.5.1
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -370,7 +370,6 @@ rrdtool graph /var/www/html/hdd_graph.png \
 --color SHADEB#565875 \
 DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
 GPRINT:hdd:LAST:%.3lf\ Now \
-GPRINT:hdd:AVERAGE:%.3lf\ AVG \
 GPRINT:hdd:MAX:%.3lf\ Max \
 GPRINT:hdd:MIN:%.3lf\ Min \
 AREA:hdd#F17EFF:"UsedHDD"
