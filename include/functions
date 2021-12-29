@@ -486,7 +486,6 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
 fi
 
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
-
   # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
   # note: only use addr, disregard addrlocal
   egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
@@ -500,8 +499,8 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # make sure success exist
   touch "$LOG_DIR"/node_data/peers/success 2>&1
 
+  # copy arp, api and ping address found each 30 minutes into nodes.tmp (every round)
   if [ -f "$LOG_DIR"/node_data/peers.tmp ] &>/dev/null; then
-    # copy arp, api and ping address found each 30 minutes into nodes.tmp (every round)
     cp "$LOG_DIR"/node_data/peers.tmp "$LOG_DIR"/node_data/nodes.tmp 2>&1
   fi
 
@@ -509,14 +508,12 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   AN_BACKUP_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${WALLET_DIR:?}"/addnodes 2>&1)
   # count success peers
   CONNECTED_COUNT=$(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "$LOG_DIR"/node_data/peers/success 2>&1)
+
   # backup greater than success, add
   if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]] &>/dev/null; then
     cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.tmp
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! ($(egrep -c "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${WALLET_DIR:?}"/addnodes 2>&1)) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     cp "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/add_peers 2>&1
-  else
-    # disregard already connected peers
-    comm -13 <(sort "$LOG_DIR"/node_data/nodes 2>&1) <(sort "$LOG_DIR"/node_data/peers/success 2>&1) >"$LOG_DIR"/node_data/add_peers 2>&1
   fi
 
   # create addnodes backup if success is greater
@@ -553,6 +550,9 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # feed address to add_peers list
   echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
   echo "$RIP_IPV4" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+
+  # disregard already connected peers
+  comm -13 <(sort "$LOG_DIR"/node_data/add_peers 2>&1) <(sort "$LOG_DIR"/node_data/peers/success 2>&1) >"$LOG_DIR"/node_data/add_peers 2>&1
 
   # look for screen session, if not found, start one
   if ! screen -list 2>&1 |
