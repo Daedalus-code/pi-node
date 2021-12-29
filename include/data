@@ -50,7 +50,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # setup api file
   cat "$LOG_DIR"/node_data/nodes.api 2>/dev/null |
-    sort 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/peers.tmp 2>&1
+    sort 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/all_nodes.tmp 2>&1
   printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Found ${G1:?}${API_COUNT:?}${N0:?} Peers! (${API_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   ### arp -a intranet ##########################################################
@@ -81,7 +81,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # setup arp file
   cat "$LOG_DIR"/node_data/nodes.arp 2>/dev/null |
-    sort 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/peers.tmp 2>&1
+    sort 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/all_nodes.tmp 2>&1
   printf '%b' "${LOG_DATE:?} Status() Intranet.ARP() Found ${G1:?}${ARP_COUNT:?}${N0:?} Peers! (${ARP_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
@@ -133,12 +133,12 @@ PING_DIFF=$(echo "$PING_COUNT-$PING_NEW" 2>&1 | bc 2>&1)
 
 # setup ping file
 cat "$LOG_DIR"/node_data/nodes.ping 2>/dev/null |
-  sort 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/peers.tmp 2>&1
+  sort 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/all_nodes.tmp 2>&1
 printf '%b' "${LOG_DATE:?} Status() Intranet.Ping: Found ${G1:?}${PING_COUNT:?}${N0:?} Peers! (${PING_DIFF:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-# remove duplicates
-cat "$LOG_DIR"/node_data/nodes.tmp 2>/dev/null |
-  sort 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes 2>&1
+# remove duplicates and create peers.tmp
+cat "$LOG_DIR"/node_data/all_nodes.tmp 2>/dev/null |
+  sort 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/peers.tmp 2>&1
 
 ### token price ##############################################################
 
