@@ -51,7 +51,7 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
     # make sure debug.log exist
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # remove old files
-    rm -R "$LOG_DIR"/node_data/* &>/dev/null
+    truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     "$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf -proxy=127.0.0.1:9050 -daemon
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
