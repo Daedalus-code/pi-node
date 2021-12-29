@@ -482,7 +482,7 @@ if [ -f "$LOG_DIR"/node_data/ticker ] &>/dev/null; then
   cp "$LOG_DIR"/node_data/ticker "${WALLET_DIR:?}"/ticker 2>&1
 else # restore it
   cp "${WALLET_DIR:?}"/ticker "$LOG_DIR"/node_data/ticker 2>&1
-  printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Restored API Price! ${G1:?}$(egrep "[0-9]+" "$LOG_DIR"/node_data/ticker 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Restored API Price! - ${G1:?}$(egrep "[0-9]+" "$LOG_DIR"/node_data/ticker 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### adding nodes, create failed and success lists ##############################
