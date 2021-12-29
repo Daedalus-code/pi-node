@@ -369,7 +369,7 @@ rrdtool graph /var/www/html/hdd_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
-GPRINT:hdd:LAST:%.0lf\ Bytes\ Used \now \
+GPRINT:hdd:LAST:%.0lf\ Bytes\ Used\ now \
 GPRINT:hdd:MIN:%.0lf\ Bytes\ Min \
 AREA:hdd#F17EFF:"UsedHDD"
 
