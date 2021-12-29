@@ -156,12 +156,12 @@ fi
 DOWNLOAD=$(ifconfig 2>&1 | egrep "RX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
 # get upload from wlan(*) - eth(*)
 UPLOAD=$(ifconfig 2>&1 | egrep "TX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
-# human-readable format
-DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
-UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
 # total and free memory (rrdtool, no color)
 DOWNLOAD_RR=$(echo "$DOWNLOAD" 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1)
 UPLOAD_RR=$(echo "$UPLOAD" 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1)
+# human-readable format
+DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
+UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
 
 ### tor ########################################################################
 
