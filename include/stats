@@ -338,7 +338,7 @@ DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
 GPRINT:net_down:LAST:%.3lf\ Download \
 GPRINT:net_up:LAST:%.3lf\ Upload \
 LINE1:net_down#00FF00:"Down" \
-LINE2:net_up#FF3A00:"Up"
+LINE1:net_up#FF3A00:"Up"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
@@ -399,7 +399,7 @@ GPRINT:temp:LAST:%.2lf\°C\ Now \
 GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
 GPRINT:temp:MAX:%.2lf\°C\ Max \
 GPRINT:temp:MIN:%.2lf\°C\ Min \
-LINE2:temp#FF2D00:"CPUTemp"
+LINE1:temp#FF2D00:"CPUTemp"
 
 # mempool (24hour)
 rrdtool graph /var/www/html/mempool_graph.png \
