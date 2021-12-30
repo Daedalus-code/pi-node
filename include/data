@@ -30,7 +30,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.api 2>&1
 
   # get new count
-  API_NEW=$(cat "$LOG_DIR"/node_data/nodes.api 2>/dev/null | wc -l 2>&1)
+  API_NEW=$(wc -l "$LOG_DIR"/node_data/nodes.api 2>&1 | awk '{ print $1 }' 2>&1)
 
   # setup api file
   cat "$LOG_DIR"/node_data/nodes.api 2>/dev/null |
@@ -47,7 +47,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.arp 2>&1
 
   # get new.arp count
-  ARP_NEW=$(cat "$LOG_DIR"/node_data/nodes.arp 2>/dev/null | wc -l 2>&1)
+  ARP_NEW=$(wc -l "$LOG_DIR"/node_data/nodes.arp 2>&1 | awk '{ print $1 }' 2>&1)
 
   # setup arp file
   cat "$LOG_DIR"/node_data/nodes.arp 2>/dev/null |
@@ -93,7 +93,7 @@ for ip in "${IP_ADDRESS_PING:?}".{1..254}; do
 done >>"$LOG_DIR"/node_data/nodes.ping
 
 # get new.arp count
-PING_NEW=$(cat "$LOG_DIR"/node_data/nodes.ping 2>/dev/null | wc -l 2>&1)
+PING_NEW=$(wc -l "$LOG_DIR"/node_data/nodes.ping 2>&1 | awk '{ print $1 }' 2>&1)
 
 # setup ping file
 cat "$LOG_DIR"/node_data/nodes.ping 2>/dev/null |
@@ -109,7 +109,7 @@ cat "$LOG_DIR"/node_data/all_nodes.tmp 2>/dev/null |
 # make sure addnodes exist
 touch /home/"$(whoami)"/addnodes &>/dev/null
 # use personal addnodes if any data
-if [[ "$(cat /home/"$(whoami)"/addnodes 2>/dev/null | wc -l 2>&1)" -gt "0" ]] &>/dev/null; then
+if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
   # add extra(s)
   egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" /home/"$(whoami)"/addnodes >>"$LOG_DIR"/node_data/nodes.tmp 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! (+$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -130,7 +130,7 @@ cat "$LOG_DIR"/node_data/ticker 2>/dev/null | tr -d '"|,' 2>&1 |
 # count ticker lines, create average
 TICKER_TOTAL=$(cat /tmp/ticker 2>/dev/null |
   awk '{ SUM += $1} END { print SUM }' 2>&1)
-TICKER_LINES=$(cat /tmp/ticker 2>/dev/null | wc -l 2>&1)
+TICKER_LINES=$(wc -l /tmp/ticker 2>&1 | awk '{ print $1 }' 2>&1)
 echo "${TICKER_TOTAL:?}/${TICKER_LINES:?}" 2>&1 |
   bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >/tmp/ticker 2>&1
 

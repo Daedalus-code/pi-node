@@ -202,7 +202,7 @@ else # save no activity value (0) to mempool.activity
   echo "0" >>"${LOG_DIR:?}"/node_data/mempool.activity 2>&1
 fi
 # reset mempool.activity after 1440 lines (1440min=1day)
-if [[ "$(cat "${LOG_DIR:?}"/node_data/mempool.activity 2>/dev/null | wc -l 2>&1)" -gt "1440" ]] &>/dev/null; then
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/mempool.activity 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
   # truncate mempool.activity
   truncate -s 0 "${LOG_DIR:?}"/node_data/mempool.activity &>/dev/null
 fi
@@ -445,7 +445,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # get wallet proof of work value
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
   # count saved vs wallet stakes
-  SAVED_POS=$(cat "${WALLET_DIR:?}"/staking 2>/dev/null | wc -l 2>&1)
+  SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
   WALLET_STAKES="${WALLET_POS:?}"
   # wallet pos value greater then saved pos value
   if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
@@ -648,7 +648,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # save proof of work data from debug.log
   # count saved vs wallet stakes
-  SAVED_POS=$(cat "${WALLET_DIR:?}"/staking 2>/dev/null | wc -l 2>&1)
+  SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
   # get wallet proof of work value
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
   # if wallet pos is less than saved pos
@@ -766,7 +766,7 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/connections 2>/dev/null | sort -n 2>&1 | head -1 2>&1)
     TIMELINE="Low/High P2P $LOWS_P2P/$HIGH_P2P"
   elif [ "$RANDOM_TIMELINE" -eq "14" ] &>/dev/null; then
-    TIMELINE_LINES=$(cat "${LOG_DIR:?}"/node_data/mempool.activity 2>/dev/null | wc -l 2>&1)
+    TIMELINE_LINES=$(wc -l "${LOG_DIR:?}"/node_data/mempool.activity 2>&1 | awk '{ print $1 }' 2>&1)
     TIMELINE_ACTIVE=$(grep "1" "${LOG_DIR:?}"/node_data/mempool.activity 2>&1 | wc -l 2>&1)
     TIMELINE_NOACTIVE=$(grep "0" "${LOG_DIR:?}"/node_data/mempool.activity 2>&1 | wc -l 2>&1)
     TIMELINE_PERC_ACTIVE=$(echo "100/$TIMELINE_LINES*$TIMELINE_ACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
