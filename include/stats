@@ -442,7 +442,7 @@ GPRINT:mempool:LAST:%.0lf\ Now \
 GPRINT:mempool:AVERAGE:%.0lf\ AVG \
 GPRINT:mempool:MAX:%.0lf\ Max \
 GPRINT:mempool:MIN:%.0lf\ Min \
-AREA:mempool#FF0000:"Mempool"
+AREA:mempool#C99999:"Mempool"
 
 # total confirmations (24hour)
 rrdtool graph /var/www/html/total_tx_graph.png \
