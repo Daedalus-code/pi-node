@@ -343,7 +343,7 @@ DEF:balance=/home/"$(whoami)"/stats/balance.rrd:balance:MAX \
 GPRINT:balance:LAST:%.2lf\ Trump \
 GPRINT:balance:MAX:%.2lf\ Max \
 GPRINT:balance:MIN:%.2lf\ Min \
-AREA:balance#3F79E5:"Balance"
+AREA:balance#85bb65:"Balance"
 
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
