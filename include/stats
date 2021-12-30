@@ -425,7 +425,7 @@ AREA:temp#FF2D00:"CPUTemp"
 
 # mempool (24hour)
 rrdtool graph /var/www/html/mempool_graph.png \
--w 1394 -h 164 -a PNG \
+-w 1394 -h 150 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "Wallet Mempool" \
@@ -446,7 +446,7 @@ AREA:mempool#FF0000:"Mempool"
 
 # total confirmations (24hour)
 rrdtool graph /var/www/html/total_tx_graph.png \
--w 1394 -h 164 -a PNG \
+-w 1394 -h 150 -a PNG \
 --slope-mode \
 --start -24hour --end now \
 --vertical-label "Wallet Total TX" \
