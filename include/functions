@@ -518,7 +518,7 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
     # add addnodes backup if backup is greater
     if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]] &>/dev/null; then
       cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.tmp
-      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! ($(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # clear out failed connections (old peers, different ports)
       grep -vf "$LOG_DIR"/node_data/peers/failed "${WALLET_DIR:?}"/addnodes 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
       mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>&1
@@ -528,7 +528,7 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
     # create addnodes backup if backup is less
     if [[ "$AN_BACKUP_COUNT" -lt "$CONNECTED_COUNT" ]] &>/dev/null; then
       cp "$LOG_DIR"/node_data/peers/success "${WALLET_DIR:?}"/addnodes 2>&1
-      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! ($(wc -l "$LOG_DIR"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "$LOG_DIR"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
     # run data
     source /usr/local/bin/include/data
@@ -549,7 +549,7 @@ function failed_peers() {
   echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
   DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! ($(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/${IPV4_FAILS:?}/${DNS_FAILS:?}) ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/${IPV4_FAILS:?}/${DNS_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 }
 
 # running at re/boot (make sure failed connections are updated while booting)
@@ -628,7 +628,7 @@ LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
-printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! (+$(wc -l "$LOG_DIR"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! $(wc -l "$LOG_DIR"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 while IFS= read -r ADDS; do
   "$WALLET_DIR"/trumpcoin-cli -datadir=./ -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
