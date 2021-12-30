@@ -598,10 +598,10 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
   ### remove failed and connected peers ########################################
 
-  # disregard already connected peers (success)
+  # disregard already connected peers (success list)
   grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
   mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-  # disregard failed peers (failed)
+  # disregard failed peers (failed list)
   grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
   mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
 
