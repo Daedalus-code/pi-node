@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213012
-# 0.8.1.2
+# 0.8.2.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.1.2"
+VERSION="v0.8.2.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -405,7 +405,9 @@ fi
 if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
 
   # make sure listunspent exist
-  touch "${LOG_DIR:?}"/node_data/listunspent &>/dev/null
+  if [ ! -f "${LOG_DIR:?}"/node_data/listunspent ] &>/dev/null; then
+    touch "${LOG_DIR:?}"/node_data/listunspent &>/dev/null
+  fi
   # get last confirmation (smallest one)
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # get last wallet txid with help of last_tx var
@@ -434,7 +436,9 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   # save wallet stakes (addtowallet), remove duplicates
 
   # make sure file exist before the fact
-  touch "${WALLET_DIR:?}"/staking &>/dev/null
+  if [ ! -f "${WALLET_DIR:?}"/staking ] &>/dev/null; then
+    touch "${WALLET_DIR:?}"/staking &>/dev/null
+  fi
 
   # get wallet stakes count
   grep -c "BitcoinMiner : proof-of-stake block was signed" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/staking.value 2>&1
@@ -488,7 +492,9 @@ fi
 ### adding nodes, create failed and success lists ##############################
 
 # make sure nodes.tmp exist
-touch "$LOG_DIR"/node_data/nodes.tmp &>/dev/null
+if [ ! -f "$LOG_DIR"/node_data/nodes.tmp ] &>/dev/null; then
+  touch "$LOG_DIR"/node_data/nodes.tmp &>/dev/null
+fi
 cp "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/add_peers 2>&1
 
 # greater than n seconds, continue
@@ -497,8 +503,10 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
   # run data with intervals, every 30 minutes, update api, arp, ping and ticker
   if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
 
-    # make sure addnodes backup exist
-    touch "${WALLET_DIR:?}"/addnodes &>/dev/null
+    if [ ! -f "${WALLET_DIR:?}"/addnodes ] &>/dev/null; then
+      # make sure addnodes backup exist
+      touch "${WALLET_DIR:?}"/addnodes &>/dev/null
+    fi
 
     # count backup peers
     AN_BACKUP_COUNT=$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }')
@@ -523,8 +531,13 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
 fi
 
 # make sure success and failed exist
-touch "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null
-touch "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
+if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ] &>/dev/null; then
+  touch "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null
+fi
+if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
+  touch "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
+fi
+
 # run data with intervals, every n minutes, update api, arp, ping and ticker
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # create "failed/refusing" ipv4:ipv6 peers list, sort, remove duplicates
@@ -545,7 +558,9 @@ fi
 if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
   # make sure success exist
-  touch "$LOG_DIR"/node_data/peers/success 2>&1
+  if [ ! -f "$LOG_DIR"/node_data/peers/success ] &>/dev/null; then
+    touch "$LOG_DIR"/node_data/peers/success 2>&1
+  fi
 
   # copy arp, api and ping address found each 30 minutes into nodes.tmp (every round)
   if [ -f "$LOG_DIR"/node_data/peers.tmp ] &>/dev/null; then
