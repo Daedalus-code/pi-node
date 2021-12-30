@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213012
-# 0.8.3.1
+# 0.8.3.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.3.1"
+VERSION="v0.8.3.3"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -457,6 +457,14 @@ else # non responsive (color)
   WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 
+# non responsive function (color)
+function wallet_dashbord() {
+  POS_STATUS="${GR:?}S${N0:?}"
+  WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
+  WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
+  WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
+}
+
 if [ -f "${LOG_DIR:?}"/node_data/getinfo ] &>/dev/null; then
   # wallet pos status
   if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/getinfo 2>&1)" ]] &>/dev/null; then
@@ -467,16 +475,10 @@ if [ -f "${LOG_DIR:?}"/node_data/getinfo ] &>/dev/null; then
     WALLET_STAKES="${G1:?}${WALLET_STAKES:?}${N0:?}"
     WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
   else # pos not active (color) waiting on daemon data
-    POS_STATUS="${GR:?}S${N0:?}"
-    WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
-    WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
-    WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
+    wallet_dashbord
   fi
 else
-  POS_STATUS="${GR:?}S${N0:?}"
-  WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
-  WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
-  WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
+  wallet_dashbord
 fi
 
 ### backup values ##############################################################
