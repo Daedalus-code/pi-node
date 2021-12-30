@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20213012
-# 0.1.4.3
+# 0.1.2.2
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -23,45 +23,33 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
-  # add node address (api) internet
-  curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 |
-    # clean up the file above (ipv4) no ports on these
-    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 |
-    awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.api 2>&1
+  # add node address (api) internet, (ipv4) no ports on these
+  curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.api 2>&1
 
   # get new count
   API_NEW=$(wc -l "$LOG_DIR"/node_data/nodes.api 2>&1 | awk '{ print $1 }' 2>&1)
 
   # setup api file
-  cat "$LOG_DIR"/node_data/nodes.api 2>/dev/null |
-    sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.all 2>&1
+  cat "$LOG_DIR"/node_data/nodes.api 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.all 2>&1
   printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Found ${G1:?}${API_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   ### arp -a intranet ##########################################################
 
-  # add local address (arp) intranet, no ports on these
-  arp -a 2>&1 | grep -v "?" 2>&1 |
-    # ignore common default router IP address
-    grep -vwE "(127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" 2>&1 |
-    egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 |
-    awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.arp 2>&1
+  # add local address (arp) intranet, no ports on these, ignore common default router ip address
+  arp -a 2>&1 | grep -v "?" 2>&1 | grep -vwE "(127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.arp 2>&1
 
   # get new.arp count
   ARP_NEW=$(wc -l "$LOG_DIR"/node_data/nodes.arp 2>&1 | awk '{ print $1 }' 2>&1)
 
   # setup arp file
-  cat "$LOG_DIR"/node_data/nodes.arp 2>/dev/null |
-    sort -n 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes.all 2>&1
+  cat "$LOG_DIR"/node_data/nodes.arp 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes.all 2>&1
   printf '%b' "${LOG_DATE:?} Status() Intranet.ARP() Found ${G1:?}${ARP_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### ping intranet ##############################################################
 
 # get interface and then ip address
-IP_ADDRESS_PING=$(echo "$(ifconfig 2>&1 | egrep "wlan*|eth*" 2>&1)" 2>&1 |
-  egrep "inet " 2>&1 |
-  grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 |
-  egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1)
+IP_ADDRESS_PING=$(echo "$(ifconfig 2>&1 | egrep "wlan*|eth*" 2>&1)" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+" 2>&1)
 
 # make sure  nodes.ping exist
 touch "$LOG_DIR"/node_data/nodes.ping &>/dev/null
@@ -70,8 +58,7 @@ truncate -s 0 "$LOG_DIR"/node_data/nodes.ping &>/dev/null
 
 # ping local network using ip_address_ping var
 for ip in "${IP_ADDRESS_PING:?}".{1..254}; do
-  ping -c 1 -W 1 $ip 2>&1 | grep "64 bytes" 2>&1 |
-    awk '{ print $4 }' 2>&1 | tr -d ':' &
+  ping -c 1 -W 1 $ip 2>&1 | grep "64 bytes" 2>&1 | awk '{ print $4 }' 2>&1 | tr -d ':' &
 done >"$LOG_DIR"/node_data/nodes.ping
 
 # ping 192.168.1.net
@@ -79,8 +66,7 @@ if ! echo "$IP_ADDRESS_PING" | grep "192.168.1" &>/dev/null; then
   IP_ADDRESS_PING="192.168.0"
   # ping local network using ip_address_ping var
   for ip in "${IP_ADDRESS_PING:?}".{1..254}; do
-    ping -c 1 -W 1 $ip 2>&1 | grep "64 bytes" 2>&1 |
-      awk '{ print $4 }' 2>&1 | tr -d ':' &
+    ping -c 1 -W 1 $ip 2>&1 | grep "64 bytes" 2>&1 | awk '{ print $4 }' 2>&1 | tr -d ':' &
   done >>"$LOG_DIR"/node_data/nodes.ping
 fi
 
@@ -88,21 +74,18 @@ fi
 IP_ADDRESS_PING="10.0.0"
 # ping local network using ip_address_ping var
 for ip in "${IP_ADDRESS_PING:?}".{1..254}; do
-  ping -c 1 -W 1 $ip 2>&1 | grep "64 bytes" 2>&1 |
-    awk '{ print $4 }' 2>&1 | tr -d ':' &
+  ping -c 1 -W 1 $ip 2>&1 | grep "64 bytes" 2>&1 | awk '{ print $4 }' 2>&1 | tr -d ':' &
 done >>"$LOG_DIR"/node_data/nodes.ping
 
 # get new.arp count
 PING_NEW=$(wc -l "$LOG_DIR"/node_data/nodes.ping 2>&1 | awk '{ print $1 }' 2>&1)
 
-# setup ping file
-cat "$LOG_DIR"/node_data/nodes.ping 2>/dev/null |
-  sort -n 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes.all 2>&1
+# setup ping file, ignore common default router ip address
+cat "$LOG_DIR"/node_data/nodes.ping 2>/dev/null | grep -vwE "(127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >>"$LOG_DIR"/node_data/nodes.all 2>&1
 printf '%b' "${LOG_DATE:?} Status() Intranet.Ping: Found ${G1:?}${PING_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # remove duplicates and create peers.tmp
-cat "$LOG_DIR"/node_data/nodes.all 2>/dev/null |
-  sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/peers.tmp 2>&1
+cat "$LOG_DIR"/node_data/nodes.all 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"$LOG_DIR"/node_data/peers.tmp 2>&1
 
 ### personal addnodes ##########################################################
 
@@ -123,16 +106,12 @@ fi
 curl -sf https://api.coingecko.com/api/v3/coins/trumpcoin >"$LOG_DIR"/node_data/ticker 2>&1
 
 # clean up ticker
-cat "$LOG_DIR"/node_data/ticker 2>/dev/null | tr -d '"|,' 2>&1 |
-  egrep -o "[a0-z9]+-[0-9]+usd:[0-9]+.[0-9]+" 2>&1 |
-  egrep -o "usd:[0-9]+.[0-9]+" 2>&1 | tr -d 'usd:' >/tmp/ticker 2>&1
+cat "$LOG_DIR"/node_data/ticker 2>/dev/null | tr -d '"|,' 2>&1 | egrep -o "[a0-z9]+-[0-9]+usd:[0-9]+.[0-9]+" 2>&1 | egrep -o "usd:[0-9]+.[0-9]+" 2>&1 | tr -d 'usd:' >/tmp/ticker 2>&1
 
 # count ticker lines, create average
-TICKER_TOTAL=$(cat /tmp/ticker 2>/dev/null |
-  awk '{ SUM += $1} END { print SUM }' 2>&1)
+TICKER_TOTAL=$(cat /tmp/ticker 2>/dev/null | awk '{ SUM += $1} END { print SUM }' 2>&1)
 TICKER_LINES=$(wc -l /tmp/ticker 2>&1 | awk '{ print $1 }' 2>&1)
-echo "${TICKER_TOTAL:?}/${TICKER_LINES:?}" 2>&1 |
-  bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >/tmp/ticker 2>&1
+echo "${TICKER_TOTAL:?}/${TICKER_LINES:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >/tmp/ticker 2>&1
 
 # setup ticker file
 mv /tmp/ticker "$LOG_DIR"/node_data/ticker 2>&1
