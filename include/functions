@@ -652,7 +652,7 @@ EOF
       timeout 1800 screen -S add_peers -X -p 0 stuff $'bash /tmp/add_peers\n'
     else
       killall screen &>/dev/null
-      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Skipping adding nodes! ${GR:?}*${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Skipping adding nodes! ${GR:?}***${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 fi
