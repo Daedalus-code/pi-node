@@ -232,8 +232,8 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<img src='stakes_graph.png' alt='Stakes' />";
   echo "<img src='inputs_graph.png' alt='Inputs' />";
   echo "<img src='peers_graph.png' alt='Peers' />";
-  echo "<img src='mempool_graph.png' alt='Mempool' />";
   echo "<img src='total_tx_graph.png' alt='Total TX' />";
+  echo "<img src='mempool_graph.png' alt='Mempool' />";
 EOF
 
 #### create shell (graphs) #####################################################
