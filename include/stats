@@ -459,13 +459,11 @@ rrdtool graph /var/www/html/total_tx_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 DEF:total_tx=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:MAX \
-DEF:total_tx=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:AVERAGE \
 GPRINT:total_tx:LAST:%.0lf\ Now \
 GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
 GPRINT:total_tx:MAX:%.0lf\ Max \
 GPRINT:total_tx:MIN:%.0lf\ Min \
-AREA:total_tx#8777E7:"Total Confirmations" \
-LINE1:total_tx#FF0000:"Average line"' >/tmp/graphs
+AREA:total_tx#8777E7:"Total Confirmations"' >/tmp/graphs
 
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
