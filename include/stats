@@ -464,6 +464,7 @@ GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
 GPRINT:total_tx:MAX:%.0lf\ Max \
 GPRINT:total_tx:MIN:%.0lf\ Min \
 AREA:total_tx#8777E7:"Total Confirmations" \
+DEF:total_tx=total_tx.rrd:total_tx:AVERAGE \
 LINE1:total_tx#FF0000:"Average line"' >/tmp/graphs
 
 # greater than n seconds, continue
