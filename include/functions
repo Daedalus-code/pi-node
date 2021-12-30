@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213012
-# 0.8.2.7
+# 0.8.2.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.2.7"
+VERSION="v0.8.2.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -517,6 +517,9 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
     if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]] &>/dev/null; then
       cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.tmp
       printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! ($(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      # clear out failed connections
+      grep -vf "$LOG_DIR"/node_data/peers/failed "${WALLET_DIR:?}"/addnodes >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
+      mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>&1
       killall screen &>/dev/null
     fi
 
@@ -644,7 +647,6 @@ fi
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # save proof of work data from debug.log
-  # note: not perfect data of proof-of-work
   # count saved vs wallet stakes
   SAVED_POS=$(cat "${WALLET_DIR:?}"/staking 2>/dev/null | wc -l 2>&1)
   # get wallet proof of work value
