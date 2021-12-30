@@ -592,9 +592,9 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
   # generate random ip address (ipv6)
   RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
-  # feed address to add_peers list
+  # feed address to add_peers list (ipv4/ipv6), ignore common default router ip address (ipv4)
   echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
-  echo "$RIP_IPV4" 2>&1 | egrep -v "127|${IP_ADDRESS_N:?}" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+  echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
   ### remove failed and connected peers ########################################
 
