@@ -690,7 +690,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     # remove old files
     truncate -s 0 "${LOG_DIR:?}"/node_data/getwan &>/dev/null
     # keep last 1000 failed connections
-    tail -1000 "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.tmp
+    tail -1000 "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
     mv "${LOG_DIR:?}"/node_data/peers/failed.tmp "${LOG_DIR:?}"/node_data/peers/failed 2>&1
     # truncate old logs, lists, internet data
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
