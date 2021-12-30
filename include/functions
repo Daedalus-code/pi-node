@@ -691,7 +691,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
     # keep last 1000 failed connections
     while IFS= read -r ADDS; do
-      echo "$LOG_DATE Socks5() connect to $ADDS failed" >"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      echo "$LOG_DATE Backup() connect to $ADDS failed" >"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     done <"${LOG_DIR:?}"/node_data/peers/failed 2>&1 | tail -1000 2>&1
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate logs, lists, internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
