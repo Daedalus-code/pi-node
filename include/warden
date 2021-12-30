@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20213012
-# 0.0.7.9
+# 0.0.8.0
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -14,6 +14,7 @@ LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
 # screen indicator (is it running)
 if ! screen -list 2>&1 |
   grep -q "add_peers" 2>&1; then
+  # below one round
   ADD_IND="${GR:?}N${N0:?}"
   SCREEN_IND="${GR:?}N${N0:?}"
 else
