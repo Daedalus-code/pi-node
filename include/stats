@@ -281,7 +281,7 @@ DEF:inputs=/home/"$(whoami)"/stats/inputs.rrd:inputs:MAX \
 GPRINT:inputs:LAST:%.0lf\ Now \
 GPRINT:inputs:MAX:%.0lf\ Max \
 GPRINT:inputs:MIN:%.0lf\ Min \
-AREA:inputs#6CE564:"Inputs"
+AREA:inputs#819C7D:"Inputs"
 
 # peers (24hour)
 rrdtool graph /var/www/html/peers_graph.png \
