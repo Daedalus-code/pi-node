@@ -463,8 +463,8 @@ GPRINT:total_tx:LAST:%.0lf\ Now \
 GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
 GPRINT:total_tx:MAX:%.0lf\ Max \
 GPRINT:total_tx:MIN:%.0lf\ Min \
-LINE1:total_tx#FF0000:"Average line" \
-AREA:total_tx#8777E7:"Total Confirmations"' >/tmp/graphs
+AREA:total_tx#8777E7:"Total Confirmations" \
+LINE1:total_tx#FF0000:"Average line"' >/tmp/graphs
 
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
