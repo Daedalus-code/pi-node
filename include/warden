@@ -26,7 +26,7 @@ else
   # kill time jump
   if [[ "$SCR_CALC" -gt "42" ]] &>/dev/null; then
     killall screen &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Slow add_peers script, shutting it down. (time jump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stop add_peers script. (time jump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     ADD_IND="${R1:?}*${N0:?}"
   else # working so far
     ADD_IND="${G1:?}*${N0:?}"
@@ -34,7 +34,7 @@ else
   # kill wrong list
   if [[ "$SCR_CALC" -gt "$(echo "$ADD_LINE/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     killall screen &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Slow add_peers script, shutting it down. (probably wrong list)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stop add_peers script. (wrong list)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     ADD_IND="${R1:?}*${N0:?}"
   else # working so far
     ADD_IND="${G1:?}*${N0:?}"
