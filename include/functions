@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213012
-# 0.8.1.1
+# 0.8.1.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.1.1"
+VERSION="v0.8.1.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -509,6 +509,7 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
     if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]] &>/dev/null; then
       cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.tmp
       printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! ($(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      killall screen &>/dev/null
     fi
 
     # create addnodes backup if backup is less
