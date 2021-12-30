@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20213012
-# 0.0.7.2
+# 0.0.7.8
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -24,12 +24,18 @@ else
   if [[ "$SCR_CALC" -gt "42" ]] &>/dev/null; then
     killall screen &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Slow add_peers script, shutting it down. (time jump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    ADD_IND="${R1:?}*${N0:?}"
+  else # working so far
+    ADD_IND="${G1:?}*${N0:?}"
   fi
   # kill wrong list
   if [[ "$SCR_CALC" -gt "$ADD_LINE" ]] &>/dev/null; then
     killall screen &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Slow add_peers script, shutting it down. (probably wrong list)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
+    ADD_IND="${R1:?}*${N0:?}"
+  else # working so far
+    ADD_IND="${G1:?}*${N0:?}"
+  fi # still running
   SCREEN_IND="${Y1:?}*${N0:?}"
 fi
 
@@ -57,7 +63,7 @@ fi
 if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
   if pgrep -x trumpcoind &>/dev/null; then
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(uptime_daemon)/3600")) $(("$(uptime_daemon)%3600/60")) $(("$(uptime_daemon)%60")))
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?} ${GR:?}$SCR_CALC${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?} ${GR:?}$SCR_CALC $ADD_IND${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # make sure debug.log exist
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
