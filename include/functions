@@ -502,7 +502,7 @@ touch /home/"$(whoami)"/addnodes &>/dev/null
 if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
   # add extra(s)
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+" /home/"$(whoami)"/addnodes >>"$LOG_DIR"/node_data/peers.tmp 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! $(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! +$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # truncate file, now old
   truncate -s 0 /home/"$(whoami)"/addnodes 2>&1
 fi
