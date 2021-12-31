@@ -600,7 +600,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     screen -dmS add_peers 2>&1
 
     # create temp list for connection check
-    cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/p2p.check 2>&1
+    cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers.check 2>&1
 
     # connect nodes found with nodes list above, (using tmp directory)
     cat >"${LOG_DIR:?}"/add_peers <<'EOF'
