@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20213112
-# 0.5.2.2
+# 0.5.1.1
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -244,7 +244,6 @@ cat <<<'#!/bin/bash
 rrdtool graph /var/www/html/load_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "System Load" \
 --color BACK#565875 \
 --color FONT#FFFFFF \
@@ -274,7 +273,6 @@ LINE1:load15#FF5100:"Load 15m"
 rrdtool graph /var/www/html/inputs_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "Wallet Inputs" \
 --alt-autoscale-max --lower-limit=1 \
 --color BACK#565875 \
@@ -297,7 +295,6 @@ AREA:inputs#819C7D:"Inputs"
 rrdtool graph /var/www/html/peers_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "Peers (P2P)" \
 --alt-autoscale-max --lower-limit=1 \
 --color BACK#565875 \
@@ -321,7 +318,6 @@ AREA:peers#A28DB8:"Peers"
 rrdtool graph /var/www/html/stakes_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "Wallet Stakes" \
 --alt-autoscale-max --lower-limit=1 \
 --color BACK#565875 \
@@ -345,7 +341,6 @@ AREA:stakes#FFB777:"Stakes"
 rrdtool graph /var/www/html/balance_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "Wallet Balance" \
 --alt-autoscale-max --lower-limit=1 \
 --color BACK#565875 \
@@ -368,7 +363,6 @@ AREA:balance#85bb65:"Balance"
 rrdtool graph /var/www/html/network_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "Network" \
 --color BACK#565875 \
 --color FONT#FFFFFF \
@@ -393,7 +387,6 @@ LINE1:net_up#FF3A00:"Up"
 rrdtool graph /var/www/html/hdd_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "System Drive" \
 --alt-autoscale-max --lower-limit=1 \
 --color BACK#565875 \
@@ -414,7 +407,6 @@ AREA:hdd#8AA6B6:"UsedHDD"
 rrdtool graph /var/www/html/memory_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "Memory (MB)" \
 --color BACK#565875 \
 --color FONT#FFFFFF \
@@ -439,7 +431,6 @@ AREA:memory_free#9FC49A:"Free"
 rrdtool graph /var/www/html/temp_graph.png \
 -w 400 -h 164 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "CPU Temp (°C)" \
 --color BACK#565875 \
 --color FONT#FFFFFF \
@@ -462,7 +453,6 @@ AREA:temp#F15A3A:"CPUTemp"
 rrdtool graph /var/www/html/mempool_graph.png \
 -w 1394 -h 150 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "Wallet Mempool" \
 --alt-autoscale-max --lower-limit=1 \
 --color BACK#565875 \
@@ -486,7 +476,6 @@ AREA:mempool#C99999:"Mempool"
 rrdtool graph /var/www/html/total_tx_graph.png \
 -w 1394 -h 150 -a PNG \
 --slope-mode \
---start -24hour --end now \
 --vertical-label "Wallet Total TX" \
 --alt-autoscale-max --lower-limit=1 \
 --color BACK#565875 \
