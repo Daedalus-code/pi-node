@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20213112
-# 0.4.8.6
+# 0.5.2.2
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -253,6 +253,13 @@ rrdtool graph /var/www/html/load_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/load.rrd:load:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/load.rrd:load:AVERAGE:end=now-1w:start=end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/load5.rrd:load5:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/load5.rrd:load5:AVERAGE:end=now-1w:start=end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/load15.rrd:load15:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/load15.rrd:load15:AVERAGE:end=now-1w:start=end-1w \
 DEF:load=/home/"$(whoami)"/stats/load.rrd:load:MAX \
 DEF:load5=/home/"$(whoami)"/stats/load5.rrd:load5:MAX \
 DEF:load15=/home/"$(whoami)"/stats/load15.rrd:load15:MAX \
@@ -277,6 +284,9 @@ rrdtool graph /var/www/html/inputs_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/inputs.rrd:inputs:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/inputs.rrd:inputs:AVERAGE:end=now-1w:start=end-1w \
 DEF:inputs=/home/"$(whoami)"/stats/inputs.rrd:inputs:MAX \
 GPRINT:inputs:LAST:%.0lf\ Now \
 GPRINT:inputs:MAX:%.0lf\ Max \
@@ -297,6 +307,9 @@ rrdtool graph /var/www/html/peers_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/peers.rrd:peers:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/peers.rrd:peers:AVERAGE:end=now-1w:start=end-1w \
 DEF:peers=/home/"$(whoami)"/stats/peers.rrd:peers:MAX \
 GPRINT:peers:LAST:%.0lf\ Now \
 GPRINT:peers:AVERAGE:%.0lf\ AVG \
@@ -318,6 +331,9 @@ rrdtool graph /var/www/html/stakes_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/stakes.rrd:stakes:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/stakes.rrd:stakes:AVERAGE:end=now-1w:start=end-1w \
 DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
 GPRINT:stakes:LAST:%.0lf\ Now \
 GPRINT:stakes:AVERAGE:%.0lf\ AVG \
@@ -339,6 +355,9 @@ rrdtool graph /var/www/html/balance_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/balance.rrd:balance:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/balance.rrd:balance:AVERAGE:end=now-1w:start=end-1w \
 DEF:balance=/home/"$(whoami)"/stats/balance.rrd:balance:MAX \
 GPRINT:balance:LAST:%.2lf\ Trump \
 GPRINT:balance:MAX:%.2lf\ Max \
@@ -384,6 +403,9 @@ rrdtool graph /var/www/html/hdd_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/hdd.rrd:hdd:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/hdd.rrd:hdd:AVERAGE:end=now-1w:start=end-1w \
 DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
 GPRINT:hdd:LAST:%.0lf\ Bytes \
 AREA:hdd#8AA6B6:"UsedHDD"
@@ -401,6 +423,11 @@ rrdtool graph /var/www/html/memory_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/memory_total.rrd:memory_total:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/memory_total.rrd:memory_total:AVERAGE:end=now-1w:start=end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/memory_free.rrd:memory_free:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/memory_free.rrd:memory_free:AVERAGE:end=now-1w:start=end-1w \
 DEF:memory_total=/home/"$(whoami)"/stats/memory_total.rrd:memory_total:MAX \
 DEF:memory_free=/home/"$(whoami)"/stats/memory_free.rrd:memory_free:MAX \
 GPRINT:memory_total:MAX:%.2lf\M\ Total \
@@ -421,6 +448,9 @@ rrdtool graph /var/www/html/temp_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/temp.rrd:temp:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/temp.rrd:temp:AVERAGE:end=now-1w:start=end-1w \
 DEF:temp=/home/"$(whoami)"/stats/temp.rrd:temp:MAX \
 GPRINT:temp:LAST:%.2lf\°C\ Now \
 GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
@@ -442,6 +472,9 @@ rrdtool graph /var/www/html/mempool_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/mempool.rrd:mempool:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/mempool.rrd:mempool:AVERAGE:end=now-1w:start=end-1w \
 DEF:mempool=/home/"$(whoami)"/stats/mempool.rrd:mempool:MAX \
 GPRINT:mempool:LAST:%.0lf\ Now \
 GPRINT:mempool:AVERAGE:%.0lf\ AVG \
@@ -463,6 +496,9 @@ rrdtool graph /var/www/html/total_tx_graph.png \
 --color FRAME#565875 \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
+--end now --start end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:AVERAGE:end=now-1w:start=end-1w \
 DEF:total_tx=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:MAX \
 GPRINT:total_tx:LAST:%.0lf\ Now \
 GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
