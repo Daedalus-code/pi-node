@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213112
-# 0.8.5.3
+# 0.8.5.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.5.3"
+VERSION="v0.8.5.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -121,6 +121,8 @@ IP_ADDRESS_N="$IP_ADDRESS"
 IP_ADDRESS="${C1:?}$IP_ADDRESS${N0:?}"
 # interface icon (top right)
 INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
+# interface w speed
+INTERFACE="$(sudo ethtool eth0 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1) $INTERFACE"
 
 # update repository, ruled by configuration
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
