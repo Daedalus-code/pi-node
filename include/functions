@@ -565,14 +565,14 @@ egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/node_data/getpeerinfo 2>
 ### add_peers screen script ####################################################
 
 # greater than n seconds, continue
-if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # make sure success exist
   if [ ! -f "$LOG_DIR"/node_data/peers/success ] &>/dev/null; then
     touch "$LOG_DIR"/node_data/peers/success 2>&1
   fi
 
-  cat "$LOG_DIR"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n "$LOG_DIR"/node_data/add_peers 2>&1
+  cat "$LOG_DIR"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
   ### random address ###########################################################
 
