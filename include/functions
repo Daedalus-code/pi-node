@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213112
-# 0.8.4.5
+# 0.8.4.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.4.5"
+VERSION="v0.8.4.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -572,7 +572,9 @@ if [[ "$(uptime_daemon)" -gt "1800" ]] &>/dev/null; then
 fi
 # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
 # note: only use addr, disregard addrlocal, no ports
-egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/node_data/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+if [ -f "$LOG_DIR"/node_data/getpeerinfo ]; then
+  egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/node_data/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+fi
 
 ### add_peers screen script ####################################################
 
