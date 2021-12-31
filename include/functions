@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213112
-# 0.8.4.6
+# 0.8.5.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.4.6"
+VERSION="v0.8.5.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -551,6 +551,12 @@ function failed_peers() {
   IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
   DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/${IPV4_FAILS:?}/${DNS_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # backup failed list
+  if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ]; then
+    cp "${WALLET_LOG_DIR:?}"failed "${LOG_DIR:?}"/node_data/peers/failed
+  else
+    cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_LOG_DIR:?}"failed
+  fi
 }
 
 # running at re/boot (make sure failed connections are updated while booting)
