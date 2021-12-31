@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20213112
-# 0.5.1.1
+# 0.5.0.5
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -253,12 +253,6 @@ rrdtool graph /var/www/html/load_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 --end now --start end-1w \
-DEF:thisweek=/home/"$(whoami)"/stats/load.rrd:load:AVERAGE \
-DEF:lastweek=/home/"$(whoami)"/stats/load.rrd:load:AVERAGE:end=now-1w:start=end-1w \
-DEF:thisweek=/home/"$(whoami)"/stats/load5.rrd:load5:AVERAGE \
-DEF:lastweek=/home/"$(whoami)"/stats/load5.rrd:load5:AVERAGE:end=now-1w:start=end-1w \
-DEF:thisweek=/home/"$(whoami)"/stats/load15.rrd:load15:AVERAGE \
-DEF:lastweek=/home/"$(whoami)"/stats/load15.rrd:load15:AVERAGE:end=now-1w:start=end-1w \
 DEF:load=/home/"$(whoami)"/stats/load.rrd:load:MAX \
 DEF:load5=/home/"$(whoami)"/stats/load5.rrd:load5:MAX \
 DEF:load15=/home/"$(whoami)"/stats/load15.rrd:load15:MAX \
