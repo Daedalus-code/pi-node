@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20213112
-# 0.0.7.9
+# 0.0.7.8
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -16,28 +16,27 @@ if ! screen -list 2>&1 |
   grep -q "add_peers" 2>&1; then
   # below one round
   ADD_IND="${GR:?}N${N0:?}"
-  SCREEN_IND="${GR:?}N${N0:?}"
+  SCR_IND="${GR:?}N${N0:?}"
 else
   NOW_TIME=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
   SCR_TIME=$(screen -list 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
   SCR_CALC=$(echo "$NOW_TIME-$SCR_TIME" 2>&1 | bc -l 2>&1)
-  SCR_CALC="${SCR_CALC:?} "
   ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)
   # kill time jump
   if [[ "$SCR_CALC" -gt "42" ]] &>/dev/null; then
     killall screen &>/dev/null
     ADD_IND="${R1:?}*${N0:?}"
   else # working so far
-    ADD_IND="${G1:?}*${N0:?}"
+    ADD_IND="${G1:?}R${N0:?}"
   fi
   # kill wrong list
   if [[ "$SCR_CALC" -gt "$(echo "$ADD_LINE/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     killall screen &>/dev/null
     ADD_IND="${R1:?}*${N0:?}"
   else # working so far
-    ADD_IND="${G1:?}*${N0:?}"
+    ADD_IND="${G1:?}R${N0:?}"
   fi # still running
-  SCREEN_IND="${Y1:?}*${N0:?}"
+  SCR_IND="${G1:?}R${N0:?}"
 fi
 
 # wallet daemon uptime in seconds
@@ -64,7 +63,7 @@ fi
 if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
   if pgrep -x trumpcoind &>/dev/null; then
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(uptime_daemon)/3600")) $(("$(uptime_daemon)%3600/60")) $(("$(uptime_daemon)%60")))
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?} ${GR:?}$SCR_CALC$ADD_IND${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCR_IND:?} ${ADD_IND:?} ${SCR_CALC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # make sure debug.log exist
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
