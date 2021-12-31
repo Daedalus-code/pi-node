@@ -164,7 +164,7 @@ fi
 if [ ! -f "/home/$(whoami)/stats/mempool.rrd" ]; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating mempool.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/mempool.rrd \
-    --step=60 \
+    --step=120 \
     DS:mempool:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:86400 \
     RRA:AVERAGE:0.5:1440:400
