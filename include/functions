@@ -555,7 +555,7 @@ function failed_peers() {
 
 # running at re/boot (make sure failed connections are updated while booting)
 if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
-  if [[ "$(uptime_daemon)" -lt "1800" ]] &>/dev/null; then
+  if [[ "$(uptime_daemon)" -lt "3600" ]] &>/dev/null; then
     failed_peers
   fi
 fi
