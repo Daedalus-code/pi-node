@@ -806,8 +806,8 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE="${N0:?}Alive ${TIMELINE_PERC_ACTIVE:?} Dead ${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "15" ] &>/dev/null; then
     # interface w speed
-    TIMELINE="$(sudo ethtool eth0 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1) $INTERFACE"
-    TIMELINE="Network ${TIMELINE:?}"
+    TIMELINE="$(sudo ethtool eth0 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
+    TIMELINE="Network ${INTERFACE:?} ${TIMELINE:?}"
   fi
 else # wait on wallet (--donald john trump quotes - art of the deal)
   # random start number
