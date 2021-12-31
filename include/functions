@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213112
-# 0.8.4.7
+# 0.8.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.4.7"
+VERSION="v0.8.4.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -547,11 +547,10 @@ function failed_peers() {
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! Total ${GR:?}$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} IPv4 ${GR:?}${IPV4_FAILS:?}${N0:?} DNS ${GR:?}${DNS_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   # backup failed list
-  if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ] &>/dev/null; then
-    cp "${WALLET_DIR:?}"/failed "${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  fi
   if [[ "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]]; then
     cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
+  else
+    cp "${WALLET_DIR:?}"/failed "${LOG_DIR:?}"/node_data/peers/failed 2>&1
   fi
 }
 
