@@ -32,7 +32,7 @@ else
     killall screen &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Slow add_peers script, shutting it down. (probably wrong list)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi # still running
-  SCREEN_IND="${Y1:?}*${N0:?}"
+  SCREEN_IND="${CY:?}*${N0:?}"
 fi
 
 # wallet daemon uptime in seconds
