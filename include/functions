@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220101
-# 0.8.7.0
+# 0.8.7.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.7.0"
+VERSION="v0.8.7.3"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -710,13 +710,16 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
   fi
 fi
 
-# use old failed list as a continuation to the next day, ruled by -lines above
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-  # add failed peers (failed.tmp) back in to debug.log
-  while IFS= read -r ADDS; do
-    echo "${LOG_DATE:?} Status() Failed.Peers() connect to ${ADDS:?} failed" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  done <"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list (failed.tmp) +$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+# do this once
+if ! grep "failed.tmp" "${WALLET_LOG_DIR:?}"/debug.log; then
+  # use old failed list as a continuation to the next day, ruled by -lines above
+  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+    # add failed peers (failed.tmp) back in to debug.log
+    while IFS= read -r ADDS; do
+      echo "${LOG_DATE:?} Status() Failed.Peers() connect to ${ADDS:?} failed" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    done <"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list (failed.tmp) +$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 fi
 
 ### timeline ###################################################################
