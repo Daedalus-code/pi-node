@@ -714,7 +714,7 @@ fi
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
   # add failed peers (failed.tmp) back in to debug.log
   while IFS= read -r ADDS; do
-    echo "${LOG_DATE:?} Status() Failed.Peers() connect to ${ADDS:?} failed" >"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    echo "${LOG_DATE:?} Status() Failed.Peers() connect to ${ADDS:?} failed" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   done <"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
   printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list (failed.tmp) +$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
