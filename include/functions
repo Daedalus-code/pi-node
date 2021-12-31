@@ -517,7 +517,7 @@ fi
 # create addnodes backup if backup is less
 if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(wc -l "$LOG_DIR"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
   cp "$LOG_DIR"/node_data/peers/success "${WALLET_DIR:?}"/addnodes 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "$LOG_DIR"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}<<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "$LOG_DIR"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}<<!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # make sure addnodes exist
@@ -527,7 +527,7 @@ touch /home/"$(whoami)"/addnodes &>/dev/null
 if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
   # add extra(s)
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+" /home/"$(whoami)"/addnodes >>"$LOG_DIR"/node_data/peers.tmp 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! +$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! +$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}!>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # truncate file, now old
   truncate -s 0 /home/"$(whoami)"/addnodes 2>&1
 fi
