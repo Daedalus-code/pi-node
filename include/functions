@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213112
-# 0.8.4.8
+# 0.8.4.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.4.8"
+VERSION="v0.8.4.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -493,12 +493,6 @@ fi
 
 ### adding nodes, create failed and success lists ##############################
 
-# make sure nodes.tmp exist
-if [ ! -f "$LOG_DIR"/node_data/nodes.tmp ] &>/dev/null; then
-  touch "$LOG_DIR"/node_data/nodes.tmp &>/dev/null
-fi
-cp "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/add_peers 2>&1
-
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
 
@@ -517,7 +511,7 @@ if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
 
     # add addnodes backup if backup is greater
     if [[ "$AN_BACKUP_COUNT" -gt "$CONNECTED_COUNT" ]] &>/dev/null; then
-      cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"$LOG_DIR"/node_data/nodes.tmp
+      cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"$LOG_DIR"/node_data/peers.tmp
       printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # clear out failed connections (old peers, different ports)
       grep -vf "$LOG_DIR"/node_data/peers/failed "${WALLET_DIR:?}"/addnodes 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
@@ -584,9 +578,9 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     touch "$LOG_DIR"/node_data/peers/success 2>&1
   fi
 
-  # copy arp and api address found each 30 minutes into nodes.tmp (every round)
+  # copy arp and api address found each 30 minutes into add_peers (every round)
   if [ -f "$LOG_DIR"/node_data/peers.tmp ] &>/dev/null; then
-    cp "$LOG_DIR"/node_data/peers.tmp "$LOG_DIR"/node_data/nodes.tmp 2>&1
+    cp "$LOG_DIR"/node_data/peers.tmp "$LOG_DIR"/node_data/add_peers 2>&1
   fi
 
   ### random address ###########################################################
@@ -615,7 +609,7 @@ if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
     screen -dmS add_peers 2>&1
 
     # create temp list for connection check
-    cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/p2p.check 2>&1
+    cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers.check 2>&1
 
     # connect nodes found with nodes list above, (using tmp directory)
     cat >"${LOG_DIR:?}"/add_peers <<'EOF'
