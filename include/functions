@@ -547,7 +547,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
 fi
 
 function failed_peers() {
-  egrep -o " to .* failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  egrep -o " to .* failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort -n 2>&1 | grep -v "addnode" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   # add system ip address
   echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
