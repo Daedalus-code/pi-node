@@ -359,10 +359,10 @@ rrdtool graph /var/www/html/network_graph.png \
 --color SHADEA#565875 \
 --color SHADEB#565875 \
 --end now --start end-1w \
-DEF:thisweek=/home/"$(whoami)"/stats/net_down.rrd:ds0:AVERAGE \
-DEF:lastweek=/home/"$(whoami)"/stats/net_down.rrd:ds0:AVERAGE:end=now-1w:start=end-1w \
-DEF:thisweek=/home/"$(whoami)"/stats/net_up.rrd:ds0:AVERAGE \
-DEF:lastweek=/home/"$(whoami)"/stats/net_up.rrd:ds0:AVERAGE:end=now-1w:start=end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/net_down.rrd:net_down:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/net_down.rrd:net_down:AVERAGE:end=now-1w:start=end-1w \
+DEF:thisweek=/home/"$(whoami)"/stats/net_up.rrd:net_up:AVERAGE \
+DEF:lastweek=/home/"$(whoami)"/stats/net_up.rrd:net_up:AVERAGE:end=now-1w:start=end-1w \
 DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
 DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
 GPRINT:net_down:LAST:%.0lf\ Bytes\ Down \
