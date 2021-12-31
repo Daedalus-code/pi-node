@@ -546,7 +546,7 @@ function failed_peers() {
   DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/${IPV4_FAILS:?}/${DNS_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # backup failed list
-  if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ]; then
+  if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ] &>/dev/null; then
     cp "${WALLET_LOG_DIR:?}"/failed "${LOG_DIR:?}"/node_data/peers/failed
   else
     cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_LOG_DIR:?}"/failed
