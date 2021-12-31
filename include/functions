@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213112
-# 0.8.5.2
+# 0.8.4.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.5.2"
+VERSION="v0.8.4.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -493,12 +493,6 @@ fi
 
 ### adding nodes, create failed and success lists ##############################
 
-# make sure nodes.tmp exist
-if [ ! -f "$LOG_DIR"/node_data/nodes.tmp ] &>/dev/null; then
-  touch "$LOG_DIR"/node_data/nodes.tmp &>/dev/null
-fi
-cp "$LOG_DIR"/node_data/nodes.tmp "$LOG_DIR"/node_data/add_peers 2>&1
-
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
 
@@ -583,14 +577,9 @@ egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/node_data/getpeerinfo 2>
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
 
-  # make sure success exist
-  if [ ! -f "$LOG_DIR"/node_data/peers/success ] &>/dev/null; then
-    touch "$LOG_DIR"/node_data/peers/success 2>&1
-  fi
-
-  # copy arp and api address found each 30 minutes into nodes.tmp (every round)
+  # copy arp and api address found each 30 minutes into add_peers (every round)
   if [ -f "$LOG_DIR"/node_data/peers.tmp ] &>/dev/null; then
-    cp "$LOG_DIR"/node_data/peers.tmp "$LOG_DIR"/node_data/nodes.tmp 2>&1
+    cp "$LOG_DIR"/node_data/peers.tmp "$LOG_DIR"/node_data/add_peers 2>&1
   fi
 
   ### random address ###########################################################
