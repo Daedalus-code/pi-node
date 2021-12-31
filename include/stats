@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20213012
+# V20213112
 # 0.4.8.6
 
 source /home/pi/pitrump.conf
