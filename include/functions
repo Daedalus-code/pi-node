@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20213012
+# V20213112
 # 0.8.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -568,7 +568,7 @@ if [[ "$(uptime_daemon)" -gt "1800" ]] &>/dev/null; then
 fi
 # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
 # note: only use addr, disregard addrlocal
-egrep "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+|addr: [a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.[a0-z9]+.*" "${LOG_DIR:?}"/node_data/getpeerinfo | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/node_data/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 
 ### add_peers screen script ####################################################
 
