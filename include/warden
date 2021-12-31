@@ -71,7 +71,7 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
     truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # backup failed list
-    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]]; then
+    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
       cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
     else
       cp "${WALLET_DIR:?}"/failed "${LOG_DIR:?}"/node_data/peers/failed 2>&1
