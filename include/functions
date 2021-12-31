@@ -567,7 +567,7 @@ if [[ "$(uptime_daemon)" -gt "3600" ]] &>/dev/null; then
   fi
 fi
 # create "stable/working" ipv4/ipv6 peers list, sort, remove duplicates
-# note: only use addr, disregard addrlocal
+# note: only use addr, disregard addrlocal, no port
 egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "$LOG_DIR"/node_data/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 
 ### add_peers screen script ####################################################
