@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213112
-# 0.8.4.7
+# 0.8.4.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.4.7"
+VERSION="v0.8.4.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -540,8 +540,6 @@ fi
 
 function failed_peers() {
   egrep -o " to .*. failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  # add system ip address
-  echo "$IP_ADDRESS_N" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
   DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
   # run output with intervals
