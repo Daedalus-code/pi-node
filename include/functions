@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20213112
-# 0.8.5.5
+# 0.8.5.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.5.5"
+VERSION="v0.8.5.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -121,8 +121,6 @@ IP_ADDRESS_N="$IP_ADDRESS"
 IP_ADDRESS="${C1:?}$IP_ADDRESS${N0:?}"
 # interface icon (top right)
 INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
-# interface w speed
-INTERFACE="$(sudo ethtool eth0 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1) $INTERFACE"
 
 # update repository, ruled by configuration
 if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
@@ -714,7 +712,7 @@ fi
 if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
 
   # random start number
-  RANDOM_TIMELINE=$((((RANDOM % 14) + 1)))
+  RANDOM_TIMELINE=$((((RANDOM % 15) + 1)))
 
   # difficulty
   if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
@@ -800,6 +798,10 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     TIMELINE_PERC_ACTIVE="${TIMELINE_PERC_ACTIVE:?}%"
     TIMELINE_PERC_NOACTIVE="${TIMELINE_PERC_NOACTIVE:?}%"
     TIMELINE="${N0:?}Alive ${TIMELINE_PERC_ACTIVE:?} Dead ${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "15" ] &>/dev/null; then
+    # interface w speed
+    TIMELINE="$(sudo ethtool eth0 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1) $INTERFACE"
+    TIMELINE="Network ${TIMELINE:?}"
   fi
 else # wait on wallet (--donald john trump quotes - art of the deal)
   # random start number
