@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.2.9.2
+# 0.2.9.3
 
 source /home/pi/pitrump.conf
 
@@ -17,45 +17,46 @@ if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; 
     UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
     STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
     echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
+    echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
   }
 
   if [[ "$(uptime_daemon)" -lt "3600" ]] &>/dev/null; then
     GRAPH_TIME="1h"
-  elif [[ "$(uptime_daemon)" -lt "7200" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "7200" ]] &>/dev/null; then
     GRAPH_TIME="2h"
-  elif [[ "$(uptime_daemon)" -lt "10800" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "10800" ]] &>/dev/null; then
     GRAPH_TIME="3h"
-  elif [[ "$(uptime_daemon)" -lt "14400" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "14400" ]] &>/dev/null; then
     GRAPH_TIME="4h"
-  elif [[ "$(uptime_daemon)" -lt "18000" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "18000" ]] &>/dev/null; then
     GRAPH_TIME="5h"
-  elif [[ "$(uptime_daemon)" -lt "21600" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "21600" ]] &>/dev/null; then
     GRAPH_TIME="6h"
-  elif [[ "$(uptime_daemon)" -lt "25200" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "25200" ]] &>/dev/null; then
     GRAPH_TIME="7h"
-  elif [[ "$(uptime_daemon)" -lt "28800" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "28800" ]] &>/dev/null; then
     GRAPH_TIME="8h"
-  elif [[ "$(uptime_daemon)" -lt "32400" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "32400" ]] &>/dev/null; then
     GRAPH_TIME="9h"
-  elif [[ "$(uptime_daemon)" -lt "36000" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "36000" ]] &>/dev/null; then
     GRAPH_TIME="10h"
-  elif [[ "$(uptime_daemon)" -lt "39600" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "39600" ]] &>/dev/null; then
     GRAPH_TIME="11h"
-  elif [[ "$(uptime_daemon)" -lt "43200" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "43200" ]] &>/dev/null; then
     GRAPH_TIME="12h"
-  elif [[ "$(uptime_daemon)" -gt "86400" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "86400" ]] &>/dev/null; then
     GRAPH_TIME="24h"
-  elif [[ "$(uptime_daemon)" -gt "172800" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "172800" ]] &>/dev/null; then
     GRAPH_TIME="48h"
-  elif [[ "$(uptime_daemon)" -gt "259200" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "259200" ]] &>/dev/null; then
     GRAPH_TIME="72h"
-  elif [[ "$(uptime_daemon)" -gt "345600" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "345600" ]] &>/dev/null; then
     GRAPH_TIME="96h"
-  elif [[ "$(uptime_daemon)" -gt "432000" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "432000" ]] &>/dev/null; then
     GRAPH_TIME="120h"
-  elif [[ "$(uptime_daemon)" -gt "518400" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "518400" ]] &>/dev/null; then
     GRAPH_TIME="144h"
-  elif [[ "$(uptime_daemon)" -gt "604800" ]] &>/dev/null; then
+  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "604800" ]] &>/dev/null; then
     GRAPH_TIME="168h"
   else
     GRAPH_TIME="${GRAPH_TIME:?}"
