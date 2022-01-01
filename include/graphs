@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.2.6.0
+# 0.2.6.1
 
 source /home/pi/pitrump.conf
 
@@ -18,11 +18,12 @@ if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; 
     STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
     echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
   }
-
+  # uptime in seconds
   echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
+  # uptime in hours
   echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600" 2>&1 | bc >"${LOG_DIR:?}"/node_data/uptime.hours 2>&1
   ROUND_UP=$(cat "${LOG_DIR:?}"/node_data/uptime.hours 2>/dev/null)
-
+  # organic graph ruled by uptime
   if [[ "$ROUND_UP" -eq "0" ]]; then
     GRAPH_TIME="1h"
   else
