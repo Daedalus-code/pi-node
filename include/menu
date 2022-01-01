@@ -9,8 +9,8 @@ if ! [ -x "$(command -v dialog)" ]; then
   sudo apt-get install dialog -y
 fi
 
-HEIGHT=7
-WIDTH=33
+HEIGHT=8
+WIDTH=26
 CHOICE_HEIGHT=2
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
