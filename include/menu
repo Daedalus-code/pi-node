@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.0.4.4
+# 0.0.4.9
 
 # make sure dialog exist
 if ! [ -x "$(command -v dialog)" ]; then
@@ -31,9 +31,14 @@ case $CHOICE in
 
 "1")
 
-  read -r -p "[YN] Turn off node, are you sure? y/n " -n 1 -r
+  # turn of trumpcoin daemon
+  read -r -p "[YN] Turn off daemon, are you sure? y/n " -n 1 -r
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    kill "$(pidof trumpcoind)" && sleep 3 && sudo reboot
+    kill "$(pidof trumpcoind)" && sleep 3
+    read -r -p "[YN] Reboot? y/n " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      sudo reboot
+    fi
   fi
   clear
 
