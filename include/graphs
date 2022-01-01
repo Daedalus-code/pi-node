@@ -20,8 +20,8 @@ if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; 
   }
 
   echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
-  echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600" 2>&1 | bc >"${LOG_DIR:?}"/node_data/uptime.days 2>&1
-  ROUND_UP=$(cat "${LOG_DIR:?}"/node_data/uptime.days 2>/dev/null)
+  echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600" 2>&1 | bc >"${LOG_DIR:?}"/node_data/uptime.hours 2>&1
+  ROUND_UP=$(cat "${LOG_DIR:?}"/node_data/uptime.hours 2>/dev/null)
 
   if [[ "$(uptime_daemon)" -lt "3600" ]] &>/dev/null; then
     GRAPH_TIME="1h"
