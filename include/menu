@@ -31,7 +31,7 @@ case $CHOICE in
 
 "1")
 
-  printf '%b' "[YN] Turn off node, are you sure? y/n \n" -n 1 -r
+  read -r -p "[YN] Turn off node, are you sure? y/n \n" -n 1 -r
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     kill "$(pidof trumpcoind)" && sleep 3 && sudo reboot
   fi
