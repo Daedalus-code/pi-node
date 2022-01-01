@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.2.9.6
+# 0.2.6.0
 
 source /home/pi/pitrump.conf
 
@@ -23,46 +23,10 @@ if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; 
   echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600" 2>&1 | bc >"${LOG_DIR:?}"/node_data/uptime.hours 2>&1
   ROUND_UP=$(cat "${LOG_DIR:?}"/node_data/uptime.hours 2>/dev/null)
 
-  if [[ "$(uptime_daemon)" -lt "3600" ]] &>/dev/null; then
+  if [[ "$ROUND_UP" -eq "0" ]]; then
     GRAPH_TIME="1h"
-  elif echo "${ROUND_UP:?}" -lt "2" &>/dev/null; then
-    GRAPH_TIME="2h"
-  elif echo "${ROUND_UP:?}" -lt "3" &>/dev/null; then
-    GRAPH_TIME="3h"
-  elif echo "${ROUND_UP:?}" -lt "4" &>/dev/null; then
-    GRAPH_TIME="4h"
-  elif echo "${ROUND_UP:?}" -lt "5" &>/dev/null; then
-    GRAPH_TIME="5h"
-  elif echo "${ROUND_UP:?}" -lt "6" &>/dev/null; then
-    GRAPH_TIME="6h"
-  elif echo "${ROUND_UP:?}" -lt "7" &>/dev/null; then
-    GRAPH_TIME="7h"
-  elif echo "${ROUND_UP:?}" -lt "8" &>/dev/null; then
-    GRAPH_TIME="8h"
-  elif echo "${ROUND_UP:?}" -lt "9" &>/dev/null; then
-    GRAPH_TIME="9h"
-  elif echo "${ROUND_UP:?}" -lt "10" &>/dev/null; then
-    GRAPH_TIME="10h"
-  elif echo "${ROUND_UP:?}" -lt "11" &>/dev/null; then
-    GRAPH_TIME="11h"
-  elif echo "${ROUND_UP:?}" -lt "12" &>/dev/null; then
-    GRAPH_TIME="12h"
-  elif echo "${ROUND_UP:?}" -gt "24" &>/dev/null; then
-    GRAPH_TIME="24h"
-  elif echo "${ROUND_UP:?}" -gt "48" &>/dev/null; then
-    GRAPH_TIME="48h"
-  elif echo "${ROUND_UP:?}" -gt "72" &>/dev/null; then
-    GRAPH_TIME="72h"
-  elif echo "${ROUND_UP:?}" -gt "96" &>/dev/null; then
-    GRAPH_TIME="96h"
-  elif echo "${ROUND_UP:?}" -gt "120" &>/dev/null; then
-    GRAPH_TIME="120h"
-  elif echo "${ROUND_UP:?}" -gt "144" &>/dev/null; then
-    GRAPH_TIME="144h"
-  elif echo "${ROUND_UP:?}" -gt "168" &>/dev/null; then
-    GRAPH_TIME="168h"
   else
-    GRAPH_TIME="${GRAPH_TIME:?}"
+    GRAPH_TIME="${ROUND_UP:?}h"
   fi
 fi
 
