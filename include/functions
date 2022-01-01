@@ -627,7 +627,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   if screen -list | grep "dead" &>/dev/null; then
     screen -wipe
     killall screen
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Killed old screen session!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script screen dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
   # look for screen session, if not found, start one
