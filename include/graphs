@@ -157,8 +157,8 @@ rrdtool graph /var/www/html/network_graph.png \
   DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
   GPRINT:net_down:LAST:%.0lf\ Bytes\ Down \
   GPRINT:net_up:LAST:%.0lf\ Bytes\ Up \
-  LINE1:net_down#00FF00:"Down" \
-  LINE1:net_up#FF3A00:"Up"
+  AREA:net_down#00FF00:"Down":STACK \
+  AREA:net_up#FF3A00:"Up":STACK
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
