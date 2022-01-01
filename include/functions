@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220101
-# 0.8.7.4
+# 0.8.7.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.7.4"
+VERSION="v0.8.7.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -667,6 +667,8 @@ EOF
       # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
       # start adding nodes, inside screen session (timeout n seconds)
       timeout 1800 screen -S add_peers -X -p 0 stuff $'bash /tmp/add_peers\n'
+    else
+      killall screen &>/dev/null
     fi
   fi
 fi
@@ -703,8 +705,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     fi
     # remove old files
     truncate -s 0 "${LOG_DIR:?}"/node_data/getwan &>/dev/null
-    # keep last 1000 failed connections
-    tail -1000 "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
+    # keep last n failed connections
+    tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
     # truncate old logs, lists, internet data
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate logs, lists, internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -717,9 +719,9 @@ if ! grep "failed.tmp" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
   if [[ "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     # add failed peers (failed.tmp) back in to debug.log
     while IFS= read -r ADDS; do
-      echo "${LOG_DATE:?} Status() Failed.Peers() connect to ${ADDS:?} failed" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    done <"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list (failed.tmp) +$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed Failed.Peers()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    done <"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '!a[$0]++' 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list, failed.tmp +$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
