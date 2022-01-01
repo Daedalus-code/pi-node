@@ -2,7 +2,12 @@
 
 # By Rainman
 # V20220101
-# 0.0.3.5
+# 0.0.4.3
+
+# make sure dialog exist
+if ! [ -x "$(command -v dialog)" ]; then
+  sudo apt-get install dialog -y
+fi
 
 HEIGHT=10
 WIDTH=40
@@ -11,9 +16,7 @@ BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
 
-OPTIONS=(1 "Option 1"
-         2 "Option 2"
-         3 "Option 3")
+OPTIONS=(1 "Turn off node")
 
 CHOICE=$(dialog --clear \
   --backtitle "$BACKTITLE" \
@@ -28,7 +31,10 @@ case $CHOICE in
 
 "1")
 
-  kill "$(pidof trumpcoind)" && sleep 3 && sudo reboot
+  printf '%b' "[YN] Turn off node, are you sure? y/n \n" -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    kill "$(pidof trumpcoind)" && sleep 3 && sudo reboot
+  fi
 
   ;;
 
