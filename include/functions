@@ -737,7 +737,7 @@ if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
     while IFS= read -r ADDS; do
       echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list, failed.tmp +$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # keep last n failed connections
     tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
