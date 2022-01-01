@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220101
-# 0.8.7.5
+# 0.8.7.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.7.5"
+VERSION="v0.8.7.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -665,9 +665,6 @@ EOF
       # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
       # start adding nodes, inside screen session (timeout n seconds)
       timeout 1800 screen -S add_peers -X -p 0 stuff $'bash /tmp/add_peers\n'
-    else
-      killall screen &>/dev/null
-      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Skipping adding nodes! ${GR:?}***${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 fi
