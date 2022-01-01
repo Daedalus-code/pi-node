@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.0.7.8
+# 0.0.7.4
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -68,10 +68,6 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     "$WALLET_DIR"/trumpcoind -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf -debug=tor -proxy=127.0.0.1:9050 -daemon
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # add failed peers (failed.tmp) back in to debug.log
-    while IFS= read -r ADDS; do
-      echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1
   fi
 fi
 
