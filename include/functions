@@ -508,7 +508,7 @@ fi
 ### personal addnodes ##########################################################
 
 # add addnodes backup if backup is greater
-if ! tail -10 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Adding backup peers" &>/dev/null; then
+if ! tail -25 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Adding backup peers" &>/dev/null; then
   if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers.tmp
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
