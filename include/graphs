@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.2.3.5
+# 0.2.3.4
 
 #### create graphs #############################################################
 
@@ -126,7 +126,6 @@ rrdtool graph /var/www/html/network_graph.png \
   --end now --start end-2d \
   DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
   DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
-  CDEF:cleanrx=rx,UN,PREV,rx,IF \
   LINE1:net_down#00FF00:"Down" \
   LINE1:net_up#FF3A00:"Up" \
   AREA:rx#00CC00FF:Download\: \
