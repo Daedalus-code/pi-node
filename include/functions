@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220101
-# 0.8.8.0
+# 0.8.8.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.8.0"
+VERSION="v0.8.8.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -503,13 +503,15 @@ fi
 ### personal addnodes ##########################################################
 
 # add addnodes backup if backup is greater
-if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-  cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers.tmp
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # clear out failed connections (old peers, different ports)
-  grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/addnodes 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
-  mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>&1
-  killall screen &>/dev/null
+if ! tail -10 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Adding backup peers" &>/dev/null; then
+  if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+    cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers.tmp
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # clear out failed connections (old peers, different ports)
+    grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/addnodes 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
+    mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>&1
+    killall screen &>/dev/null
+  fi
 fi
 
 # create addnodes backup if backup is less
