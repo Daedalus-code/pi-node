@@ -2,55 +2,64 @@
 
 # By Rainman
 # V20220101
-# 0.2.8.3
+# 0.2.9.2
 
 source /home/pi/pitrump.conf
 
 ### auto graphs w time #########################################################
 
-# wallet daemon uptime in seconds
-function uptime_daemon() {
-  PID="$(pidof trumpcoind 2>&1)"
-  HZ=$(getconf CLK_TCK 2>&1)
-  UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
-  STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
-  echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
-}
+if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; then
 
-if [[ "$(uptime_daemon)" -lt "3600" ]]; then
-  GRAPH_TIME="1h"
-elif [[ "$(uptime_daemon)" -lt "7200" ]]; then
-  GRAPH_TIME="2h"
-elif [[ "$(uptime_daemon)" -lt "10800" ]]; then
-  GRAPH_TIME="3h"
-elif [[ "$(uptime_daemon)" -lt "14400" ]]; then
-  GRAPH_TIME="4h"
-elif [[ "$(uptime_daemon)" -lt "18000" ]]; then
-  GRAPH_TIME="5h"
-elif [[ "$(uptime_daemon)" -lt "21600" ]]; then
-  GRAPH_TIME="6h"
-elif [[ "$(uptime_daemon)" -lt "25200" ]]; then
-  GRAPH_TIME="7h"
-elif [[ "$(uptime_daemon)" -lt "28800" ]]; then
-  GRAPH_TIME="8h"
-elif [[ "$(uptime_daemon)" -lt "32400" ]]; then
-  GRAPH_TIME="9h"
-elif [[ "$(uptime_daemon)" -lt "36000" ]]; then
-  GRAPH_TIME="10h"
-elif [[ "$(uptime_daemon)" -lt "39600" ]]; then
-  GRAPH_TIME="11h"
-elif [[ "$(uptime_daemon)" -lt "43200" ]]; then
-  GRAPH_TIME="12h"
-elif [[ "$(uptime_daemon)" -gt "43200" ]]; then
-  GRAPH_TIME="24h"
-elif [[ "$(uptime_daemon)" -gt "86400" ]]; then
-  GRAPH_TIME="48h"
-elif [[ "$(uptime_daemon)" -gt "172800" ]]; then
-  GRAPH_TIME="96h"
-elif [[ "$(uptime_daemon)" -gt "302400" ]]; then
-  GRAPH_TIME="96h"
-else
-  GRAPH_TIME="${GRAPH_TIME:?}"
+  # wallet daemon uptime in seconds
+  function uptime_daemon() {
+    PID="$(pidof trumpcoind 2>&1)"
+    HZ=$(getconf CLK_TCK 2>&1)
+    UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
+    STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
+    echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
+  }
+
+  if [[ "$(uptime_daemon)" -lt "3600" ]] &>/dev/null; then
+    GRAPH_TIME="1h"
+  elif [[ "$(uptime_daemon)" -lt "7200" ]] &>/dev/null; then
+    GRAPH_TIME="2h"
+  elif [[ "$(uptime_daemon)" -lt "10800" ]] &>/dev/null; then
+    GRAPH_TIME="3h"
+  elif [[ "$(uptime_daemon)" -lt "14400" ]] &>/dev/null; then
+    GRAPH_TIME="4h"
+  elif [[ "$(uptime_daemon)" -lt "18000" ]] &>/dev/null; then
+    GRAPH_TIME="5h"
+  elif [[ "$(uptime_daemon)" -lt "21600" ]] &>/dev/null; then
+    GRAPH_TIME="6h"
+  elif [[ "$(uptime_daemon)" -lt "25200" ]] &>/dev/null; then
+    GRAPH_TIME="7h"
+  elif [[ "$(uptime_daemon)" -lt "28800" ]] &>/dev/null; then
+    GRAPH_TIME="8h"
+  elif [[ "$(uptime_daemon)" -lt "32400" ]] &>/dev/null; then
+    GRAPH_TIME="9h"
+  elif [[ "$(uptime_daemon)" -lt "36000" ]] &>/dev/null; then
+    GRAPH_TIME="10h"
+  elif [[ "$(uptime_daemon)" -lt "39600" ]] &>/dev/null; then
+    GRAPH_TIME="11h"
+  elif [[ "$(uptime_daemon)" -lt "43200" ]] &>/dev/null; then
+    GRAPH_TIME="12h"
+  elif [[ "$(uptime_daemon)" -gt "86400" ]] &>/dev/null; then
+    GRAPH_TIME="24h"
+  elif [[ "$(uptime_daemon)" -gt "172800" ]] &>/dev/null; then
+    GRAPH_TIME="48h"
+  elif [[ "$(uptime_daemon)" -gt "259200" ]] &>/dev/null; then
+    GRAPH_TIME="72h"
+  elif [[ "$(uptime_daemon)" -gt "345600" ]] &>/dev/null; then
+    GRAPH_TIME="96h"
+  elif [[ "$(uptime_daemon)" -gt "432000" ]] &>/dev/null; then
+    GRAPH_TIME="120h"
+  elif [[ "$(uptime_daemon)" -gt "518400" ]] &>/dev/null; then
+    GRAPH_TIME="144h"
+  elif [[ "$(uptime_daemon)" -gt "604800" ]] &>/dev/null; then
+    GRAPH_TIME="168h"
+  else
+    GRAPH_TIME="${GRAPH_TIME:?}"
+  fi
 fi
 
 ### create graphs #############################################################
