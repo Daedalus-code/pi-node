@@ -730,7 +730,7 @@ if [[ ! -f "${WALLET_DIR:?}"/failed ]] &>/dev/null; then
 fi
 
 # do this once
-if ! grep "failed.tmp" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
+if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
   # use old failed list as a continuation to the next day, ruled by -lines above
   if [[ "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     # add failed peers (failed.tmp) back in to debug.log
