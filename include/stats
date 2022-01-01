@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.2.5.2
+# 0.2.3.7
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -46,8 +46,7 @@ if [ ! -f "/home/$(whoami)/stats/load.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/load.rrd \
     --step=60 \
     DS:load:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # load 5
 if [ ! -f "/home/$(whoami)/stats/load5.rrd" ]; then
@@ -55,8 +54,7 @@ if [ ! -f "/home/$(whoami)/stats/load5.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/load5.rrd \
     --step=60 \
     DS:load5:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # load 15
 if [ ! -f "/home/$(whoami)/stats/load15.rrd" ]; then
@@ -64,8 +62,7 @@ if [ ! -f "/home/$(whoami)/stats/load15.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/load15.rrd \
     --step=60 \
     DS:load15:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # temp
 if [ ! -f "/home/$(whoami)/stats/temp.rrd" ]; then
@@ -73,8 +70,7 @@ if [ ! -f "/home/$(whoami)/stats/temp.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/temp.rrd \
     --step=60 \
     DS:temp:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # memory available
 if [ ! -f "/home/$(whoami)/stats/memory_total.rrd" ]; then
@@ -82,8 +78,7 @@ if [ ! -f "/home/$(whoami)/stats/memory_total.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/memory_total.rrd \
     --step=60 \
     DS:memory_total:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # memory free
 if [ ! -f "/home/$(whoami)/stats/memory_free.rrd" ]; then
@@ -91,8 +86,7 @@ if [ ! -f "/home/$(whoami)/stats/memory_free.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/memory_free.rrd \
     --step=60 \
     DS:memory_free:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # hdd
 if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ]; then
@@ -100,26 +94,23 @@ if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/hdd.rrd \
     --step=60 \
     DS:hdd:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # download
 if [ ! -f "/home/$(whoami)/stats/net_down.rrd" ]; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating net_down.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/net_down.rrd \
     --step=60 \
-    DS:net_down:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    DS:net_down:DERIVE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
 fi
 # upload
 if [ ! -f "/home/$(whoami)/stats/net_up.rrd" ]; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating net_up.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/net_up.rrd \
     --step=60 \
-    DS:net_up:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    DS:net_up:DERIVE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
 fi
 
 ### create round robin databases for wallet (rrdtool) ##########################
@@ -130,8 +121,7 @@ if [ ! -f "/home/$(whoami)/stats/balance.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/balance.rrd \
     --step=60 \
     DS:balance:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # stakes
 if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ]; then
@@ -139,8 +129,7 @@ if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/stakes.rrd \
     --step=60 \
     DS:stakes:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # inputs
 if [ ! -f "/home/$(whoami)/stats/inputs.rrd" ]; then
@@ -148,8 +137,7 @@ if [ ! -f "/home/$(whoami)/stats/inputs.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/inputs.rrd \
     --step=60 \
     DS:inputs:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # peers
 if [ ! -f "/home/$(whoami)/stats/peers.rrd" ]; then
@@ -157,8 +145,7 @@ if [ ! -f "/home/$(whoami)/stats/peers.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/peers.rrd \
     --step=60 \
     DS:peers:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # difficulty
 if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ]; then
@@ -166,8 +153,7 @@ if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/difficulty.rrd \
     --step=60 \
     DS:difficulty:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 # total confirmations
 if [ ! -f "/home/$(whoami)/stats/total_tx.rrd" ]; then
@@ -175,8 +161,7 @@ if [ ! -f "/home/$(whoami)/stats/total_tx.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/total_tx.rrd \
     --step=60 \
     DS:total_tx:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:86400 \
-    RRA:AVERAGE:0.5:1440:400
+    RRA:AVERAGE:0.5:1:315360
 fi
 
 ### update rrdtool databases ###################################################
