@@ -217,7 +217,7 @@ fi
 cat >/var/www/html/index.php <<'EOF'
 <div id="content" align="center">
 <?php
-  header("refresh: 60;");
+  header("refresh: 300;");
 ?>
 <?php
   // background color (dark blue)
