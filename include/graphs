@@ -133,8 +133,6 @@ rrdtool graph /var/www/html/network_graph.png \
   STACK:net_up#0000FFFF:Upload\: \
   GPRINT:net_up:LAST:\:%8.2lf %s
 
-  AREA:balance#85bb65:"Balance"
-
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
   -w 400 -h 164 -a PNG \
