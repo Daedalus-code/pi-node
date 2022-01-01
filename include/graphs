@@ -1,0 +1,232 @@
+#!/bin/bash
+
+# By Rainman
+# V20220101
+# 0.2.3.2
+
+#### create graphs #############################################################
+
+# loadavg 1,5,15m (24hour)
+rrdtool graph /var/www/html/load_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "System Load" \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:load=/home/"$(whoami)"/stats/load.rrd:load:MAX \
+  DEF:load5=/home/"$(whoami)"/stats/load5.rrd:load5:MAX \
+  DEF:load15=/home/"$(whoami)"/stats/load15.rrd:load15:MAX \
+  GPRINT:load:LAST:%.2lf \
+  GPRINT:load5:AVERAGE:%.2lf \
+  GPRINT:load15:AVERAGE:%.2lf \
+  LINE1:load#00FF33:"Load 1m" \
+  LINE1:load5#FFE000:"Load 5m" \
+  LINE1:load15#FF5100:"Load 15m"
+
+# inputs (24hour)
+rrdtool graph /var/www/html/inputs_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "Wallet Inputs" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:inputs=/home/"$(whoami)"/stats/inputs.rrd:inputs:MAX \
+  GPRINT:inputs:LAST:%.0lf\ Now \
+  GPRINT:inputs:MAX:%.0lf\ Max \
+  GPRINT:inputs:MIN:%.0lf\ Min \
+  AREA:inputs#819C7D:"Inputs"
+
+# peers (24hour)
+rrdtool graph /var/www/html/peers_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "Peers (P2P)" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:peers=/home/"$(whoami)"/stats/peers.rrd:peers:MAX \
+  GPRINT:peers:LAST:%.0lf\ Now \
+  GPRINT:peers:AVERAGE:%.0lf\ AVG \
+  GPRINT:peers:MAX:%.0lf\ Max \
+  GPRINT:peers:MIN:%.0lf\ Min \
+  AREA:peers#A28DB8:"Peers"
+
+# stakes (24hour)
+rrdtool graph /var/www/html/stakes_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "Wallet Stakes" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
+  GPRINT:stakes:LAST:%.0lf\ Now \
+  GPRINT:stakes:AVERAGE:%.0lf\ AVG \
+  GPRINT:stakes:MAX:%.0lf\ Max \
+  GPRINT:stakes:MIN:%.0lf\ Min \
+  AREA:stakes#FFB777:"Stakes"
+
+# balance (24hour)
+rrdtool graph /var/www/html/balance_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "Wallet Balance" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:balance=/home/"$(whoami)"/stats/balance.rrd:balance:MAX \
+  GPRINT:balance:LAST:%.2lf\ Trump \
+  GPRINT:balance:MAX:%.2lf\ Max \
+  GPRINT:balance:MIN:%.2lf\ Min \
+  AREA:balance#85bb65:"Balance"
+
+# network (24hour)
+rrdtool graph /var/www/html/network_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "Network" \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
+  DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
+  GPRINT:net_down:LAST:%.0lf\ Bytes\ Down \
+  GPRINT:net_up:LAST:%.0lf\ Bytes\ Up \
+  LINE1:net_down#00FF00:"Down" \
+  LINE1:net_up#FF3A00:"Up"
+
+# hdd (24hour)
+rrdtool graph /var/www/html/hdd_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "System Drive" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
+  GPRINT:hdd:LAST:%.0lf\ Bytes \
+  AREA:hdd#8AA6B6:"UsedHDD"
+
+# memory (24hour)
+rrdtool graph /var/www/html/memory_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "Memory (MB)" \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:memory_total=/home/"$(whoami)"/stats/memory_total.rrd:memory_total:MAX \
+  DEF:memory_free=/home/"$(whoami)"/stats/memory_free.rrd:memory_free:MAX \
+  GPRINT:memory_total:MAX:%.2lf\M\ Total \
+  GPRINT:memory_free:LAST:%.2lf\M\ Free \
+  AREA:memory_total#8BABB6:"Total" \
+  AREA:memory_free#9FC49A:"Free"
+
+# cpu temperature (24hour)
+rrdtool graph /var/www/html/temp_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "CPU Temp (°C)" \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:temp=/home/"$(whoami)"/stats/temp.rrd:temp:MAX \
+  GPRINT:temp:LAST:%.2lf\°C\ Now \
+  GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
+  GPRINT:temp:MAX:%.2lf\°C\ Max \
+  GPRINT:temp:MIN:%.2lf\°C\ Min \
+  AREA:temp#F15A3A:"CPUTemp"
+
+# difficulty (24hour)
+rrdtool graph /var/www/html/difficulty_graph.png \
+  -w 1394 -h 150 -a PNG \
+  --slope-mode \
+  --vertical-label "Network Difficulty" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:difficulty=/home/"$(whoami)"/stats/difficulty.rrd:difficulty:MAX \
+  GPRINT:difficulty:LAST:%.0lf\ Now \
+  GPRINT:difficulty:AVERAGE:%.0lf\ AVG \
+  GPRINT:difficulty:MAX:%.0lf\ Max \
+  GPRINT:difficulty:MIN:%.0lf\ Min \
+  AREA:difficulty#C99999:"Network Difficulty"
+
+# total confirmations (24hour)
+rrdtool graph /var/www/html/total_tx_graph.png \
+  -w 1394 -h 150 -a PNG \
+  --slope-mode \
+  --vertical-label "Wallet Total TX" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-2d \
+  DEF:total_tx=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:MAX \
+  GPRINT:total_tx:LAST:%.0lf\ Now \
+  GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
+  GPRINT:total_tx:MAX:%.0lf\ Max \
+  GPRINT:total_tx:MIN:%.0lf\ Min \
+  AREA:total_tx#8777E7:"Total Confirmations"
