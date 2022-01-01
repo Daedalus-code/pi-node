@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.0.7.4
+# 0.0.7.6
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -63,6 +63,8 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
   else
     # make sure debug.log exist
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # store failed connections
+    mv "${LOG_DIR:?}"/node_data/peers/failed.tmp "${LOG_DIR:?}"/node_data/peers/failed 2>&1
     # remove old files
     truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
