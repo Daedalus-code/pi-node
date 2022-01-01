@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.0.4.3
+# 0.0.4.4
 
 # make sure dialog exist
 if ! [ -x "$(command -v dialog)" ]; then
@@ -31,10 +31,11 @@ case $CHOICE in
 
 "1")
 
-  read -r -p "[YN] Turn off node, are you sure? y/n \n" -n 1 -r
+  read -r -p "[YN] Turn off node, are you sure? y/n " -n 1 -r
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     kill "$(pidof trumpcoind)" && sleep 3 && sudo reboot
   fi
+  clear
 
   ;;
 
