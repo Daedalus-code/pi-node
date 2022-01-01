@@ -708,7 +708,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
     # remove old files
     truncate -s 0 "${LOG_DIR:?}"/node_data/getwan &>/dev/null
     # keep last n failed connections
-    tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
+    tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
     # truncate old logs, lists, internet data
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate logs, lists, internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -718,11 +718,11 @@ fi
 # do this once
 if ! grep "failed.tmp" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
   # use old failed list as a continuation to the next day, ruled by -lines above
-  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+  if [[ "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     # add failed peers (failed.tmp) back in to debug.log
     while IFS= read -r ADDS; do
-      echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed Failed.Peers()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    done <"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '!a[$0]++' 2>&1
+      echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1
     printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list, failed.tmp +$(wc -l "${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
