@@ -192,7 +192,7 @@ function uptime_daemon() {
 }
 
 # greater than n seconds, continue
-if [[ "$(uptime_daemon)" -gt "600" ]] &>/dev/null; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   rrdtool update /home/"$(whoami)"/stats/load.rrd N:"$(cat "${LOG_DIR:?}"/node_data/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $1 }' 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/load5.rrd N:"$(cat "${LOG_DIR:?}"/node_data/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $2 }' 2>&1)"
