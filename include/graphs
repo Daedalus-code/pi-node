@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220101
-# 0.2.9.4
+# 0.2.9.5
 
 source /home/pi/pitrump.conf
 
@@ -20,44 +20,45 @@ if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; 
   }
 
   echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
+  ROUND_UP=$(echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600" 2>&1 | bc 2>&1)
 
   if [[ "$(uptime_daemon)" -lt "3600" ]] &>/dev/null; then
     GRAPH_TIME="1h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "7200" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "2" &>/dev/null; then
     GRAPH_TIME="2h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "10800" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "3" &>/dev/null; then
     GRAPH_TIME="3h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "14400" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "4" &>/dev/null; then
     GRAPH_TIME="4h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "18000" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "5" &>/dev/null; then
     GRAPH_TIME="5h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "21600" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "6" &>/dev/null; then
     GRAPH_TIME="6h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "25200" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "7" &>/dev/null; then
     GRAPH_TIME="7h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "28800" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "8" &>/dev/null; then
     GRAPH_TIME="8h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "32400" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "9" &>/dev/null; then
     GRAPH_TIME="9h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "36000" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "10" &>/dev/null; then
     GRAPH_TIME="10h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "39600" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "11" &>/dev/null; then
     GRAPH_TIME="11h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "43200" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -lt "12" &>/dev/null; then
     GRAPH_TIME="12h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "86400" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -gt "24" &>/dev/null; then
     GRAPH_TIME="24h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "172800" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -gt "48" &>/dev/null; then
     GRAPH_TIME="48h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "259200" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -gt "72" &>/dev/null; then
     GRAPH_TIME="72h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "345600" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -gt "96" &>/dev/null; then
     GRAPH_TIME="96h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "432000" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -gt "120" &>/dev/null; then
     GRAPH_TIME="120h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "518400" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -gt "144" &>/dev/null; then
     GRAPH_TIME="144h"
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "604800" ]] &>/dev/null; then
+  elif echo "${ROUND_UP:?}" -gt "168" &>/dev/null; then
     GRAPH_TIME="168h"
   else
     GRAPH_TIME="${GRAPH_TIME:?}"
