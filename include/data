@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20213112
-# 0.0.7.3
+# V20220101
+# 0.0.7.4
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -11,6 +11,7 @@ function uptime_daemon() {
   UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
   STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
+  echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
 }
 
 source /home/pi/pitrump.conf
