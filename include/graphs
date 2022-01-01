@@ -2,7 +2,9 @@
 
 # By Rainman
 # V20220101
-# 0.2.3.4
+# 0.2.3.6
+
+source /home/pi/pitrump.conf
 
 #### create graphs #############################################################
 
@@ -18,7 +20,7 @@ rrdtool graph /var/www/html/load_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:load=/home/"$(whoami)"/stats/load.rrd:load:MAX \
   DEF:load5=/home/"$(whoami)"/stats/load5.rrd:load5:MAX \
   DEF:load15=/home/"$(whoami)"/stats/load15.rrd:load15:MAX \
@@ -42,7 +44,7 @@ rrdtool graph /var/www/html/inputs_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:inputs=/home/"$(whoami)"/stats/inputs.rrd:inputs:MAX \
   GPRINT:inputs:LAST:%.0lf\ Now \
   GPRINT:inputs:MAX:%.0lf\ Max \
@@ -62,7 +64,7 @@ rrdtool graph /var/www/html/peers_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:peers=/home/"$(whoami)"/stats/peers.rrd:peers:MAX \
   GPRINT:peers:LAST:%.0lf\ Now \
   GPRINT:peers:AVERAGE:%.0lf\ AVG \
@@ -83,7 +85,7 @@ rrdtool graph /var/www/html/stakes_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
   GPRINT:stakes:LAST:%.0lf\ Now \
   GPRINT:stakes:AVERAGE:%.0lf\ AVG \
@@ -104,7 +106,7 @@ rrdtool graph /var/www/html/balance_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:balance=/home/"$(whoami)"/stats/balance.rrd:balance:MAX \
   GPRINT:balance:LAST:%.2lf\ Trump \
   GPRINT:balance:MAX:%.2lf\ Max \
@@ -123,7 +125,7 @@ rrdtool graph /var/www/html/network_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
   DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
   DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
@@ -146,7 +148,7 @@ rrdtool graph /var/www/html/hdd_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
   GPRINT:hdd:LAST:%.0lf\ Bytes \
   AREA:hdd#8AA6B6:"UsedHDD"
@@ -163,7 +165,7 @@ rrdtool graph /var/www/html/memory_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:memory_total=/home/"$(whoami)"/stats/memory_total.rrd:memory_total:MAX \
   DEF:memory_free=/home/"$(whoami)"/stats/memory_free.rrd:memory_free:MAX \
   GPRINT:memory_total:MAX:%.2lf\M\ Total \
@@ -183,7 +185,7 @@ rrdtool graph /var/www/html/temp_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:temp=/home/"$(whoami)"/stats/temp.rrd:temp:MAX \
   GPRINT:temp:LAST:%.2lf\°C\ Now \
   GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
@@ -204,7 +206,7 @@ rrdtool graph /var/www/html/difficulty_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:difficulty=/home/"$(whoami)"/stats/difficulty.rrd:difficulty:MAX \
   GPRINT:difficulty:LAST:%.0lf\ Now \
   GPRINT:difficulty:AVERAGE:%.0lf\ AVG \
@@ -225,7 +227,7 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   --color FRAME#565875 \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
-  --end now --start end-2d \
+  --end now --start end-"${GRAPH_TIME:?}" \
   DEF:total_tx=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:MAX \
   GPRINT:total_tx:LAST:%.0lf\ Now \
   GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
