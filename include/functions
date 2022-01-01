@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220101
-# 0.8.9.6
+# 0.8.9.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.9.6"
+VERSION="v0.8.9.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -515,7 +515,6 @@ if ! tail -50 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Adding backup peers" 
     # clear out failed connections (old peers, different ports)
     grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/addnodes 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
     mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>&1
-    killall screen &>/dev/null
   fi
 fi
 
