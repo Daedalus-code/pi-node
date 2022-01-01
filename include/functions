@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220101
-# 0.8.7.2
+# 0.8.7.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.8.7.2"
+VERSION="v0.8.7.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -401,10 +401,11 @@ fi
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
 
-  # make sure listunspent exist
   if [ ! -f "${LOG_DIR:?}"/node_data/listunspent ] &>/dev/null; then
+    # make sure listunspent exist
     touch "${LOG_DIR:?}"/node_data/listunspent &>/dev/null
   fi
+
   # get last confirmation (smallest one)
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # get last wallet txid with help of last_tx var
@@ -432,8 +433,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # save wallet stakes (addtowallet), remove duplicates
 
-  # make sure file exist before the fact
   if [ ! -f "${WALLET_DIR:?}"/staking ] &>/dev/null; then
+    # make sure staking exist
     touch "${WALLET_DIR:?}"/staking &>/dev/null
   fi
 
@@ -544,11 +545,12 @@ fi
 
 ### failed and success lists ###################################################
 
-# make sure success and failed exist
 if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ] &>/dev/null; then
+  # make sure failed exist
   touch "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null
 fi
 if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
+  # make sure success exist
   touch "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
 fi
 
@@ -593,8 +595,8 @@ fi
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
-  # make sure success exist
   if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
+    # make sure success exist
     touch "${LOG_DIR:?}"/node_data/peers/success 2>&1
   fi
 
