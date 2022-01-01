@@ -660,7 +660,7 @@ exit
 EOF
 
     # don't run data with intervals, every n minutes, updating api, arp and ticker (updating lists)
-    if [[ ! "$(date '+%T' 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
+    if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+0:[0-9]+|[0-9]+:[0-9]+5:[0-9]+" 2>&1)" ]] &>/dev/null; then
 
       # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
       # start adding nodes, inside screen session (timeout n seconds)
