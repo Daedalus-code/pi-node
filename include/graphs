@@ -2,11 +2,58 @@
 
 # By Rainman
 # V20220101
-# 0.2.3.6
+# 0.2.8.3
 
 source /home/pi/pitrump.conf
 
-#### create graphs #############################################################
+### auto graphs w time #########################################################
+
+# wallet daemon uptime in seconds
+function uptime_daemon() {
+  PID="$(pidof trumpcoind 2>&1)"
+  HZ=$(getconf CLK_TCK 2>&1)
+  UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
+  STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
+  echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
+}
+
+if [[ "$(uptime_daemon)" -lt "3600" ]]; then
+  GRAPH_TIME="1h"
+elif [[ "$(uptime_daemon)" -lt "7200" ]]; then
+  GRAPH_TIME="2h"
+elif [[ "$(uptime_daemon)" -lt "10800" ]]; then
+  GRAPH_TIME="3h"
+elif [[ "$(uptime_daemon)" -lt "14400" ]]; then
+  GRAPH_TIME="4h"
+elif [[ "$(uptime_daemon)" -lt "18000" ]]; then
+  GRAPH_TIME="5h"
+elif [[ "$(uptime_daemon)" -lt "21600" ]]; then
+  GRAPH_TIME="6h"
+elif [[ "$(uptime_daemon)" -lt "25200" ]]; then
+  GRAPH_TIME="7h"
+elif [[ "$(uptime_daemon)" -lt "28800" ]]; then
+  GRAPH_TIME="8h"
+elif [[ "$(uptime_daemon)" -lt "32400" ]]; then
+  GRAPH_TIME="9h"
+elif [[ "$(uptime_daemon)" -lt "36000" ]]; then
+  GRAPH_TIME="10h"
+elif [[ "$(uptime_daemon)" -lt "39600" ]]; then
+  GRAPH_TIME="11h"
+elif [[ "$(uptime_daemon)" -lt "43200" ]]; then
+  GRAPH_TIME="12h"
+elif [[ "$(uptime_daemon)" -gt "43200" ]]; then
+  GRAPH_TIME="24h"
+elif [[ "$(uptime_daemon)" -gt "86400" ]]; then
+  GRAPH_TIME="48h"
+elif [[ "$(uptime_daemon)" -gt "172800" ]]; then
+  GRAPH_TIME="96h"
+elif [[ "$(uptime_daemon)" -gt "302400" ]]; then
+  GRAPH_TIME="96h"
+else
+  GRAPH_TIME="${GRAPH_TIME:?}"
+fi
+
+### create graphs #############################################################
 
 # loadavg 1,5,15m (24hour)
 rrdtool graph /var/www/html/load_graph.png \
