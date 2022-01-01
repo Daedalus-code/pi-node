@@ -126,11 +126,12 @@ rrdtool graph /var/www/html/network_graph.png \
   --end now --start end-2d \
   DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
   DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
+  DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
+  DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
+  GPRINT:net_down:LAST:%.0lf\ Bytes\ Down \
+  GPRINT:net_up:LAST:%.0lf\ Bytes\ Up \
   LINE1:net_down#00FF00:"Down" \
-  LINE1:net_up#FF3A00:"Up" \
-  GPRINT:net_down:LAST:\:%.2lf %s \
-  STACK:net_up#0000FFFF:Upload\: \
-  GPRINT:net_up:LAST:\:%.2lf %s
+  LINE1:net_up#FF3A00:"Up"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
