@@ -376,7 +376,7 @@ function wallet_balances() {
 }
 
 # greater than n seconds, continue
-if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # get wallet ticker.usd
   WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/ticker 2>/dev/null | tail -1 2>&1)
@@ -428,7 +428,7 @@ if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
 fi
 
 # greater than n seconds, continue
-if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # save wallet stakes (addtowallet), remove duplicates
 
@@ -691,7 +691,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 fi
 
 # greater than n seconds, continue
-if [[ "$(uptime_daemon)" -gt "369" ]] &>/dev/null; then
+if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
   # note: heavy reading, do interval reading with date:time
   if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
