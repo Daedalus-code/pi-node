@@ -5,7 +5,7 @@
 # 0.0.4.9
 
 # make sure dialog exist
-if ! [ -x "$(command -v dialog)" ]; then
+if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
   sudo apt-get install dialog -y
 fi
 
@@ -33,10 +33,10 @@ case $CHOICE in
 
   # turn of trumpcoin daemon
   read -r -p "[YN] Turn off daemon, are you sure? y/n " -n 1 -r
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    kill "$(pidof trumpcoind)" && sleep 3
+  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    kill -9 "$(pidof trumpcoind &>/dev/null)" && sleep 3
     read -r -p "[YN] Reboot? y/n " -n 1 -r
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       sudo reboot
     fi
   fi
