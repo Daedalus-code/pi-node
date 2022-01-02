@@ -888,10 +888,10 @@ fi
 ### theme ######################################################################
 
 if [[ "$DARKMODE" -eq "1" ]] &>/dev/null; then
-  # darkmode theme (grey)
+  # darkmode (grey)
   RC="${GR:?}"
   TH="${RC:?}D${N0:?}"
-else # trumpmode theme (yellow)
+else # trumpmode (yellow)
   RC="${Y1:?}"
   TH="${RC:?}T${N0:?}"
 fi
