@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220101
+# V20220201
 # 0.8.9.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -891,9 +891,9 @@ if [[ "$DARKMODE" -eq "1" ]] &>/dev/null; then
   # darkmode theme (grey)
   RC="${GR:?}"
   TH="${RC:?}D${N0:?}"
-else # default theme (yellow)
+else # trumpmode theme (yellow)
   RC="${Y1:?}"
-  TH="${RC:?}D${N0:?}"
+  TH="${RC:?}T${N0:?}"
 fi
 
 # END
