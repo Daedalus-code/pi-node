@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220101
-# 0.0.4.5
+# V20220201
+# 0.0.4.6
 
 source /home/pi/pitrump.conf
 
@@ -35,6 +35,7 @@ sudo cp -R /home/"$(whoami)"/trump-node/include/update /usr/local/bin/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/include/menu /usr/local/bin/ 2>&1
 sudo chmod +x /usr/local/bin/update 2>&1
 sudo chmod +x /usr/local/bin/menu 2>&1
+rm "${LOG_DIR:?}"/add_peers &>/dev/null
 sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pitrump /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/* 2>&1
 sudo chown "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
 LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S')
