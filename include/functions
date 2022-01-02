@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220201
-# 0.9.0.2
+# 0.9.0.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.0.2"
+VERSION="v0.9.0.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -41,6 +41,7 @@ function uptime_daemon() {
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
 
+# create uptime
 echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
 
 # greater than n seconds, continue
@@ -507,8 +508,9 @@ fi
 
 ### personal addnodes ##########################################################
 
-# add addnodes backup if backup is greater
-if ! tail -50 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Adding backup peers" &>/dev/null; then
+# run data with intervals, every n minutes
+if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:15:[0-9]+|[0-9]+:45:[0-9]+" 2>&1)" ]] &>/dev/null; then
+  # add addnodes backup if backup is greater
   if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers.tmp
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -518,10 +520,13 @@ if ! tail -50 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Adding backup peers" 
   fi
 fi
 
-# create addnodes backup if backup is less
-if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/peers/success "${WALLET_DIR:?}"/addnodes 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}<<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+# run data with intervals, every n minutes
+if [[ "$(date '+%T' 2>&1 | egrep "[0-9]+:25:[0-9]+|[0-9]+:55:[0-9]+" 2>&1)" ]] &>/dev/null; then
+  # create addnodes backup if backup is less
+  if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/peers/success "${WALLET_DIR:?}"/addnodes 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}<<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 fi
 
 # make sure addnodes exist
@@ -726,7 +731,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     # remove old files
     truncate -s 0 "${LOG_DIR:?}"/node_data/getwan &>/dev/null
     # keep last n failed connections
-    tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
+    tail -256 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
     # truncate old logs, lists, internet data
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate logs, lists, internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -749,7 +754,7 @@ if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # keep last n failed connections
-    tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
+    tail -256 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
   fi
 fi
 
