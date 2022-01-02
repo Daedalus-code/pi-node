@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220101
-# 0.0.4.9
+# V20220201
+# 0.0.5.9
 
 # make sure dialog exist
 if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
@@ -34,10 +34,20 @@ case $CHOICE in
   # turn of trumpcoin daemon
   read -r -p "[YN] Turn off daemon, are you sure? y/n " -n 1 -r
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-    kill -9 "$(pidof trumpcoind &>/dev/null)" && sleep 3
+    read -r -p "[YN] Kill PID? y/n " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      # hard shutdown, turn off crontab
+      sudo service cron stop 2>&1
+      kill -9 "$(pidof trumpcoind &>/dev/null)" && sleep 3
+    else # normal shutdown, turn off crontab
+      sudo service cron stop 2>&1
+      cd "${WALLET_DIR:?}" || exit && ./trumpcoin-cli -datadir./ stop
+    fi
     read -r -p "[YN] Reboot? y/n " -n 1 -r
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       sudo reboot
+    else # turn crontab back on if no reboot
+      sudo service cron start 2>&1
     fi
   fi
   clear
