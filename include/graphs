@@ -267,7 +267,7 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
   GPRINT:total_tx:MAX:%.0lf\ Max \
   GPRINT:total_tx:MIN:%.0lf\ Min \
-  AREA:total_tx#8777E7:"AVG Confirmations" \
+  AREA:total_tx#3C79A9:"AVG Confirmations" \
   LINE3:set_auto_con#C99999:"Auto PoS Config"
 
 # END
