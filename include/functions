@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.1.1
+# 0.9.1.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.1.1"
+VERSION="v0.9.1.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -624,7 +624,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
   echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
-  ### remove failed, connected peers and invalid pattern address #################
+  ### remove failed, connected peers and invalid pattern address ###############
 
   # disregard already connected peers (success list)
   grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
@@ -632,6 +632,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # disregard failed peers (failed list)
   grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
   mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+
+  # count wrong patterns (cidr)
+  grepcidr -f "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers 2>"${LOG_DIR:?}"/cidr >"${LOG_DIR:?}"/cidr.tmp && rm "${LOG_DIR:?}"/cidr.tmp &>/dev/null
+  INV_CIDR=$(wc -l "${LOG_DIR:?}"/cidr 2>&1 | awk '{ print $1 }' 2>&1)
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script $INV_CIDR address with invalid pattern (CIDR)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # disregard invalid pattern address (cidr - classless inter-domain routing)
   grepcidr -f "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>/dev/null
   mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
