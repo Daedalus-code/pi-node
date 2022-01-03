@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.7.9
+# 0.9.8.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.7.9"
+VERSION="v0.9.8.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -171,14 +171,16 @@ grep "TX" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | sor
 DOWN_L1=$(tail -2 "${LOG_DIR:?}"/node_data/down.net 2>&1 | tail -1 2>&1)
 DOWN_L2=$(tail -2 "${LOG_DIR:?}"/node_data/down.net 2>&1 | head -1 2>&1)
 DOWN_DIFF=$(echo "$DOWN_L1-$DOWN_L2" 2>&1 | bc 2>&1)
-DOWNLOAD_RR=$(echo "$DOWN_DIFF/1024" 2>&1 | bc 2>&1)
+DOWNLOAD_CC=$(echo "$DOWN_DIFF/1024" 2>&1 | bc 2>&1)
+DOWNLOAD_RR=$(echo "$DOWNLOAD_CC/60" 2>&1 | bc 2>&1)
 DOWNLOAD_SP="$DOWNLOAD_RR"
 
 # calculate upload speed average
 UP_L1=$(tail -2 "${LOG_DIR:?}"/node_data/up.net 2>&1 | tail -1 2>&1)
 UP_L2=$(tail -2 "${LOG_DIR:?}"/node_data/up.net 2>&1 | head -1 2>&1)
 UP_DIFF=$(echo "$UP_L1-$UP_L2" 2>&1 | bc 2>&1)
-UPLOAD_RR=$(echo "$UP_DIFF/1024" 2>&1 | bc 2>&1)
+UPLOAD_CC=$(echo "$UP_DIFF/1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+UPLOAD_RR=$(echo "$UPLOAD_CC/60" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 UPLOAD_SP="$UPLOAD_RR"
 
 ### tor ########################################################################

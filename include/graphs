@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220101
+# V20220301
 # 0.2.6.1
 
 source /home/pi/pitrump.conf
@@ -155,8 +155,8 @@ rrdtool graph /var/www/html/network_graph.png \
   DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
   DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
   DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
-  GPRINT:net_down:LAST:%.0lf\ Bytes\ Down \
-  GPRINT:net_up:LAST:%.0lf\ Bytes\ Up \
+  GPRINT:net_down:LAST:%.2lf\ KB/s\ Down \
+  GPRINT:net_up:LAST:%.2lf\ KB/s\ Up \
   AREA:net_down#3DCD3D:"Down":STACK \
   AREA:net_up#DC5F3A:"Up":STACK
 
