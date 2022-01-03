@@ -151,18 +151,18 @@ rrdtool graph /var/www/html/network_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:RXbytes=/home/"$(whoami)"/stats/network.rrd:RXbytes:MAX \
-  DEF:TXbytes=/home/"$(whoami)"/stats/network.rrd:TXbytes:MAX \
-  DEF:RXpackets=/home/"$(whoami)"/stats/network.rrd:RXpackets:MAX \
-  DEF:TXpackets=/home/"$(whoami)"/stats/network.rrd:TXpackets:MAX \
-  GPRINT:RXbytes:LAST:%.0lf\ RX\ bytes \
-  GPRINT:TXbytes:LAST:%.0lf\ TX\ bytes \
-  GPRINT:RXpackets:LAST:%.0lf\ RX\ packets \
-  GPRINT:TXpackets:LAST:%.0lf\ TX\ packets \
-  AREA:RXbytes#3DCD3D:"RX bytes" \
-  AREA:TXbytes#DC5F3A:"TX bytes" \
-  AREA:RXpackets#94D094:"RX packets" \
-  AREA:TXpackets#D2A395:"TX packets"
+  DEF:rxbytes=/home/"$(whoami)"/stats/network.rrd:rxbytes:MAX \
+  DEF:txbytes=/home/"$(whoami)"/stats/network.rrd:txbytes:MAX \
+  DEF:rxpackets=/home/"$(whoami)"/stats/network.rrd:rxpackets:MAX \
+  DEF:txpackets=/home/"$(whoami)"/stats/network.rrd:txpackets:MAX \
+  GPRINT:rxbytes:LAST:%.0lf\ RX\ bytes \
+  GPRINT:txbytes:LAST:%.0lf\ TX\ bytes \
+  GPRINT:rxpackets:LAST:%.0lf\ RX\ packets \
+  GPRINT:txpackets:LAST:%.0lf\ TX\ packets \
+  AREA:rxbytes#3DCD3D:"RX bytes" \
+  AREA:txbytes#DC5F3A:"TX bytes" \
+  AREA:rxpackets#94D094:"RX packets" \
+  AREA:txpackets#D2A395:"TX packets"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
