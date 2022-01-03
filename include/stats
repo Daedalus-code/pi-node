@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220301
-# 0.2.5.1
+# 0.2.4.0
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -101,22 +101,11 @@ if [ ! -f "/home/$(whoami)/stats/network.rrd" ]; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating network.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/network.rrd \
     --step=60 \
-    DS:RXbytes:DERIVE:300:U:U \
-    DS:RXpackets:DERIVE:300:U:U \
-    DS:TXbytes:DERIVE:300:U:U \
-    DS:TXpackets:DERIVE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360 \
-    RRA:AVERAGE:0.5:5:315360 \
-    RRA:AVERAGE:0.5:10:315360 \
-    RRA:AVERAGE:0.5:60:315360 \
-    RRA:MAX:0.5:1:315360 \
-    RRA:MAX:0.5:5:315360 \
-    RRA:MAX:0.5:10:315360 \
-    RRA:MAX:0.5:60:315360 \
-    RRA:MIN:0.5:1:315360 \
-    RRA:MIN:0.5:5:315360 \
-    RRA:MIN:0.5:10:315360 \
-    RRA:MIN:0.5:60:315360
+    DS:RXbytes:GAUGE:300:U:U \
+    DS:RXpackets:GAUGE:300:U:U \
+    DS:TXbytes:GAUGE:300:U:U \
+    DS:TXpackets:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
 fi
 
 ### create round robin databases for wallet (rrdtool) ##########################
