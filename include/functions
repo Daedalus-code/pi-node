@@ -509,7 +509,7 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/mempool 2>&1 | awk '{ print $1 }' 2>&1)"
 fi
 
 # get difficulty and save values to difficulty
-grep "difficulty" "${LOG_DIR:?}"/node_data/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >>"${LOG_DIR:?}"/node_data/difficulty
+grep "difficulty" "${LOG_DIR:?}"/node_data/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | egrep "[1-9]+" >>"${LOG_DIR:?}"/node_data/difficulty
 
 # reset difficulty after 2880 lines (2880min=2days)
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2880" ]] &>/dev/null; then
