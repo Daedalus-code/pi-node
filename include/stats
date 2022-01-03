@@ -155,8 +155,8 @@ if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ]; then
     DS:difficulty:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
-# difficulty set auto pos
-if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ]; then
+# set auto pos (difficulty)
+if [ ! -f "/home/$(whoami)/stats/set_auto_pos.rrd" ]; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating set_auto_pos.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/set_auto_pos.rrd \
     --step=60 \
