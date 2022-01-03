@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.1.5
+# 0.9.1.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.1.5"
+VERSION="v0.9.1.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -168,6 +168,10 @@ UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
 # remove empty files, onion
 if [ ! -s "${WALLET_DIR:?}"/onion ] &>/dev/null; then
   rm "${WALLET_DIR:?}"/onion &>/dev/null
+fi
+# remove empty files, getwan
+if [ ! -s "${LOG_DIR:?}"/node_data/getwan ] &>/dev/null; then
+  rm "${LOG_DIR:?}"/node_data/getwan &>/dev/null
 fi
 
 # get tor status
