@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.5.9
+# 0.9.7.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.5.9"
+VERSION="v0.9.7.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -109,10 +109,13 @@ USED_HDD="${G1:?}${USED_HDD:?}${N0:?}"
 
 ### get wan/lan.ip, internet/intranet ##########################################
 
+# save ifconfig values to ifconfig
+ifconfig >"${LOG_DIR:?}"/node_data/ifconfig
+
 # if non responsive
 IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 # get interface
-IFCONFIG=$(ifconfig 2>&1 | egrep "wlan*|eth*" 2>&1)
+IFCONFIG=$(cat "${LOG_DIR:?}"/node_data/ifconfig 2>/dev/null | egrep "wlan*|eth*" 2>&1)
 # get ip address from interface
 IP_ADDRESS=$(echo "$IFCONFIG" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
 # get ip address (no color)
@@ -153,15 +156,30 @@ fi
 ### download and upload ########################################################
 
 # get download from wlan(*) - eth(*)
-DOWNLOAD=$(ifconfig 2>&1 | egrep "RX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
+DOWNLOAD=$(cat "${LOG_DIR:?}"/node_data/ifconfig 2>/dev/null | egrep "RX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
 # get upload from wlan(*) - eth(*)
-UPLOAD=$(ifconfig 2>&1 | egrep "TX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
-# total and free memory (rrdtool, no color)
-DOWNLOAD_RR=$(echo "$DOWNLOAD" 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1)
-UPLOAD_RR=$(echo "$UPLOAD" 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1)
+UPLOAD=$(cat "${LOG_DIR:?}"/node_data/ifconfig 2>/dev/null | egrep "TX packets [0-9]+  bytes [0-9]+" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
 # human-readable format
 DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
 UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
+
+# get download and upload values and save to list(s)
+cat "${LOG_DIR:?}"/node_data/ifconfig 2>/dev/null | grep "RX" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 >>/tmp/down.tmp 2>&1
+cat "${LOG_DIR:?}"/node_data/ifconfig 2>/dev/null | grep "TX" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 >>/tmp/up.tmp 2>&1
+
+# calculate download speed average
+DOWN_L1=$(tail -2 /tmp/down.tmp | tail -1)
+DOWN_L2=$(tail -2 /tmp/down.tmp | head -1)
+DOWN_DIFF=$(echo "$DOWN_L1-$DOWN_L2" | bc)
+DOWNLOAD_RR=$(echo "$DOWN/1024" | bc)
+DOWNLOAD_SP="$DOWNLOAD_RR"
+
+# calculate upload speed average
+UP_L1=$(tail -2 /tmp/up.tmp | tail -1)
+UP_L2=$(tail -2 /tmp/up.tmp | head -1)
+UP_DIFF=$(echo "$UP_L1-$UP_L2" | bc)
+UPLOAD_RR=$(echo "$UP/1024" | bc)
+UPLOAD_SP="$UPLOAD_RR"
 
 ### tor ########################################################################
 
@@ -506,7 +524,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
 
   if [ ! -f "${WALLET_DIR:?}"/diff.lock ]; then
     if [[ "$AUTO_POS" -eq "1" ]]; then
-      CON_DIFF=$(grep "threshold" "${LOG_DIR:?}"/node_data/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1)
+      CON_DIFF=$(grep "threshold" "${LOG_DIR:?}"/node_data/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
       # check for any difference from last day
       CON_AVG_DIFF=$(echo $(("$DIFF_AVG-$CON_DIFF")) | tr -d '-' 2>&1)
 
@@ -816,7 +834,7 @@ fi
 if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
 
   # random start number
-  RANDOM_TIMELINE=$((((RANDOM % 15) + 1)))
+  RANDOM_TIMELINE=$((((RANDOM % 16) + 1)))
 
   # difficulty
   if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
@@ -904,6 +922,8 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     # interface w speed
     TIMELINE="$(sudo ethtool eth0 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
     TIMELINE="Network ${INTERFACE:?} ${TIMELINE:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "16" ] &>/dev/null; then
+    TIMELINE="Average: ${G1:?}$DOWNLOAD_SP${N0:?} KB/s ${R1:?}$UPLOAD_SP${N0:?} KB/s"
   fi
 else # wait on wallet (--donald john trump quotes - art of the deal)
   # random start number
