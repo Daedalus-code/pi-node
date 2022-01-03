@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.6.4
+# 0.9.6.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.6.4"
+VERSION="v0.9.6.8"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -777,9 +777,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     if [[ "$KEEP_BACKUPS" -eq "0" ]] &>/dev/null; then
       # remove old backups, locks, banlist.dat ruled by configuration
       rm -r "${WALLET_DIR:?}"/backups/* &>/dev/null
-      rm "${WALLET_DIR:?}"/diff.lock &>/dev/null
-      truncate -s 0 "${WALLET_DIR:?}"/banlist.dat &>/dev/null
       printf '%b' "${LOG_DATE:?} Status() Clean.remove() Deleting wallet backups${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
+    rm "${WALLET_DIR:?}"/diff.lock &>/dev/null
+    truncate -s 0 "${WALLET_DIR:?}"/banlist.dat &>/dev/null
+    if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+      # look for sync has finished line, save it there and then
+      grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
     fi
     # remove old files
     truncate -s 0 "${LOG_DIR:?}"/node_data/getwan &>/dev/null
