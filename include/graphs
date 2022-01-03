@@ -235,7 +235,7 @@ rrdtool graph /var/www/html/difficulty_graph.png \
   DEF:difficulty=/home/"$(whoami)"/stats/difficulty.rrd:difficulty:MAX \
   DEF:set_auto_pos=/home/"$(whoami)"/stats/set_auto_pos.rrd:set_auto_pos:MAX \
   GPRINT:difficulty:LAST:%.0lf\ Now \
-  GPRINT:set_auto_pos:LAST:%.0lf\ Now \
+  GPRINT:set_auto_pos:LAST:%.0lf\ APC \
   GPRINT:difficulty:AVERAGE:%.0lf\ AVG \
   GPRINT:difficulty:MAX:%.0lf\ Max \
   GPRINT:difficulty:MIN:%.0lf\ Min \
