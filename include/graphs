@@ -120,7 +120,7 @@ rrdtool graph /var/www/html/stakes_graph.png \
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
-  -w 400 -h 179 -a PNG \
+  -w 400 -h 178 -a PNG \
   --slope-mode \
   --vertical-label "Wallet Balance" \
   --alt-autoscale-max --lower-limit=1 \
@@ -166,7 +166,7 @@ rrdtool graph /var/www/html/network_graph.png \
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
-  -w 400 -h 179 -a PNG \
+  -w 400 -h 178 -a PNG \
   --slope-mode \
   --vertical-label "System Drive" \
   --alt-autoscale-max --lower-limit=1 \
