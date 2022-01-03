@@ -101,7 +101,7 @@ if [ ! -f "/home/$(whoami)/stats/net_down.rrd" ]; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating net_down.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/net_down.rrd \
     --step=60 \
-    DS:net_down:DERIVE:300:U:U \
+    DS:net_down:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
 # upload
@@ -109,7 +109,7 @@ if [ ! -f "/home/$(whoami)/stats/net_up.rrd" ]; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating net_up.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/net_up.rrd \
     --step=60 \
-    DS:net_up:DERIVE:300:U:U \
+    DS:net_up:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
 
