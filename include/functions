@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.1.2
+# 0.9.1.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.1.2"
+VERSION="v0.9.1.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -644,8 +644,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   fi
 
   # look for screen session, if not found, start one
-  if ! screen -list 2>&1 |
-    grep -q "add_peers" &>/dev/null; then
+  if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     # create screen session
     screen -dmS add_peers 2>&1
 
