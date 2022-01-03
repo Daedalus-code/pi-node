@@ -193,10 +193,10 @@ function uptime_daemon() {
 # greater than n seconds, continue
 if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
 
-  TXBytes=$(egrep "TX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 2>&1)
-  RXBytes=$(egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 2>&1)
-  TXPackets=$(egrep "TX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $3 }' 2>&1 | head -1 2>&1)
-  RXPackets=$(egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $3 }' 2>&1 | head -1 2>&1)
+  TXBytes=$(cat "${LOG_DIR:?}"/node_data/txbytes 2>/dev/null)
+  RXBytes=$(cat "${LOG_DIR:?}"/node_data/rxbytes 2>/dev/null)
+  TXPackets=$(cat "${LOG_DIR:?}"/node_data/txpackets 2>/dev/null)
+  RXPackets=$(cat "${LOG_DIR:?}"/node_data/rxpackets 2>/dev/null)
 
   rrdtool update /home/"$(whoami)"/stats/load.rrd N:"$(cat "${LOG_DIR:?}"/node_data/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $1 }' 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/load5.rrd N:"$(cat "${LOG_DIR:?}"/node_data/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $2 }' 2>&1)"

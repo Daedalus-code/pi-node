@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.8.5
+# 0.9.6.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.8.5"
+VERSION="v0.9.6.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -162,26 +162,6 @@ UPLOAD=$(egrep "TX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/ifconf
 # human-readable format
 DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
 UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
-
-# get download and upload values and save to list(s)
-grep "RX" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 >>"${LOG_DIR:?}"/node_data/down.net 2>&1
-grep "TX" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 >>"${LOG_DIR:?}"/node_data/up.net 2>&1
-
-# calculate download speed average
-DOWN_L1=$(tail -2 "${LOG_DIR:?}"/node_data/down.net 2>&1 | tail -1 2>&1)
-DOWN_L2=$(tail -2 "${LOG_DIR:?}"/node_data/down.net 2>&1 | head -1 2>&1)
-DOWN_DIFF=$(echo "$DOWN_L1-$DOWN_L2" 2>&1 | bc 2>&1)
-DOWNLOAD_CC=$(echo "$DOWN_DIFF/1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-DOWNLOAD_RR=$(echo "$DOWNLOAD_CC/60" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-DOWNLOAD_SP="$DOWNLOAD_RR"
-
-# calculate upload speed average
-UP_L1=$(tail -2 "${LOG_DIR:?}"/node_data/up.net 2>&1 | tail -1 2>&1)
-UP_L2=$(tail -2 "${LOG_DIR:?}"/node_data/up.net 2>&1 | head -1 2>&1)
-UP_DIFF=$(echo "$UP_L1-$UP_L2" 2>&1 | bc 2>&1)
-UPLOAD_CC=$(echo "$UP_DIFF/1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-UPLOAD_RR=$(echo "$UPLOAD_CC/60" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-UPLOAD_SP="$UPLOAD_RR"
 
 ### tor ########################################################################
 
@@ -840,7 +820,7 @@ fi
 if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
 
   # random start number
-  RANDOM_TIMELINE=$((((RANDOM % 16) + 1)))
+  RANDOM_TIMELINE=$((((RANDOM % 15) + 1)))
 
   # difficulty
   if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
@@ -928,8 +908,6 @@ if [ -f "${LOG_DIR:?}"/node_data/getblockchaininfo ] &>/dev/null; then
     # interface w speed
     TIMELINE="$(sudo ethtool eth0 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
     TIMELINE="Network ${INTERFACE:?} ${TIMELINE:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "16" ] &>/dev/null; then
-    TIMELINE="Average: ${G1:?}$DOWNLOAD_SP${N0:?} KB/s ${R1:?}$UPLOAD_SP${N0:?} KB/s"
   fi
 else # wait on wallet (--donald john trump quotes - art of the deal)
   # random start number
@@ -964,9 +942,10 @@ if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
   # echo values into files (no color)
   echo "$TOTAL_MEM_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats.total_mem 2>&1
   echo "$FREE_MEM_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats.free_mem 2>&1
-  echo "$DOWNLOAD_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats.download 2>&1
-  echo "$UPLOAD_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats.upload 2>&1
-
+  egrep "TX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/txbytes 2>&1
+  egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/rxbytes 2>&1
+  egrep "TX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $3 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/txpackets 2>&1
+  egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $3 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/rxpackets 2>&1
   # setup graphs
   bash /usr/local/bin/include/stats
 fi
