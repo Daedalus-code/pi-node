@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220301
-# 0.2.6.4
+# 0.2.6.8
 
 source /home/pi/pitrump.conf
 
@@ -151,14 +151,18 @@ rrdtool graph /var/www/html/network_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
-  DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
-  DEF:net_down=/home/"$(whoami)"/stats/net_down.rrd:net_down:MAX \
-  DEF:net_up=/home/"$(whoami)"/stats/net_up.rrd:net_up:MAX \
-  GPRINT:net_down:LAST:%.2lf\ KB/s\ AVG\ Down \
-  GPRINT:net_up:LAST:%.2lf\ KB/s\ AVG\ Up \
-  AREA:net_down#3DCD3D:"Down":STACK \
-  AREA:net_up#DC5F3A:"Up":STACK
+  DEF:RXbytes=/home/"$(whoami)"/stats/network.rrd:RXbytes:MAX \
+  DEF:TXbytes=/home/"$(whoami)"/stats/network.rrd:TXbytes:MAX \
+  DEF:RXpackets=/home/"$(whoami)"/stats/network.rrd:RXpackets:MAX \
+  DEF:TXpackets=/home/"$(whoami)"/stats/network.rrd:TXpackets:MAX \
+  GPRINT:RXbytes:LAST:%.0lf\ RX\ bytes \
+  GPRINT:TXbytes:LAST:%.0lf\ TX\ bytes \
+  GPRINT:RXpackets:LAST:%.0lf\ RX\ packets \
+  GPRINT:TXpackets:LAST:%.0lf\ TX\ packets \
+  AREA:RXbytes#3DCD3D:"RX bytes" \
+  AREA:TXbytes#DC5F3A:"TX bytes" \
+  AREA:RXpackets#94D094:"RX packets" \
+  AREA:TXpackets#D2A395:"TX packets"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
@@ -240,7 +244,7 @@ rrdtool graph /var/www/html/difficulty_graph.png \
   GPRINT:difficulty:MAX:%.0lf\ Max \
   GPRINT:difficulty:MIN:%.0lf\ Min \
   AREA:difficulty#C99999:"Network Difficulty" \
-  LINE2:set_auto_pos#9A99C9:"Auto PoS Config"
+  LINE3:set_auto_pos#3330BA:"Auto PoS Config"
 
 # total confirmations (24hour)
 rrdtool graph /var/www/html/total_tx_graph.png \
