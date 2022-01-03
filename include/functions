@@ -164,19 +164,19 @@ DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
 UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
 
 # get download and upload values and save to list(s)
-cat "${LOG_DIR:?}"/node_data/ifconfig 2>/dev/null | grep "RX" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 >>/tmp/down.tmp 2>&1
-cat "${LOG_DIR:?}"/node_data/ifconfig 2>/dev/null | grep "TX" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 >>/tmp/up.tmp 2>&1
+cat "${LOG_DIR:?}"/node_data/ifconfig 2>/dev/null | grep "RX" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 >>"${LOG_DIR:?}"/node_data/down.net 2>&1
+cat "${LOG_DIR:?}"/node_data/ifconfig 2>/dev/null | grep "TX" 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 >>"${LOG_DIR:?}"/node_data/up.net 2>&1
 
 # calculate download speed average
-DOWN_L1=$(tail -2 /tmp/down.tmp | tail -1)
-DOWN_L2=$(tail -2 /tmp/down.tmp | head -1)
+DOWN_L1=$(tail -2 "${LOG_DIR:?}"/node_data/down.net | tail -1)
+DOWN_L2=$(tail -2 "${LOG_DIR:?}"/node_data/down.net | head -1)
 DOWN_DIFF=$(echo "$DOWN_L1-$DOWN_L2" | bc)
 DOWNLOAD_RR=$(echo "$DOWN/1024" | bc)
 DOWNLOAD_SP="$DOWNLOAD_RR"
 
 # calculate upload speed average
-UP_L1=$(tail -2 /tmp/up.tmp | tail -1)
-UP_L2=$(tail -2 /tmp/up.tmp | head -1)
+UP_L1=$(tail -2 "${LOG_DIR:?}"/node_data/up.net | tail -1)
+UP_L2=$(tail -2 "${LOG_DIR:?}"/node_data/up.net | head -1)
 UP_DIFF=$(echo "$UP_L1-$UP_L2" | bc)
 UPLOAD_RR=$(echo "$UP/1024" | bc)
 UPLOAD_SP="$UPLOAD_RR"
