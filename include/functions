@@ -506,11 +506,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
 
   if [ ! -f "${WALLET_DIR:?}"/diff.lock ]; then
     if [[ "$AUTO_POS" -eq "1" ]]; then
-      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
       CON_DIFF=$(grep "threshold" "${LOG_DIR:?}"/node_data/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1)
       # check for any difference from last day
       CON_AVG_DIFF=$(echo $(("$DIFF_AVG-$CON_DIFF")) | tr -d '-' 2>&1)
+
+      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
       # re-configure if limit is met (if n in difference since last config are greater)
       if [[ "$CON_AVG_DIFF" -gt "1001" ]]; then
