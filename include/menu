@@ -2,7 +2,9 @@
 
 # By Rainman
 # V20220301
-# 0.0.6.2
+# 0.0.6.4
+
+source /home/pi/pitrump.conf
 
 # make sure dialog exist
 if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
