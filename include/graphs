@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220301
-# 0.2.6.1
+# 0.2.6.4
 
 source /home/pi/pitrump.conf
 
@@ -222,7 +222,7 @@ rrdtool graph /var/www/html/temp_graph.png \
 rrdtool graph /var/www/html/difficulty_graph.png \
   -w 1394 -h 150 -a PNG \
   --slope-mode \
-  --vertical-label "Network Difficulty" \
+  --vertical-label "Network Difficulty+APC" \
   --alt-autoscale-max --lower-limit=1 \
   --color BACK#565875 \
   --color FONT#FFFFFF \
@@ -233,11 +233,14 @@ rrdtool graph /var/www/html/difficulty_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:difficulty=/home/"$(whoami)"/stats/difficulty.rrd:difficulty:MAX \
+  DEF:set_auto_pos=/home/"$(whoami)"/stats/set_auto_pos.rrd:set_auto_pos:MAX \
   GPRINT:difficulty:LAST:%.0lf\ Now \
+  GPRINT:set_auto_pos:LAST:%.0lf\ Now \
   GPRINT:difficulty:AVERAGE:%.0lf\ AVG \
   GPRINT:difficulty:MAX:%.0lf\ Max \
   GPRINT:difficulty:MIN:%.0lf\ Min \
-  AREA:difficulty#C99999:"Network Difficulty"
+  AREA:difficulty#C99999:"Network Difficulty" \
+  LINE1:set_auto_pos#9A99C9:"Auto PoS Config"
 
 # total confirmations (24hour)
 rrdtool graph /var/www/html/total_tx_graph.png \
