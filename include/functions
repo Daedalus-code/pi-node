@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.6.8
+# 0.9.7.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.6.8"
+VERSION="v0.9.7.3"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -516,15 +516,20 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
 
       # re-configure if limit is met (if n in difference since last config are greater)
       if [[ "$CON_AVG_DIFF" -gt "1001" ]]; then
+        CONF_LIMIT="963"
+        # average confirmations divided by input count, greater than limit set, continue
+        CONF_AVG=$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)
+        if [[ "$CONF_AVG" -gt "$CONF_LIMIT" ]]; then
 
-        # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
-        "$WALLET_DIR"/trumpcoin-cli -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf setautocombinethreshold true "${DIFF_AVG:?}"
-        "$WALLET_DIR"/trumpcoin-cli -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf setstakesplitthreshold "$(echo "${DIFF_AVG:?}-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
+          # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
+          "$WALLET_DIR"/trumpcoin-cli -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf setautocombinethreshold true "${DIFF_AVG:?}"
+          "$WALLET_DIR"/trumpcoin-cli -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf setstakesplitthreshold "$(echo "${DIFF_AVG:?}-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
 
-        printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold ${DIFF_AVG:?} ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold $(echo "$DIFF_AVG-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      else
-        printf '%b' "${LOG_DATE:?} Status() Staking.Script Difference not that big ${CON_AVG_DIFF:?} waiting. ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold ${DIFF_AVG:?} ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold $(echo "$DIFF_AVG-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        else
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script Difference not that big ${CON_AVG_DIFF:?} waiting. ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        fi
       fi
     fi
   fi

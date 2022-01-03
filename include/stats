@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220301
-# 0.2.4.0
+# 0.2.4.9
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -158,6 +158,14 @@ if [ ! -f "/home/$(whoami)/stats/set_auto_pos.rrd" ]; then
     DS:set_auto_pos:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
+# set auto con (confirmation)
+if [ ! -f "/home/$(whoami)/stats/set_auto_con.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating set_auto_con.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  rrdtool create /home/"$(whoami)"/stats/set_auto_con.rrd \
+    --step=60 \
+    DS:set_auto_con:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
+fi
 # total confirmations
 if [ ! -f "/home/$(whoami)/stats/total_tx.rrd" ]; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating total_tx.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -197,6 +205,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)"
+  rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"963"
 
 fi
 
