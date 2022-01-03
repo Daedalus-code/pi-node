@@ -110,7 +110,7 @@ USED_HDD="${G1:?}${USED_HDD:?}${N0:?}"
 ### get wan/lan.ip, internet/intranet ##########################################
 
 # save ifconfig values to ifconfig
-ifconfig >"${LOG_DIR:?}"/node_data/ifconfig
+ifconfig 2>&1 | egrep -A8 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/ifconfig 2>&1
 
 # if non responsive
 IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
@@ -153,7 +153,7 @@ else # output localhost (127.0.0.1) if not found
   PUBLIC_IP="${GR:?}127.0.0.1${N0:?}"
 fi
 
-### download and upload ########################################################
+### network - download and upload ##############################################
 
 # get download from wlan(*) - eth(*)
 DOWNLOAD=$(egrep "RX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
