@@ -243,7 +243,7 @@ rrdtool graph /var/www/html/difficulty_graph.png \
 rrdtool graph /var/www/html/total_tx_graph.png \
   -w 1394 -h 150 -a PNG \
   --slope-mode \
-  --vertical-label "Wallet Total TX" \
+  --vertical-label "Wallet Total AVG TX" \
   --alt-autoscale-max --lower-limit=1 \
   --color BACK#565875 \
   --color FONT#FFFFFF \
@@ -258,4 +258,4 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
   GPRINT:total_tx:MAX:%.0lf\ Max \
   GPRINT:total_tx:MIN:%.0lf\ Min \
-  AREA:total_tx#8777E7:"Total Confirmations"
+  AREA:total_tx#8777E7:"Total AVG Confirmations"
