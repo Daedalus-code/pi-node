@@ -101,10 +101,10 @@ if [ ! -f "/home/$(whoami)/stats/network.rrd" ]; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating network.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/network.rrd \
     --step=60 \
-    DS:RXbytes:DERIVE:120:0:U \
-    DS:RXpackets:DERIVE:120:0:U \
-    DS:TXbytes:DERIVE:120:0:U \
-    DS:TXpackets:DERIVE:120:0:U \
+    DS:RXbytes:DERIVE:300:U:U \
+    DS:RXpackets:DERIVE:300:U:U \
+    DS:TXbytes:DERIVE:300:U:U \
+    DS:TXpackets:DERIVE:300:U:U \
     RRA:AVERAGE:0.5:1:315360 \
     RRA:AVERAGE:0.5:5:315360 \
     RRA:AVERAGE:0.5:10:315360 \
