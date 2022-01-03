@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.2.9
+# 0.9.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.2.9"
+VERSION="v0.9.4.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -499,6 +499,23 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/difficulty 2>&1 | awk '{ print $1 }' 2>&
   echo "$(tail -1440 "${LOG_DIR:?}"/node_data/difficulty)" >"${LOG_DIR:?}"/node_data/difficulty
 fi
 
+# get average difficulty value
+DIFF_AVG=$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/difficulty)/$(wc -l "${LOG_DIR:?}"/node_data/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+
+if [ ! -f "${LOG_DIR:?}"/node_data/diff.lock ]; then
+  if [[ "$AUTO_POS" -eq "1" ]]; then
+    CONFIG_DIFF=$(grep "threshold" "${LOG_DIR:?}"/node_data/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1)
+    printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding online! ${GR:?}::${N0:?} Config ${GR:?}$CONFIG_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
+    "$WALLET_DIR"/trumpcoin-cli -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf setautocombinethreshold true "${DIFF_AVG:?}"
+    "$WALLET_DIR"/trumpcoin-cli -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf setstakesplitthreshold "$(echo "${DIFF_AVG:?}-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
+    # create lock file
+    echo "$DIFF_AVG" >"${LOG_DIR:?}"/node_data/diff.lock
+    printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold ${DIFF_AVG:?} ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold $(echo "$DIFF_AVG-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+fi
+
 ### backup values ##############################################################
 
 # backup ticker price
@@ -744,10 +761,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # note: heavy reading, do interval reading with date:time
   if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
     if [[ "$KEEP_BACKUPS" -eq "0" ]] &>/dev/null; then
-      # remove old backups, peers.dat, banlist.dat ruled by configuration
+      # remove old backups, locks, banlist.dat ruled by configuration
       rm -r "${WALLET_DIR:?}"/backups/* &>/dev/null
+      rm "${LOG_DIR:?}"/node_data/diff.lock &>/dev/null
       truncate -s 0 "${WALLET_DIR:?}"/banlist.dat &>/dev/null
-      truncate -s 0 "${WALLET_DIR:?}"/peers.dat &>/dev/null
       printf '%b' "${LOG_DATE:?} Status() Clean.remove() Deleting wallet backups${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
     # remove old files
