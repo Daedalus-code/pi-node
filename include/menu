@@ -35,7 +35,7 @@ case $CHOICE in
   read -r -p "[YN] Turn off daemon, are you sure? y/n " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-    read -r -p "[YN] Kill PID? y/n " -n 1 -r
+    read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       # hard shutdown, turn off crontab
