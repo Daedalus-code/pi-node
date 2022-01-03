@@ -636,7 +636,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
   # disregard invalid pattern address (cidr - classless inter-domain routing) and count wrong patterns (cidr)
   grepcidr -f "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>"${LOG_DIR:?}"/node_data/add_peers.cidr
-  INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/*.cidr 2>&1 | awk '{ print $1 }' 2>&1)
+  INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/*.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
   cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Invalid pattern ${INV_CIDR:?} (CIDR) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
