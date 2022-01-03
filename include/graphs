@@ -224,7 +224,7 @@ rrdtool graph /var/www/html/temp_graph.png \
 
 # difficulty (24hour)
 rrdtool graph /var/www/html/difficulty_graph.png \
-  -w 1394 -h 150 -a PNG \
+  -w 1394 -h 142 -a PNG \
   --slope-mode \
   --vertical-label "Network Difficulty+APC" \
   --alt-autoscale-max --lower-limit=1 \
@@ -244,11 +244,11 @@ rrdtool graph /var/www/html/difficulty_graph.png \
   GPRINT:difficulty:MAX:%.0lf\ Max \
   GPRINT:difficulty:MIN:%.0lf\ Min \
   AREA:difficulty#C99999:"Network Difficulty" \
-  LINE3:set_auto_pos#3CD369:"Auto PoS Config"
+  LINE3:set_auto_pos#0C6E99:"Auto PoS Config"
 
-# total confirmations (24hour)
+# total avg confirmations (24hour)
 rrdtool graph /var/www/html/total_tx_graph.png \
-  -w 1394 -h 150 -a PNG \
+  -w 1394 -h 142 -a PNG \
   --slope-mode \
   --vertical-label "Wallet Total AVG TX" \
   --alt-autoscale-max --lower-limit=1 \
