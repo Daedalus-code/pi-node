@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220301
+# V20220401
 # 0.2.7.3
 
 source /home/pi/pitrump.conf
@@ -244,7 +244,7 @@ rrdtool graph /var/www/html/difficulty_graph.png \
   GPRINT:difficulty:MAX:%.0lf\ Max \
   GPRINT:difficulty:MIN:%.0lf\ Min \
   AREA:difficulty#C99999:"Network Difficulty" \
-  LINE3:set_auto_pos#3C79A9:"Auto PoS Config"
+  LINE3:set_auto_pos#DA3737:"Auto PoS Config"
 
 # total avg confirmations (24hour)
 rrdtool graph /var/www/html/total_tx_graph.png \
@@ -268,6 +268,6 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   GPRINT:total_tx:MAX:%.0lf\ Max \
   GPRINT:total_tx:MIN:%.0lf\ Min \
   AREA:total_tx#3C79A9:"AVG Confirmations" \
-  LINE3:set_auto_con#C99999:"Auto PoS Config"
+  LINE3:set_auto_con#DA3737:"Auto PoS Config"
 
 # END
