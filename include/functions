@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220401
-# 0.9.9.7
+# 1.0.0.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.7"
+VERSION="v1.0.0.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -405,6 +405,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   if [ ! -f "${LOG_DIR:?}"/node_data/client/listunspent ] &>/dev/null; then
     # make sure listunspent exist
     touch "${LOG_DIR:?}"/node_data/client/listunspent &>/dev/null
+  fi
+  if [ ! -f "${LOG_DIR:?}"/node_data/add_peers ] &>/dev/null; then
+    # make sure listunspent exist
+    touch "${LOG_DIR:?}"/node_data/add_peers &>/dev/null
   fi
 
   # get last confirmation (smallest one)
