@@ -156,11 +156,11 @@ rrdtool graph /var/www/html/network_graph.png \
   DEF:rxpackets=/home/"$(whoami)"/stats/network.rrd:rxpackets:MAX \
   DEF:txpackets=/home/"$(whoami)"/stats/network.rrd:txpackets:MAX \
   AREA:rxbytes#32CD32:"Incoming" \
-  GPRINT:rxbytes:MAX:%6.1lf %s \
+  GPRINT:rxbytes:MAX:%6.1lf \
   GPRINT:rxbytes:AVERAGE:%6.1lf %S \
   GPRINT:rxbytes:LAST:%6.1lf %SBytes/sec\\n \
   AREA:txbytes#CD4032:"Outgoing" \
-  GPRINT:txbytes:MAX:%6.1lf %s \
+  GPRINT:txbytes:MAX:%6.1lf \
   GPRINT:txbytes:AVERAGE:%6.1lf %S \
   GPRINT:txbytes:LAST:%6.1lf %SBytes/sec\\n
 
