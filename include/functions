@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.7.3
+# 0.9.7.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.7.3"
+VERSION="v0.9.7.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -953,8 +953,6 @@ if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
   echo "$FREE_MEM_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats.free_mem 2>&1
   egrep "TX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/txbytes 2>&1
   egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/rxbytes 2>&1
-  egrep "TX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $3 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/txpackets 2>&1
-  egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/ifconfig 2>&1 | awk '{ print $3 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/rxpackets 2>&1
   # setup graphs
   bash /usr/local/bin/include/stats
 fi
