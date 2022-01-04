@@ -153,8 +153,8 @@ rrdtool graph /var/www/html/network_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:rxbytes=/home/"$(whoami)"/stats/network.rrd:rxbytes:AVERAGE \
   DEF:txbytes=/home/"$(whoami)"/stats/network.rrd:txbytes:AVERAGE \
-  CDEF:rxbytes=rxbytes,8,* \
-  CDEF:txbytes=txbytes,8,* \
+  CDEF:inbytes=rxbytes,8,* \
+  CDEF:outbytes=txbytes,8,* \
   CDEF:total=rxbytes,txbytes,+ \
   CDEF:rTotal=txbytes,rxbytes,+ \
   VDEF:transfer=rTotal,TOTAL \
