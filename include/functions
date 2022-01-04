@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.9.2
+# 0.9.9.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.2"
+VERSION="v0.9.9.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -414,6 +414,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # get last wallet txid with help of last_tx var
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
+  if [[ ! -f "${LOG_DIR:?}"/node_data/synced ]] &>/dev/null; then
+    # look for sync has finished line, save it there and then
+    grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
+  fi
 else # non responsive
   LAST_TX="${N0:?}"
   if [[ ! "$WALLET_SYNC_N" -eq "100" ]] &>/dev/null; then

@@ -13,7 +13,7 @@ source /home/pi/pitrump.conf
 ########## sync_progress_bar ###################################################
 
 # when debug.log says wallet is synced, this stops here
-if ! grep "SwitchToNextAsset" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # look for sync has finished line, save it there and then
   grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
 
