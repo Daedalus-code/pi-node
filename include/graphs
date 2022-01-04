@@ -240,7 +240,7 @@ rrdtool graph /var/www/html/difficulty_graph.png \
   GPRINT:difficulty:MAX:%.0lf\ Max \
   GPRINT:difficulty:MIN:%.0lf\ Min \
   AREA:difficulty#C99999:"Network Difficulty" \
-  LINE2:set_auto_pos#DA3737:"Auto PoS Config"
+  LINE1:set_auto_pos#CF6464:"Auto PoS Config"
 
 # total avg confirmations (24hour)
 rrdtool graph /var/www/html/total_tx_graph.png \
@@ -264,6 +264,6 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   GPRINT:total_tx:MAX:%.0lf\ Max \
   GPRINT:total_tx:MIN:%.0lf\ Min \
   AREA:total_tx#3C79A9:"AVG Confirmations" \
-  LINE2:set_auto_con#DA3737:"Auto PoS Config"
+  LINE1:set_auto_con#CF6464:"Auto PoS Config"
 
 # END
