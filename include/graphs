@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220401
-# 0.2.7.3
+# 0.2.7.2
 
 source /home/pi/pitrump.conf
 
@@ -158,11 +158,10 @@ rrdtool graph /var/www/html/network_graph.png \
   CDEF:total=rxbytes,txbytes,+ \
   CDEF:rTotal=txbytes,rxbytes,+ \
   VDEF:transfer=rTotal,TOTAL \
-  VDEF:95th=total,95,PERCENT \
   AREA:total#90B040: \
-  GPRINT:transfer:'Total %6.2lf%sB ' \
-  LINE1:95th#aa0000 \
-  GPRINT:95th:'95th %6.2lf%sb/s' >/dev/null
+  AREA:rxbytes#C99999:"Download" \
+  AREA:txbytes#C99999:"Upload" \
+  GPRINT:transfer:'Total %6.2lf%sB '
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
