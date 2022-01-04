@@ -120,7 +120,7 @@ rrdtool graph /var/www/html/stakes_graph.png \
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
-  -w 400 -h 178 -a PNG \
+  -w 400 -h 164 -a PNG \
   --slope-mode \
   --vertical-label "Wallet Balance" \
   --alt-autoscale-max --lower-limit=1 \
@@ -158,14 +158,16 @@ rrdtool graph /var/www/html/network_graph.png \
   CDEF:total=rxbytes,txbytes,+ \
   CDEF:rTotal=txbytes,rxbytes,+ \
   VDEF:transfer=rTotal,TOTAL \
-  AREA:total#90B040: \
-  AREA:rxbytes#C99999:"Download" \
-  AREA:txbytes#C99999:"Upload" \
+  AREA:total#53DAB1: \
+  AREA:rxbytes#60E21F:"Download" \
+  AREA:txbytes#E21F1F:"Upload" \
+  GPRINT:rxbytes:MIN:%.2lf\ Min \
+  GPRINT:txbytes:MIN:%.2lf\ Min \
   GPRINT:transfer:'Total %6.2lf%sB '
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
-  -w 400 -h 178 -a PNG \
+  -w 400 -h 164 -a PNG \
   --slope-mode \
   --vertical-label "System Drive" \
   --alt-autoscale-max --lower-limit=1 \
