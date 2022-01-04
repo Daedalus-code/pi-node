@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220401
-# 0.9.9.6
+# 0.9.9.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.6"
+VERSION="v0.9.9.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -17,6 +17,7 @@ source /usr/local/bin/include/color
 # create data, peers, tmp directory, ruled by configuration
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
+mkdir "${LOG_DIR:?}"/node_data/stats &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/client &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
 
