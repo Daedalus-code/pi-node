@@ -259,11 +259,11 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   DEF:total_tx=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:MAX \
   DEF:set_auto_con=/home/"$(whoami)"/stats/set_auto_con.rrd:set_auto_con:MAX \
   GPRINT:total_tx:LAST:%.0lf\ Now \
-  GPRINT:set_auto_con:LAST:%.0lf\ APC \
+  GPRINT:set_auto_con:LAST:%.0lf\ APL \
   GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
   GPRINT:total_tx:MAX:%.0lf\ Max \
   GPRINT:total_tx:MIN:%.0lf\ Min \
   AREA:total_tx#3C79A9:"AVG Confirmations" \
-  LINE1:set_auto_con#CF6464:"Auto PoS Config"
+  LINE1:set_auto_con#CF6464:"Auto PoS Limit"
 
 # END
