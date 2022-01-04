@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.7.4
+# 0.9.7.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.7.4"
+VERSION="v0.9.7.8"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -813,6 +813,10 @@ fi
 
 # do this once
 if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
+  if [[ $(wc -l "${WALLET_DIR:?}"/failed | awk '{ print $1 }') -lt "2" ]]; then
+    rm "${WALLET_DIR:?}"/failed &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Clean.Restored Removing tiny failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
   # use old failed list as a continuation to the next day, ruled by -lines above
   if [[ "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     # add failed peers (failed.tmp) back in to debug.log
