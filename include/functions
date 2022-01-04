@@ -796,7 +796,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     # remove old files
     truncate -s 0 "${LOG_DIR:?}"/node_data/getwan &>/dev/null
     # keep last n of failed connections
-    echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
+    echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
     # keep last n of network data
     echo "$(tail -60 "${LOG_DIR:?}"/node_data/down.net)" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/down.net 2>&1
     echo "$(tail -60 "${LOG_DIR:?}"/node_data/up.net)" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/up.net 2>&1
@@ -822,7 +822,7 @@ if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # keep last n of failed connections
-    echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
+    echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
   fi
 fi
 
