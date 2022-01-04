@@ -241,7 +241,7 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating graphs.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     bash /usr/local/bin/include/graphs &>/dev/null && clear
   else
-    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Storing data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Saving data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
