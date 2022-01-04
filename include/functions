@@ -447,9 +447,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   fi
 
   # get wallet stakes count
-  grep -c "BitcoinMiner : proof-of-stake block was signed" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/staking.value 2>&1
+  grep -c "BitcoinMiner : proof-of-stake block was signed" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/staking 2>&1
   # get wallet proof of work value
-  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
+  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null)
   # count saved vs wallet stakes
   SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
   WALLET_STAKES="${WALLET_POS:?}"
@@ -778,7 +778,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # count saved vs wallet stakes
   SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
   # get wallet proof of work value
-  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/staking.value 2>/dev/null)
+  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null)
   # if wallet pos is less than saved pos
   if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
     # restore missing proof of work data
