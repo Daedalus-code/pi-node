@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220401
-# 0.2.4.7
+# 0.2.4.8
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -10,15 +10,16 @@ source /usr/local/bin/include/color
 # date for logs
 LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
 
-# node_stats directory
-mkdir /home/"$(whoami)"/stats &>/dev/null
+if [ ! -d /home/"$(whoami)"/stats ] &>/dev/null; then
+  # node_stats directory
+  mkdir /home/"$(whoami)"/stats &>/dev/null
+fi
 
 ### install needed packages ####################################################
 
 # rrdtool setup (graphs, round robin database)
 if ! [ -x "$(command -v rrdtool)" ]; then
   sudo mkdir /var/lib/rrd &>/dev/null
-  sudo mkdir /var/www/html/rrdtool &>/dev/null
   sudo chown -R "$(whoami)":"$(whoami)" /var/lib/rrd
   sudo apt-get install librrds-perl rrdtool -y 2>&1
 fi
