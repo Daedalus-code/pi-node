@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220401
-# 0.0.6.5
+# 0.0.6.8
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -20,6 +20,9 @@ fi
 if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   sudo apt-get install tor -y
   echo "Setup tor/wallet configurations!"
+  # some configuration
+  TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>&1)
+  usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>&1
 fi
 # make sure grepcidr is installed
 if ! [ -x "$(command -v grepcidr)" ] &>/dev/null; then
