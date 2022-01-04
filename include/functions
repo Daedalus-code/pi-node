@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220401
-# 0.9.9.6
+# 1.0.0.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.6"
+VERSION="v1.0.0.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -629,86 +629,90 @@ fi
 
 ### failed and success lists ###################################################
 
-if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ] &>/dev/null; then
-  # make sure failed exist
-  touch "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null
-fi
-if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
-  # make sure success exist
-  touch "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
-fi
+# look for screen session, if not found, run this block
+if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
 
-# failed_peers function
-function failed_peers() {
-  egrep -o " to .* failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort -n 2>&1 | grep -v "addnode" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  # add system ip address
-  echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  awk '!a[$0]++' "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
-  mv "${LOG_DIR:?}"/node_data/peers/failed.clean "${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
-  DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
-  # greater than n seconds, continue
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1) ${IPV4_FAILS:?}/${DNS_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ] &>/dev/null; then
+    # make sure failed exist
+    touch "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null
   fi
-}
-
-if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev/null; then
-  # failed_peers function
-  failed_peers
-fi
-
-# create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
-# note: only use addr, disregard addrlocal, no port
-if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
-  egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
-fi
-
-### add_peers screen script ####################################################
-
-# greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
-
   if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
     # make sure success exist
-    touch "${LOG_DIR:?}"/node_data/peers/success 2>&1
+    touch "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
   fi
 
-  cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
+  # failed_peers function
+  function failed_peers() {
+    egrep -o " to .* failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort -n 2>&1 | grep -v "addnode" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+    # add system ip address
+    echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+    awk '!a[$0]++' "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
+    mv "${LOG_DIR:?}"/node_data/peers/failed.clean "${LOG_DIR:?}"/node_data/peers/failed 2>&1
+    IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
+    DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
+    # greater than n seconds, continue
+    if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1) ${IPV4_FAILS:?}/${DNS_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
+  }
 
-  ### random address ###########################################################
+  if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev/null; then
+    # failed_peers function
+    failed_peers
+  fi
 
-  # generate random ip address (ipv4)
-  RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
-  # generate random ip address (ipv6)
-  RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
-  # feed address to add_peers list (ipv4/ipv6), ignore common default router ip address (ipv4)
-  echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
-  echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+  # create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
+  # note: only use addr, disregard addrlocal, no port
+  if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
+    egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+  fi
 
-  ### remove failed, connected peers and invalid pattern address ###############
+  ### add_peers screen script ####################################################
 
-  # disregard already connected peers (success list)
-  grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-  mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-  # disregard failed peers (failed list)
-  grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-  mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+  # greater than n seconds, continue
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
-  # disregard invalid pattern address (cidr - classless inter-domain routing) and count wrong patterns (cidr)
-  grepcidr -f "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>"${LOG_DIR:?}"/node_data/peers.cidr
-  # count all invalid patterns
-  INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/peers.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
-  mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?} Invalid pattern (CIDR) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # clean up cidr files
-  truncate -s 0 "${LOG_DIR:?}"/node_data/peers.cidr &>/dev/null
+    if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
+      # make sure success exist
+      touch "${LOG_DIR:?}"/node_data/peers/success 2>&1
+    fi
 
-  # kill dead screens
-  if screen -list 2>&1 | grep "dead" &>/dev/null; then
-    screen -wipe &>/dev/null
-    killall screen &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script screen dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
+
+    ### random address ###########################################################
+
+    # generate random ip address (ipv4)
+    RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
+    # generate random ip address (ipv6)
+    RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
+    # feed address to add_peers list (ipv4/ipv6), ignore common default router ip address (ipv4)
+    echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+
+    ### remove failed, connected peers and invalid pattern address ###############
+
+    # disregard already connected peers (success list)
+    grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
+    mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+    # disregard failed peers (failed list)
+    grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
+    mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+
+    # disregard invalid pattern address (cidr - classless inter-domain routing) and count wrong patterns (cidr)
+    grepcidr -f "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>"${LOG_DIR:?}"/node_data/peers.cidr
+    # count all invalid patterns
+    INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/peers.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
+    mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?} Invalid pattern (CIDR) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # clean up cidr files
+    truncate -s 0 "${LOG_DIR:?}"/node_data/peers.cidr &>/dev/null
+
+    # kill dead screens
+    if screen -list 2>&1 | grep "dead" &>/dev/null; then
+      screen -wipe &>/dev/null
+      killall screen &>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Addnode.Script screen dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
 
   # look for screen session, if not found, start one
