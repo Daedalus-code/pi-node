@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220401
-# 0.0.8.5
+# 0.0.8.7
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -36,6 +36,8 @@ HiddenServiceDir /var/lib/tor/trumpcoin-service/
 HiddenServicePort 15110 127.0.0.1:15110"
 EOF
     cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
+    # remove old files
+    rm /tmp/torrc &>/dev/null
     # restart tor after configuration
     sudo service tor restart 2>&1
   fi
