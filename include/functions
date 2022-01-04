@@ -571,8 +571,8 @@ fi
 # always run if uptime is less than n seconds
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "3600" ]] &>/dev/null; then
   FAILED_CHECK=$(echo "${LOG_CHECK:?}" 2>&1)
-  ADDNODES_CHECK="[0-9]+:[0-9]+0:[0-9]+" # **:*0:**
-  DATA_CHECK=$(echo "${LOG_CHECK:?}" 2>&1)
+  ADDNODES_CHECK="[0-9]+:[0-9]+0:[0-9]+"         # **:*0:**
+  DATA_CHECK="[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" # **:30:** | **:00:**
   ADD_P2P_CHECK=$(echo "${LOG_CHECK:?}" 2>&1)
   # run with set time schedule (! means reverse)
 else
