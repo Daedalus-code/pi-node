@@ -151,18 +151,18 @@ rrdtool graph /var/www/html/network_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:rxbytes=/home/"$(whoami)"/stats/network.rrd:rxbytes:MAX \
-  DEF:txbytes=/home/"$(whoami)"/stats/network.rrd:txbytes:MAX \
-  DEF:rxpackets=/home/"$(whoami)"/stats/network.rrd:rxpackets:MAX \
-  DEF:txpackets=/home/"$(whoami)"/stats/network.rrd:txpackets:MAX \
-  AREA:rxbytes#32CD32:"Incoming" \
-  GPRINT:rxbytes:MAX:%6.1lf \
-  GPRINT:rxbytes:AVERAGE:%6.1lf \
-  GPRINT:rxbytes:LAST:%6.1lf \
-  AREA:txbytes#CD4032:"Outgoing" \
-  GPRINT:txbytes:MAX:%6.1lf \
-  GPRINT:txbytes:AVERAGE:%6.1lf \
-  GPRINT:txbytes:LAST:%6.1lf
+  DEF:rxbytes=/home/"$(whoami)"/stats/network.rrd:rxbytes:AVERAGE \
+  DEF:txbytes=/home/"$(whoami)"/stats/network.rrd:txbytes:AVERAGE \
+  CDEF:rxbytes=rxbytes,8,* \
+  CDEF:txbytes=txbytes,8,* \
+  CDEF:total=rxbytes,txbytes,+ \
+  CDEF:rTotal=rxbytes,txbytes,+ \
+  VDEF:transfer=rTotal,TOTAL \
+  VDEF:95th=total,95,PERCENT \
+  AREA:total#90B040: \
+  GPRINT:transfer:'Total %6.2lf%sB ' \
+  LINE1:95th#aa0000 \
+  GPRINT:95th:'95th %6.2lf%sb/s' >/dev/null
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
