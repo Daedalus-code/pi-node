@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220301
-# 0.0.6.4
+# 0.0.6.5
 
 source /home/pi/pitrump.conf
 
@@ -37,6 +37,7 @@ case $CHOICE in
   read -r -p "[YN] Turn off daemon, are you sure? y/n " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
     read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -45,7 +46,7 @@ case $CHOICE in
       kill -9 "$(pidof trumpcoind 2>&1)" && sleep 1
     else # normal shutdown, turn off crontab
       sudo service cron stop 2>&1
-      "$WALLET_DIR"/trumpcoin-cli -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf stop
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop
     fi
     read -r -p "[YN] Reboot? y/n " -n 1 -r
     echo
