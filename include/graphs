@@ -161,8 +161,8 @@ rrdtool graph /var/www/html/network_graph.png \
   GPRINT:txpackets:LAST:%.0lf\ TX\ packets \
   LINE1:rxbytes#3DCD3D:"RX bytes" \
   LINE1:txbytes#DC5F3A:"TX bytes" \
-  LINE1:rxpackets#94D094:"RX PK":STACK \
-  LINE1:txpackets#D2A395:"TX PK":STACK
+  LINE1:rxpackets#94D094:"RX PK" \
+  LINE1:txpackets#D2A395:"TX PK"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
@@ -244,7 +244,7 @@ rrdtool graph /var/www/html/difficulty_graph.png \
   GPRINT:difficulty:MAX:%.0lf\ Max \
   GPRINT:difficulty:MIN:%.0lf\ Min \
   AREA:difficulty#C99999:"Network Difficulty" \
-  LINE3:set_auto_pos#DA3737:"Auto PoS Config"
+  LINE2:set_auto_pos#DA3737:"Auto PoS Config"
 
 # total avg confirmations (24hour)
 rrdtool graph /var/www/html/total_tx_graph.png \
@@ -268,6 +268,6 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   GPRINT:total_tx:MAX:%.0lf\ Max \
   GPRINT:total_tx:MIN:%.0lf\ Min \
   AREA:total_tx#3C79A9:"AVG Confirmations" \
-  LINE3:set_auto_con#DA3737:"Auto PoS Config"
+  LINE2:set_auto_con#DA3737:"Auto PoS Config"
 
 # END
