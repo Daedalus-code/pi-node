@@ -597,7 +597,7 @@ touch /home/"$(whoami)"/addnodes &>/dev/null
 if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
 
   # add extra(s), disregard invalid pattern address (cidr - classless inter-domain routing)
-  grepcidr -f /home/"$(whoami)"/addnodes /home/"$(whoami)"/addnodes >>"${LOG_DIR:?}"/node_data/peers.tmp 2>"${LOG_DIR:?}"/node_data/addnodes.cidr
+  grepcidr -f /home/"$(whoami)"/addnodes /home/"$(whoami)"/addnodes >>"${LOG_DIR:?}"/node_data/peers.tmp 2>"${LOG_DIR:?}"/node_data/peers.cidr
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! +$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # truncate file, now old
   truncate -s 0 /home/"$(whoami)"/addnodes 2>&1
@@ -696,13 +696,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
 
   # disregard invalid pattern address (cidr - classless inter-domain routing) and count wrong patterns (cidr)
-  grepcidr -f "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>"${LOG_DIR:?}"/node_data/add_peers.cidr
+  grepcidr -f "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>"${LOG_DIR:?}"/node_data/peers.cidr
   # count all invalid patterns
-  INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/*.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
+  INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/peers.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
   mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?} Invalid pattern (CIDR) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # clean up cidr files
-  truncate -s 0 "${LOG_DIR:?}"/node_data/*.cidr &>/dev/null
+  truncate -s 0 "${LOG_DIR:?}"/node_data/peers.cidr &>/dev/null
 
   # kill dead screens
   if screen -list 2>&1 | grep "dead" &>/dev/null; then
