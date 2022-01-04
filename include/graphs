@@ -158,11 +158,11 @@ rrdtool graph /var/www/html/network_graph.png \
   AREA:rxbytes#32CD32:"Incoming" \
   GPRINT:rxbytes:MAX:%6.1lf \
   GPRINT:rxbytes:AVERAGE:%6.1lf \
-  GPRINT:rxbytes:LAST:%6.1lf %SBytes/sec\\n \
+  GPRINT:rxbytes:LAST:%6.1lf \
   AREA:txbytes#CD4032:"Outgoing" \
   GPRINT:txbytes:MAX:%6.1lf \
   GPRINT:txbytes:AVERAGE:%6.1lf \
-  GPRINT:txbytes:LAST:%6.1lf %SBytes/sec\\n
+  GPRINT:txbytes:LAST:%6.1lf
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
