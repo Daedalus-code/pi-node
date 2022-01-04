@@ -55,7 +55,7 @@ LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%a
 LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
 OLD_HEAD=$(grep "Update.Script" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $7 }' 2>&1 | tail -1 2>&1)
 printf '%b' "Updated! [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
-printf '%b' "${LOG_DATE:?} Status() Update.Script: [${GR:?}${OLD_HEAD:?}${N0:?}] Updating -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Update.Script: Updating ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 ls -lSh /usr/local/bin/include/
 
 # END
