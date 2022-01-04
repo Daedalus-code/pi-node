@@ -1,8 +1,11 @@
 #!/bin/bash
 
 # By Rainman
-# V20220101
+# V20220401
 # 0.0.7.5
+
+source /home/pi/pitrump.conf
+source /usr/local/bin/include/color
 
 # wallet daemon uptime in seconds
 function uptime_daemon() {
@@ -13,11 +16,8 @@ function uptime_daemon() {
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
 
-source /home/pi/pitrump.conf
-source /usr/local/bin/include/color
-
 # date for logs
-LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
 

@@ -722,11 +722,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 #!/bin/bash
 
 # By Rainman
-# V20220301
+# V20220401
 # 0.0.2.8
 
 # date for logs
-LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220101
+# V20220401
 # 0.0.7.7
 
 # pitrump configurations
@@ -9,7 +9,7 @@ source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
 # date for logs
-LOG_DATE=$(date '+%Y-%d-%mT%TZ' 2>&1)
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 # screen indicator (is it running)
 if ! screen -list 2>&1 |

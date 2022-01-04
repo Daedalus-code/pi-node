@@ -8,7 +8,7 @@ source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
 # date for logs
-LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 if [ ! -d /home/"$(whoami)"/stats ] &>/dev/null; then
   # node_stats directory
