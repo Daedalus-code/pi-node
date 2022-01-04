@@ -507,8 +507,8 @@ DIFF_AVG=$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
 
-  if [ ! -f "${WALLET_DIR:?}"/diff.lock ]; then
-    if [[ "$AUTO_POS" -eq "1" ]]; then
+  if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
+    if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
       CON_DIFF=$(grep "threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
       # check for any difference from last day
       CON_AVG_DIFF=$(echo $(("$DIFF_AVG-$CON_DIFF")) | tr -d '-' 2>&1)
@@ -518,11 +518,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       echo "$DIFF_AVG" >"${WALLET_DIR:?}"/diff.lock
 
       # re-configure if limit is met (if n in difference since last config are greater)
-      if [[ "$CON_AVG_DIFF" -gt "1001" ]]; then
+      if [[ "$CON_AVG_DIFF" -gt "1001" ]] &>/dev/null; then
         CONF_LIMIT="963"
         # average confirmations divided by input count, greater than limit set, continue
         CONF_AVG=$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)
-        if [[ "$CONF_AVG" -gt "$CONF_LIMIT" ]]; then
+        if [[ "$CONF_AVG" -gt "$CONF_LIMIT" ]] &>/dev/null; then
 
           # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
           "$WALLET_DIR"/trumpcoin-cli -datadir="$WALLET_DIR" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="$WALLET_DIR"/trumpcoin.conf setautocombinethreshold true "${DIFF_AVG:?}"
@@ -712,7 +712,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers.check 2>&1
 
     # make sure add_peers exist
-    if [[ ! -f "${LOG_DIR:?}"/add_peers ]]; then
+    if [[ ! -f "${LOG_DIR:?}"/add_peers ]] &>/dev/null; then
       # connect nodes found with nodes list above, (using tmp directory)
       cat >"${LOG_DIR:?}"/add_peers <<'EOF'
 #!/bin/bash
@@ -813,7 +813,7 @@ fi
 
 # do this once
 if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
-  if [[ $(wc -l "${WALLET_DIR:?}"/failed | awk '{ print $1 }') -lt "2" ]]; then
+  if [[ $(wc -l "${WALLET_DIR:?}"/failed | awk '{ print $1 }') -lt "2" ]] &>/dev/null; then
     rm "${WALLET_DIR:?}"/failed &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Clean.Restored Removing tiny failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
