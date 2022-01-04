@@ -156,7 +156,7 @@ rrdtool graph /var/www/html/network_graph.png \
   CDEF:rxbytes=rxbytes,8,* \
   CDEF:txbytes=txbytes,8,* \
   CDEF:total=rxbytes,txbytes,+ \
-  CDEF:rTotal=rxbytes,txbytes,+ \
+  CDEF:rTotal=txbytes,rxbytes,+ \
   VDEF:transfer=rTotal,TOTAL \
   VDEF:95th=total,95,PERCENT \
   AREA:total#90B040: \
