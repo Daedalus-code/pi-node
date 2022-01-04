@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220401
-# 0.0.8.2
+# 0.0.8.5
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -26,13 +26,16 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>&1
   # check torrc configuration
   if ! grep "15110 127.0.0.1:15110" /etc/tor/torrc &>/dev/null; then
-    echo "
+    cat >/tmp/torrc <<'EOF'
+
 ControlPort 9051
 CookieAuthentication 1
 CookieAuthFileGroupReadable 1
 
 HiddenServiceDir /var/lib/tor/trumpcoin-service/
 HiddenServicePort 15110 127.0.0.1:15110"
+EOF
+    cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
     # restart tor after configuration
     sudo service tor restart 2>&1
   fi
