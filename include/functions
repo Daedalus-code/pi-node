@@ -656,7 +656,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "3600" ]] &>/dev/
 fi
 # create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
 # note: only use addr, disregard addrlocal, no port
-if [ -f "${LOG_DIR:?}"/node_data/getpeerinfo ] &>/dev/null; then
+if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
   egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 fi
 
