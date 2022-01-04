@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.7.0
+# 0.9.7.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.7.0"
+VERSION="v0.9.7.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -29,8 +29,10 @@ done
 
 if [ ! -d "${LOG_DIR:?}"/node_data ] &>/dev/null; then
   # create data, peers, tmp directory, ruled by configuration
-  mkdir -p "${LOG_DIR:?}"/node_data/peers &>/dev/null
-  mkdir -p "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data
+  mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/client &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
 fi
 
 # uptime_daemon function
