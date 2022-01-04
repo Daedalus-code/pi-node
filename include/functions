@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.9.0
+# 0.9.9.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.0"
+VERSION="v0.9.9.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -723,7 +723,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
 # By Rainman
 # V20220401
-# 0.0.2.8
+# 0.0.3.0
+
+source /home/pi/pitrump.conf
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
