@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220401
-# 0.9.9.5
+# 0.9.9.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.5"
+VERSION="v0.9.9.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -567,17 +567,18 @@ if [ ! -f "${LOG_DIR:?}"/node_data/peers.tmp ] &>/dev/null; then
   touch "${LOG_DIR:?}"/node_data/peers.tmp &>/dev/null
 fi
 
-# run this at boot for n hour
+# always run if uptime is less than n seconds
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "3600" ]] &>/dev/null; then
   FAILED_CHECK=$(echo "${LOG_CHECK:?}" 2>&1)
   ADDNODES_CHECK=$(echo "${LOG_CHECK:?}" 2>&1)
   DATA_CHECK=$(echo "${LOG_CHECK:?}" 2>&1)
   ADD_P2P_CHECK=$(echo "${LOG_CHECK:?}" 2>&1)
+  # run with set time schedule (! means reverse)
 else
-  FAILED_CHECK="[0-9]+:[0-9]+5:[0-9]+"
-  ADDNODES_CHECK="[0-9]+:[0-9]+0:[0-9]+"
-  DATA_CHECK="[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+"
-  ADD_P2P_CHECK="[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+"
+  FAILED_CHECK="[0-9]+:[0-9]+5:[0-9]+"              # **:*5:**
+  ADDNODES_CHECK="[0-9]+:[0-9]+0:[0-9]+"            # **:*0:**
+  DATA_CHECK="[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+"    # **:30:** | **:00:**
+  ADD_P2P_CHECK="[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" # **:30:** | **:00:** !
 fi
 
 ### personal addnodes ##########################################################
