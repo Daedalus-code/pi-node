@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220401
-# 0.2.4.9
+# 0.2.4.7
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -102,9 +102,7 @@ if [ ! -f "/home/$(whoami)/stats/network.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/network.rrd \
     --step=60 \
     DS:rxbytes:DERIVE:300:U:U \
-    DS:rxpackets:DERIVE:300:U:U \
     DS:txbytes:DERIVE:300:U:U \
-    DS:txpackets:DERIVE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
 

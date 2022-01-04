@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220401
-# 0.2.7.2
+# 0.2.6.9
 
 source /home/pi/pitrump.conf
 
@@ -151,19 +151,14 @@ rrdtool graph /var/www/html/network_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:rxbytes=/home/"$(whoami)"/stats/network.rrd:rxbytes:AVERAGE \
-  DEF:txbytes=/home/"$(whoami)"/stats/network.rrd:txbytes:AVERAGE \
-  CDEF:inbytes=rxbytes,8,* \
-  CDEF:outbytes=txbytes,8,* \
-  CDEF:total=rxbytes,txbytes,+ \
-  CDEF:rTotal=txbytes,rxbytes,+ \
-  VDEF:transfer=rTotal,TOTAL \
-  AREA:total#53DAB1: \
-  AREA:rxbytes#60E21F:"Download" \
-  AREA:txbytes#E21F1F:"Upload" \
-  GPRINT:rxbytes:MIN:%.2lf\ Min \
-  GPRINT:txbytes:MIN:%.2lf\ Min \
-  GPRINT:transfer:'Total %6.2lf%sB '
+  DEF:rxbytes=/home/"$(whoami)"/stats/network.rrd:rxbytes:MAX \
+  DEF:txbytes=/home/"$(whoami)"/stats/network.rrd:net_up:MAX \
+  DEF:rxbytes=/home/"$(whoami)"/stats/network.rrd:rxbytes:MAX \
+  DEF:txbytes=/home/"$(whoami)"/stats/network.rrd:net_up:MAX \
+  GPRINT:rxbytes:LAST:%.0lf\ Bytes\ Down \
+  GPRINT:txbytes:LAST:%.0lf\ Bytes\ Up \
+  AREA:rxbytes#3DCD3D:"Down" \
+  AREA:txbytes#DC5F3A:"Up"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
