@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220301
-# 0.9.7.8
+# 0.9.8.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.7.8"
+VERSION="v0.9.8.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -812,21 +812,23 @@ if [[ ! -f "${WALLET_DIR:?}"/failed ]] &>/dev/null; then
 fi
 
 # do this once
-if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
-  if [[ $(wc -l "${WALLET_DIR:?}"/failed | awk '{ print $1 }') -lt "2" ]] &>/dev/null; then
-    rm "${WALLET_DIR:?}"/failed &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Clean.Restored Removing tiny failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-  # use old failed list as a continuation to the next day, ruled by -lines above
-  if [[ "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-    # add failed peers (failed.tmp) back in to debug.log
-    while IFS= read -r ADDS; do
-      echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  else
-    # keep last n of failed connections
-    echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+  if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
+    if [ ! -s "${WALLET_DIR:?}"/failed ] &>/dev/null; then
+      printf '%b' "${LOG_DATE:?} Status() Clean.Restored Removing tiny failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      rm "${WALLET_DIR:?}"/failed &>/dev/null
+    fi
+    # use old failed list as a continuation to the next day, ruled by -lines above
+    if [[ "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+      # add failed peers (failed.tmp) back in to debug.log
+      while IFS= read -r ADDS; do
+        echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    else
+      # keep last n of failed connections
+      echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
+    fi
   fi
 fi
 
