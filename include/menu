@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220301
-# 0.0.6.5
+# V20220401
+# 0.0.6.7
 
 source /home/pi/pitrump.conf
 
@@ -37,7 +37,9 @@ case $CHOICE in
   read -r -p "[YN] Turn off daemon, are you sure? y/n " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-    cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
+    if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
+      cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
+    fi
     read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
