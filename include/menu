@@ -48,7 +48,7 @@ case $CHOICE in
       kill -9 "$(pidof trumpcoind 2>&1)" && sleep 1
     else # normal shutdown, turn off crontab
       sudo service cron stop 2>&1
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
     fi
     read -r -p "[YN] Reboot? y/n " -n 1 -r
     echo
