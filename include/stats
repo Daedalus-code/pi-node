@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220401
-# 0.2.5.1
+# 0.2.5.3
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -203,8 +203,10 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
   if [[ "$AUTO_POS" -eq "1" ]]; then
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)"
+    # only save data from inputs within the limit range
+    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | sort -n 2>&1 | awk '$1 > '"${CON_DIFF:?}"' { print }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)"
   else
+    # normal data
     rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)"
   fi
   rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)"
