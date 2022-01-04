@@ -50,7 +50,7 @@ sudo chmod +x /usr/local/bin/update 2>&1
 sudo chmod +x /usr/local/bin/menu 2>&1
 rm "${LOG_DIR:?}"/add_peers &>/dev/null
 sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pitrump /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/* 2>&1
-sudo chown "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
+sudo chown -R "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
 LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S')
 LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
 printf '%b' "Updated! [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
