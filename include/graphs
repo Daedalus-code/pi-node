@@ -155,14 +155,14 @@ rrdtool graph /var/www/html/network_graph.png \
   DEF:txbytes=/home/"$(whoami)"/stats/network.rrd:txbytes:MAX \
   DEF:rxpackets=/home/"$(whoami)"/stats/network.rrd:rxpackets:MAX \
   DEF:txpackets=/home/"$(whoami)"/stats/network.rrd:txpackets:MAX \
-  GPRINT:rxbytes:LAST:%.0lf\ RX\ bytes \
-  GPRINT:txbytes:LAST:%.0lf\ TX\ bytes \
-  GPRINT:rxpackets:LAST:%.0lf\ RX\ packets \
-  GPRINT:txpackets:LAST:%.0lf\ TX\ packets \
-  LINE1:rxbytes#3DCD3D:"RX bytes" \
-  LINE1:txbytes#DC5F3A:"TX bytes" \
-  LINE1:rxpackets#94D094:"RX PK" \
-  LINE1:txpackets#D2A395:"TX PK"
+  AREA:rxbytes#32CD32:Incoming" \
+  AREA:txbytes#CD4032:Outgoing" \
+  GPRINT:rxbytes:MAX: Max\\: %6.1lf %s \
+  GPRINT:rxbytes:AVERAGE: Avg\\: %6.1lf %S \
+  GPRINT:rxbytes:LAST: Current\\: %6.1lf %SBytes/sec\\n \
+  GPRINT:txbytes:MAX: Max\\: %6.1lf %s \
+  GPRINT:txbytes:AVERAGE: Avg\\: %6.1lf %S \
+  GPRINT:txbytes:LAST: Current\\: %6.1lf %SBytes/sec\\n
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
