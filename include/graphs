@@ -157,8 +157,8 @@ rrdtool graph /var/www/html/network_graph.png \
   DEF:txbytes=/home/"$(whoami)"/stats/network.rrd:txbytes:MAX \
   GPRINT:rxbytes:MAX:%.0lf\ Bytes\ Down \
   GPRINT:txbytes:MAX:%.0lf\ Bytes\ Up \
-  AREA:rxbytes#3DCD3D:"Down" \
-  AREA:txbytes#DC5F3A:"Up"
+  LINE1:rxbytes#3DCD3D:"Down" \
+  LINE1:txbytes#DC5F3A:"Up"
 
 # hdd (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
