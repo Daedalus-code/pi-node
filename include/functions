@@ -12,23 +12,6 @@ VERSION="v0.9.9.6"
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
-# time - date, trim extra spaces with xargs
-CLOCK=$(date "+%H:%M:%S" 2>&1)
-# date for logs
-date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
-LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
-# date check
-date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
-LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
-
-# wait on node (daemon) to start
-until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
-  RANDOM_PID=$((((RANDOM % 9999) + 1)))
-  clear
-  printf '%b' "Waiting on trumpcoin (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
-  sleep 2
-done
-
 ### folders, logs and daemon ###################################################
 
 # create data, peers, tmp directory, ruled by configuration
@@ -67,6 +50,23 @@ if [[ -z "$LAST_LOG" ]] &>/dev/null; then
   # non responsive
   LAST_LOG=" "
 fi
+
+# time - date, trim extra spaces with xargs
+CLOCK=$(date "+%H:%M:%S" 2>&1)
+# date for logs
+date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
+# date check
+date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
+LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
+
+# wait on node (daemon) to start
+until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+  RANDOM_PID=$((((RANDOM % 9999) + 1)))
+  clear
+  printf '%b' "Waiting on trumpcoin (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
+  sleep 2
+done
 
 ### system information, load, user, cpu temp ###################################
 
