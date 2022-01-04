@@ -19,7 +19,7 @@ date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 # date check
 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
-LOG_CHCK=$(echo "${LOG_CHCK:?}" 2>&1)
+LOG_CHCK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
 
 # wait on node (daemon) to start
 until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
