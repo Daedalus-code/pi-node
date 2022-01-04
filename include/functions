@@ -467,7 +467,7 @@ function wallet_dashbord() {
   WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
 }
 
-if [ -f "${LOG_DIR:?}"/node_data/getinfo ] &>/dev/null; then
+if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
   # wallet pos status
   if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1)" ]] &>/dev/null; then
     # pos active
