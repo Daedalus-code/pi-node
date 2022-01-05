@@ -546,7 +546,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
 
       printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-      # get difference in percentage
+      # get difference in percentage (difficulty)
       echo "100/${CON_DIFF:?}*${DIFF_AVG:?}" 2>&1 | bc -l 2>&1 | tail -1 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/diff_perc 2>&1
       CON_PERC_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/diff_perc 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
 
