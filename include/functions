@@ -538,11 +538,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
     # continue if lock is missing
     if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
 
-      # create lock file
-      echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
-
       # get autocombine threshold
       CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+
+      # create lock file
+      echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
 
       printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
