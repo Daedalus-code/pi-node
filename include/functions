@@ -739,8 +739,8 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
 #!/bin/bash
 
 # By Rainman
-# V20220401
-# 0.0.3.0
+# V20220501
+# 0.0.3.3
 
 source /home/pi/pitrump.conf
 
@@ -749,6 +749,9 @@ LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
+
+# make sure connections exist
+touch "${LOG_DIR:?}"/node_data/stats/connections &>/dev/null
 
 P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | tail -1 2>&1)
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! +$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1) P2P ${P2P:?} ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
