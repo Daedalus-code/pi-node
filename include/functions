@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220501
+# V20220601
 # 1.0.4.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -716,8 +716,8 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     # disregard already connected peers (success list)
     grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
     mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-    # disregard failed peers (failed list)
-    grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
+    # disregard failed peers (failed list), remove 127. address (localhost)
+    grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n 2>&1 | grep -v "127." >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
     mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
 
     # disregard invalid pattern address (cidr - classless inter-domain routing) and count wrong patterns (cidr)
