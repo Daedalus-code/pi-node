@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220501
-# 1.0.1.0
+# 1.0.1.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.1.0"
+VERSION="v1.0.1.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -737,10 +737,13 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
       echo "1" >"${LOG_DIR:?}"/node_data/stats/connections 2>&1
     fi
 
-    # make sure add_peers exist
-    if [[ ! -f "${LOG_DIR:?}"/add_peers ]] &>/dev/null; then
-      # connect nodes found with nodes list above, (using tmp directory)
-      cat >"${LOG_DIR:?}"/add_peers <<'EOF'
+    # greater than n seconds, continue
+    if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+
+      # make sure add_peers exist
+      if [[ ! -f "${LOG_DIR:?}"/add_peers ]] &>/dev/null; then
+        # connect nodes found with nodes list above, (using tmp directory)
+        cat >"${LOG_DIR:?}"/add_peers <<'EOF'
 #!/bin/bash
 
 # By Rainman
@@ -772,17 +775,18 @@ killall screen &>/dev/null
 screen -wipe &>/dev/null
 exit
 EOF
-    fi
+      fi
 
-    # don't run script with intervals, every n minutes, updating api, arp and ticker (updating lists)
-    if [[ ! "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${ADD_P2P_CHECK:?}" 2>&1)" ]] &>/dev/null; then
+      # don't run script with intervals, every n minutes, updating api, arp and ticker (updating lists)
+      if [[ ! "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${ADD_P2P_CHECK:?}" 2>&1)" ]] &>/dev/null; then
 
-      # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
-      # start adding nodes, inside screen session (timeout n seconds)
-      timeout 1800 screen -S add_peers -X -p 0 stuff $'bash /tmp/add_peers\n'
-    else
-      killall screen &>/dev/null
-      printf '%b' "${LOG_DATE:?} Status() Addnode.Script skipping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
+        # start adding nodes, inside screen session (timeout n seconds)
+        timeout 1800 screen -S add_peers -X -p 0 stuff $'bash /tmp/add_peers\n'
+      else
+        killall screen &>/dev/null
+        printf '%b' "${LOG_DATE:?} Status() Addnode.Script skipping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      fi
     fi
   fi
 fi
