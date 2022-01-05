@@ -536,7 +536,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       # get autocombine threshold
       CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
       # check for any difference from last day
-      CON_AVG_DIFF=$(echo $(("$DIFF_AVG-$CON_DIFF")) | tr -d '-' 2>&1)
+      CON_AVG_DIFF=$(echo $(("$CON_DIFF-$DIFF_AVG")) | tr -d '-' 2>&1)
 
       # get difference in percentage
       echo "100/${CON_DIFF:?}*${CON_AVG_DIFF:?}" 2>&1 | bc -l 2>&1 | tail -1 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/diff_perc 2>&1
