@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220501
-# 1.0.1.2
+# 1.0.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.1.2"
+VERSION="v1.0.2.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -143,25 +143,23 @@ IP_ADDRESS="${C1:?}$IP_ADDRESS${N0:?}"
 # interface icon (top right)
 INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
 
-# update repository, ruled by configuration
-if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
-  if [[ "$UPDATE_REPO" -eq "1" ]] &>/dev/null; then
-    # update repo, if set
-    cd /home/"$(whoami)"/trump-node || exit &&
-      git pull -q && bash include/install 2>&1
-  fi
+# remove empty files, getwan
+if [ ! -s "${WALLET_DIR:?}"/getwan ] &>/dev/null; then
+  rm "${WALLET_DIR:?}"/getwan &>/dev/null
 fi
+
+### wan address ################################################################
 
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
   # get wan address, if missing
-  if [ ! -f "${LOG_DIR:?}"/node_data/getwan ] &>/dev/null; then
+  if [ ! -f "${WALLET_DIR:?}"/getwan ] &>/dev/null; then
     # get my wan ip from myip.opendns.com -> resolver1.opendns.com
-    host myip.opendns.com resolver1.opendns.com >"${LOG_DIR:?}"/node_data/getwan 2>&1
-    printf '%b' "${LOG_DATE:?} Status() GetWan.Data(): Found Wan Address (${CY:?}$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    host myip.opendns.com resolver1.opendns.com >"${WALLET_DIR:?}"/getwan 2>&1
+    printf '%b' "${LOG_DATE:?} Status() GetWan.Data(): Found Wan Address (${CY:?}$(grep "address" "${WALLET_DIR:?}"/getwan 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # get public ip address
-    PUBLIC_IP=$(grep "address" "${LOG_DIR:?}"/node_data/getwan 2>&1 |
+    PUBLIC_IP=$(grep "address" "${WALLET_DIR:?}"/getwan 2>&1 |
       egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
     # public ip (color)
     PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
@@ -176,10 +174,6 @@ fi
 # remove empty files, onion
 if [ ! -s "${WALLET_DIR:?}"/onion ] &>/dev/null; then
   rm "${WALLET_DIR:?}"/onion &>/dev/null
-fi
-# remove empty files, getwan
-if [ ! -s "${LOG_DIR:?}"/node_data/getwan ] &>/dev/null; then
-  rm "${LOG_DIR:?}"/node_data/getwan &>/dev/null
 fi
 
 # get tor status
@@ -542,7 +536,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
 
       printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # create lock file
-      echo "$DIFF_AVG" >"${WALLET_DIR:?}"/diff.lock
+      echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
 
       # re-configure if limit is met (if n in difference since last config are greater)
       if [[ "$CON_AVG_DIFF" -gt "1001" ]] &>/dev/null; then
@@ -557,7 +551,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
           printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold ${DIFF_AVG:?} ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
           printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold $(echo "$DIFF_AVG-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
         else
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script Difference not that big ${CON_AVG_DIFF:?} waiting. ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script Difference not that big PoS ${DIFF_AVG:?} Normal $(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/difficulty)/$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1), waiting. ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
         fi
       fi
     fi
@@ -812,20 +806,38 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
   # note: heavy reading, do interval reading with date:time
   if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+
+    # remove, reset old files, locks, backups ruled by configuration
+
+    # remove wallet backups, ruled by configuration
     if [[ "$KEEP_BACKUPS" -eq "0" ]] &>/dev/null; then
-      # remove old backups, locks, banlist.dat ruled by configuration
       rm -r "${WALLET_DIR:?}"/backups/* &>/dev/null
       printf '%b' "${LOG_DATE:?} Status() Clean.remove() Deleting wallet backups${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
+
+    # update repository, ruled by configuration
+    if [[ "$UPDATE_REPO" -eq "1" ]] &>/dev/null; then
+      # update repo, if set
+      cd /home/"$(whoami)"/trump-node || exit &&
+        git pull -q && bash include/install 2>&1
+    fi
+
+    # remove lock file (auto pos config)
     rm "${WALLET_DIR:?}"/diff.lock &>/dev/null
-    truncate -s 0 "${WALLET_DIR:?}"/banlist.dat &>/dev/null
-    # remove old files
-    truncate -s 0 "${LOG_DIR:?}"/node_data/getwan &>/dev/null
+
+    # reset old files (address)
+    truncate -s 0 "${WALLET_DIR:?}"/getwan &>/dev/null
+    truncate -s 0 "${WALLET_DIR:?}"/onion &>/dev/null
+
+    # reset staking
+    truncate -s 0 "${WALLET_DIR:?}"/staking &>/dev/null
+
     # keep last n of failed connections
     echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
     # keep last n of network data
     echo "$(tail -60 "${LOG_DIR:?}"/node_data/down.net)" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/down.net 2>&1
     echo "$(tail -60 "${LOG_DIR:?}"/node_data/up.net)" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/up.net 2>&1
+
     # truncate old logs, lists, internet data
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate logs, lists, internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
