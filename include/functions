@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220501
-# 1.0.4.7
+# 1.0.3.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.4.7"
+VERSION="v1.0.3.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -543,35 +543,27 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       # get difficulty average
       DIFF_AVG=$(cat "$LOG_DIR"/node_data/stats/difficulty_avg 2>/dev/null)
 
-      # get difference in percentage (difficulty)
-      echo "100/${CON_DIFF:?}*${DIFF_AVG:?}" 2>&1 | bc -l 2>&1 | tail -1 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_perc 2>&1
-      CON_PERC_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_perc 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
-
       printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-      # re-configure if limit is met
-      if [[ "$CON_PERC_LIMIT" -gt "100" ]] &>/dev/null; then
+      # auto pos limit (max minutes to wait on pos) (apl)
+      POS_LIMIT="1440" # (maximum 1 day in average confirmation before it is too much)
 
-        # auto pos limit (max minutes to wait on pos) (apl)
-        POS_LIMIT="1440" # (maximum 1 day in average confirmation before it is too much)
+      # average confirmations divided by input count, greater than limit set, continue
+      CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1)
+      if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
 
-        # average confirmations divided by input count, greater than limit set, continue
-        CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1)
-        if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
+        # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
+        "$WALLET_DIR"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf setautocombinethreshold true "${DIFF_AVG:?}"
+        "$WALLET_DIR"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf setstakesplitthreshold "$(echo "${DIFF_AVG:?}-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
 
-          # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
-          "$WALLET_DIR"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf setautocombinethreshold true "${DIFF_AVG:?}"
-          "$WALLET_DIR"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf setstakesplitthreshold "$(echo "${DIFF_AVG:?}-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
-
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold ${DIFF_AVG:?} ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold $(echo "$DIFF_AVG-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        else
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script Difference not that big PoS ${DIFF_AVG:?} ${CON_PERC_LIMIT:?}% Normal $(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/difficulty)/$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1), waiting. ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        fi
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold ${DIFF_AVG:?} ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold $(echo "$DIFF_AVG-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      else
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script Difference not that big PoS ${DIFF_AVG:?} Normal $(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/difficulty)/$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1), waiting. ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
-      # create lock file
-      echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
     fi
+    # create lock file
+    echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
   fi
 fi
 
