@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220401
-# 0.2.6.9
+# V20220501
+# 0.2.7.0
 
 source /home/pi/pitrump.conf
 
@@ -31,7 +31,7 @@ if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; 
   fi
 fi
 
-### create graphs #############################################################
+### create graphs ##############################################################
 
 # loadavg 1,5,15m (24hour)
 rrdtool graph /var/www/html/load_graph.png \
@@ -133,10 +133,11 @@ rrdtool graph /var/www/html/balance_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:balance=/home/"$(whoami)"/stats/balance.rrd:balance:MAX \
+  DEF:value=/home/"$(whoami)"/stats/value.rrd:value:MAX \
   GPRINT:balance:LAST:%.2lf\ Trump \
-  GPRINT:balance:MAX:%.2lf\ Max \
-  GPRINT:balance:MIN:%.2lf\ Min \
-  AREA:balance#85bb65:"Balance"
+  GPRINT:value:LAST:%.2lf\ USD \
+  AREA:balance#85bb65:"Balance" \
+  LINE1:value#668163:"USD"
 
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
