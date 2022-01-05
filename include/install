@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220501
-# 0.0.8.7
+# 0.0.8.8
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -27,6 +27,7 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   # check torrc configuration
   if ! grep "15110 127.0.0.1:15110" /etc/tor/torrc &>/dev/null; then
     cat >/tmp/torrc <<'EOF'
+RunAsDaemon 1
 
 ControlPort 9051
 CookieAuthentication 1
