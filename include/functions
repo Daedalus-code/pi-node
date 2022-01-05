@@ -525,7 +525,7 @@ fi
 
 if [[ "${AUTO_POS:?}" -eq "1" ]]; then
   # get average difficulty value with auto pos config
-  rrdtool info stats/difficulty.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>&1
+  rrdtool info /home/"$(whoami)"/stats/difficulty.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>&1
 else
   # get average difficulty value normally
   echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/difficulty)/$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>&1
@@ -543,11 +543,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       # get difficulty average
       DIFF_AVG=$(cat "$LOG_DIR"/node_data/stats/difficulty_avg 2>/dev/null)
 
-      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
       # get difference in percentage (difficulty)
-      echo "100/${CON_DIFF:?}*${DIFF_AVG:?}" 2>&1 | bc -l 2>&1 | tail -1 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/diff_perc 2>&1
-      CON_PERC_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/diff_perc 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
+      echo "100/${CON_DIFF:?}*${DIFF_AVG:?}" 2>&1 | bc -l 2>&1 | tail -1 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_perc 2>&1
+      CON_PERC_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_perc 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
+
+      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
       # re-configure if limit is met
       if [[ "$CON_PERC_LIMIT" -gt "100" ]] &>/dev/null; then
@@ -556,7 +556,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
         POS_LIMIT="1440" # (maximum 1 day in average confirmation before it is too much)
 
         # average confirmations divided by input count, greater than limit set, continue
-        CONF_AVG=$(rrdtool info stats/total_tx.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1)
+        CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1)
         if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
 
           # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
