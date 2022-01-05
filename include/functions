@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220501
-# 1.0.2.9
+# 1.0.4.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.2.9"
+VERSION="v1.0.4.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -521,30 +521,41 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 
   echo "$(tail -1440 "${LOG_DIR:?}"/node_data/stats/difficulty)" >"${LOG_DIR:?}"/node_data/stats/difficulty
 fi
 
+### auto pos grinding ##########################################################
+
 if [[ "${AUTO_POS:?}" -eq "1" ]]; then
-  # get average difficulty value with auto pos config
+  # get average confirmation value with auto pos config
   DIFF_AVG=$(rrdtool info stats/total_tx.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1)
 else
-  # get average difficulty value normally
+  # get average confirmation value normally
   DIFF_AVG=$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/difficulty)/$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
 fi
 
+# greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
 
-  if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
-    if [[ "${AUTO_POS:?}" -eq "1" ]] &>/dev/null; then
-      # get autocombine threshold
-      CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+  if [[ "${AUTO_POS:?}" -eq "1" ]] &>/dev/null; then
+    # continue if lock is missing
+    if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
 
-      # get difference in percentage
-      echo "100/${CON_DIFF:?}*${DIFF_AVG:?}" 2>&1 | bc -l 2>&1 | tail -1 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/diff_perc 2>&1
-      CON_PERC_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/diff_perc 2>/dev/null)
-      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # create lock file
       echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
 
+      # get autocombine threshold
+      CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+
+      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+      # auto pos limit (max minutes to wait on pos)
+      POS_LIMIT="1440" # (maximum 1 day)
+
+      # get difference in percentage
+      echo "100/${POS_LIMIT:?}*${DIFF_AVG:?}" 2>&1 | bc -l 2>&1 | tail -1 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/diff_perc 2>&1
+      CON_PERC_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/diff_perc 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
+
       # re-configure if limit is met
       if [[ "$CON_PERC_LIMIT" -gt "100" ]] &>/dev/null; then
+
         # average confirmations divided by input count, greater than limit set, continue
         CONF_AVG=$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)
         if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
