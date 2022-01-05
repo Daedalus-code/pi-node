@@ -546,7 +546,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       # get difficulty average
       DIFF_AVG=$(cat "$LOG_DIR"/node_data/stats/difficulty_avg 2>/dev/null)
 
-      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}Now ${DIFF_AVG:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
       # auto pos limit (max minutes to wait on pos) (apl)
       POS_LIMIT="1440" # (maximum 1 day in average confirmation before it is too much)
