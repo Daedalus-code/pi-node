@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220401
-# 0.0.6.7
+# V20220501
+# 0.0.6.8
 
 source /home/pi/pitrump.conf
 
@@ -53,6 +53,7 @@ case $CHOICE in
     read -r -p "[YN] Reboot? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      sleep 5
       sudo reboot
     else # turn crontab back on if no reboot
       sudo service cron start 2>&1
