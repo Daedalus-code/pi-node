@@ -215,7 +215,7 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   if [[ "$AUTO_POS" -eq "1" ]]; then
 
     # auto pos limit (max minutes to wait on pos)
-    POS_LIMIT="1440" # (maximum 1 day)
+    POS_LIMIT="1440" # (maximum 1 day in average confirmation before it is too much)
     # get autocombine threshold
     CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # get amount of inputs with lower value than var con_diff
