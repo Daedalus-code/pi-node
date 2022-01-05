@@ -525,10 +525,10 @@ fi
 
 if [[ "${AUTO_POS:?}" -eq "1" ]]; then
   # get average difficulty value with auto pos config
-  rrdtool info stats/difficulty.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' >"$LOG_DIR"/node_data/stats/difficulty_avg
+  rrdtool info stats/difficulty.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 |  awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>&1
 else
   # get average difficulty value normally
-  echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/difficulty)/$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' >"$LOG_DIR"/node_data/stats/difficulty_avg
+  echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/difficulty)/$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>&1
 fi
 
 # greater than n seconds, continue
