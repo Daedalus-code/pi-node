@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220501
-# 1.0.2.4
+# 1.0.2.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.2.4"
+VERSION="v1.0.2.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -360,6 +360,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   WALLET_IMMATURE=$(grep "immature_balance" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   # get total balance, regardless of immature, unconfirmed values (combine them all)
   WALLET_BALANCE=$(echo "$WALLET_BALANCE+$WALLET_UNCONFIRMED+$WALLET_IMMATURE" | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+  # save wallet value
+  echo "${WALLET_BALANCE:?}" >"$LOG_DIR"/node_data/stats/total_balance 2>&1
   # get wallet value
   WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
 else # non responsive (color)
