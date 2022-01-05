@@ -538,7 +538,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
     # continue if lock is missing
     if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
 
-      # get autocombine threshold
+      # get autocombine threshold (apc)
       CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
       # create lock file
@@ -546,7 +546,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
 
       printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-      # auto pos limit (max minutes to wait on pos)
+      # auto pos limit (max minutes to wait on pos) (apl)
       POS_LIMIT="1440" # (maximum 1 day in average confirmation before it is too much)
 
       # get difference in percentage
