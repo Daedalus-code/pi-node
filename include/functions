@@ -546,7 +546,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       # get difficulty average
       DIFF_AVG=$(cat "$LOG_DIR"/node_data/stats/difficulty_avg 2>/dev/null)
 
-      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}Now ${DIFF_AVG:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
       # auto pos limit (max minutes to wait on pos) (apl)
       POS_LIMIT="1440" # (maximum 1 day in average confirmation before it is too much)
@@ -560,7 +560,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
         printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold ${DIFF_AVG:?} ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
         printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold $(echo "$DIFF_AVG-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       else
-        printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs OK! Diff ${DIFF_AVG:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs OK! (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
     fi
     # create lock file
