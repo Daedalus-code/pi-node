@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220501
-# 0.9.9.9
+# 1.0.0.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.9"
+VERSION="v1.0.0.0"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -523,7 +523,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
 
   if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
     if [[ "${AUTO_POS:?}" -eq "1" ]] &>/dev/null; then
-      CON_DIFF=$(grep "threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+      # get autocombine threshold
+      CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
       # check for any difference from last day
       CON_AVG_DIFF=$(echo $(("$DIFF_AVG-$CON_DIFF")) | tr -d '-' 2>&1)
 
