@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220501
-# 1.0.4.0
+# 1.0.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.4.0"
+VERSION="v1.0.4.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -729,7 +729,14 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     # count all invalid patterns
     INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/peers.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
     mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?} Invalid pattern (CIDR) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+    # create total cidr list
+    cat "${LOG_DIR:?}"/node_data/peers.cidr >>"${LOG_DIR:?}"/node_data/stats/total.cidr 2>&1
+    # count total invalid patterns
+    TOT_INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/stats/total.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
+
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?}/${TOT_INV_CIDR:?} Invalid pattern (CIDR) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
     # clean up cidr files
     truncate -s 0 "${LOG_DIR:?}"/node_data/peers.cidr &>/dev/null
 
@@ -841,11 +848,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     # remove lock file (auto pos config)
     rm "${WALLET_DIR:?}"/diff.lock &>/dev/null
 
-    # reset old files (address)
+    # reset old files
     truncate -s 0 "${WALLET_DIR:?}"/getwan &>/dev/null
     truncate -s 0 "${WALLET_DIR:?}"/onion &>/dev/null
-
-    # reset staking
+    truncate -s 0 "${LOG_DIR:?}"/node_data/stats/total.cidr &>/dev/null
     truncate -s 0 "${WALLET_DIR:?}"/staking &>/dev/null
 
     # keep last n of failed connections
