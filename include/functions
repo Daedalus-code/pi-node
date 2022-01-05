@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220501
-# 1.0.4.6
+# 1.0.4.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.4.6"
+VERSION="v1.0.4.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -541,9 +541,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       # get autocombine threshold (apc)
       CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
-      # create lock file
-      echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
-
       printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
       # get difference in percentage (difficulty)
@@ -570,6 +567,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
           printf '%b' "${LOG_DATE:?} Status() Staking.Script Difference not that big PoS ${DIFF_AVG:?} ${CON_PERC_LIMIT:?}% Normal $(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/difficulty)/$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1), waiting. ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
         fi
       fi
+      # create lock file
+      echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
     fi
   fi
 fi
