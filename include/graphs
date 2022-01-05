@@ -136,8 +136,8 @@ rrdtool graph /var/www/html/balance_graph.png \
   DEF:value=/home/"$(whoami)"/stats/value.rrd:value:MAX \
   GPRINT:balance:LAST:%.2lf\ Trump \
   GPRINT:value:LAST:%.2lf\ USD \
-  AREA:balance#85bb65:"Balance" \
-  LINE1:value#668163:"USD"
+  AREA:balance#668163:"Balance" \
+  LINE2:value#85bb65:"USD"
 
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
