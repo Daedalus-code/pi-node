@@ -229,6 +229,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   fi
 fi
 
+if [ ! -s "${LOG_DIR:?}"/node_data/stats/connections ] &>/dev/null; then
+  # make sure connections exist
+  echo "1" >"${LOG_DIR:?}"/node_data/stats/connections 2>&1
+fi
+
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
@@ -730,11 +735,6 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
 
       # create temp and backup list for connection check
       cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers.check 2>&1
-
-      if [ ! -s "${LOG_DIR:?}"/node_data/stats/connections ] &>/dev/null; then
-        # make sure connections exist
-        echo "1" >"${LOG_DIR:?}"/node_data/stats/connections 2>&1
-      fi
 
       # make sure add_peers exist
       if [[ ! -f "${LOG_DIR:?}"/add_peers ]] &>/dev/null; then
