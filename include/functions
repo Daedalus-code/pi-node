@@ -538,9 +538,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
     # continue if lock is missing
     if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
 
-      # average confirmations divided by input count, greater than limit set, continue
+      # get total average confirmations
       CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1)
-
       # get autocombine threshold (apc)
       CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
       # get difficulty average
@@ -551,6 +550,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       # auto pos limit (max minutes to wait on pos) (apl)
       POS_LIMIT="1440" # (maximum 1 day in average confirmation before it is too much)
 
+      # total average confirmations greater than limit set, continue
       if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
 
         printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs High! (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
