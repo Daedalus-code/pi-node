@@ -558,8 +558,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
         # got input
         # get new pos limit (apl)
         echo "$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos 2>/dev/null)/${DIFF_AVG:?}" | bc -l >"${LOG_DIR:?}"/node_data/stats/ind_pos.tmp
-        echo "1/$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos.tmp 2>/dev/null)" >"${LOG_DIR:?}"/node_data/stats/lim_pos.tmp
-        echo "$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos.tmp 2>/dev/null)*1440" >"${LOG_DIR:?}"/node_data/stats/lim_pos
+        echo "1/$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos.tmp 2>/dev/null)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/stats/lim_pos.tmp
+        echo "$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos.tmp 2>/dev/null)*1440" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/stats/lim_pos
         POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
       fi
 
