@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220501
-# 0.2.7.0
+# V20220601
+# 0.2.7.3
 
 source /home/pi/pitrump.conf
 
@@ -161,7 +161,7 @@ rrdtool graph /var/www/html/network_graph.png \
   LINE1:rxbytes#3DCD3D:"Down" \
   LINE1:txbytes#DC5F3A:"Up"
 
-# hdd (24hour)
+# total hdd, used (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
   -w 400 -h 164 -a PNG \
   --slope-mode \
@@ -175,9 +175,12 @@ rrdtool graph /var/www/html/hdd_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
+  DEF:hdd_total=/home/"$(whoami)"/stats/hdd_total.rrd:hdd:MAX \
   DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
-  GPRINT:hdd:LAST:%.0lf\ Bytes \
-  AREA:hdd#8AA6B6:"UsedHDD"
+  GPRINT:hdd_total:LAST:%.0lf\ GB \
+  GPRINT:hdd:LAST:%.0lf\ GB \
+  AREA:hdd_total#8AA6B6:"Total Space" \
+  AREA:hdd#597E93:"Used Space"
 
 # memory (24hour)
 rrdtool graph /var/www/html/memory_graph.png \

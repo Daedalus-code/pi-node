@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220601
-# 0.2.8.0
+# 0.2.8.9
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -95,6 +95,14 @@ if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ]; then
   rrdtool create /home/"$(whoami)"/stats/hdd.rrd \
     --step=60 \
     DS:hdd:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
+fi
+# hdd total
+if [ ! -f "/home/$(whoami)/stats/hdd_total.rrd" ]; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating hdd_total.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  rrdtool create /home/"$(whoami)"/stats/hdd_total.rrd \
+    --step=60 \
+    DS:hdd_total:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
 # network
@@ -203,7 +211,8 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   rrdtool update /home/"$(whoami)"/stats/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" | bc)"
   rrdtool update /home/"$(whoami)"/stats/memory_total.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/memtotal 2>/dev/null)"
   rrdtool update /home/"$(whoami)"/stats/memory_free.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/memfree 2>/dev/null)"
-  rrdtool update /home/"$(whoami)"/stats/hdd.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)*1024" 2>&1 | bc -l 2>&1)"
+  rrdtool update /home/"$(whoami)"/stats/hdd.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1)"
+  rrdtool update /home/"$(whoami)"/stats/hdd_total.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $2 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/network.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/rxbytes 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/stats/txbytes 2>/dev/null)"
   rrdtool update /home/"$(whoami)"/stats/balance.rrd N:"$(cat "$LOG_DIR"/node_data/stats/total_balance 2>/dev/null)"
   rrdtool update /home/"$(whoami)"/stats/value.rrd N:"$(cat "$LOG_DIR"/node_data/stats/balance_value 2>/dev/null)"
