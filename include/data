@@ -70,10 +70,10 @@ curl -sf "$URL_TOKEN" >"$LOG_DIR"/node_data/stats/ticker 2>&1
 
 # get token price
 cat "$LOG_DIR"/node_data/stats/ticker 2>/dev/null | html2text >"$LOG_DIR"/node_data/stats/ticker.tmp 2>&1
-mv "$LOG_DIR"/node_data/stats/ticker.tmp "$LOG_DIR"/node_data/stats/ticker 2>&1
+cat "$LOG_DIR"/node_data/stats/ticker.tmp 2>/dev/null | grep -A1 "TrumpCoin Price Today" 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' >"$LOG_DIR"/node_data/stats/ticker 2>&1
 
 # api value
-API_VALUE=$(cat "$LOG_DIR"/node_data/stats/ticker 2>/dev/null | grep -A1 "TrumpCoin Price Today" 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' 2>&1)
+API_VALUE=$(cat "$LOG_DIR"/node_data/stats/ticker 2>/dev/null)
 
 printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Found ${G1:?}${API_VALUE:?}${N0:?} Coinmarketcap price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
