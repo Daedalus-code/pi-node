@@ -32,7 +32,7 @@ if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     # make sure proc exist
     touch "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null
     # save progress
-    grep -o "progress=...." "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | tr -d '.' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/tmp/proc 2>&1
+    grep -o "progress=...." "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | tr -d '.' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1
     # output progress value several times
     SYNCING_REPLACE_TX=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | tr -d "0" 2>&1)
 
