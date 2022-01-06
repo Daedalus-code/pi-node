@@ -177,8 +177,8 @@ rrdtool graph /var/www/html/hdd_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:hdd_total=/home/"$(whoami)"/stats/hdd_total.rrd:hdd_total:MAX \
   DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
-  GPRINT:hdd_total:LAST:%.0lf\ GB \
-  GPRINT:hdd:LAST:%.0lf\ GB \
+  GPRINT:hdd_total:LAST:%.2lf\ GB \
+  GPRINT:hdd:LAST:%.2lf\ GB \
   AREA:hdd_total#8AA6B6:"Total Space" \
   AREA:hdd#597E93:"Used Space"
 
