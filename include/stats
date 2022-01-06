@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220601
-# 0.2.7.1
+# 0.2.7.5
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -214,8 +214,12 @@ if [[ "$(uptime_daemon)" -gt "300" ]] &>/dev/null; then
   # auto pos config
   if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
 
-    # auto pos limit (max minutes to wait on pos)
-    POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
+    if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
+      POS_LIMIT="1440"
+    else
+      POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
+    fi
+
     # get autocombine threshold
     CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # get amount of inputs with lower value than var con_diff
