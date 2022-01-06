@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220601
-# 0.0.7.3
+# 0.0.7.4
 
 source /home/pi/pitrump.conf
 
@@ -48,6 +48,7 @@ case $CHOICE in
       kill -9 "$(pidof trumpcoind 2>&1)" && sleep 1
     else # normal shutdown, turn off crontab
       sudo service cron stop 2>&1
+      printf '%b' "[!!] "
       "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
     fi
     read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
