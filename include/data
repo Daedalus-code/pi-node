@@ -70,7 +70,7 @@ curl -sf "$URL_TOKEN" >"$LOG_DIR"/node_data/stats/ticker 2>&1
 
 # get token price
 cat "$LOG_DIR"/node_data/stats/ticker 2>/dev/null | html2text >"$LOG_DIR"/node_data/stats/ticker.tmp 2>&1
-cat "$LOG_DIR"/node_data/stats/ticker.tmp 2>/dev/null | grep -A1 "TrumpCoin Price Today" 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' >"$LOG_DIR"/node_data/stats/ticker 2>&1
+cat "$LOG_DIR"/node_data/stats/ticker.tmp 2>/dev/null | grep -A1 "TrumpCoin Price Today" 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' >"$LOG_DIR"/node_data/stats/ticker 2>&1 && rm "$LOG_DIR"/node_data/stats/ticker.tmp &>/dev/null
 
 # api value
 API_VALUE=$(cat "$LOG_DIR"/node_data/stats/ticker 2>/dev/null)
