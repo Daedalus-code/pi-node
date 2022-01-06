@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220501
-# 0.0.6.8
+# V20220601
+# 0.0.7.3
 
 source /home/pi/pitrump.conf
 
@@ -49,6 +49,11 @@ case $CHOICE in
     else # normal shutdown, turn off crontab
       sudo service cron stop 2>&1
       "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+    fi
+    read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      rm -r /home/"$(whoami)"/stats/ &>/dev/null
     fi
     read -r -p "[YN] Reboot? y/n " -n 1 -r
     echo
