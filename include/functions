@@ -576,9 +576,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       else
         printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs OK! (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
+      # create lock file
+      echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
     fi
-    # create lock file
-    echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
   fi
 fi
 
