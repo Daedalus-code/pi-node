@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220601
-# 1.0.5.5
+# 1.0.5.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.5.5"
+VERSION="v1.0.5.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -426,7 +426,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 
 else # non responsive
-  LAST_TX="${N0:?}"
   if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     source /usr/local/bin/include/proc
     # sync progress from proc
