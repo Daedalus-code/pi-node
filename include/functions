@@ -426,7 +426,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 
 else # non responsive
-  if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+  if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     source /usr/local/bin/include/proc
     # sync progress from proc
     if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1)" -eq "100" ]] &>/dev/null; then
