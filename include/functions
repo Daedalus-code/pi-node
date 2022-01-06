@@ -392,15 +392,15 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   WALLET_TXCOUNT=$(grep "txcount" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | egrep -o "[0-9]+" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # get wallet inputs
   WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)
+fi
 
 # only zeros
-elif [[ "$WALLET_TXCOUNT" -eq "0" ]] &>/dev/null; then
+if [[ "$WALLET_TXCOUNT" -eq "0" ]] &>/dev/null; then
   # non responsive
   wallet_balances
-elif [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
+fi
+if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
   # non responsive
-  wallet_balances
-else # non responsive
   wallet_balances
 fi
 
