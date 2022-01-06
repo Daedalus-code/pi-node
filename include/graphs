@@ -175,7 +175,7 @@ rrdtool graph /var/www/html/hdd_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:hdd_total=/home/"$(whoami)"/stats/hdd_total.rrd:hdd:MAX \
+  DEF:hdd_total=/home/"$(whoami)"/stats/hdd_total.rrd:hdd_total:MAX \
   DEF:hdd=/home/"$(whoami)"/stats/hdd.rrd:hdd:MAX \
   GPRINT:hdd_total:LAST:%.0lf\ GB \
   GPRINT:hdd:LAST:%.0lf\ GB \
