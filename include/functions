@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220601
-# 1.0.5.2
+# 1.0.4.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.5.2"
+VERSION="v1.0.4.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -604,7 +604,6 @@ fi
 # always run if uptime is less than n seconds
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "3600" ]] &>/dev/null; then
   FAILED_CHECK=$(echo "${LOG_CHECK:?}" 2>&1)
-  # run with set time schedule (! means reverse)
 else
   FAILED_CHECK="[0-9]+:[0-9]+0:[0-9]+" # **:*0:**
 fi
@@ -612,6 +611,7 @@ fi
 ADDNODES_CHECK="[0-9]+:[0-9]+0:[0-9]+"            # **:*0:**
 DATA_CHECK="[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+"    # **:30:** | **:00:**
 ADD_P2P_CHECK="[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" # **:30:** | **:00:** !
+# run with set time schedule (! means reverse)
 
 ### personal addnodes ##########################################################
 
@@ -661,45 +661,45 @@ fi
 
 ### failed and success lists ###################################################
 
+if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ] &>/dev/null; then
+  # make sure failed exist
+  touch "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null
+fi
+if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
+  # make sure success exist
+  touch "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
+fi
+
+# failed_peers function
+function failed_peers() {
+  egrep -o " to .* failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort -n 2>&1 | grep -v "addnode" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  # add system ip address
+  echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  awk '!a[$0]++' "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
+  mv "${LOG_DIR:?}"/node_data/peers/failed.clean "${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
+  DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
+  # greater than n seconds, continue
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1) ${IPV4_FAILS:?}/${DNS_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+}
+
+if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev/null; then
+  # failed_peers function
+  failed_peers
+fi
+
+# create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
+# note: only use addr, disregard addrlocal, no port
+if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
+  egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+fi
+
+### add_peers screen script ####################################################
+
 # look for screen session, if not found, run this block
 if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
-
-  if [ ! -f "${LOG_DIR:?}"/node_data/peers/failed ] &>/dev/null; then
-    # make sure failed exist
-    touch "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null
-  fi
-  if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
-    # make sure success exist
-    touch "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
-  fi
-
-  # failed_peers function
-  function failed_peers() {
-    egrep -o " to .* failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sed 's/^[.]//' 2>&1 | sort -n 2>&1 | grep -v "addnode" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-    # add system ip address
-    echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-    awk '!a[$0]++' "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
-    mv "${LOG_DIR:?}"/node_data/peers/failed.clean "${LOG_DIR:?}"/node_data/peers/failed 2>&1
-    IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
-    DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
-    # greater than n seconds, continue
-    if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
-      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1) ${IPV4_FAILS:?}/${DNS_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
-  }
-
-  if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev/null; then
-    # failed_peers function
-    failed_peers
-  fi
-
-  # create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
-  # note: only use addr, disregard addrlocal, no port
-  if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
-    egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
-  fi
-
-  ### add_peers screen script ##################################################
 
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
@@ -862,9 +862,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
     # keep last n of failed connections
     echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
-    # keep last n of network data
-    echo "$(tail -60 "${LOG_DIR:?}"/node_data/down.net)" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/down.net 2>&1
-    echo "$(tail -60 "${LOG_DIR:?}"/node_data/up.net)" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/up.net 2>&1
 
     # truncate old logs, lists, internet data
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
