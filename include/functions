@@ -177,7 +177,7 @@ if [ ! -s "${WALLET_DIR:?}"/onion ] &>/dev/null; then
 fi
 
 # get tor status
-if grep "127.0.0.1:9050" "${LOG_DIR:?}"/node_data/client/getinfo &>/dev/null; then
+if egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/client/getinfo &>/dev/null; then
   TOR_ICON="${P1:?}P$N0"
   # running proxy (tor), do this once
   if [ ! -f "${WALLET_DIR:?}"/onion ] &>/dev/null; then
