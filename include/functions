@@ -36,7 +36,7 @@ echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
 touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
 
 # greater than n seconds, continue
-if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
 
   # tail last line in debug.log
   LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
@@ -968,8 +968,8 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     TIMELINE="Lowest Input $TIMELINE"
     # daemon uptime
   elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
-    TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(uptime_daemon)/3600")) $(("$(uptime_daemon)%3600/60")) $(("$(uptime_daemon)%60")))
-    TIMELINE_DAYS=$(echo "$(uptime_daemon)/86400" 2>&1 | bc 2>&1)
+    TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
+    TIMELINE_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
     TIMELINE="Uptime (${TIMELINE_DAYS:?}d) ${GR:?}$TIMELINE${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "13" ] &>/dev/null; then
     # highest peer count

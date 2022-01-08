@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220601
+# V20220801
 # 0.0.7.7
 
 # pitrump configurations
@@ -10,6 +10,15 @@ source /usr/local/bin/include/color
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
+
+# wallet daemon uptime in seconds
+function uptime_daemon() {
+  PID="$(pidof trumpcoind 2>&1)"
+  HZ=$(getconf CLK_TCK 2>&1)
+  UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
+  STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
+  echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
+}
 
 # screen indicator (is it running)
 if ! screen -list 2>&1 |
@@ -38,16 +47,7 @@ else
   SCREEN_IND="${CY:?}*${N0:?}"
 fi
 
-# wallet daemon uptime in seconds
-function uptime_daemon() {
-  PID="$(pidof trumpcoind 2>&1)"
-  HZ=$(getconf CLK_TCK 2>&1)
-  UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
-  STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
-  echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
-}
-
-if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   # error: couldn't connect to server
   if grep -o "error: couldn't connect to server" "$LOG_DIR"/node_data/client/tmp/getinfo; then
     # error with server (daemon), stopping
@@ -59,9 +59,9 @@ if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
 fi
 
 # daemon uptime greater then n
-if [[ "$(uptime_daemon)" -gt "1" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   if pgrep -x trumpcoind &>/dev/null; then
-    UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(uptime_daemon)/3600")) $(("$(uptime_daemon)%3600/60")) $(("$(uptime_daemon)%60")))
+    UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?} ${GR:?}$SCR_CALC${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # make sure debug.log exist
