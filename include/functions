@@ -2,17 +2,25 @@
 
 # By Rainman
 # V20220801
-# 1.0.5.0
+# 1.0.5.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.5.0"
+VERSION="v1.0.5.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
-### folders, logs and daemon ###################################################
+# wait on node (daemon) to start
+until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+  RANDOM_PID=$((((RANDOM % 9999) + 1)))
+  clear
+  printf '%b' "Waiting on trumpcoin (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
+  sleep 2
+done
+
+### folders, daemon uptime, logs ###############################################
 
 # create data, peers, tmp directory, ruled by configuration
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
@@ -20,6 +28,8 @@ mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/stats &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/client &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
+# create debug.log
+touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
 
 # uptime_daemon function
 function uptime_daemon() {
@@ -31,9 +41,6 @@ function uptime_daemon() {
 }
 # create uptime
 echo "$(uptime_daemon 2>&1)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
-
-# create debug.log
-touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
 
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
@@ -54,6 +61,8 @@ if [[ -z "$LAST_LOG" ]] &>/dev/null; then
   LAST_LOG=" "
 fi
 
+# clock, log date, log check ###################################################
+
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
@@ -62,14 +71,6 @@ LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 # date check
 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
 LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
-
-# wait on node (daemon) to start
-until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
-  RANDOM_PID=$((((RANDOM % 9999) + 1)))
-  clear
-  printf '%b' "Waiting on trumpcoin (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
-  sleep 2
-done
 
 ### system information, load, user, cpu temp ###################################
 
@@ -115,12 +116,10 @@ USED_HDD_P=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ pr
 # get used hdd (color)
 USED_HDD="${G1:?}${USED_HDD:?}${N0:?}"
 
-### get wan/lan.ip, internet/intranet ##########################################
+### network - download and upload ##############################################
 
 # save ifconfig values to ifconfig
 ifconfig 2>&1 | egrep -A8 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1
-
-### network - download and upload ##############################################
 
 # get download from wlan(*) - eth(*)
 DOWNLOAD=$(egrep "RX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
@@ -143,12 +142,12 @@ IP_ADDRESS="${C1:?}$IP_ADDRESS${N0:?}"
 # interface icon (top right)
 INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
 
+### wan address ################################################################
+
 # remove empty files, getwan
 if [ ! -s "${WALLET_DIR:?}"/getwan ] &>/dev/null; then
   rm "${WALLET_DIR:?}"/getwan &>/dev/null
 fi
-
-### wan address ################################################################
 
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
@@ -813,7 +812,7 @@ EOF
   fi
 fi
 
-### clean up debug.log (truncate) keep pos around ##############################
+### restore proof of work data #################################################
 
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
@@ -831,11 +830,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   fi
 fi
 
+### backup, clean up lists, logs (truncate) keep proof of work data ############
+
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
   # note: heavy reading, do interval reading with date:time
-  if [[ "$(date +%H%M 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+  if [[ "$(date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
 
     # remove, reset old files, locks, backups ruled by configuration
 
