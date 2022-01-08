@@ -14,7 +14,7 @@ if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; 
   echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600" 2>&1 | bc >"${LOG_DIR:?}"/node_data/uptime.hours 2>&1
   ROUND_UP=$(cat "${LOG_DIR:?}"/node_data/uptime.hours 2>/dev/null)
   # organic hour graph ruled by uptime_daemon > uptime.hours
-  if [[ "$ROUND_UP" -eq "0" ]]; then
+  if [[ "$ROUND_UP" -eq "0" ]] &>/dev/null; then
     GRAPH_TIME="1h"
   else
     GRAPH_TIME="${ROUND_UP:?}h"

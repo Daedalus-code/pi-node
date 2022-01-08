@@ -18,14 +18,14 @@ fi
 ### install needed packages ####################################################
 
 # rrdtool setup (graphs, round robin database)
-if ! [ -x "$(command -v rrdtool)" ]; then
+if ! [ -x "$(command -v rrdtool)" ] &>/dev/null; then
   sudo mkdir /var/lib/rrd &>/dev/null
   sudo chown -R "$(whoami)":"$(whoami)" /var/lib/rrd
   sudo apt-get install librrds-perl rrdtool -y 2>&1
 fi
 
 # apache2 setup (webserver, php)
-if ! [ -x "$(command -v apache2)" ]; then
+if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
   sudo apt-get install apache2 php libapache2-mod-php -y 2>&1
   sudo chown -R "$(whoami)":"$(whoami)" /var/www/html
   rm /var/www/html/index.html &>/dev/null
@@ -42,7 +42,7 @@ fi
 ### create round robin databases for system (rrdtool) ##########################
 
 # load 1
-if [ ! -f "/home/$(whoami)/stats/load.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/load.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/load.rrd \
     --step=60 \
@@ -50,7 +50,7 @@ if [ ! -f "/home/$(whoami)/stats/load.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # load 5
-if [ ! -f "/home/$(whoami)/stats/load5.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/load5.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load5.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/load5.rrd \
     --step=60 \
@@ -58,7 +58,7 @@ if [ ! -f "/home/$(whoami)/stats/load5.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # load 15
-if [ ! -f "/home/$(whoami)/stats/load15.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/load15.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load15.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/load15.rrd \
     --step=60 \
@@ -66,7 +66,7 @@ if [ ! -f "/home/$(whoami)/stats/load15.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # temp
-if [ ! -f "/home/$(whoami)/stats/temp.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/temp.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating temp.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/temp.rrd \
     --step=60 \
@@ -74,7 +74,7 @@ if [ ! -f "/home/$(whoami)/stats/temp.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # memory available
-if [ ! -f "/home/$(whoami)/stats/memory_total.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/memory_total.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating memory_total.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/memory_total.rrd \
     --step=60 \
@@ -82,7 +82,7 @@ if [ ! -f "/home/$(whoami)/stats/memory_total.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # memory free
-if [ ! -f "/home/$(whoami)/stats/memory_free.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/memory_free.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating memory_free.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/memory_free.rrd \
     --step=60 \
@@ -90,7 +90,7 @@ if [ ! -f "/home/$(whoami)/stats/memory_free.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # hdd
-if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating hdd.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/hdd.rrd \
     --step=60 \
@@ -98,7 +98,7 @@ if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # hdd total
-if [ ! -f "/home/$(whoami)/stats/hdd_total.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/hdd_total.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating hdd_total.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/hdd_total.rrd \
     --step=60 \
@@ -106,7 +106,7 @@ if [ ! -f "/home/$(whoami)/stats/hdd_total.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # network
-if [ ! -f "/home/$(whoami)/stats/network.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/network.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating network.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/network.rrd \
     --step=60 \
@@ -118,7 +118,7 @@ fi
 ### create round robin databases for wallet (rrdtool) ##########################
 
 # balance
-if [ ! -f "/home/$(whoami)/stats/balance.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/balance.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating balance.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/balance.rrd \
     --step=60 \
@@ -126,7 +126,7 @@ if [ ! -f "/home/$(whoami)/stats/balance.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # balance value
-if [ ! -f "/home/$(whoami)/stats/value.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/value.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating value.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/value.rrd \
     --step=60 \
@@ -134,7 +134,7 @@ if [ ! -f "/home/$(whoami)/stats/value.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # stakes
-if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating stakes.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/stakes.rrd \
     --step=60 \
@@ -142,7 +142,7 @@ if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # inputs
-if [ ! -f "/home/$(whoami)/stats/inputs.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/inputs.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating inputs.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/inputs.rrd \
     --step=60 \
@@ -150,7 +150,7 @@ if [ ! -f "/home/$(whoami)/stats/inputs.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # peers
-if [ ! -f "/home/$(whoami)/stats/peers.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/peers.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating peers.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/peers.rrd \
     --step=60 \
@@ -158,7 +158,7 @@ if [ ! -f "/home/$(whoami)/stats/peers.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # difficulty
-if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating difficulty.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/difficulty.rrd \
     --step=60 \
@@ -166,7 +166,7 @@ if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # set auto pos (difficulty)
-if [ ! -f "/home/$(whoami)/stats/set_auto_pos.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/set_auto_pos.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating set_auto_pos.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/set_auto_pos.rrd \
     --step=60 \
@@ -174,7 +174,7 @@ if [ ! -f "/home/$(whoami)/stats/set_auto_pos.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # set auto con (confirmation)
-if [ ! -f "/home/$(whoami)/stats/set_auto_con.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/set_auto_con.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating set_auto_con.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/set_auto_con.rrd \
     --step=60 \
@@ -182,7 +182,7 @@ if [ ! -f "/home/$(whoami)/stats/set_auto_con.rrd" ]; then
     RRA:AVERAGE:0.5:1:315360
 fi
 # total confirmations
-if [ ! -f "/home/$(whoami)/stats/total_tx.rrd" ]; then
+if [ ! -f "/home/$(whoami)/stats/total_tx.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating total_tx.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/total_tx.rrd \
     --step=60 \
@@ -219,7 +219,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
     fi
 
-    if [[ -z "$POS_LIMIT" ]]; then
+    if [[ -z "$POS_LIMIT" ]] &>/dev/null; then
       # non responsive
       POS_LIMIT="${POS_LIMIT:?}"
     fi

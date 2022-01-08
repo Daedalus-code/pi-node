@@ -517,7 +517,7 @@ fi
 
 ### auto pos grinding ##########################################################
 
-if [[ "${AUTO_POS:?}" -eq "1" ]]; then
+if [[ "${AUTO_POS:?}" -eq "1" ]] &>/dev/null; then
   # get average difficulty value with auto pos config
   # new value ruled by include/stats -> line 223
   rrdtool info /home/"$(whoami)"/stats/difficulty.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>&1

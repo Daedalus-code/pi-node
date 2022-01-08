@@ -46,10 +46,10 @@ printf '%b' "${LOG_DATE:?} Status() Addnode.Script Total ${G1:?}${TOTAL_NODES:?}
 ### token price ################################################################
 
 # need curl, html2text for this
-if ! [ -x "$(command -v curl)" ]; then
+if ! [ -x "$(command -v curl)" ] &>/dev/null; then
   sudo apt-get install curl -y
 fi
-if ! [ -x "$(command -v html2text)" ]; then
+if ! [ -x "$(command -v html2text)" ] &>/dev/null; then
   sudo apt-get install html2text -y
 fi
 
