@@ -12,6 +12,15 @@ VERSION="v1.0.5.6"
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
+### folders, daemon uptime, logs ###############################################
+
+# create data, peers, tmp directory, ruled by configuration
+mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
+mkdir "${LOG_DIR:?}"/node_data/stats &>/dev/null
+mkdir "${LOG_DIR:?}"/node_data/client &>/dev/null
+mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
+
 # wait on node (daemon) to start
 until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   RANDOM_PID=$((((RANDOM % 9999) + 1)))
@@ -25,15 +34,6 @@ until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   # date check
   date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
 done
-
-### folders, daemon uptime, logs ###############################################
-
-# create data, peers, tmp directory, ruled by configuration
-mkdir "${LOG_DIR:?}"/node_data &>/dev/null
-mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
-mkdir "${LOG_DIR:?}"/node_data/stats &>/dev/null
-mkdir "${LOG_DIR:?}"/node_data/client &>/dev/null
-mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
 
 # uptime_daemon function
 function uptime_daemon() {
