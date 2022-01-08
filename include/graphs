@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220601
-# 0.2.7.3
+# V20220801
+# 0.2.6.3
 
 source /home/pi/pitrump.conf
 
@@ -10,16 +10,6 @@ source /home/pi/pitrump.conf
 
 if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; then
 
-  # wallet daemon uptime in seconds
-  function uptime_daemon() {
-    PID="$(pidof trumpcoind 2>&1)"
-    HZ=$(getconf CLK_TCK 2>&1)
-    UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
-    STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
-    echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
-  }
-  # uptime in seconds
-  echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
   # uptime in hours
   echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600" 2>&1 | bc >"${LOG_DIR:?}"/node_data/uptime.hours 2>&1
   ROUND_UP=$(cat "${LOG_DIR:?}"/node_data/uptime.hours 2>/dev/null)

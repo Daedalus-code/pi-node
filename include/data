@@ -2,24 +2,13 @@
 
 # By Rainman
 # V20220801
-# 0.0.8.1
+# 0.0.7.0
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
-# wallet daemon uptime in seconds
-function uptime_daemon() {
-  PID="$(pidof trumpcoind 2>&1)"
-  HZ=$(getconf CLK_TCK 2>&1)
-  UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
-  STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
-  echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
-}
-
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
-
-echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
 
 ### addnodes ###################################################################
 

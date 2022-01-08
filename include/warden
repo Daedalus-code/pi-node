@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220801
-# 0.0.7.7
+# 0.0.7.9
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -19,6 +19,8 @@ function uptime_daemon() {
   STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
+# create uptime
+echo "$(uptime_daemon 2>&1)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
 
 # screen indicator (is it running)
 if ! screen -list 2>&1 |

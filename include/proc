@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220801
-# 0.3.5.9
+# 0.3.4.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -19,16 +19,6 @@ grep -o "progress=...." "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+.
 if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # look for sync has finished line, save it there and then
   grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
-
-  # wallet daemon uptime function
-  # function for waiting with command(s) before a limit (seconds) is reached
-  function uptime_daemon() {
-    PID="$(pidof trumpcoind 2>&1)"
-    HZ=$(getconf CLK_TCK 2>&1)
-    UPTIME_CMD=$(awk '{print $1}' </proc/uptime)
-    STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
-    echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
-  }
 
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then

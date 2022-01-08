@@ -29,9 +29,9 @@ function uptime_daemon() {
   STARTTIME=$(awk '{print $22}' </proc/"$PID"/stat)
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
-
 # create uptime
-echo "$(uptime_daemon)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
+echo "$(uptime_daemon 2>&1)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
+
 # create debug.log
 touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
 
