@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220601
-# 0.0.7.4
+# V20220801
+# 0.0.8.0
 
 source /home/pi/pitrump.conf
 
@@ -50,6 +50,12 @@ case $CHOICE in
       sudo service cron stop 2>&1
       printf '%b' "[!!] "
       "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+      # wait on node (daemon) to stop
+      until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+        clear
+        printf '%b' "Waiting on trumpcoin ($(pidof trumpcoind 2>&1)) daemon to shutdown..\n"
+        sleep 2
+      done
     fi
     read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
     echo
