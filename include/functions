@@ -694,7 +694,7 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev
   # failed_peers function
   failed_peers
   # disregard random ip address
-  grep -vf "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers.random "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
+  grep -vf "${LOG_DIR:?}"/node_data/peers.random "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
   mv "${LOG_DIR:?}"/node_data/peers/failed.tmp "${LOG_DIR:?}"/node_data/peers/failed 2>&1
 fi
 
@@ -727,7 +727,7 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
     # feed address to add_peers list (ipv4/ipv6), ignore common default router ip address (ipv4)
     echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/peers.random 2>&1
-    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/peers.random 2>&1
+    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
     # clean up peers.random list
     cat "${LOG_DIR:?}"/node_data/peers.random 2>/dev/null | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers.random.tmp
     mv "${LOG_DIR:?}"/node_data/peers.random.tmp "${LOG_DIR:?}"/node_data/peers.random 2>&1
