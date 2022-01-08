@@ -728,7 +728,7 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     # feed address to add_peers list (ipv4/ipv6), ignore common default router ip address (ipv4)
     echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/peers.random 2>&1
     echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
-    cat "${LOG_DIR:?}"/node_data/add_peers 2>/dev/null | tail -1 >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+    cat "${LOG_DIR:?}"/node_data/add_peers 2>/dev/null | tail -1 >>"${LOG_DIR:?}"/node_data/peers.random 2>&1
     # disregard invalid pattern address (cidr - classless inter-domain routing)
     grepcidr -f "${LOG_DIR:?}"/node_data/peers.random "${LOG_DIR:?}"/node_data/peers.random 2>/dev/null | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers.random.tmp
     mv "${LOG_DIR:?}"/node_data/peers.random.tmp "${LOG_DIR:?}"/node_data/peers.random 2>&1
