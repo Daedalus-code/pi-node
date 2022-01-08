@@ -694,7 +694,7 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev
   # failed_peers function
   failed_peers
   # disregard random ip address (ipv4)
-  grep -vf "$(cat /tmp/node_data/peers.random 2>/dev/null | egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
+  grep -vf "${LOG_DIR:?}"/node_data/peers.ipv4.r "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
   mv "${LOG_DIR:?}"/node_data/peers/failed.tmp "${LOG_DIR:?}"/node_data/peers/failed 2>&1
 fi
 
@@ -725,13 +725,13 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
     # generate random ip address (ipv6)
     RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
-    # feed address to add_peers list (ipv4/ipv6), ignore common default router ip address (ipv4)
-    echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/peers.random 2>&1
-    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
-    cat "${LOG_DIR:?}"/node_data/add_peers 2>/dev/null | tail -1 >>"${LOG_DIR:?}"/node_data/peers.random 2>&1
+    # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
+    echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/peers.ipv6.r 2>&1
+    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/peers.ipv4.r 2>&1
     # disregard invalid pattern address (cidr - classless inter-domain routing)
-    grepcidr -f "${LOG_DIR:?}"/node_data/peers.random "${LOG_DIR:?}"/node_data/peers.random 2>/dev/null | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers.random.tmp
-    mv "${LOG_DIR:?}"/node_data/peers.random.tmp "${LOG_DIR:?}"/node_data/peers.random 2>&1
+    grepcidr -f "${LOG_DIR:?}"/node_data/*.r "${LOG_DIR:?}"/node_data/*.r 2>/dev/null | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers.all.r
+    # move random address to add_peers
+    tail -2 "${LOG_DIR:?}"/node_data/peers.all.r >>"${LOG_DIR:?}"/node_data/add_peers
 
     ### remove failed, connected peers and invalid pattern address #############
 
