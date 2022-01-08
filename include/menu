@@ -2,9 +2,10 @@
 
 # By Rainman
 # V20220801
-# 0.0.7.9
+# 0.0.8.0
 
 source /home/pi/pitrump.conf
+source /usr/local/bin/include/color
 
 # make sure dialog exist
 if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
