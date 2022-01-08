@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220801
-# 0.0.8.8
+# 0.0.9.2
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -19,14 +19,17 @@ fi
 
 # make sure tor is installed
 if ! [ -x "$(command -v tor)" ] &>/dev/null; then
-  sudo apt-get install tor -y
-  echo "Setup tor/wallet configurations!"
-  # tor group, user configuration
-  TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>&1)
-  sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>&1
-  # check torrc configuration
-  if ! grep "15110 127.0.0.1:15110" /etc/tor/torrc &>/dev/null; then
-    cat >/tmp/torrc <<'EOF'
+  read -r -p "[YN] Install Proxy (tor)? y/n " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    sudo apt-get install tor -y
+    echo "Setup tor/wallet configurations!"
+    # tor group, user configuration
+    TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>&1)
+    sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>&1
+    # check torrc configuration
+    if ! grep "15110 127.0.0.1:15110" /etc/tor/torrc &>/dev/null; then
+      cat >/tmp/torrc <<'EOF'
 RunAsDaemon 1
 
 ControlPort 9051
@@ -36,11 +39,12 @@ CookieAuthFileGroupReadable 1
 HiddenServiceDir /var/lib/tor/trumpcoin-service/
 HiddenServicePort 15110 127.0.0.1:15110
 EOF
-    cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
-    # remove old files
-    rm /tmp/torrc &>/dev/null
-    # restart tor after configuration
-    sudo service tor restart 2>&1
+      cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
+      # remove old files
+      rm /tmp/torrc &>/dev/null
+      # restart tor after configuration
+      sudo service tor restart 2>&1
+    fi
   fi
 fi
 
