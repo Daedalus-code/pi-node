@@ -18,6 +18,8 @@ until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   clear
   printf '%b' "Waiting on trumpcoin (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
   sleep 2
+  # create debug.log
+  touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
 done
 
 ### folders, daemon uptime, logs ###############################################
@@ -28,8 +30,6 @@ mkdir "${LOG_DIR:?}"/node_data/peers &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/stats &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/client &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
-# create debug.log
-touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
 
 # uptime_daemon function
 function uptime_daemon() {
