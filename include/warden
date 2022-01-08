@@ -2,12 +2,15 @@
 
 # By Rainman
 # V20220801
-# 0.0.7.9
+# 0.0.8.2
 
 # pitrump configurations
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
 
+if [ ! -f "${LOG_DIR:?}"/node_data/stats/date ] 2>/dev/null; then
+  date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
+fi
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 

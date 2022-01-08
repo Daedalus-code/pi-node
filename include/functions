@@ -419,7 +419,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # get last wallet txid with help of last_tx var
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-  if [[ ! -f "${LOG_DIR:?}"/node_data/synced ]] &>/dev/null; then
+  if [ ! -f "${LOG_DIR:?}"/node_data/synced ] &>/dev/null; then
     # look for sync has finished line, save it there and then
     grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
   fi
@@ -763,7 +763,7 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
       cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers.check 2>&1
 
       # make sure add_peers exist
-      if [[ ! -f "${LOG_DIR:?}"/add_peers ]] &>/dev/null; then
+      if [ ! -f "${LOG_DIR:?}"/add_peers ] &>/dev/null; then
         # connect nodes found with nodes list above, (using tmp directory)
         cat >"${LOG_DIR:?}"/add_peers <<'EOF'
 #!/bin/bash
@@ -872,7 +872,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   fi
 fi
 
-if [[ ! -f "${WALLET_DIR:?}"/failed ]] &>/dev/null; then
+if [ ! -f "${WALLET_DIR:?}"/failed ] &>/dev/null; then
   # make sure backup failed exist
   touch "${WALLET_DIR:?}"/failed &>/dev/null
 fi
