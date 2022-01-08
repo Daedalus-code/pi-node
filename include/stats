@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220801
-# 0.2.7.9
+# 0.2.7.4
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -217,11 +217,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       POS_LIMIT="${POS_LIMIT:?}"
     else
       POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
-    fi
-
-    if [[ -z "$POS_LIMIT" ]] &>/dev/null; then
-      # non responsive
-      POS_LIMIT="${POS_LIMIT:?}"
     fi
 
     # get autocombine threshold
