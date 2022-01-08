@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220801
-# 1.0.6.3
+# 1.0.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.6.3"
+VERSION="v1.0.6.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -728,8 +728,7 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
     echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/peers.ipv6.r 2>&1
     echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/peers.ipv4.r 2>&1
-    # disregard invalid pattern address (cidr - classless inter-domain routing)
-    grepcidr -f "${LOG_DIR:?}"/node_data/*.r "${LOG_DIR:?}"/node_data/*.r 2>/dev/null | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers.all.r
+
     # move random address to add_peers
     tail -2 "${LOG_DIR:?}"/node_data/peers.all.r >>"${LOG_DIR:?}"/node_data/add_peers
 
