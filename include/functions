@@ -729,8 +729,8 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/peers.ipv6.r 2>&1
     echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/peers.ipv4.r 2>&1
 
-    # move random address to add_peers
-    tail -2 "${LOG_DIR:?}"/node_data/peers.*.r >>"${LOG_DIR:?}"/node_data/add_peers
+    # move random address to add_peers (ipv4/ipv6)
+    cat "${LOG_DIR:?}"/node_data/peers.*.r 2>/dev/null | tail -2 >>"${LOG_DIR:?}"/node_data/add_peers
 
     ### remove failed, connected peers and invalid pattern address #############
 
