@@ -694,7 +694,7 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev
   # failed_peers function
   failed_peers
   # disregard random ip address
-  grep -vf "${LOG_DIR:?}"/node_data/peers.random "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
+  grep -vf "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers.random "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
   mv "${LOG_DIR:?}"/node_data/peers/failed.tmp "${LOG_DIR:?}"/node_data/peers/failed 2>&1
 fi
 
