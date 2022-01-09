@@ -189,7 +189,7 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
     if egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
       egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${WALLET_DIR:?}"/onion 2>&1
 
-      printf '%b' "${LOG_DATE:?} Status() GetOnionData() Found Onion Address! (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() GetOnionData() Found Onion Address! (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
 
     # get onion address
@@ -512,14 +512,6 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
   fi
 else
   wallet_dashbord
-fi
-
-# ruled by configuration
-if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-  # hide balance and inputs
-  WALLET_BALANCE="${GR?}****${N0?}"
-  WALLET_INPUTS="${GR?}****${N0?}"
-  WALLET_STAKES="${GR?}****${N0?}"
 fi
 
 # get blockchain activity with mempool
@@ -961,7 +953,7 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
       # hide unconfirmed
-      TIMELINE="Unconfirmed ${GR?}****${N0?} ${GR?}****${N0?} USD${N0:?}"
+      TIMELINE="Unconfirmed ${GR:?}****${N0:?} ${GR:?}****${N0:?} USD${N0:?}"
     else
       TIMELINE="Unconfirmed $WALLET_UNCONFIRMED ${GR:?}$WALLET_UNCONFIRMED_VALUE USD${N0:?}"
     fi
@@ -970,7 +962,7 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
       # hide immature
-      TIMELINE="Immature ${GR?}****${N0?} ${GR?}****${N0?} USD${N0:?}"
+      TIMELINE="Immature ${GR:?}****${N0:?} ${GR:?}****${N0:?} USD${N0:?}"
     else
       TIMELINE="Immature $WALLET_IMMATURE ${GR:?}$WALLET_IMMATURE_VALUE USD${N0:?}"
     fi
@@ -984,7 +976,7 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
       # hide new input
-      TIMELINE="New Input ${GR?}****${N0?} (${GR?}****${N0?}) ${GR?}****${N0?}${N0:?}"
+      TIMELINE="New Input ${GR:?}****${N0:?} (${GR:?}****${N0:?}) ${GR:?}****${N0:?}${N0:?}"
     else
       TIMELINE="New Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
     fi
@@ -998,7 +990,7 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
     if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
       # hide old input
-      TIMELINE="Old Input ${GR?}****${N0?} (${GR?}****${N0?}) ${GR?}****${N0?}${N0:?}"
+      TIMELINE="Old Input ${GR:?}****${N0:?} (${GR:?}****${N0:?}) ${GR:?}****${N0:?}${N0:?}"
     else
       TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
     fi
@@ -1020,7 +1012,7 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
   elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
     if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
       # hide value
-      TIMELINE="Value ${GR?}****${N0?} USD ${GR?}****${N0?}"
+      TIMELINE="Value ${GR:?}****${N0:?} USD ${GR:?}****${N0:?}"
     else
       TIMELINE="Value ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
     fi
@@ -1029,7 +1021,7 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
     if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
       # hide highest input
-      TIMELINE="Highest Input ${GR?}****${N0?}"
+      TIMELINE="Highest Input ${GR:?}****${N0:?}"
     else
       TIMELINE="Highest Input $TIMELINE"
     fi
@@ -1038,7 +1030,7 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
     if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
       # hide lowest input
-      TIMELINE="Lowest Input ${GR?}****${N0?}"
+      TIMELINE="Lowest Input ${GR:?}****${N0:?}"
     else
       TIMELINE="Lowest Input $TIMELINE"
     fi
@@ -1110,6 +1102,14 @@ if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
   egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/stats/rxbytes 2>&1
   # setup graphs
   bash /usr/local/bin/include/stats
+fi
+
+if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+  # hide balance and inputs
+  WALLET_BALANCE="${GR:?}****${N0:?}"
+  WALLET_INPUTS="${GR:?}****${N0:?}"
+  WALLET_STAKES="${GR:?}****${N0:?}"
+  WALLET_TXLAST="${GR:?}*************************************************************${N0:?}"
 fi
 
 ### theme ######################################################################
