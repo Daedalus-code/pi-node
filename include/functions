@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220901
-# 1.1.2.6
+# 1.1.3.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.2.6"
+VERSION="v1.1.3.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -254,6 +254,10 @@ fi
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
+  if [[ -z "$WALLET_PEERS_TOTAL_N" ]]; then
+    # non responsive
+    WALLET_PEERS_TOTAL_N="0"
+  fi
   # create a list this time
   echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/stats/connections
 
@@ -535,6 +539,12 @@ grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
   # keep log at 720 lines (12h)
   echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/difficulty)" >"${LOG_DIR:?}"/node_data/stats/difficulty
+fi
+
+# reset connections after 1440 lines (1440min=1day)
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/connections 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
+  # keep log at 720 lines (12h)
+  echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/connections 2>&1)" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/connections 2>&1
 fi
 
 ### auto pos grinding ##########################################################
