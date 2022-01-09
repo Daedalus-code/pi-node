@@ -204,8 +204,8 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
     fi
   fi
 
-  # output random onion address (dev/urandom)
-  PUBLIC_IP="${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)...onion${N0:?}"
+  PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
+  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
 else # tor icon (top right)
   TOR_ICON="${GR:?}P$N0"
