@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220901
-# 1.0.7.2
+# 1.0.8.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.7.2"
+VERSION="v1.0.8.2"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -206,6 +206,11 @@ else # tor icon (top right)
   TOR_ICON="${GR:?}P$N0"
   # tor public ip while waiting on data
   PUBLIC_IP="${P1:?}127.0.0.1$N0"
+fi
+
+if [[ "$HIDE_WAN" -eq "1" ]]; then
+  # hide wan address
+  PUBLIC_IP="${GR:?}127.0.0.1$N0"
 fi
 
 ### wallet information #########################################################
@@ -501,6 +506,11 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
   fi
 else
   wallet_dashbord
+fi
+
+if [[ "$HIDE_BALANCE" -eq "1" ]]; then
+  # hide balance
+  WALLET_BALANCE="${GR?}****${N0?}"
 fi
 
 # get blockchain activity with mempool
