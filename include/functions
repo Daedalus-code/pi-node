@@ -211,7 +211,7 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
 else # tor icon (top right)
   TOR_ICON="${GR:?}P$N0"
   # tor public ip while waiting on data
-  PUBLIC_IP="${P1:?}127.0.0.1$N0"
+  PUBLIC_IP="${GR:?}127.0.0.1$N0"
 fi
 
 if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
