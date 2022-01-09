@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220901
-# 1.0.7.4
+# 1.0.7.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.7.4"
+VERSION="v1.0.7.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -195,14 +195,15 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
     fi
   fi
 
-  # get onion address
-  PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
   if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-    # random onion (cryptography)
-    PUBLIC_IP=$(tr -dc 'a-z0-9' </dev/urandom 2>&1 | head -c 12 2>&1)
+    # random onion (/dev/urandom)
+    PUBLIC_IP=$(cat "${WALLET_DIR:?}"/getwan 2>/dev/null)
+    PUBLIC_IP="${P1:?}${PUBLIC_IP:?}${N0:?}"
+  else
+    # get onion address
+    PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
+    PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
   fi # output onion address (short version)
-
-  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
 else # tor icon (top right)
   TOR_ICON="${GR:?}P$N0"
