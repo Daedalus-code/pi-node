@@ -190,7 +190,7 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
       # output purple wan address (pure wan)
       PUBLIC_IP="${P1:?}${PUBLIC_IP:?}${N0:?}"
       # use wan address instead
-      cp "${WALLET_DIR:?}"/getwan "${WALLET_DIR:?}"/onion 2>&1
+      grep "address" "${WALLET_DIR:?}"/getwan 2>&1 | awk '{ print $4 }' >"${WALLET_DIR:?}"/onion 2>&1
       printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     else
       # get onion address
