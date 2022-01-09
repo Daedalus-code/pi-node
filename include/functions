@@ -191,7 +191,7 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
       PUBLIC_IP="${P1:?}${RANDOM_ONION:0:8}...onion${N0:?}"
       echo "$RANDOM_ONION" >"${WALLET_DIR:?}"/onion 2>&1
 
-      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! Use random (${P1:?}${PUBLIC_IP:0:8}...onion${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! Use random (${P1:?}${PUBLIC_IP:?}${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     else
       # get onion address
       PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
