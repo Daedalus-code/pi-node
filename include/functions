@@ -198,14 +198,14 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
 
     # get onion address from debug.log
     if ! egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
-      tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev >"${WALLET_DIR:?}"/onion
+      tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev >"${WALLET_DIR:?}"/onion 2>&1
 
-      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! Using random (${PUBLIC_IP:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! Using random ($(cat "${WALLET_DIR:?}"/onion 2>/dev/null))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 
   # output random onion address (dev/urandom)
-  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+  PUBLIC_IP="${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)...onion${N0:?}"
 
 else # tor icon (top right)
   TOR_ICON="${GR:?}P$N0"
