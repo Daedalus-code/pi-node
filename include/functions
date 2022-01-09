@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220901
-# 1.0.8.2
+# 1.0.8.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.8.2"
+VERSION="v1.0.8.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -184,23 +184,28 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
   TOR_ICON="${P1:?}P$N0"
   # running proxy (tor), do this once
   if [ ! -f "${WALLET_DIR:?}"/onion ] &>/dev/null; then
-    # get onion address from debug.log
-    if ! egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log; then
-      RANDOM_ONION=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)
-      # output random onion address (dev/urandom)
-      PUBLIC_IP="${P1:?}${RANDOM_ONION:0:8}...onion${N0:?}"
 
-      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! Using random (${PUBLIC_IP:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    else
-      # get onion address
-      PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
-      # output onion address (short version)
-      PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
-
+    if egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
       egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${WALLET_DIR:?}"/onion 2>&1
+
       printf '%b' "${LOG_DATE:?} Status() GetOnionData() Found Onion Address! (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
+
+    # get onion address
+    PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
+    # output onion address (short version)
+    PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+
+    # get onion address from debug.log
+    if ! egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
+      tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev >"${WALLET_DIR:?}"/onion
+
+      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! Using random (${PUBLIC_IP:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
+
+  # output random onion address (dev/urandom)
+  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
 else # tor icon (top right)
   TOR_ICON="${GR:?}P$N0"
@@ -208,7 +213,7 @@ else # tor icon (top right)
   PUBLIC_IP="${P1:?}127.0.0.1$N0"
 fi
 
-if [[ "$HIDE_WAN" -eq "1" ]]; then
+if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
   # hide wan address
   PUBLIC_IP="${GR:?}127.0.0.1$N0"
 fi
@@ -508,7 +513,7 @@ else
   wallet_dashbord
 fi
 
-if [[ "$HIDE_BALANCE" -eq "1" ]]; then
+if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
   # hide balance
   WALLET_BALANCE="${GR?}****${N0?}"
 fi
