@@ -529,7 +529,7 @@ fi
 # reset mempool after 1440 lines (1440min=1day)
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
   # keep log at 720 lines (12h)
-  echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/mempool)" >"${LOG_DIR:?}"/node_data/stats/mempool
+  echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
 fi
 
 # get difficulty and save values to difficulty
@@ -538,13 +538,13 @@ grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2
 # reset difficulty after 1440 lines (1440min=1day)
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
   # keep log at 720 lines (12h)
-  echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/difficulty)" >"${LOG_DIR:?}"/node_data/stats/difficulty
+  echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1)" >"${LOG_DIR:?}"/node_data/stats/difficulty 2>&1
 fi
 
 # reset connections after 1440 lines (1440min=1day)
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/connections 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
   # keep log at 720 lines (12h)
-  echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/connections 2>&1)" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/connections 2>&1
+  echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/connections 2>&1)" >"${LOG_DIR:?}"/node_data/stats/connections 2>&1
 fi
 
 ### auto pos grinding ##########################################################
