@@ -186,12 +186,12 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
   if [ ! -f "${WALLET_DIR:?}"/onion ] &>/dev/null; then
     # get onion address from debug.log
     if ! egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log; then
-      PUBLIC_IP=$(grep "address" "${WALLET_DIR:?}"/getwan | awk '{ print $4 }')
-      # output purple wan address (pure wan)
+      PUBLIC_IP=$(tr -dc 'a-z0-9' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)
+      # output random onion address (dev/urandom)
       PUBLIC_IP="${P1:?}${PUBLIC_IP:?}${N0:?}"
-      # use wan address instead
-      grep "address" "${WALLET_DIR:?}"/getwan 2>&1 | awk '{ print $4 }' >"${WALLET_DIR:?}"/onion 2>&1
-      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      echo "$PUBLIC_IP" >"${WALLET_DIR:?}"/onion 2>&1
+
+      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! Use random (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     else
       # get onion address
       PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
