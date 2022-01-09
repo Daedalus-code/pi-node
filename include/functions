@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220901
-# 1.0.8.8
+# 1.1.2.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.8.8"
+VERSION="v1.1.2.3"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -956,11 +956,21 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
   # unconfirmed_balance
   elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
     WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
-    TIMELINE="Unconfirmed $WALLET_UNCONFIRMED ${GR:?}$WALLET_UNCONFIRMED_VALUE USD${N0:?}"
+    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+      # hide balance
+      TIMELINE="Unconfirmed ${GR?}****${N0?} ${GR?}****${N0?} USD${N0:?}"
+    else
+      TIMELINE="Unconfirmed $WALLET_UNCONFIRMED ${GR:?}$WALLET_UNCONFIRMED_VALUE USD${N0:?}"
+    fi
   # immature_balance
   elif [ "$RANDOM_TIMELINE" -eq "5" ] &>/dev/null; then
     WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
-    TIMELINE="Immature $WALLET_IMMATURE ${GR:?}$WALLET_IMMATURE_VALUE USD${N0:?}"
+    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+      # hide balance
+      TIMELINE="Immature ${GR?}****${N0?} ${GR?}****${N0?} USD${N0:?}"
+    else
+      TIMELINE="Immature $WALLET_IMMATURE ${GR:?}$WALLET_IMMATURE_VALUE USD${N0:?}"
+    fi
   elif [ "$RANDOM_TIMELINE" -eq "6" ] &>/dev/null; then
     # lowest confirmation
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
@@ -969,7 +979,12 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    TIMELINE="New Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
+    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+      # hide balance
+      TIMELINE="New Input ${GR?}****${N0?} (${GR?}****${N0?}) ${GR?}****${N0?}${N0:?}"
+    else
+      TIMELINE="New Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
+    fi
   elif [ "$RANDOM_TIMELINE" -eq "7" ] &>/dev/null; then
     # highest confirmation
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
@@ -978,7 +993,12 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
+    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+      # hide balance
+      TIMELINE="Old Input ${GR?}****${N0?} (${GR?}****${N0?}) ${GR?}****${N0?}${N0:?}"
+    else
+      TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
+    fi
     # average confirmation
   elif [ "$RANDOM_TIMELINE" -eq "8" ] &>/dev/null; then
     UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)
@@ -995,15 +1015,30 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     TIMELINE="Average $TIMELINE_AVG (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
     # wallet value
   elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
-    TIMELINE="Value ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
+    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+      # hide balance
+      TIMELINE="Value ${GR?}****${N0?} USD ${GR?}****${N0?}"
+    else
+      TIMELINE="Value ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
+    fi
     # highest input amount
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
-    TIMELINE="Highest Input $TIMELINE"
+    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+      # hide balance
+      TIMELINE="Highest Input ${GR?}****${N0?}"
+    else
+      TIMELINE="Highest Input $TIMELINE"
+    fi
     # lowest input amount
   elif [ "$RANDOM_TIMELINE" -eq "11" ] &>/dev/null; then
     TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
-    TIMELINE="Lowest Input $TIMELINE"
+    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+      # hide balance
+      TIMELINE="Lowest Input ${GR?}****${N0?}"
+    else
+      TIMELINE="Lowest Input $TIMELINE"
+    fi
     # daemon uptime
   elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
     TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
