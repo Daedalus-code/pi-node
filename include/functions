@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220901
-# 1.1.2.3
+# 1.1.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.2.3"
+VERSION="v1.1.2.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -515,8 +515,9 @@ else
 fi
 
 if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-  # hide balance
+  # hide balance and inputs
   WALLET_BALANCE="${GR?}****${N0?}"
+  WALLET_INPUTS="${GR?}****${N0?}"
 fi
 
 # get blockchain activity with mempool
