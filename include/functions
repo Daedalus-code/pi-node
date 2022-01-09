@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220801
-# 1.0.6.5
+# V20220901
+# 1.0.7.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.6.5"
+VERSION="v1.0.7.4"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -181,24 +181,33 @@ fi
 
 # get tor status
 if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/client/getinfo &>/dev/null; then
+
   TOR_ICON="${P1:?}P$N0"
   # running proxy (tor), do this once
   if [ ! -f "${WALLET_DIR:?}"/onion ] &>/dev/null; then
     # get onion address from debug.log
-    egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${WALLET_DIR:?}"/onion 2>&1
-    printf '%b' "${LOG_DATE:?} Status() GetOnion.Data: Found Onion Address (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    if ! egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log; then
+      #statements
+      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    else
+      egrep -o "[a0-z9]+.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${WALLET_DIR:?}"/onion 2>&1
+      printf '%b' "${LOG_DATE:?} Status() GetOnionData() Found Onion Address! (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0?:})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
+
   # get onion address
   PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
   if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
     # random onion (cryptography)
-    PUBLIC_IP=$(openssl rand -base64 12 2>&1 | tr -d '+|=|/|-' 2>&1)
+    PUBLIC_IP=$(tr -dc 'a-z0-9' </dev/urandom 2>&1 | head -c 12 2>&1)
   fi # output onion address (short version)
+
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+
 else # tor icon (top right)
   TOR_ICON="${GR:?}P$N0"
   # tor public ip while waiting on data
-  PUBLIC_IP="${GR:?}127.0.0.1$N0"
+  PUBLIC_IP="${P1:?}127.0.0.1$N0"
 fi
 
 ### wallet information #########################################################
