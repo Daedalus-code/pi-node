@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220801
-# 0.0.7.0
+# V20221001
+# 0.0.7.4
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -64,6 +64,10 @@ cat "$LOG_DIR"/node_data/stats/ticker.tmp 2>/dev/null | grep -A1 "TrumpCoin Pric
 
 # api value
 API_VALUE=$(cat "$LOG_DIR"/node_data/stats/ticker 2>/dev/null)
+if [[ -z "$API_VALUE" ]]; then
+  # non responsive
+  API_VALUE="0"
+fi
 
 printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Found ${G1:?}${API_VALUE:?}${N0:?} Coinmarketcap price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
