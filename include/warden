@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220901
-# 0.0.8.3
+# V20221401
+# 0.0.8.7
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -33,7 +33,11 @@ if ! screen -list 2>&1 |
 else
   NOW_TIME=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
   SCR_TIME=$(screen -list 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
-  SCR_CALC=$(echo "$NOW_TIME-$SCR_TIME" 2>&1 | bc -l 2>&1)
+  SCR_CALC=$(echo "$NOW_TIME-$SCR_TIME" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1)
+  if [[ -z "$SCR_CALC" ]]; then
+    # non responsive
+    SCR_CALC="0"
+  fi
   ADD_LINE=$(cat "${LOG_DIR:?}"/node_data/add_peers.value 2>/dev/null)
   # kill time jump
   if [[ "$SCR_CALC" -gt "42" ]] &>/dev/null; then
