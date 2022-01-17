@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221701
+# V20221801
 # 1.1.6.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -570,7 +570,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/
       # get autocombine threshold (apc)
       CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
       # get difficulty average
-      DIFF_AVG=$(cat "$LOG_DIR"/node_data/stats/difficulty_avg 2>/dev/null)
+      DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>/dev/null)
 
       printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
