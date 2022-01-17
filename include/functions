@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221401
-# 1.1.5.4
+# V20221701
+# 1.1.6.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.5.4"
+VERSION="v1.1.6.1"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -688,9 +688,9 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' /home/"$(whoami)"/addnodes >/tmp/addnodes.dns
 
   # add extra(s), disregard invalid pattern address (cidr - classless inter-domain routing)
-  grepcidr -f /tmp/addnodes.ipv4 /tmp/addnodes.ipv4 >>"${LOG_DIR:?}"/node_data/peers.tmp 2>"${LOG_DIR:?}"/node_data/peers.cidr
+  grepcidr -f /tmp/addnodes.ipv4 /tmp/addnodes.ipv4 >"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
   # add extra(s) domain names
-  cat /tmp/addnodes.dns >>"${LOG_DIR:?}"/node_data/peers.tmp 2>&1
+  cat /tmp/addnodes.dns >>"${LOG_DIR:?}"/node_data/peers.x 2>&1
 
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! IPv4 +$(wc -l /tmp/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1) DNS +$(wc -l /tmp/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
@@ -800,6 +800,13 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     TOT_INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/stats/total.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
 
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?}/${TOT_INV_CIDR:?} Invalid pattern (CIDR) ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+    if [ -f "${LOG_DIR:?}"/node_data/peers.x ] &>/dev/null; then
+      # add extras from personal addnodes
+      cat "${LOG_DIR:?}"/node_data/peers.x >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+      # remove file, now old
+      rm "${LOG_DIR:?}"/node_data/peers.x &>/dev/null
+    fi
 
     # clean up cidr files
     truncate -s 0 "${LOG_DIR:?}"/node_data/peers.cidr &>/dev/null
