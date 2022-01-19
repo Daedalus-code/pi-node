@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221401
-# 0.0.8.7
+# V20221901
+# 0.0.8.8
 
 # pitrump configurations
 source /home/pi/pitrump.conf
@@ -58,10 +58,10 @@ fi
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   # error: couldn't connect to server
-  if grep -o "error: couldn't connect to server" "$LOG_DIR"/node_data/client/tmp/getinfo &>/dev/null; then
+  if grep -o "error: couldn't connect to server" "${LOG_DIR:?}"/node_data/client/tmp/getinfo &>/dev/null; then
     # error with server (daemon), stopping
     printf '%b' "${R1:?}${LOG_DATE:?} Status() Wallet.Warden: PID() $(pidof trumpcoind 2>&1) Couldn't connect to server! Stopping daemon now!${N0:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    "$WALLET_DIR"/trumpcoin-cli -datadir=./ stop
+    "${WALLET_DIR:?}"/trumpcoin-cli -datadir=./ stop
     printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: ${GR:?}::${N0:?} [${R1:?}XX${N0:?}] ${GR:?}::${N0:?} Rebooting system now!${N0:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     sudo reboot 2>&1
   fi
@@ -77,6 +77,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     # make sure debug.log exist
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # remove old files
+    rm "${WALLET_DIR:?}"/onion &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     "${WALLET_DIR:?}"/trumpcoind -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
