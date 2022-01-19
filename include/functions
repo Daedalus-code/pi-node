@@ -254,7 +254,7 @@ fi
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
-  if [[ -z "$WALLET_PEERS_TOTAL_N" ]]; then
+  if [[ -z "$WALLET_PEERS_TOTAL_N" ]] &>/dev/null; then
     # non responsive
     WALLET_PEERS_TOTAL_N="0"
   fi
@@ -283,7 +283,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/n
 fi
 
 # greater than n seconds, continue
-if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ]; then
+if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
 
   # loading is done
   RC_LOADING="${N0:?}"
