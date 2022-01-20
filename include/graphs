@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221701
+# V20222001
 # 0.2.6.3
 
 source /home/pi/pitrump.conf
@@ -258,6 +258,6 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   GPRINT:total_tx:MAX:%.0lf\ Max \
   GPRINT:total_tx:MIN:%.0lf\ Min \
   AREA:total_tx#3C79A9:"AVG Confirmations" \
-  LINE1:set_auto_con#CF6464:"Auto PoS Limit"
+  LINE1:set_auto_con#FFFFFF:"Auto PoS Limit"
 
 # END
