@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222001
-# 0.2.9.7
+# 0.3.0.3
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -222,16 +222,16 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # auto pos config
   if [[ "$AUTO_POS" -eq "2" ]] &>/dev/null; then
 
-    # get autocombine threshold
-    CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
-    # get total confirmations from inputs that are below the con_diff var (with not_post_input var)
-    TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
-
     if [[ "$(echo "$(cat "$LOG_DIR"/node_data/stats/total_balance 2>/dev/null)/$(cat "$LOG_DIR"/node_data/stats/difficulty_avg 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
       POS_LIMIT="${POS_LIMIT:?}"
     else
       POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
     fi
+
+    # get autocombine threshold
+    CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+    # get total confirmations from inputs that are below the con_diff var (with not_post_input var)
+    TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
     # get amount of inputs with lower value than var con_diff
     grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | sort -n 2>&1 | awk '$1 < '"${CON_DIFF:?}"' { print }' 2>&1 | wc -l >"${LOG_DIR:?}"/node_data/stats/not_pos 2>&1
@@ -243,6 +243,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}"
   else
     if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
+
+      if [[ "$(echo "$(cat "$LOG_DIR"/node_data/stats/total_balance 2>/dev/null)/$(cat "$LOG_DIR"/node_data/stats/difficulty_avg 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
+        POS_LIMIT="${POS_LIMIT:?}"
+      else
+        POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
+      fi
 
       # get total confirmations from inputs that are below the con_diff var (withouth not_post_input var)
       TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
