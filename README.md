@@ -11,6 +11,12 @@ Trump Node - RaspberryPi with LCD monitoring
 * HyperPixel 4.0" IPS Display for Pi - [amazon](https://www.amazon.co.uk/dp/B07HJ59NP3/)
 * SD card (16GB, Class 10) - [amazon](https://www.amazon.co.uk/SanDisk-Ultra-Memory-Class-Black/dp/B0143RTB1E)
 
+### Setup wallet
+Download latest TrumpCoin wallet  
+https://github.com/trumpcoinsupport/TrumpCoin/releases  
+``cd && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/5.0.0.0/TrumpCoin.arm-linux-gnueabihf.zip``  
+``unzip TrumpCoin.arm-linux-gnueabihf.zip``  
+
 ### Setup script
 ``cd && git clone https://github.com/Daedalus-code/trump-node.git``  
 ``cd trump-node && bash include/install``  
