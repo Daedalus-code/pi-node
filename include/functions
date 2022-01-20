@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221901
-# 1.1.7.0
+# V20222001
+# 1.1.6.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.7.0"
+VERSION="v1.1.6.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -931,7 +931,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
     # reset old files
     truncate -s 0 "${WALLET_DIR:?}"/getwan &>/dev/null
-    truncate -s 0 "${WALLET_DIR:?}"/onion &>/dev/null
     truncate -s 0 "${WALLET_DIR:?}"/staking &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/peers.ipv4.r &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/peers.ipv6.r &>/dev/null
@@ -964,7 +963,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       # add failed peers (failed.tmp) back in to debug.log
       while IFS= read -r ADDS; do
         echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1
+      done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -R 2>&1
       printf '%b' "${LOG_DATE:?} Status() Clean.Restored old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     else
       # keep last n of failed connections
