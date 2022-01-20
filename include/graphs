@@ -255,7 +255,7 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   DEF:set_auto_con=/home/"$(whoami)"/stats/set_auto_con.rrd:set_auto_con:MAX \
   GPRINT:total_tx:LAST:%.0lf\ Now \
   GPRINT:total_tx_q:LAST:%.0lf\ APL\ Real \
-  GPRINT:set_auto_con:LAST:%.0lf\ APLQ \
+  GPRINT:set_auto_con:LAST:%.0lf\ APL \
   GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
   GPRINT:total_tx:MAX:%.0lf\ Max \
   GPRINT:total_tx:MIN:%.0lf\ Min \
