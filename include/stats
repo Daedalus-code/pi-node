@@ -35,7 +35,7 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
     sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' 2>&1)
   echo "[!!] Try your $LOCAL IP Address"
   echo
-  read -r -p "Press Enter to continue" </dev/tty
+  read -r -p "[Ok] Press Enter to continue" </dev/tty
   echo
 fi
 

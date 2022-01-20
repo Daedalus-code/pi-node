@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220801
-# 0.0.8.1
+# V20222001
+# 0.1.0.8
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -12,14 +12,15 @@ if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
   sudo apt-get install dialog -y
 fi
 
-HEIGHT=8
+HEIGHT=10
 WIDTH=26
-CHOICE_HEIGHT=2
+CHOICE_HEIGHT=3
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
 
-OPTIONS=(1 "Turn off node")
+OPTIONS=(1 "Turn off node"
+  2 "Import key 🔐 ")
 
 CHOICE=$(dialog --clear \
   --backtitle "$BACKTITLE" \
@@ -73,6 +74,32 @@ case $CHOICE in
     fi
   fi
   clear
+
+  ;;
+
+"2")
+
+  # Import key
+  echo "Adds a private key (as returned by dumpprivkey) to your wallet. Requires a new wallet backup.
+
+Note: This call can take minutes to complete if rescan is true, during that time, other rpc calls
+may report that the imported key exists but related transactions are still missing, leading to temporarily incorrect/bogus balances and unspent outputs until rescan completes.
+"
+  printf '%b' "Enter private key ${G1:?}>${N0:?} "
+  read -r IMPORT_KEY
+  if [[ -z "$IMPORT_KEY" ]]; then
+    # non responsive
+    echo "Nothing was typed!"
+    sleep 1
+    clear
+    exit
+  fi
+  echo "Please wait..! This call can take minutes to complete."
+  "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf importprivkey "${IMPORT_KEY:?}"
+  clear
+  echo
+  read -r -p "[Ok] Press Enter to continue" </dev/tty
+  echo
 
   ;;
 
