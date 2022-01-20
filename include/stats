@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222001
-# 0.3.0.3
+# 0.3.6.5
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -218,6 +218,68 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
+
+  # greater than n seconds, continue
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
+
+    if [[ "${AUTO_POS:?}" -gt "0" ]] &>/dev/null; then
+      # continue if lock is missing
+      if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
+
+        # get total average confirmations
+        CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1)
+        # get autocombine threshold (apc)
+        CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+        # get difficulty average
+        DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>/dev/null)
+
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+        # calculate an indicater for var pos_limit
+        echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)/${DIFF_AVG:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/ind_pos 2>&1
+
+        if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
+          # got inputs (high enough to make several)
+          # get new pos limit (apl)
+          # ruled by configuration (default 1440)
+          POS_LIMIT="${POS_LIMIT:?}"
+        else
+          # got input (too low to make several)
+          # get new pos limit (apl)
+          # ruled by input size + average difficulty (disregard configuration)
+          echo "$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos 2>/dev/null)/${DIFF_AVG:?}" | bc -l >"${LOG_DIR:?}"/node_data/stats/ind_pos.tmp
+          # do
+          echo "1/$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos.tmp 2>/dev/null)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/stats/lim_pos.tmp
+          # some
+          echo "$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos.tmp 2>/dev/null)*${POS_LIMIT:?}" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/stats/lim_pos
+          # mental gymnastics (calculations)
+          # get new pos limit that works better for the small solo input
+          # will be higher than 1440 (1day) if average difficulty is bigger than the input itself
+          POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
+          # remove old files
+          rm "${LOG_DIR:?}"/node_data/stats/*.tmp &>/dev/null
+        fi
+
+        # total average confirmations greater than limit set, continue
+        if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
+
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${R1:?}High!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script New Input count with new config -> ${G1:?}$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          sleep 1
+          # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
+          "$WALLET_DIR"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf setautocombinethreshold true "${DIFF_AVG:?}" 2>&1
+          "$WALLET_DIR"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf setstakesplitthreshold "$(echo "${DIFF_AVG:?}-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
+          sleep 1
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold -> ${G1:?}${DIFF_AVG:?} ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold -> ${G1:?}$(echo "$DIFF_AVG-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        else
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${G1:?}OK!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        fi
+        # create lock file
+        echo "${CON_DIFF:?}" >"${WALLET_DIR:?}"/diff.lock
+      fi
+    fi
+  fi
 
   # auto pos config
   if [[ "$AUTO_POS" -eq "2" ]] &>/dev/null; then
