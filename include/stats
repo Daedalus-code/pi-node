@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222001
-# 0.2.8.0
+# 0.2.9.6
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -189,6 +189,14 @@ if [ ! -f "/home/$(whoami)/stats/total_tx.rrd" ] &>/dev/null; then
     DS:total_tx:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
+# total confirmations q
+if [ ! -f "/home/$(whoami)/stats/total_tx_q.rrd" ] &>/dev/null; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating total_tx_q.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  rrdtool create /home/"$(whoami)"/stats/total_tx_q.rrd \
+    --step=60 \
+    DS:total_tx_q:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
+fi
 
 ### update rrdtool databases ###################################################
 
@@ -212,7 +220,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
 
   # auto pos config
-  if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
+  if [[ "$AUTO_POS" -eq "2" ]] &>/dev/null; then
+
+    # get autocombine threshold
+    CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+    # get total confirmations from inputs that are below the con_diff var (withouth not_post_input var)
+    TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
     if [[ "$(echo "$(cat "$LOG_DIR"/node_data/stats/total_balance 2>/dev/null)/$(cat "$LOG_DIR"/node_data/stats/difficulty_avg 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
       POS_LIMIT="${POS_LIMIT:?}"
@@ -220,21 +233,24 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
     fi
 
-    # get autocombine threshold
-    CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
-
-    # get total confirmations from inputs that are below the con_diff var
-    TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
-
     # get amount of inputs with lower value than var con_diff
     grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | sort -n 2>&1 | awk '$1 < '"${CON_DIFF:?}"' { print }' 2>&1 | wc -l >"${LOG_DIR:?}"/node_data/stats/not_pos 2>&1
     NOT_POS_INPUT=$(cat "${LOG_DIR:?}"/node_data/stats/not_pos 2>/dev/null)
 
     # get amount of inputs, disregard with var not_pos_input value
     rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)+${NOT_POS_INPUT:?}" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)"
+    rrdtool update /home/"$(whoami)"/stats/total_tx_q.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)"
   else
-    # original normal values
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)"
+    if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
+
+      # get total confirmations from inputs that are below the con_diff var (withouth not_post_input var)
+      TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+
+      rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)"
+    else
+      # original normal values
+      rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)"
+    fi
   fi
   rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}"

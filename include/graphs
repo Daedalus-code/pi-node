@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222001
-# 0.2.6.3
+# 0.2.6.5
 
 source /home/pi/pitrump.conf
 
@@ -251,6 +251,7 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:total_tx=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:MAX \
+  DEF:total_tx_q=/home/"$(whoami)"/stats/total_tx_q.rrd:total_tx_q:MAX \
   DEF:set_auto_con=/home/"$(whoami)"/stats/set_auto_con.rrd:set_auto_con:MAX \
   GPRINT:total_tx:LAST:%.0lf\ Now \
   GPRINT:set_auto_con:LAST:%.0lf\ APL \
@@ -258,6 +259,7 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   GPRINT:total_tx:MAX:%.0lf\ Max \
   GPRINT:total_tx:MIN:%.0lf\ Min \
   AREA:total_tx#3C79A9:"AVG Confirmations" \
-  LINE1:set_auto_con#FFFFFF:"Auto PoS Limit"
+  LINE1:set_auto_con#FFFFFF:"Auto PoS Limit" \
+  LINE1:total_tx_q#4D97D2:"Auto PoS Limit Q"
 
 # END
