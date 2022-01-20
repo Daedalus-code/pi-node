@@ -261,6 +261,6 @@ rrdtool graph /var/www/html/total_tx_graph.png \
   GPRINT:total_tx:MIN:%.0lf\ Min \
   AREA:total_tx#3C79A9:"AVG Confirmations" \
   LINE1:set_auto_con#FFFFFF:"Auto PoS Limit Q" \
-  LINE1:total_tx_q#72B4E9:"Auto PoS Limit 'Real'"
+  LINE1:total_tx_q#72B4E9:"Auto PoS Limit Real"
 
 # END
