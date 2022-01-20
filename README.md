@@ -3,7 +3,7 @@ Trump Node - RaspberryPi with LCD monitoring
 
 *Build your own TrumpCoin Node/StakeBox on a Raspberry Pi with a nice Display.*
 
-![alt text](https://i.ibb.co/bbgD6PG/node.jpg)  
+![alt text](https://i.imgur.com/5Wg4jR7.jpg)  
 
 ##### All parts together cost around 90-100 USD. 
 
