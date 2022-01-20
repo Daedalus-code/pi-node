@@ -1,6 +1,10 @@
 # Trump-node
 Trump Node - RaspberryPi with LCD monitoring
 
+*Build your own TrumpCoin Node/StakeBox on a Raspberry Pi with a nice Display.*
+
+![alt text](https://i.ibb.co/bbgD6PG/node.jpg)  
+
 ##### All parts together cost around 90-100 USD. 
 
 * Raspberry Pi 3 Model B+ - [raspberrypi.org](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/)
@@ -10,6 +14,8 @@ Trump Node - RaspberryPi with LCD monitoring
 ### Setup script
 ``cd && git clone https://github.com/Daedalus-code/trump-node.git``  
 ``cd trump-node && bash include/install``  
+``cp pitrump.conf ../``  
+edit pitrump.conf  
 
 ### Setup rc.local
 
