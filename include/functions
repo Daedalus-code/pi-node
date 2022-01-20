@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222001
-# 1.1.6.4
+# 1.1.5.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.6.4"
+VERSION="v1.1.5.3"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -548,17 +548,6 @@ grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
   # keep log at 720 lines (12h)
   echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1)" >"${LOG_DIR:?}"/node_data/stats/difficulty 2>&1
-fi
-
-### auto pos grinding ##########################################################
-
-if [[ "${AUTO_POS:?}" -eq "1" ]] &>/dev/null; then
-  # get average difficulty value with auto pos config
-  # new value ruled by include/stats -> line 213
-  rrdtool info /home/"$(whoami)"/stats/difficulty.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>&1
-else
-  # get average difficulty value normally
-  echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>&1
 fi
 
 ### backup values ##############################################################
