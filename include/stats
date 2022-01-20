@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222001
-# 0.2.7.9
+# 0.2.8.0
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -210,6 +210,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
+
   # auto pos config
   if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
 
