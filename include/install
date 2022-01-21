@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222101
-# 0.1.1.4
+# 0.1.1.3
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -54,7 +54,6 @@ fi
 if ! [ -x "$(command -v grepcidr)" ] &>/dev/null; then
   echo "Installing grepcidr"
   sudo apt-get install grepcidr -y
-  echo "Setup tor/wallet configurations!"
   echo
   read -r -p "[Ok] Press Enter to continue" </dev/tty
   echo
