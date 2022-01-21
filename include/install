@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222101
-# 0.1.7.4
+# 0.1.8.4
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -29,9 +29,19 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
     # tor group, user configuration
     TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>&1)
     sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>&1
+    read -r -p "[YN] Setup Onion Web Server (tor)? y/n " -n 1 -r
+    echo
+    echo "[??] Yes -> Run public web server (onion)"
+    echo "[??] No  -> Run local web server"
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      HIDDEN_SERVICE="HiddenServicePort 80 127.0.0.1:80"
+    else
+      HIDDEN_SERVICE="#HiddenServicePort 80 127.0.0.1:80"
+    fi
     # check torrc configuration
     if ! grep "15110 127.0.0.1:15110" /etc/tor/torrc &>/dev/null; then
-      cat >/tmp/torrc <<'EOF'
+      echo "
 RunAsDaemon 1
 
 ControlPort 9051
@@ -40,7 +50,7 @@ CookieAuthFileGroupReadable 1
 
 HiddenServiceDir /var/lib/tor/trumpcoin-service/
 HiddenServicePort 15110 127.0.0.1:15110
-EOF
+${HIDDEN_SERVICE:?}" >/tmp/torrc 2>&1
       cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
       # remove old files
       rm /tmp/torrc &>/dev/null
