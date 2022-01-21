@@ -47,15 +47,15 @@ EOF
       # restart tor after configuration
       sudo service tor restart 2>&1
     fi
+  else
+    echo "Installing tor (proxy)"
+    sudo apt-get install tor -y
+    # tor group, user configuration
+    TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>&1)
+    sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>&1
+    # restart tor after configuration
+    sudo service tor restart 2>&1
   fi
-else
-  echo "Installing tor (proxy)"
-  sudo apt-get install tor -y
-  # tor group, user configuration
-  TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>&1)
-  sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>&1
-  # restart tor after configuration
-  sudo service tor restart 2>&1
 fi
 
 # make sure grepcidr is installed
