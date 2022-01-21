@@ -34,6 +34,9 @@ Put this before exit, not after!
 ``sleep 10 && sudo -u pi bash /usr/local/bin/pitrump &``  
 Save with ctrl+o  
 
+### Setup Crontab
+``*/1 * * * * bash /usr/local/bin/include/warden``  
+
 ### Setup HyperPixel4
 
 * https://github.com/pimoroni/hyperpixel4
