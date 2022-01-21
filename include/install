@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222101
-# 0.1.1.3
+# 0.1.7.4
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -20,7 +20,7 @@ fi
 
 # make sure tor is installed
 if ! [ -x "$(command -v tor)" ] &>/dev/null; then
-  read -r -p "[YN] Install Proxy (tor)? y/n " -n 1 -r
+  read -r -p "[YN] Using local proxy (tor)? y/n " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
     echo "Installing tor (proxy)"
@@ -48,6 +48,14 @@ EOF
       sudo service tor restart 2>&1
     fi
   fi
+else
+  echo "Installing tor (proxy)"
+  sudo apt-get install tor -y
+  # tor group, user configuration
+  TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>&1)
+  sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>&1
+  # restart tor after configuration
+  sudo service tor restart 2>&1
 fi
 
 # make sure grepcidr is installed
@@ -75,6 +83,54 @@ if ! [ -x "$(command -v ufw)" ] &>/dev/null; then
   echo
 fi
 
+if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
+
+  # install trumpcoin.conf, do this once
+  if [[ ! -f "${WALLET_DIR:?}"/trumpcoin.conf ]] &>/dev/null; then
+
+    # create random rpcuser & rpcpassword
+    RANDOM_RPCN=$((((RANDOM % 9) + 1)))
+    RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+
+    echo "## trumpcoin.conf configuration file.
+# Network-related settings:
+
+# Run on the test network instead of the real trumpcoin network.
+#testnet=1
+
+# RPC credentials
+rpcuser=${RANDOM_RPCL:?}${RANDOM_RPCN:?}
+rpcpassword=${RANDOM_RPCN:?}${RANDOM_RPCL:?}
+rpcallowip=${RPC_IP:?}
+rpcbind=${RPC_IP:?}
+
+# Connect via a SOCKS5 proxy (default: 127.0.0.1:9050)
+proxy=${PROXY:?}
+
+# Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: -proxy)
+onion=${PROXY:?}
+
+# Tor control port to use if onion listening enabled (default: 127.0.0.1:9051)
+torcontrol=${TOR_CONTROL:?}
+
+# Tor onion externalip
+externalip=${EXTERNALIP:?}
+
+# Listening mode, enabled by default except when 'connect' is being used
+listen=1
+discover=1
+
+# Maximum number of inbound+outbound connections. (default: 125)
+maxconnections=1024
+
+# can be commented out if you use the service script
+daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
+    mv "${WALLET_DIR:?}"/trumpcoin.conf.tmp "${WALLET_DIR:?}"/trumpcoin.conf 2>&1
+    echo "Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
+  fi
+else
+  echo "Please run Install one more time!"
+fi
 clear
 
 # look for screen session, if found, killall
@@ -89,6 +145,11 @@ if [ ! -d "${LOG_DIR:?}"/node_data ] &>/dev/null; then
 fi
 if [ ! -d /usr/local/bin/include ] &>/dev/null; then
   sudo mkdir /usr/local/bin/include &>/dev/null
+fi
+# pitrump.conf, do this once
+if [[ ! -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
+  cp /home/"$(whoami)"/trump-node/pitrump.conf ../
+  echo "Please edit pitrump.conf"
 fi
 sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
