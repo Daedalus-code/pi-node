@@ -121,7 +121,7 @@ listen=1
 discover=1
 
 # Maximum number of inbound+outbound connections. (default: 125)
-maxconnections=1024
+maxconnections=${MAX_P2P:?}
 
 # can be commented out if you use the service script
 daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
