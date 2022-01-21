@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222101
-# 0.1.9.7
+# 0.2.2.1
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -160,8 +160,20 @@ may report that the imported key exists but related transactions are still missi
 
   "4")
 
-    echo "Allow Rule"
-    echo "allow ARGS - add allow rule"
+    echo "Example rules using the simple syntax:
+ufw allow 53
+
+This rule will allow tcp and udp port 53 to any address on this host.
+To specify a protocol, append '/protocol'
+to the port. For example:
+ufw allow 25/tcp
+
+This will allow tcp port 25 to any address on this host.
+ufw will also check /etc/services for the port and pro‐
+tocol if specifying a service by name. Eg:
+
+ufw allow smtp"
+    echo "Type only value/rule"
     printf '%b' "Enter ${G1:?}> ${N0:?}"
     read -r ALLOW_RULE
     if [[ -z "$ALLOW_RULE" ]]; then
@@ -175,8 +187,20 @@ may report that the imported key exists but related transactions are still missi
 
   "5")
 
-    echo "Deny Rule"
-    echo "deny ARGS - add deny rule"
+    echo "Example rules using the simple syntax:
+ufw deny 53
+
+This rule will deny tcp and udp port 53 to any address on this host.
+To specify a protocol, append '/protocol'
+to the port. For example:
+ufw deny 25/tcp
+
+This will deny tcp port 25 to any address on this host.
+ufw will also check /etc/services for the port and pro‐
+tocol if specifying a service by name. Eg:
+
+ufw deny smtp"
+    echo "Type only value/rule"
     printf '%b' "Enter ${G1:?}> ${N0:?}"
     read -r DENY_RULE
     if [[ -z "$DENY_RULE" ]]; then
