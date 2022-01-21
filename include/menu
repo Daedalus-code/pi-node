@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222101
-# 0.1.8.6
+# 0.1.9.7
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -138,14 +138,23 @@ may report that the imported key exists but related transactions are still missi
 
   "2")
 
-    echo "Enabling the firewall"
-    sudo ufw enable
+    read -r -p "[YN] Enable firewall? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      echo "Enabling the firewall"
+      sudo ufw enable
+    fi
+
     ;;
 
   "3")
 
-    echo "Disabling the firewall"
-    sudo ufw disable
+    read -r -p "[YN] Disable firewall? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      echo "Disabling the firewall"
+      sudo ufw disable
+    fi
 
     ;;
 
@@ -153,10 +162,11 @@ may report that the imported key exists but related transactions are still missi
 
     echo "Allow Rule"
     echo "allow ARGS - add allow rule"
+    printf '%b' "Enter ${G1:?}> ${N0:?}"
     read -r ALLOW_RULE
     if [[ -z "$ALLOW_RULE" ]]; then
       # empty
-      echo "Empty!"
+      echo "Empty, try again"
       exit
     fi
     sudo ufw allow "${ALLOW_RULE:?}"
@@ -167,10 +177,11 @@ may report that the imported key exists but related transactions are still missi
 
     echo "Deny Rule"
     echo "deny ARGS - add deny rule"
+    printf '%b' "Enter ${G1:?}> ${N0:?}"
     read -r DENY_RULE
     if [[ -z "$DENY_RULE" ]]; then
       # empty
-      echo "Empty!"
+      echo "Empty, try again"
       exit
     fi
     sudo ufw deny "${DENY_RULE:?}"
