@@ -129,7 +129,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
     echo "Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
   fi
 else
-  echo "Please run Install one more time!"
+  echo "Please run install one more time after editing pitrump.conf!"
 fi
 clear
 
@@ -148,8 +148,8 @@ if [ ! -d /usr/local/bin/include ] &>/dev/null; then
 fi
 # pitrump.conf, do this once
 if [[ ! -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
-  cp /home/"$(whoami)"/trump-node/pitrump.conf ../
-  echo "Please edit pitrump.conf"
+  cd || exit && cp /home/"$(whoami)"/trump-node/pitrump.conf ../
+  echo "Please edit! -> /home/$(whoami)/pitrump.conf"
 fi
 sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
