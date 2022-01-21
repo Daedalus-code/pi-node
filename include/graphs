@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222001
+# V20222101
 # 0.3.5.5
 
 source /home/pi/pitrump.conf
@@ -283,7 +283,7 @@ function avgconfirmation_auto2() {
     DEF:total_tx_q=/home/"$(whoami)"/stats/total_tx_q.rrd:total_tx_q:MAX \
     DEF:set_auto_con=/home/"$(whoami)"/stats/set_auto_con.rrd:set_auto_con:MAX \
     GPRINT:total_tx:LAST:%.0lf\ Now \
-    GPRINT:total_tx_q:LAST:%.0lf\ Now\ Real \
+    GPRINT:total_tx_q:LAST:%.0lf\ N\ Real \
     GPRINT:set_auto_con:LAST:%.0lf\ APL \
     GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
     GPRINT:total_tx:MAX:%.0lf\ Max \
