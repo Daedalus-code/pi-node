@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222101
-# 1.1.5.6
+# 1.1.5.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.5.6"
+VERSION="v1.1.5.8"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -912,9 +912,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     echo
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     echo
-    # keep old log (debug.log)
-    printf '%b' "${LOG_DATE:?} Status() Old.DebugLog() Storing old wallet log --> ${GR:?}${WALLET_DIR:?}/debug.log${G1:?}${N0:?} <--${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    cat "${WALLET_LOG_DIR:?}"/debug.log >>"${WALLET_DIR:?}"/debug.log 2>/dev/null
+    if [[ "$KEEP_DEBUG" -eq "1" ]]; then
+      # keep old log (debug.log)
+      printf '%b' "${LOG_DATE:?} Status() Old.DebugLog() Storing old wallet log --> ${GR:?}${WALLET_DIR:?}/debug.log${G1:?}${N0:?} <--${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      cat "${WALLET_LOG_DIR:?}"/debug.log >>"${WALLET_DIR:?}"/debug.log 2>/dev/null
+    fi
 
     # remove lock file (auto pos config)
     rm "${WALLET_DIR:?}"/diff.lock &>/dev/null
