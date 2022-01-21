@@ -5,7 +5,7 @@ Trump Node - RaspberryPi with LCD monitoring
 
 ![alt text](https://i.imgur.com/5Wg4jR7.jpg)  
 
-##### All parts together cost around 90-100 USD. 
+##### All parts together cost around 90-100 USD.
 
 * Raspberry Pi 3 Model B+ - [raspberrypi.org](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/)
 * HyperPixel 4.0" IPS Display for Pi - [amazon](https://www.amazon.co.uk/dp/B07HJ59NP3/)
@@ -35,7 +35,10 @@ Put this before exit, not after!
 Save with ctrl+o  
 
 ### Setup Crontab
+``crontab -e``  
+Put this at bottom
 ``*/1 * * * * bash /usr/local/bin/include/warden``  
+Save with ctrl+o  
 
 ### Setup HyperPixel4
 
