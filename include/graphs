@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222101
-# 0.3.5.5
+# 0.3.5.8
 
 source /home/pi/pitrump.conf
 
@@ -238,7 +238,7 @@ function difficulty_auto() {
     LINE1:set_auto_pos#FFFFFF:"Auto PoS Config"
 }
 
-function avgconfirmation_auto1() {
+function avgconfirmation_auto_one() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
     -w 1394 -h 142 -a PNG \
@@ -264,7 +264,7 @@ function avgconfirmation_auto1() {
     LINE1:set_auto_con#FFFFFF:"Auto PoS Limit"
 }
 
-function avgconfirmation_auto2() {
+function avgconfirmation_auto_two() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
     -w 1394 -h 142 -a PNG \
@@ -339,15 +339,18 @@ function avgconfirmation_normal() {
     AREA:total_tx#3C79A9:"AVG Confirmations"
 }
 
+# auto proof-of-stake config
 if [[ "$AUTO_POS" -gt "0" ]] &>/dev/null; then
   difficulty_auto
+  # auto proof-of-stake config, normal
   if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
-    avgconfirmation_auto1
+    avgconfirmation_auto_one
   fi
+  # auto proof-of-stake config, extra
   if [[ "$AUTO_POS" -eq "2" ]] &>/dev/null; then
-    avgconfirmation_auto2
+    avgconfirmation_auto_two
   fi
-else
+else # no auto proof-of-stake config
   difficulty_normal
   avgconfirmation_normal
 fi
