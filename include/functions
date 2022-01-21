@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222101
-# 1.1.5.7
+# 1.1.5.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.5.7"
+VERSION="v1.1.5.6"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -771,8 +771,8 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
 #!/bin/bash
 
 # By Rainman
-# V20220501
-# 0.0.3.0
+# V20222101
+# 0.0.2.9
 
 source /home/pi/pitrump.conf
 
@@ -793,7 +793,6 @@ P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+
 FAILED=$(grep " to $(cat "${LOG_DIR:?}"/node_data/add_peers.check 2>/dev/null) failed" "$WALLET_LOG_DIR"/debug.log 2>&1 | egrep -o " to .*. failed" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}-$FAILED${N0:?} P2P ${P2P:?} ${GR:?}<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-rm "${LOG_DIR:?}"/node_data/add_peers.value &>/dev/null
 screen -X -S add_peers quit
 killall screen &>/dev/null
 screen -wipe &>/dev/null
