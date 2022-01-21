@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222101
-# 0.1.7.3
+# 0.1.7.2
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -31,8 +31,7 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
     sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>&1
     # check torrc configuration
     if ! grep "15110 127.0.0.1:15110" /etc/tor/torrc &>/dev/null; then
-      echo "
-RunAsDaemon 1
+      echo "RunAsDaemon 1
 
 ControlPort 9051
 CookieAuthentication 1

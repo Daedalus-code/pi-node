@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222101
-# 0.2.4.3
+# 0.2.5.0
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -225,13 +225,20 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   echo "[??] No  -> Run local web server"
   echo
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-    echo "HiddenServicePort 80 127.0.0.1:80" >/tmp/torrc 2>&1
+    echo "RunAsDaemon 1
+
+ControlPort 9051
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
+
+HiddenServiceDir /var/lib/tor/trumpcoin-service/
+HiddenServicePort 80 127.0.0.1:80" >/tmp/torrc 2>&1
     cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
     sudo service tor restart 2>&1
     echo "[Ok] -> /var/lib/tor/trumpcoin-service/hostname"
   else
-    cat /etc/tor/torrc 2>/dev/null | grep -v "1:80" >/tmp/torrc 2>&1
     sudo rm /etc/tor/torrc &>/dev/null
+    cat /etc/tor/torrc 2>/dev/null | grep -v "1:80" >/tmp/torrc 2>&1
     cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
     sudo service tor restart 2>&1
   fi
