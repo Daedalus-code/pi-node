@@ -2,7 +2,9 @@
 
 # By Rainman
 # V20222101
-# 0.2.2.1
+# 0.3.4.2
+
+# shellcheck disable=SC2034  # Unused variables left for readability
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -12,16 +14,17 @@ if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
   sudo apt-get install dialog -y
 fi
 
-HEIGHT=10
+HEIGHT=11
 WIDTH=60
-CHOICE_HEIGHT=3
+CHOICE_HEIGHT=4
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
 
 OPTIONS=(1 "Turn off node :: Shutdown, Reboot, Delete graphs"
   2 "Import key    :: Import keys, Staking inputs ($(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1))"
-  3 "(UFW) Menu    :: Uncomplicated firewall")
+  3 "(UFW) Menu    :: Uncomplicated firewall"
+  4 "Information   :: Trump node status")
 
 CHOICE=$(dialog --clear \
   --backtitle "$BACKTITLE" \
@@ -214,6 +217,124 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   esac
 
+  ;;
+
+"4")
+
+  # get uptime
+  UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
+  UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
+  UPTIME="(${UPTIME_DAYS:?}d) ${UPTIME:?}"
+
+  # pidof daemon
+  PID_DAEMON=$(pidof trumpcoind 2>&1)
+
+  # coin supply
+  NODE_COIN_SUPPLY=$(grep "moneysupply" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1 | rev 2>&1 | sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
+
+  # running mainnet or testnet
+  if ! "$(grep "main" "${LOG_DIR:?}"/node_data/client/getblockchaininfo 2>&1)" -eq "main" &>/dev/null; then
+    # mainnet
+    WALLET_CHAIN="mainnet"
+  else # testnet
+    WALLET_CHAIN="testnet"
+  fi
+
+  # staking status
+  if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1)" ]] &>/dev/null; then
+
+    # proof-of-work active
+    NODE_PROOF="Active"
+  else
+    # proof-of-work not active
+    NODE_PROOF="Not active"
+  fi
+
+  # get download from wlan(*) - eth(*)
+  DOWNLOAD=$(egrep "RX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
+  # get upload from wlan(*) - eth(*)
+  UPLOAD=$(egrep "TX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
+  # human-readable format
+  DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
+  UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
+
+  # get blockchain headers
+  WALLET_HEADS=$(grep "blocks" "${LOG_DIR:?}"/node_data/client/getblockchaininfo 2>&1 | grep -Eo "[0-9]+" 2>&1)
+  # get blockchain block
+  WALLET_BLOCK=$(grep "headers" "${LOG_DIR:?}"/node_data/client/getblockchaininfo 2>&1 | grep -Eo "[0-9]+" 2>&1)
+
+  # total connections
+  WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)
+  # total banned
+  WALLET_PEERS_BANNED=$("$WALLET_DIR"/trumpcoin-cli -datadir=./ listbanned 2>&1 | grep -c "address" 2>&1)
+
+  # get total Memory
+  TOTAL_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)
+  TOTAL_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)
+  # get free Memory
+  FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $4 }' 2>&1)
+  FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)
+  # calculate
+  TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1)
+  FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
+  # total and free memory (rrdtool, no color)
+  TOTAL_MEM_RR="$TOTAL_MEM"
+  FREE_MEM_RR="$FREE_MEM"
+
+  # users online
+  USER=$(users 2>&1 | wc -w 2>&1)
+
+  # system load
+  LOAD="$(cat /proc/loadavg 2>&1 | awk '{ print $1,$2,$3 }' 2>&1)"
+
+  # get cpu temp, celcius, fahrenheit, (raspberry pi)
+  CPU_CTEMP=$(</sys/class/thermal/thermal_zone0/temp)
+  CPU_CTEMP=$(echo "$CPU_CTEMP / 100 * 0.1" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  CPU_FTEMP=$(echo "(1.8 * $CPU_CTEMP) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+  # get free Space, mmc block device #0, partition #2, partition #2, dev/root
+  USED_HDD=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)
+  # get bytes from kilo
+  USED_HDD=$(echo "$USED_HDD*1024" 2>&1 | bc -l 2>&1)
+  # human-readable format
+  USED_HDD=$(numfmt --to iec --format "%8.3f" "$USED_HDD" 2>&1 | xargs 2>&1)
+  # get used hdd percentage
+  USED_HDD_P=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $5 }' 2>&1)
+
+  # total swap
+  TOTAL_SWAP=$(cat /proc/meminfo 2>&1 | grep "SwapTotal" 2>&1 | awk '{ print $2 }' 2>&1)
+  # used swap
+  USED_SWAP=$(cat /proc/meminfo 2>&1 | grep "SwapCached" 2>&1 | awk '{ print $2 }' 2>&1)
+  # calculate swap kilo bytes into mega bytes
+  USED_SWAP_CALC=$(echo "$USED_SWAP/1024" 2>&1 | bc 2>&1)
+  TOTAL_SWAP_CALC=$(echo "$TOTAL_SWAP/1024" 2>&1 | bc 2>&1)
+
+  function display_result() {
+
+    echo "
+  OS..........: $(uname -o 2>&1) $(uname -p 2>&1)
+  Kernel......: $(uname -r 2>&1)
+  Load........: ${LOAD:?}
+  FreeMemory..: ${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M
+  UsedSwap....: ${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M
+  Uptime......: ${UPTIME:?}
+  UsedHDD.....: ${USED_HDD:?} ${USED_HDD_P:?}
+  CPUTemp.....: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
+  Users.......: ${USER:?}
+
+  Daemon(s)...: ${PID_DAEMON:?}
+  Ban(s)......: ${WALLET_PEERS_BANNED:?}
+  Connections.: ${WALLET_PEERS_TOTAL:?}
+  Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
+  Network.....: ${WALLET_CHAIN:?}
+  CoinSupply..: ${NODE_COIN_SUPPLY:?}
+  Staking.....: ${NODE_PROOF:?}
+  Download....: ${DOWNLOAD:?}
+  Upload......: ${UPLOAD:?}
+  "
+
+  }
+  display_result
   ;;
 
 esac
