@@ -322,7 +322,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   CPUTemp.....: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
   Users.......: ${USER:?}
 
-  Daemon(s)...: ${PID_DAEMON:?}
+  Daemon......: ${PID_DAEMON:?}
   Ban(s)......: ${WALLET_PEERS_BANNED:?}
   Connections.: ${WALLET_PEERS_TOTAL:?}
   Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
