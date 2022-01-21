@@ -12,9 +12,9 @@ if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
   sudo apt-get install dialog -y
 fi
 
-HEIGHT=10
+HEIGHT=11
 WIDTH=60
-CHOICE_HEIGHT=3
+CHOICE_HEIGHT=4
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
@@ -22,7 +22,7 @@ MENU="Choose one of the following options:"
 OPTIONS=(1 "Turn off node :: Shutdown, Reboot, Delete graphs"
   2 "Import key 🔐 :: Import keys, Staking inputs ($(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1))"
   3 "(UFW) Menu    :: Uncomplicated firewall"
-  4 "Web Monitor   :: Setup Onion Web Monitor")
+  4 "Web Monitor   :: Setup Public Onion Web Monitor")
 
 CHOICE=$(dialog --clear \
   --backtitle "$BACKTITLE" \
@@ -219,7 +219,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
 "4")
 
-  read -r -p "[YN] Setup Onion Web Server (tor)? y/n " -n 1 -r
+  read -r -p "[YN] Setup Public Onion Web Server (tor)? y/n " -n 1 -r
   echo
   echo "[??] Yes -> Run public web server (onion)"
   echo "[??] No  -> Run local web server"
