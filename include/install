@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.1.8.9
+# 0.1.9.1
 
 # create directories, ruled by configuration
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -103,7 +103,9 @@ if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
 
     if [[ "$EXTERNALIP" ]]; then
       # non responsive
-      EXTERNALIP=""
+      EXTERNALIP="#externalip=PLEASE_EDIT"
+    else
+      EXTERNALIP="externalip=${EXTERNALIP:?}"
     fi
 
     echo "## trumpcoin.conf configuration file.
@@ -128,7 +130,7 @@ onion=${PROXY:?}
 torcontrol=${TOR_CONTROL:?}
 
 # Tor onion externalip
-externalip=${EXTERNALIP:?}
+${EXTERNALIP:?}
 
 # Listening mode, enabled by default except when 'connect' is being used
 listen=1
