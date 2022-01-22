@@ -172,8 +172,8 @@ case $CHOICE in
 
     printf '%b' "Latest...: ${G1:?}v${LATEST_VERSION:?}${N0:?}\n"
     printf '%b' "Installed: ${N0:?}${WALLET_VERSION:?}${N0:?}\n"
-
-    read -r -p "[YN] Restart node (daemon)? y/n " -n 1 -r
+    echo
+    read -r -p "[YN] Force new install? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
