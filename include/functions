@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222201
-# 1.1.5.7
+# 1.1.5.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.5.7"
+VERSION="v1.1.5.9"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -286,6 +286,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/n
   WALLET_CHAIN="${CY:?}nonet${N0:?}"
 fi
 
+WALLET_HEADS="${GR:?}0${N0:?}"
+WALLET_BLOCK="${GR:?}0${N0:?}"
 # greater than n seconds, continue
 if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
 
