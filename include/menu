@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.0.3
+# 0.5.9.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -167,7 +167,7 @@ case $CHOICE in
       # setup trumpcoin wallet
       mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
       mv /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}".zip 2>&1
-      unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
+      unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip* -d /home/"$(whoami)"/TrumpCoin
     }
 
     function down_install() {
@@ -193,31 +193,26 @@ case $CHOICE in
     # armv7l
     if uname -a 2>&1 | grep "armv7l" &>/dev/null; then
       sudo service cron stop 2>&1
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+      # wait on node (daemon) to stop
+      until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+        clear
+        printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        sleep 10
+        kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
+      done
       down_install
-      read -r -p "[YN] Force upgrade? y/n " -n 1 -r
+      cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
+      setup
+      read -r -p "[YN] Start node (daemon)? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
-        # wait on node (daemon) to stop
-        until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
-          clear
-          printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
-          sleep 10
-          kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
-        done
-        down_install
-        cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
-        setup
-        read -r -p "[YN] Start node (daemon)? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          echo "[Ok] $(start_daemon)"
-        fi
-        echo
-        read -r -p "[Ok] Press Enter to continue" </dev/tty
-        echo
-        sudo service cron start 2>&1
+        echo "[Ok] $(start_daemon)"
       fi
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+      sudo service cron start 2>&1
     else
       echo "[!!] This is not armv7l! (ARM)"
     fi
