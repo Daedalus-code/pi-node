@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # By Rainman
-# V20211312
-# 0.0.0.8
+# V20222201
+# 0.0.1.2
 
+cp /home/"$(whoami)"/pitrump.conf /tmp/pt.tmp 2>/dev/null
+sudo mv /tmp/pt.tmp /usr/local/bin/include/pitrump.conf 2>/dev/null
 # update repo
 cd /home/"$(whoami)"/trump-node || exit && git pull -q && bash include/install 2>&1
 
