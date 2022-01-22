@@ -2,17 +2,20 @@
 
 # By Rainman
 # V20222201
-# 0.2.0.9
+# 0.2.1.2
 
-if uname -a 2>/dev/null | grep "Microsoft" &>/dev/null; then
-  echo "No support for Microsoft"
+if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
   sudo rm -r /home/"$(whoami)"/trump* &>/dev/null
   sudo rm -r /home/"$(whoami)"/addnodes* &>/dev/null
   sudo rm -r /home/"$(whoami)"/pitrump* &>/dev/null
   sudo rm -r /usr/local/bin/include/ &>/dev/null
+  sudo rm -r /usr/local/bin/pitrump &>/dev/null
+  sudo rm -r /usr/local/bin/update &>/dev/null
+  sudo rm -r /usr/local/bin/menu &>/dev/null
   sudo rm -r /tmp/node_data/ &>/dev/null
   sudo rm -r /tmp/add_peers* &>/dev/null
+  echo "No support for Microsoft"
   exit
 fi
 
