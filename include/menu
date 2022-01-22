@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.5.9.5
+# 0.5.9.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -138,8 +138,8 @@ case $CHOICE in
     read -r -p "[YN] Restart node (daemon)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "[Ok] Restarting node!"
       sudo service cron stop 2>&1
+      echo "[Ok] Restarting node!"
       printf '%b' "[!!] "
       "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
       # wait on node (daemon) to stop
@@ -162,6 +162,7 @@ case $CHOICE in
 
     # armv7l
     if uname -a 2>&1 | grep "armv7l" &>/dev/null; then
+      sudo service cron stop 2>&1
       # get latest release
       LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
       if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
