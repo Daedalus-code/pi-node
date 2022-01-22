@@ -67,7 +67,7 @@ echo "$(tail -30 "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1)" >"${LOG_DIR:?}
 mv "${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1
 
 # api value
-API_VALUE=$(cat "${LOG_DIR:?}"/node_data/stats/ticker 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)
+API_VALUE=$(cat "${LOG_DIR:?}"/node_data/stats/ticker 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
 if [[ -z "$API_VALUE" ]]; then
   # non responsive
   API_VALUE="0"
