@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.5.9.6
+# 0.6.0.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -160,11 +160,17 @@ case $CHOICE in
 
   "3")
 
-    # armv7l
-    if uname -a 2>&1 | grep "armv7l" &>/dev/null; then
-      sudo service cron stop 2>&1
-      # get latest release
-      LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+    # get latest release
+    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+
+    function setup() {
+      # setup trumpcoin wallet
+      mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
+      mv /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}".zip 2>&1
+      unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
+    }
+
+    function down_install() {
       if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
         printf '%b' "${G1:?}Downloading TrumpCoin wallet (armv7l)${N0:?}\n"
         # download arm-linux-gnueabihf.zip
@@ -172,10 +178,7 @@ case $CHOICE in
       fi
       if [[ ! -f /home/"$(whoami)"/TrumpCoin/trumpcoind ]] &>/dev/null; then
         printf '%b' "${G1:?}Installing trumpcoin node (armv7l)${N0:?}\n"
-        # setup trumpcoin wallet
-        mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
-        mv /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}".zip
-        unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
+        setup
       else
         WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
         if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
@@ -185,6 +188,12 @@ case $CHOICE in
         echo "Latest...: v${LATEST_VERSION:?}"
         printf '%b' "Installed: ${G1:?}${WALLET_VERSION:?}${N0:?}\n"
       fi
+    }
+
+    # armv7l
+    if uname -a 2>&1 | grep "armv7l" &>/dev/null; then
+      sudo service cron stop 2>&1
+      down_install
       read -r -p "[YN] Force upgrade? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -196,11 +205,9 @@ case $CHOICE in
           sleep 10
           kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
         done
+        down_install
         cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
-        # setup trumpcoin wallet
-        mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
-        mv /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}".zip
-        unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
+        setup
         read -r -p "[YN] Start node (daemon)? y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
