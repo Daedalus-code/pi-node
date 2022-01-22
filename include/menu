@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.5.3.4
+# 0.5.4.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -147,7 +147,13 @@ case $CHOICE in
         # setup trumpcoin wallet
         unzip /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
       else
-        echo "Already installed."
+        WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
+        if [[ -z "$WALLET_VERSION" ]]; then
+          # non responsive
+          WALLET_VERSION="${GR:?}vLoading${N0:?}"
+        fi
+        echo "Latest...: ${LATEST_VERSION:?}"
+        printf '%b' "Installed: ${G1:?}${WALLET_VERSION:?}${N0:?}\n"
       fi
     else
       echo "This is not armv7l! (ARM)"
