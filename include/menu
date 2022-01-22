@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.5.8.7
+# 0.5.9.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -172,6 +172,8 @@ case $CHOICE in
       if [[ ! -f /home/"$(whoami)"/TrumpCoin/trumpcoind ]] &>/dev/null; then
         printf '%b' "${G1:?}Installing trumpcoin node (armv7l)${N0:?}\n"
         # setup trumpcoin wallet
+        mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
+        mv /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}".zip
         unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
       else
         WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
@@ -196,7 +198,11 @@ case $CHOICE in
         cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
         # setup trumpcoin wallet
         unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
-        echo "[Ok] $(start_daemon)"
+        read -r -p "[YN] Start node (daemon)? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          echo "[Ok] $(start_daemon)"
+        fi
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
