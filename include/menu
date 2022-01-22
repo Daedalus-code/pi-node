@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.5.8.5
+# 0.5.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -57,6 +57,7 @@ case $CHOICE in
     # remove old files
     rm "${WALLET_DIR:?}"/onion &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
+    truncate -s 0 "${LOG_DIR:?}"/node_data/client/* &>/dev/null
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # start node (daemon)
     sleep 1
