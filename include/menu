@@ -598,14 +598,14 @@ Daemon......: ${PID_DAEMON:?} (trumpcoind)
 Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
 Network.....: ${WALLET_CHAIN:?}
 Address.....: ${IP_ADDRESS_N:?}
+Download....: ${DOWNLOAD:?}
+Upload......: ${UPLOAD:?}
 
 Ban(s)......: ${WALLET_PEERS_BANNED:?}
 Connections.: ${WALLET_PEERS_TOTAL:?}
 Addnodes....: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)
-CoinSupply..: ${NODE_COIN_SUPPLY:?}
 Staking.....: ${NODE_PROOF:?}
-Download....: ${DOWNLOAD:?}
-Upload......: ${UPLOAD:?}
+CoinSupply..: ${NODE_COIN_SUPPLY:?}
           ")
     display_result "System Information"
     clear
