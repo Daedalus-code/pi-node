@@ -104,8 +104,8 @@ if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
   if [[ ! -f "${WALLET_DIR:?}"/trumpcoin.conf ]] &>/dev/null; then
 
     # create random rpcuser & rpcpassword
-    RANDOM_RPCN=$((((RANDOM % 9) + 1)))
     RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+    RANDOM_RPCN=$(echo "$RANDOM_RPCN" 2>&1 | rev 2>&1)
 
     if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
       # non responsive
