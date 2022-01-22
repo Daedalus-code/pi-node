@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222101
-# 0.3.4.2
+# 0.3.6.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -14,9 +14,9 @@ if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
   sudo apt-get install dialog -y
 fi
 
-HEIGHT=11
+HEIGHT=12
 WIDTH=60
-CHOICE_HEIGHT=4
+CHOICE_HEIGHT=5
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
@@ -24,7 +24,8 @@ MENU="Choose one of the following options:"
 OPTIONS=(1 "Turn off node :: Shutdown, Reboot, Delete graphs"
   2 "Import key    :: Import keys, Staking inputs ($(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1))"
   3 "(UFW) Menu    :: Uncomplicated firewall"
-  4 "Information   :: Trump node status")
+  4 "Information   :: Trump node status"
+  5 "System Space  :: Disk space utilized")
 
 CHOICE=$(dialog --clear \
   --backtitle "$BACKTITLE" \
@@ -309,32 +310,49 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   USED_SWAP_CALC=$(echo "$USED_SWAP/1024" 2>&1 | bc 2>&1)
   TOTAL_SWAP_CALC=$(echo "$TOTAL_SWAP/1024" 2>&1 | bc 2>&1)
 
-  function display_result() {
-
-    echo "
-  OS..........: $(uname -o 2>&1) $(uname -p 2>&1)
-  Kernel......: $(uname -r 2>&1)
-  Load........: ${LOAD:?}
-  FreeMemory..: ${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M
-  UsedSwap....: ${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M
-  Uptime......: ${UPTIME:?}
-  UsedHDD.....: ${USED_HDD:?} ${USED_HDD_P:?}
-  CPUTemp.....: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
-  Users.......: ${USER:?}
-
-  Daemon......: ${PID_DAEMON:?}
-  Ban(s)......: ${WALLET_PEERS_BANNED:?}
-  Connections.: ${WALLET_PEERS_TOTAL:?}
-  Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
-  Network.....: ${WALLET_CHAIN:?}
-  CoinSupply..: ${NODE_COIN_SUPPLY:?}
-  Staking.....: ${NODE_PROOF:?}
-  Download....: ${DOWNLOAD:?}
-  Upload......: ${UPLOAD:?}
-  "
-
+  display_result() {
+    dialog --title "$1" \
+      --no-collapse \
+      --msgbox "$RESULT" 0 0
   }
-  display_result
+
+  RESULT=$(echo "
+OS..........: $(uname -o 2>&1) $(uname -p 2>&1)
+Kernel......: $(uname -r 2>&1)
+Load........: ${LOAD:?}
+FreeMemory..: ${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M
+UsedSwap....: ${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M
+Uptime......: ${UPTIME:?}
+UsedHDD.....: ${USED_HDD:?} ${USED_HDD_P:?}
+UserSpace...: $(du -sh /home/* 2>/dev/null | xargs 2>&1)
+CPUTemp.....: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
+Users.......: ${USER:?}
+
+Daemon......: ${PID_DAEMON:?}
+Ban(s)......: ${WALLET_PEERS_BANNED:?}
+Connections.: ${WALLET_PEERS_TOTAL:?}
+Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
+Network.....: ${WALLET_CHAIN:?}
+CoinSupply..: ${NODE_COIN_SUPPLY:?}
+Staking.....: ${NODE_PROOF:?}
+Download....: ${DOWNLOAD:?}
+Upload......: ${UPLOAD:?}
+          ")
+  display_result "System Information"
+  clear
+  ;;
+
+"5")
+
+  display_result() {
+    dialog --title "$1" \
+      --no-collapse \
+      --msgbox "$RESULT" 0 0
+  }
+
+  RESULT=$(df -h)
+  display_result "Disk Space"
+  clear
   ;;
 
 esac
