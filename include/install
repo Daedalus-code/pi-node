@@ -93,7 +93,7 @@ if ! [ -x "$(command -v ufw)" ] &>/dev/null; then
   echo
 fi
 
-if ! cat "${WALLET_DIR:?}"/trumpcoin.conf | grep "configuration" &>/dev/null; then
+if ! cat "${WALLET_DIR:?}"/trumpcoin.conf 2>/dev/null | grep "configuration" &>/dev/null; then
   # wrong config
   rm "${WALLET_DIR:?}"/trumpcoin.conf &>/dev/null
 fi
@@ -105,7 +105,7 @@ if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
 
     # create random rpcuser & rpcpassword
     RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
-    RANDOM_RPCN=$(echo "$RANDOM_RPCN" 2>&1 | rev 2>&1)
+    RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
     if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
       # non responsive
