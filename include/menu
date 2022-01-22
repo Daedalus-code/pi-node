@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.3.7
+# 0.6.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -574,6 +574,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # get ip address (no color)
     IP_ADDRESS_N="$IP_ADDRESS"
 
+    # get latest release
+    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+    # get wallet version
+    WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
+
     display_result() {
       dialog --title "$1" \
         --no-collapse \
@@ -594,6 +599,8 @@ UserSpace...: $(du -sh /home/* 2>/dev/null | xargs 2>&1)
 CPUTemp.....: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
 Users.......: ${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))
 
+Release.....: v${LATEST_VERSION:?}
+Installed...: ${WALLET_VERSION:?}
 Daemon......: ${PID_DAEMON:?} (trumpcoind)
 Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
 Network.....: ${WALLET_CHAIN:?}
