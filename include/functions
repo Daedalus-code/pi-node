@@ -290,7 +290,7 @@ WALLET_HEADS="${GR:?}0${N0:?}"
 WALLET_BLOCK="${GR:?}0${N0:?}"
 RC_LOADING="${GR:?}        Loading${N0:?}"
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/null; then
 
   # loading is done
   RC_LOADING="${N0:?}"
