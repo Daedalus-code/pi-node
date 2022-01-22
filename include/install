@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # By Rainman
-# V20222101
-# 0.1.7.0
+# V20222201
+# 0.1.7.2
 
-source /home/pi/pitrump.conf
+source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
 
 # date for logs
@@ -166,5 +166,7 @@ fi
 printf '%b' "Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
 printf '%b' "${LOG_DATE:?} Status() Update.Script: Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] $LATEST_DATE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 ls -lSh /usr/local/bin/include/
+# update configuration
+cp /home/"$(whoami)"/pitrump.conf /usr/local/bin/include/pitrump.conf 2>&1
 
 # END

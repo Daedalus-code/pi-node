@@ -4,7 +4,7 @@
 # V20222201
 # 0.3.7.6
 
-source /home/pi/pitrump.conf
+source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
 
 # date for logs

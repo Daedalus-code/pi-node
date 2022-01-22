@@ -5,7 +5,7 @@
 # 0.0.8.8
 
 # pitrump configurations
-source /home/pi/pitrump.conf
+source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
 
 if [ ! -f "${LOG_DIR:?}"/node_data/stats/date ] &>/dev/null; then

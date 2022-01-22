@@ -6,7 +6,7 @@
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
-source /home/pi/pitrump.conf
+source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
 
 # make sure dialog exist

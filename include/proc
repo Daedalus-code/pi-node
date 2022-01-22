@@ -8,7 +8,7 @@
 
 ########## config ##############################################################
 
-source /home/pi/pitrump.conf
+source /usr/local/bin/include/pitrump.conf
 
 ########## sync_progress_bar ###################################################
 
