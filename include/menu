@@ -199,7 +199,7 @@ case $CHOICE in
         mkdir /home/"$(whoami)"/TrumpCoin.old &>/dev/null
         mkdir /home/"$(whoami)"/TrumpCoin &>/dev/null
         mv /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip
-        unzip -o /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin
+        unzip -o /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin/
       }
 
       # armv7l
