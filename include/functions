@@ -146,7 +146,7 @@ IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 # get interface
 IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
 # get ip address from interface
-IP_ADDRESS=$(echo "${IFCONFIG:?}" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
+IP_ADDRESS=$(echo "${IFCONFIG:?}" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)
 # get ip address (no color)
 IP_ADDRESS_N="${IP_ADDRESS:?}"
 # get ip address (color)
