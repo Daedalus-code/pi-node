@@ -73,7 +73,7 @@ case $CHOICE in
   TITLE="Node Menu"
   MENU="Choose one of the following options:"
 
-  OPTIONS=(1 "Shutdown         Shutdown trumpcoin daemon"
+  OPTIONS=(1 "Shutdown         Shutdown reboot, graphs"
     2 "Restart          Restart trumpcoin daemon"
     3 "Install          Install trumpcoin wallet")
 
