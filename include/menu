@@ -91,7 +91,7 @@ case $CHOICE in
   "1")
 
     # turn of trumpcoin daemon
-    read -r -p "[YN] Turn off daemon, are you sure? y/n " -n 1 -r
+    read -r -p "[YN] Turn off node, are you sure? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
