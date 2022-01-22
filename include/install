@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.1.8.4
+# 0.1.8.9
 
 # create directories, ruled by configuration
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -100,6 +100,11 @@ if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
     # create random rpcuser & rpcpassword
     RANDOM_RPCN=$((((RANDOM % 9) + 1)))
     RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+
+    if [[ "$EXTERNALIP" ]]; then
+      # non responsive
+      EXTERNALIP=""
+    fi
 
     echo "## trumpcoin.conf configuration file.
 # Network-related settings:
