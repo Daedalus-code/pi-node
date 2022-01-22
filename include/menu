@@ -179,7 +179,7 @@ case $CHOICE in
     printf '%b' "Latest...: ${G1:?}v${LATEST_VERSION:?}${N0:?}\n"
     printf '%b' "Installed: ${N0:?}${WALLET_VERSION:?}${N0:?}\n"
     echo
-    read -r -p "[YN] Force new install? y/n " -n 1 -r
+    read -r -p "[YN] New install? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
@@ -202,7 +202,7 @@ case $CHOICE in
         # setup trumpcoin wallet
         mkdir /home/"$(whoami)"/TrumpCoin.old &>/dev/null
         mkdir /home/"$(whoami)"/TrumpCoin &>/dev/null
-        mv /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip
+        cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip
         unzip -j /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin/
       }
 
