@@ -5,7 +5,7 @@
 # 0.1.7.3
 
 # update configuration
-cp /home/"$(whoami)"/trump-node/pitrump.conf /usr/local/bin/include/pitrump.conf 2>&1
+cp /home/"$(whoami)"/trump-node/pitrump.conf /usr/local/bin/include/pitrump.conf &>/dev/null
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
