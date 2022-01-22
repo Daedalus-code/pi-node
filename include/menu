@@ -166,7 +166,7 @@ case $CHOICE in
     function setup() {
       # setup trumpcoin wallet
       mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
-      mv /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}".zip 2>&1
+      mv /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip* /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}".zip 2>&1
       unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip* -d /home/"$(whoami)"/TrumpCoin
     }
 
