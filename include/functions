@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222201
-# 1.1.6.3
+# 1.1.6.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.6.3"
+VERSION="v1.1.6.7"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -139,13 +139,13 @@ IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 # get interface
 IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
 # get ip address from interface
-IP_ADDRESS=$(echo "$IFCONFIG" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
+IP_ADDRESS=$(echo "${IFCONFIG:?}" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
 # get ip address (no color)
-IP_ADDRESS_N="$IP_ADDRESS"
+IP_ADDRESS_N="${IP_ADDRESS:?}"
 # get ip address (color)
-IP_ADDRESS="${C1:?}$IP_ADDRESS${N0:?}"
+IP_ADDRESS="${C1:?}${IP_ADDRESS:?}${N0:?}"
 # interface icon (top right)
-INTERFACE=$(echo "$IFCONFIG" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
+INTERFACE=$(echo "${IFCONFIG:?}" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
 
 ### wan address ################################################################
 
@@ -1092,8 +1092,12 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     TIMELINE_PERC_NOACTIVE="${TIMELINE_PERC_NOACTIVE:?}%"
     TIMELINE="${N0:?}Alive ${TIMELINE_PERC_ACTIVE:?} Dead ${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "15" ] &>/dev/null; then
+    # get interface
+    IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
+    # interface icon (top right)
+    INTERFACE=$(echo "${IFCONFIG:?}" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
     # interface w speed
-    TIMELINE="$(sudo ethtool eth0 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
+    TIMELINE="$(sudo ethtool "${INTERFACE:?}" 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
     TIMELINE="Network ${INTERFACE:?} ${TIMELINE:?}"
   fi
 else # wait on wallet (--donald john trump quotes - art of the deal)
