@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.4.6.3
+# 0.5.1.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -15,7 +15,7 @@ if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
 fi
 
 HEIGHT=12
-WIDTH=57
+WIDTH=55
 CHOICE_HEIGHT=5
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
@@ -213,18 +213,20 @@ Then the importprivkey can be used with this output
 
 "3")
 
-  HEIGHT=12
-  WIDTH=50
-  CHOICE_HEIGHT=5
+  HEIGHT=14
+  WIDTH=46
+  CHOICE_HEIGHT=7
   BACKTITLE="Trump-Node"
   TITLE="Uncomplicated firewall Menu"
   MENU="Choose one of the following options:"
 
-  OPTIONS=(1 "UFW Status       Show firewall status"
-    2 "UFW Enable       Enables the firewall"
-    3 "UFW Disable      Disables the firewall"
-    4 "UFW Allow        Add allow rule"
-    5 "UFW Deny         Add deny rule")
+  OPTIONS=(1 "Status       Show firewall status"
+    2 "Enable       Enables the firewall"
+    3 "Disable      Disables the firewall"
+    4 "Allow        Add allow rule"
+    5 "Deny         Add deny rule"
+    6 "Delete All   Delete all rules"
+    7 "Use Default  Set default rules")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -240,7 +242,11 @@ Then the importprivkey can be used with this output
   "1")
 
     echo "Uncomplicated firewall Status"
-    sudo ufw status
+    sudo ufw status verbose
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
     ;;
 
   "2")
@@ -250,6 +256,9 @@ Then the importprivkey can be used with this output
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       echo "Enabling the firewall"
       sudo ufw enable
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
     fi
 
     ;;
@@ -261,6 +270,9 @@ Then the importprivkey can be used with this output
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       echo "Disabling the firewall"
       sudo ufw disable
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
     fi
 
     ;;
@@ -289,6 +301,9 @@ ufw allow ${G1:?}smtp${N0:?}\n"
       exit
     fi
     sudo ufw allow "${ALLOW_RULE:?}"
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
 
     ;;
 
@@ -316,6 +331,37 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       exit
     fi
     sudo ufw deny "${DENY_RULE:?}"
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  "6")
+
+    # delete ufw rules
+    echo "Deleting allow rules 15110, 80, 22"
+    sudo ufw delete allow 15110
+    sudo ufw delete allow 80
+    sudo ufw delete allow 22
+    sudo ufw status
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  "7")
+
+    # set default ufw rules
+    echo "Set allow rules 15110, 80, 22"
+    sudo ufw allow 15110 comment "TrumpCoin mainnet"
+    sudo ufw allow 80 comment "TrumpCoin Graphs"
+    sudo ufw allow 22 comment "SSH"
+    sudo ufw status
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
 
     ;;
 
@@ -456,6 +502,7 @@ Upload......: ${UPLOAD:?}
   RESULT=$(df -h)
   display_result "Disk Space"
   clear
+
   ;;
 
 esac
