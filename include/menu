@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.5.6.1
+# 0.5.6.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -123,7 +123,7 @@ case $CHOICE in
     until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
       clear
       printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
-      sleep 2
+      sleep 5
     done
     # make sure debug.log exist
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -131,9 +131,13 @@ case $CHOICE in
     rm "${WALLET_DIR:?}"/onion &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    echo "Starting daemon"
-    cd || exit
+    # start node (daemon)
+    sleep 1
     "${WALLET_DIR:?}"/trumpcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
     sudo service cron start 2>&1
 
     ;;
