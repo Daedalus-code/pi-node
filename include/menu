@@ -140,10 +140,10 @@ case $CHOICE in
         # download arm-linux-gnueabihf.zip
         cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/5.0.0.0/TrumpCoin.arm-linux-gnueabihf.zip
       fi
-      if [[ ! -f /home/"$(whoami)"TrumpCoin/trumpcoind ]] &>/dev/null; then
+      if [[ ! -f /home/"$(whoami)"/TrumpCoin/trumpcoind ]] &>/dev/null; then
         printf '%b' "${G1:?}Installing trumpcoin node (armv7l)${N0:?}\n"
         # setup trumpcoin wallet
-        unzip /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"TrumpCoin
+        unzip /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
       else
         echo "Already installed."
       fi
