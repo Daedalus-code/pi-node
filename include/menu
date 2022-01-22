@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.5.1.7
+# 0.5.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -133,8 +133,22 @@ case $CHOICE in
 
   "3")
 
-    echo "Updating node!"
-    echo "Coming soon! https://github.com/trumpcoinsupport/TrumpCoin/releases"
+    # armv7l
+    if uname -a 2>&1 | grep "armv7l" &>/dev/null; then
+      printf '%b' "${G1:?}Updating trumpcoin node (armv7l)!${N0:?}\n"
+      if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
+        # download arm-linux-gnueabihf.zip
+        cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/5.0.0.0/TrumpCoin.arm-linux-gnueabihf.zip
+        if [[ ! -f /home/"$(whoami)"TrumpCoin/trumpcoind ]] &>/dev/null; then
+          # setup trumpcoin wallet
+          unzip /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"TrumpCoin
+        else
+          echo "Already installed."
+        fi
+      fi
+    else
+      echo "This is not armv7l! (ARM)"
+    fi
 
     ;;
 
