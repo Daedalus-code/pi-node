@@ -115,7 +115,7 @@ case $CHOICE in
           kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
         done
       fi
-      read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
+      read -t 3 -r -p "[YN] Remove graph databases? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
         rm -r /home/"$(whoami)"/stats/ &>/dev/null
