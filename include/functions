@@ -286,9 +286,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/n
   WALLET_CHAIN="${CY:?}nonet${N0:?}"
 fi
 
-WALLET_HEADS="${GR:?}0${N0:?}"
-WALLET_BLOCK="${GR:?}0${N0:?}"
-RC_LOADING="${GR:?}        Loading${N0:?}"
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/null; then
 
@@ -296,10 +293,17 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/n
   RC_LOADING="${N0:?}"
   # logo turns yellow while running
   RC="${Y1:?}"
-  # get blockchain headers
-  WALLET_HEADS=$(grep "blocks" "${LOG_DIR:?}"/node_data/client/getblockchaininfo 2>&1 | grep -Eo "[0-9]+" 2>&1)
-  # get blockchain block
-  WALLET_BLOCK=$(grep "headers" "${LOG_DIR:?}"/node_data/client/getblockchaininfo 2>&1 | grep -Eo "[0-9]+" 2>&1)
+
+  if [[ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ]]; then
+    # get blockchain headers
+    WALLET_HEADS=$(grep "blocks" "${LOG_DIR:?}"/node_data/client/getblockchaininfo 2>&1 | grep -Eo "[0-9]+" 2>&1)
+    # get blockchain block
+    WALLET_BLOCK=$(grep "headers" "${LOG_DIR:?}"/node_data/client/getblockchaininfo 2>&1 | grep -Eo "[0-9]+" 2>&1)
+  else
+    WALLET_HEADS="${GR:?}0${N0:?}"
+    WALLET_BLOCK="${GR:?}0${N0:?}"
+  fi
+
   # calculate blockchain sync
   WALLET_SYNC=$(echo "100/$WALLET_HEADS*$WALLET_BLOCK" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   # if progress equals 1, then 100% synced
@@ -310,15 +314,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/n
   WALLET_SYNC_N="$WALLET_SYNC"
   # wallet sync var with percentage symbol
   WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
-  # non responsive, waiting on deamon data
-elif [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
-  WALLET_HEADS="${GR:?}0${N0:?}"
-  WALLET_BLOCK="${GR:?}0${N0:?}"
-  WALLET_SYNC="${GR:?}0.00${N0:?}"
-  RC_LOADING="${GR:?}        Loading${N0:?}"
+
 else # wallet is loading/syncing
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
+  RC_LOADING="${GR:?}        Loading${N0:?}"
   # logo turns grey while loading
   RC="${GR:?}"
   # non responsive (loading)
