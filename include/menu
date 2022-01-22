@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.5.7.8
+# 0.5.8.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -20,6 +20,10 @@ if [[ ! -s "${LOG_DIR:?}"/node_data/client/listunspent ]] &>/dev/null; then
 else # get input count
   POS_COUNT=$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)
 fi
+
+# date for logs
+date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 HEIGHT=12
 WIDTH=55
