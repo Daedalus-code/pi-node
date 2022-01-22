@@ -603,12 +603,12 @@ Users.......: ${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))
 
 Daemon......: ${PID_DAEMON:?} (trumpcoind)
 Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
-Release.....: v${LATEST_VERSION:?}
-Installed...: ${WALLET_VERSION:?}
 Network.....: ${WALLET_CHAIN:?}
 Address.....: ${IP_ADDRESS_N:?}
 Download....: ${DOWNLOAD:?}
 Upload......: ${UPLOAD:?}
+Release.....: v${LATEST_VERSION:?}
+Installed...: ${WALLET_VERSION:?}
 
 Ban(s)......: ${WALLET_PEERS_BANNED:?}
 Connections.: ${WALLET_PEERS_TOTAL:?}
