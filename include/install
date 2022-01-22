@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.1.9.6
+# 0.1.9.7
 
 # create directories, ruled by configuration
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -30,6 +30,7 @@ LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
 if ! [ -x "$(command -v screen)" ] &>/dev/null; then
   echo "Installing screen"
   sudo apt-get install screen -y
+  sudo /etc/init.d/screen-cleanup start
 fi
 
 # make sure tor is installed
