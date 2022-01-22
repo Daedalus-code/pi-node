@@ -194,7 +194,7 @@ case $CHOICE in
         fi
         # setup trumpcoin wallet
         mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
-        mv /home/"$(whoami)"/TrumpCoin.arm-*.* /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip 2>&1
+        mv /home/"$(whoami)"/TrumpCoin.*.zip /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip 2>&1
         unzip -o /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin
       }
 
