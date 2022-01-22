@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.3.6
+# 0.6.3.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -595,11 +595,12 @@ CPUTemp.....: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
 Users.......: ${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))
 
 Daemon......: ${PID_DAEMON:?} (trumpcoind)
-Ban(s)......: ${WALLET_PEERS_BANNED:?}
-Connections.: ${WALLET_PEERS_TOTAL:?}
 Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
 Network.....: ${WALLET_CHAIN:?}
 Address.....: ${IP_ADDRESS_N:?}
+
+Ban(s)......: ${WALLET_PEERS_BANNED:?}
+Connections.: ${WALLET_PEERS_TOTAL:?}
 Addnodes....: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)
 CoinSupply..: ${NODE_COIN_SUPPLY:?}
 Staking.....: ${NODE_PROOF:?}
