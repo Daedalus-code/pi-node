@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222201
-# 1.1.6.1
+# 1.1.6.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.6.1"
+VERSION="v1.1.6.5"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -1006,8 +1006,13 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
     # calculate seconds into age
-    INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
+    if [[ -f "${LOG_DIR:?}"/node_data/client/listunspent ]] &>/dev/null; then
+      INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
+      INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
+    else
+      INPUT_AGE="${N0:?}"
+      INPUT_AGE_D="${N0:?}"
+    fi
     if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
       # hide new input
       TIMELINE="New Input ${GR:?}****${N0:?} (${GR:?}****${N0:?}) ${GR:?}****${N0:?}${N0:?}"
