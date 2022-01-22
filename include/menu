@@ -599,8 +599,8 @@ UserSpace...: $(du -sh /home/* 2>/dev/null | xargs 2>&1)
 CPUTemp.....: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
 Users.......: ${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))
 
-ScriptVersion > ${VERSION:?}
-WalletVersion > ${WALLET_VERSION:?}
+ScriptVersion ${VERSION:?}
+WalletVersion ${WALLET_VERSION:?}
 
 Daemon......: ${PID_DAEMON:?} (trumpcoind)
 Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
