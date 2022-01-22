@@ -138,7 +138,7 @@ case $CHOICE in
     read -r -p "[YN] Restart node (daemon)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "Restarting node!"
+      echo "[Ok] Restarting node!"
       sudo service cron stop 2>&1
       printf '%b' "[!!] "
       "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
@@ -149,7 +149,7 @@ case $CHOICE in
         sleep 10
         kill -9 "$(pidof trumpcoind 2>&1)"
       done
-      start_daemon
+      echo "[Ok] $(start_daemon)"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
@@ -196,14 +196,14 @@ case $CHOICE in
         cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
         # setup trumpcoin wallet
         unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
-        start_daemon
+        echo "[Ok] $(start_daemon)"
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
         sudo service cron start 2>&1
       fi
     else
-      echo "This is not armv7l! (ARM)"
+      echo "[!!] This is not armv7l! (ARM)"
     fi
 
     ;;
@@ -247,12 +247,12 @@ may report that the imported key exists but related transactions are still missi
     read -r IMPORT_KEY
     if [[ -z "$IMPORT_KEY" ]] &>/dev/null; then
       # non responsive
-      echo "Nothing was typed!"
+      echo "[!!] Nothing was typed!"
       sleep 1
       clear
       exit
     fi
-    echo "Please wait..! This call can take minutes to complete."
+    echo "[!?] Please wait..! This call can take minutes to complete."
     "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf importprivkey "${IMPORT_KEY:?}"
     clear
     echo
@@ -270,12 +270,12 @@ Then the importprivkey can be used with this output
     read -r DUMP_ADDRESS
     if [[ -z "$DUMP_ADDRESS" ]] &>/dev/null; then
       # non responsive
-      echo "Nothing was typed!"
+      echo "[!!] Nothing was typed!"
       sleep 1
       clear
       exit
     fi
-    echo "Please copy this!"
+    echo "[!?] Please copy this!"
     "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf dumpprivkey "${DUMP_ADDRESS:?}"
     clear
     echo
@@ -331,7 +331,7 @@ Then the importprivkey can be used with this output
     read -r -p "[YN] Enable firewall? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "Enabling the firewall"
+      echo "[Ok] Enabling the firewall"
       sudo ufw enable
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -345,7 +345,7 @@ Then the importprivkey can be used with this output
     read -r -p "[YN] Disable firewall? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "Disabling the firewall"
+      echo "[Ok] Disabling the firewall"
       sudo ufw disable
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -374,7 +374,7 @@ ufw allow ${G1:?}smtp${N0:?}\n"
     read -r ALLOW_RULE
     if [[ -z "$ALLOW_RULE" ]] &>/dev/null; then
       # empty
-      echo "Empty, try again"
+      echo "[!!] Empty, try again"
       exit
     fi
     sudo ufw allow "${ALLOW_RULE:?}"
@@ -404,7 +404,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     read -r DENY_RULE
     if [[ -z "$DENY_RULE" ]] &>/dev/null; then
       # empty
-      echo "Empty, try again"
+      echo "[!!] Empty, try again"
       exit
     fi
     sudo ufw deny "${DENY_RULE:?}"
@@ -417,7 +417,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "6")
 
     # delete ufw rules
-    echo "Deleting allow rules 15110, 80, 22"
+    echo "[!!] Deleting allow rules 15110, 80, 22"
     sudo ufw delete allow 15110
     sudo ufw delete allow 80
     sudo ufw delete allow 22
@@ -431,7 +431,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "7")
 
     # set default ufw rules
-    echo "Set allow rules 15110, 80, 22"
+    echo "[Ok] Set allow rules 15110, 80, 22"
     sudo ufw allow 15110 comment "TrumpCoin mainnet"
     sudo ufw allow 80 comment "TrumpCoin Graphs"
     sudo ufw allow 22 comment "SSH"
