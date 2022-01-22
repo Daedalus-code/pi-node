@@ -400,7 +400,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # calculate average price
   echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/ticker.avg)/${TICKER_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.4f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/ticker 2>&1
   # get wallet value
-  WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+  WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
   # save balance valued value
   echo "${WALLET_VALUE:?}" >"${LOG_DIR:?}"/node_data/stats/balance_value 2>&1
 else # non responsive (color)
