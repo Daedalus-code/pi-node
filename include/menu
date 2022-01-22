@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.5.4.0
+# 0.5.6.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -125,7 +125,14 @@ case $CHOICE in
       printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
       sleep 2
     done
+    # make sure debug.log exist
+    touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # remove old files
+    rm "${WALLET_DIR:?}"/onion &>/dev/null
+    truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
+    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     echo "Starting daemon"
+    cd || exit
     "${WALLET_DIR:?}"/trumpcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
     sudo service cron start 2>&1
 
@@ -154,6 +161,20 @@ case $CHOICE in
         fi
         echo "Latest...: v${LATEST_VERSION:?}"
         printf '%b' "Installed: ${G1:?}${WALLET_VERSION:?}${N0:?}\n"
+      fi
+      read -r -p "[YN] Force upgrade? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+        # wait on node (daemon) to stop
+        until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+          clear
+          printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+          sleep 2
+        done
+        cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
+        # setup trumpcoin wallet
+        unzip /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
       fi
     else
       echo "This is not armv7l! (ARM)"
