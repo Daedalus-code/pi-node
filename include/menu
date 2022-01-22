@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.7.5
+# 0.6.7.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -185,16 +185,19 @@ case $CHOICE in
       function setup() {
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "armv7l" &>/dev/null; then
           UNAME_SYSTEM="armv7l"
+          UNAME_FILE="TrumpCoin.arm-linux-gnueabihf.zip"
         fi
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
           UNAME_SYSTEM="aarch64"
+          UNAME_FILE="TrumpCoin.aarch64-linux-gnu.zip"
         fi
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
           UNAME_SYSTEM="x86_64"
+          UNAME_FILE="TrumpCoin.Linux.zip"
         fi
         # setup trumpcoin wallet
         mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
-        mv /home/"$(whoami)"/TrumpCoin.*.zip /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip 2>&1
+        mv /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip 2>&1
         unzip -o /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin
       }
 
