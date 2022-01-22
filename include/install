@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.1.9.1
+# 0.1.9.6
 
 # create directories, ruled by configuration
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -91,6 +91,11 @@ if ! [ -x "$(command -v ufw)" ] &>/dev/null; then
   echo
   read -r -p "[Ok] Press Enter to continue" </dev/tty
   echo
+fi
+
+if ! cat "${WALLET_DIR:?}"/trumpcoin.conf | grep "configuration" &>/dev/null; then
+  # wrong config
+  rm "${WALLET_DIR:?}"/trumpcoin.conf &>/dev/null
 fi
 
 if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
