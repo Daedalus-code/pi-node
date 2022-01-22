@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222201
-# 1.1.7.4
+# 1.1.7.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.7.4"
+VERSION="v1.1.7.6"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -274,8 +274,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     "$WALLET_DIR"/trumpcoin-cli -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/client/version 2>&1
   fi
   WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
-else # wallet version, grey, waiting on daemon data
-  WALLET_VERSION="${GR:?}vLoading${N0:?}"
+  if [[ -z "$WALLET_VERSION" ]]; then
+    # wallet version, grey, waiting on daemon data
+    WALLET_VERSION="${GR:?}vLoading${N0:?}"
+  fi
 fi
 
 # running mainnet or testnet
