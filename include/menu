@@ -214,7 +214,7 @@ Then the importprivkey can be used with this output
 "3")
 
   HEIGHT=12
-  WIDTH=51
+  WIDTH=50
   CHOICE_HEIGHT=5
   BACKTITLE="Trump-Node"
   TITLE="Uncomplicated firewall Menu"
