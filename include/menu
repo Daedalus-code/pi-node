@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.7.8
+# 0.6.7.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -197,6 +197,7 @@ case $CHOICE in
         fi
         # setup trumpcoin wallet
         mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
+        mdkri /home/"$(whoami)"/TrumpCoin &>/dev/null
         mv /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip
         unzip -o /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin
       }
