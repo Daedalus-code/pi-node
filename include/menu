@@ -152,7 +152,7 @@ case $CHOICE in
           # non responsive
           WALLET_VERSION="${GR:?}vLoading${N0:?}"
         fi
-        echo "Latest...: ${LATEST_VERSION:?}"
+        echo "Latest...: v${LATEST_VERSION:?}"
         printf '%b' "Installed: ${G1:?}${WALLET_VERSION:?}${N0:?}\n"
       fi
     else
