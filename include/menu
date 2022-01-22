@@ -170,7 +170,7 @@ case $CHOICE in
       if [[ ! -f /home/"$(whoami)"/TrumpCoin/trumpcoind ]] &>/dev/null; then
         printf '%b' "${G1:?}Installing trumpcoin node (armv7l)${N0:?}\n"
         # setup trumpcoin wallet
-        unzip /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
+        unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
       else
         WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
         if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
@@ -193,7 +193,7 @@ case $CHOICE in
         done
         cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
         # setup trumpcoin wallet
-        unzip /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -o /home/"$(whoami)"/TrumpCoin
+        unzip -o /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip -d /home/"$(whoami)"/TrumpCoin
         start_daemon
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
