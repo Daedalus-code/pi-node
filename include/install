@@ -101,7 +101,7 @@ if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
     RANDOM_RPCN=$((((RANDOM % 9) + 1)))
     RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
 
-    if [[ "$EXTERNALIP" ]]; then
+    if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
       # non responsive
       EXTERNALIP="#externalip=PLEASE_EDIT"
     else
