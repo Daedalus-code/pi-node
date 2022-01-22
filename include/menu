@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222101
-# 0.3.6.0
+# V20222201
+# 0.4.6.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -15,15 +15,15 @@ if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
 fi
 
 HEIGHT=12
-WIDTH=60
+WIDTH=57
 CHOICE_HEIGHT=5
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
 
-OPTIONS=(1 "Turn off node :: Shutdown, Reboot, Delete graphs"
-  2 "Import key    :: Import keys, Staking inputs ($(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1))"
-  3 "(UFW) Menu    :: Uncomplicated firewall"
+OPTIONS=(1 "Node Menu     :: Shutdown, Restart, Update"
+  2 "Keys Menu     :: Import keys, PoS inputs ($(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1))"
+  3 "UFW Menu      :: Uncomplicated firewall"
   4 "Information   :: Trump node status"
   5 "System Space  :: Disk space utilized")
 
@@ -40,71 +40,174 @@ case $CHOICE in
 
 "1")
 
-  # turn of trumpcoin daemon
-  read -r -p "[YN] Turn off daemon, are you sure? y/n " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-    if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
-      cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
-    fi
-    read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      # hard shutdown, turn off crontab
-      sudo service cron stop 2>&1
-      kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null && sleep 1
-    else # normal shutdown, turn off crontab
-      sudo service cron stop 2>&1
-      printf '%b' "[!!] "
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
-      # wait on node (daemon) to stop
-      until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
-        clear
-        printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
-        sleep 2
-      done
-    fi
-    read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      rm -r /home/"$(whoami)"/stats/ &>/dev/null
-    fi
-    read -r -p "[YN] Reboot? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      sleep 5
-      sudo reboot
-    else # turn crontab back on if no reboot
-      sudo service cron start 2>&1
-    fi
-  fi
+  HEIGHT=10
+  WIDTH=53
+  CHOICE_HEIGHT=3
+  BACKTITLE="Trump-Node"
+  TITLE="Node Menu"
+  MENU="Choose one of the following options:"
+
+  OPTIONS=(1 "Shutdown      :: Shutdown trumpcoin daemon"
+    2 "Restart       :: Restart trumpcoin daemon"
+    3 "Update        :: Update trumpcoin wallet")
+
+  CHOICE=$(dialog --clear \
+    --backtitle "$BACKTITLE" \
+    --title "$TITLE" \
+    --menu "$MENU" \
+    $HEIGHT $WIDTH $CHOICE_HEIGHT \
+    "${OPTIONS[@]}" \
+    2>&1 >/dev/tty)
+
   clear
+  case $CHOICE in
+
+  "1")
+
+    # turn of trumpcoin daemon
+    read -r -p "[YN] Turn off daemon, are you sure? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
+        cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
+      fi
+      read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        # hard shutdown, turn off crontab
+        sudo service cron stop 2>&1
+        kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null && sleep 1
+      else # normal shutdown, turn off crontab
+        sudo service cron stop 2>&1
+        printf '%b' "[!!] "
+        "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+        # wait on node (daemon) to stop
+        until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+          clear
+          printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+          sleep 2
+        done
+      fi
+      read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        rm -r /home/"$(whoami)"/stats/ &>/dev/null
+      fi
+      read -r -p "[YN] Reboot? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        sleep 5
+        sudo reboot
+      else # turn crontab back on if no reboot
+        sudo service cron start 2>&1
+      fi
+    fi
+    clear
+
+    ;;
+
+  "2")
+
+    echo "Restarting node!"
+    sudo service cron stop 2>&1
+    printf '%b' "[!!] "
+    "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+    # wait on node (daemon) to stop
+    until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+      clear
+      printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+      sleep 2
+    done
+    echo "Starting daemon"
+    "${WALLET_DIR:?}"/trumpcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
+    sudo service cron start 2>&1
+
+    ;;
+
+  "3")
+
+    echo "Updating node!"
+    echo "Coming soon! https://github.com/trumpcoinsupport/TrumpCoin/releases"
+
+    ;;
+
+  esac
 
   ;;
 
 "2")
 
-  # Import key
-  echo "Adds a private key (as returned by dumpprivkey) to your wallet. Requires a new wallet backup.
+  HEIGHT=9
+  WIDTH=52
+  CHOICE_HEIGHT=2
+  BACKTITLE="Backtitle here"
+  TITLE="Title here"
+  MENU="Choose one of the following options:"
+
+  OPTIONS=(1 "Import key    :: Adds a private key"
+    2 "Dump key      :: Reveals the private key")
+
+  CHOICE=$(dialog --clear \
+    --backtitle "$BACKTITLE" \
+    --title "$TITLE" \
+    --menu "$MENU" \
+    $HEIGHT $WIDTH $CHOICE_HEIGHT \
+    "${OPTIONS[@]}" \
+    2>&1 >/dev/tty)
+
+  clear
+  case $CHOICE in
+
+  "1")
+
+    # Import key
+    echo "Adds a private key (as returned by dumpprivkey) to your wallet. Requires a new wallet backup.
 
 Note: This call can take minutes to complete if rescan is true, during that time, other rpc calls
 may report that the imported key exists but related transactions are still missing, leading to temporarily incorrect/bogus balances and unspent outputs until rescan completes.
 "
-  printf '%b' "Enter private key ${G1:?}>${N0:?} "
-  read -r IMPORT_KEY
-  if [[ -z "$IMPORT_KEY" ]]; then
-    # non responsive
-    echo "Nothing was typed!"
-    sleep 1
+    printf '%b' "Enter private key ${G1:?}>${N0:?} "
+    read -r IMPORT_KEY
+    if [[ -z "$IMPORT_KEY" ]]; then
+      # non responsive
+      echo "Nothing was typed!"
+      sleep 1
+      clear
+      exit
+    fi
+    echo "Please wait..! This call can take minutes to complete."
+    "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf importprivkey "${IMPORT_KEY:?}"
     clear
-    exit
-  fi
-  echo "Please wait..! This call can take minutes to complete."
-  "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${WALLET_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf importprivkey "${IMPORT_KEY:?}"
-  clear
-  echo
-  read -r -p "[Ok] Press Enter to continue" </dev/tty
-  echo
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  "2")
+
+    echo "Reveals the private key corresponding to 'address'.
+Then the importprivkey can be used with this output
+"
+    printf '%b' "Enter address to dump ${G1:?}>${N0:?} "
+    read -r DUMP_ADDRESS
+    if [[ -z "$DUMP_ADDRESS" ]]; then
+      # non responsive
+      echo "Nothing was typed!"
+      sleep 1
+      clear
+      exit
+    fi
+    echo "Please copy this!"
+    "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf dumpprivkey "${DUMP_ADDRESS:?}"
+    clear
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  esac
 
   ;;
 
