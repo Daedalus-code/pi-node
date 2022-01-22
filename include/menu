@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.4.6
+# 0.6.3.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -574,11 +574,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # get ip address (no color)
     IP_ADDRESS_N="$IP_ADDRESS"
 
-    # get wallet balance
-    WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    # get wallet version
-    WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
-
     display_result() {
       dialog --title "$1" \
         --no-collapse \
@@ -598,9 +593,6 @@ UsedHDD.....: ${USED_HDD:?} ${USED_HDD_P:?}
 UserSpace...: $(du -sh /home/* 2>/dev/null | xargs 2>&1)
 CPUTemp.....: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
 Users.......: ${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))
-
-ScriptVersion ${VERSION:?}
-WalletVersion ${WALLET_VERSION:?}
 
 Daemon......: ${PID_DAEMON:?} (trumpcoind)
 Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
