@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.9.3
+# 0.6.8.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -198,18 +198,6 @@ case $CHOICE in
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
           UNAME_SYSTEM="x86_64"
           UNAME_FILE="TrumpCoin.Linux.zip"
-        fi
-
-        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "Microsoft" &>/dev/null; then
-          echo "No support for Microsoft"
-          sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
-          sudo rm -r /home/"$(whoami)"/trump* &>/dev/null
-          sudo rm -r /home/"$(whoami)"/addnodes* &>/dev/null
-          sudo rm -r /home/"$(whoami)"/pitrump* &>/dev/null
-          sudo rm -r /usr/local/bin/include/ &>/dev/null
-          sudo rm -r /tmp/node_data/ &>/dev/null
-          sudo rm -r /tmp/add_peers* &>/dev/null
-          exit
         fi
 
         # setup trumpcoin wallet
