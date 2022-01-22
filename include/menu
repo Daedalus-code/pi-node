@@ -189,7 +189,7 @@ case $CHOICE in
           WALLET_VERSION="${GR:?}vLoading${N0:?}"
         fi
 
-        printf '%b' "Latest...: ${G1:?}v${LATEST_VERSION:?}${N0:?}$"
+        printf '%b' "Latest...: ${G1:?}v${LATEST_VERSION:?}${N0:?}\n"
         printf '%b' "Installed: ${N0:?}${WALLET_VERSION:?}${N0:?}\n"
       fi
 
