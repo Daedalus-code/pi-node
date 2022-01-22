@@ -12,6 +12,8 @@ if [[ ! -f /usr/local/bin/include/pitrump.conf ]] &>/dev/null; then
 fi
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
+. /usr/local/bin/include/pitrump.conf
+. /usr/local/bin/include/color
 
 # date for logs
 LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
