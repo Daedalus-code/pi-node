@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.2.2
+# 0.6.3.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -562,6 +562,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     USED_SWAP_CALC=$(echo "$USED_SWAP/1024" 2>&1 | bc 2>&1)
     TOTAL_SWAP_CALC=$(echo "$TOTAL_SWAP/1024" 2>&1 | bc 2>&1)
 
+    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/ifconfig ]]; then
+      # save ifconfig values to ifconfig, do this once
+      ifconfig 2>&1 | egrep -A8 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1
+    fi
+
+    # get interface
+    IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
+    # get ip address from interface
+    IP_ADDRESS=$(echo "$IFCONFIG" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
+    # get ip address (no color)
+    IP_ADDRESS_N="$IP_ADDRESS"
+
     display_result() {
       dialog --title "$1" \
         --no-collapse \
@@ -585,7 +597,7 @@ Daemon......: ${PID_DAEMON:?} (trumpcoind)
 Ban(s)......: ${WALLET_PEERS_BANNED:?}
 Connections.: ${WALLET_PEERS_TOTAL:?}
 Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
-Network.....: ${WALLET_CHAIN:?}
+Network.....: ${WALLET_CHAIN:?} (${IP_ADDRESS_N:?})
 Addnodes....: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)
 CoinSupply..: ${NODE_COIN_SUPPLY:?}
 Staking.....: ${NODE_PROOF:?}
