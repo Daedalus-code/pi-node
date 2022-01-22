@@ -943,7 +943,7 @@ fi
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
   if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
     if [ ! -s "${WALLET_DIR:?}"/failed ] &>/dev/null; then
-      printf '%b' "${LOG_DATE:?} Status() Clean.Restored Removing empty failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Clean.Backup() Removing empty failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       rm "${WALLET_DIR:?}"/failed &>/dev/null
     fi
     # use old failed list as a continuation to the next day, ruled by -lines above
@@ -952,7 +952,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       while IFS= read -r ADDS; do
         echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -R 2>&1
-      printf '%b' "${LOG_DATE:?} Status() Clean.Restored Restoring old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Clean.Backup() Restoring old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     else
       # keep last n of failed connections
       echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
