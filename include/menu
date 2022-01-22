@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.8.3
+# 0.6.8.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -212,7 +212,6 @@ case $CHOICE in
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
           # download arm-linux-gnueabihf.zip
           cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
-          setup
         fi
       fi
 
@@ -222,7 +221,6 @@ case $CHOICE in
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
           # download trumpcoin.aarch64-linux-gnu.zip
           cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
-          setup
         fi
       fi
 
@@ -232,10 +230,9 @@ case $CHOICE in
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.Linux.zip ]] &>/dev/null; then
           # download trumpcoin.linux.zip
           cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.Linux.zip
-          setup
         fi
       fi
-
+      setup
       sudo service cron stop 2>&1
       sleep 1
       "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
