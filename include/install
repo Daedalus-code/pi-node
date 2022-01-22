@@ -4,10 +4,10 @@
 # V20222201
 # 0.1.7.5
 
-if [[ -f /usr/local/bin/include/pitrump.conf ]]; then
+if [[ -f /usr/local/bin/include/pitrump.conf ]] &>/dev/null; then
   source /usr/local/bin/include/pitrump.conf
 else
-  sudo cp /home/"$(whoami)"/trump-node/pitrump.conf /usr/local/bin/include/pitrump.conf &>/dev/null
+  sudo cp /home/"$(whoami)"/trump-node/pitrump.conf /usr/local/bin/include/pitrump.conf 2>/dev/null
   source /usr/local/bin/include/pitrump.conf
 fi
 source /usr/local/bin/include/color
