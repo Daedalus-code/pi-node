@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222201
-# 1.1.5.8
+# 1.1.5.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.5.8"
+VERSION="v1.1.5.7"
 
 source /home/pi/pitrump.conf
 source /usr/local/bin/include/color
@@ -927,7 +927,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     truncate -s 0 "${LOG_DIR:?}"/node_data/peers.ipv4.r &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/peers.ipv6.r &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/stats/total.cidr &>/dev/null
-    truncate -s 0 "${LOG_DIR:?}"/node_data/stats/ticker.avg &>/dev/null
 
     # truncate old log (debug.log)
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
