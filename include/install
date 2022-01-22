@@ -6,10 +6,10 @@
 
 if [[ ! -f /usr/local/bin/include/pitrump.conf ]] &>/dev/null; then
   sudo cp /home/"$(whoami)"/trump-node/pitrump.conf /usr/local/bin/include/pitrump.conf 2>/dev/null
-  if [[ ! -f /home/"$(whoami)"/pitrump.conf ]]; then
-    sudo cp /home/"$(whoami)"/trump-node/pitrump.conf sudo cp /home/"$(whoami)"/pitrump.conf 2>/dev/null
+  if [[ ! -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
+    sudo cp /home/"$(whoami)"/trump-node/pitrump.conf /home/"$(whoami)"/pitrump.conf 2>/dev/null
   fi
-  if [[ -f /home/"$(whoami)"/pitrump.conf ]]; then
+  if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
     sudo cp /home/"$(whoami)"/pitrump.conf /usr/local/bin/include/pitrump.conf 2>/dev/null
   fi
 fi
