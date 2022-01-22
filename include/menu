@@ -112,7 +112,7 @@ case $CHOICE in
           clear
           printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
           sleep 10
-          kill -9 "$(pidof trumpcoind 2>&1)"
+          kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
         done
       fi
       read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
@@ -147,7 +147,7 @@ case $CHOICE in
         clear
         printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
         sleep 10
-        kill -9 "$(pidof trumpcoind 2>&1)"
+        kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
       done
       echo "[Ok] $(start_daemon)"
       echo
@@ -191,7 +191,7 @@ case $CHOICE in
           clear
           printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
           sleep 10
-          kill -9 "$(pidof trumpcoind 2>&1)"
+          kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
         done
         cd || exit && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
         # setup trumpcoin wallet
