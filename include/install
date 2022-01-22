@@ -4,7 +4,7 @@
 # V20222201
 # 0.2.0.9
 
-if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "Microsoft" &>/dev/null; then
+if uname -a 2>/dev/null | grep "Microsoft" &>/dev/null; then
   echo "No support for Microsoft"
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
   sudo rm -r /home/"$(whoami)"/trump* &>/dev/null
