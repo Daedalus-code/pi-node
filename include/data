@@ -63,7 +63,7 @@ cat "$LOG_DIR"/node_data/stats/ticker 2>/dev/null | html2text >"$LOG_DIR"/node_d
 cat "$LOG_DIR"/node_data/stats/ticker.tmp 2>/dev/null | grep -A1 "Trumpcoin Price Today" 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' 2>&1 | awk '{ printf "%.4f\n", $1 }' >"$LOG_DIR"/node_data/stats/ticker 2>&1 && rm "$LOG_DIR"/node_data/stats/ticker.tmp &>/dev/null
 
 # keep last n of failed connections
-echo "$(tail -10 "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1)" >"${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp 2>&1
+echo "$(tail -30 "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1)" >"${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1
 
 # api value
