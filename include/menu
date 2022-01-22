@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.6.5.2
+# 0.6.7.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -111,9 +111,10 @@ case $CHOICE in
         until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
           clear
           printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
-          sleep 10 # kill after n seconds
-          kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
+          printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
+          sleep 5
         done
+        kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
       fi
       read -t 3 -r -p "[YN] Remove graph databases? y/n " -n 1 -r
       echo
@@ -146,9 +147,10 @@ case $CHOICE in
       until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
         clear
         printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
-        sleep 10 # kill after n seconds
-        kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
+        printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
+        sleep 5
       done
+      kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
       echo "[Ok] $(start_daemon)"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -177,56 +179,77 @@ case $CHOICE in
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
+      # create uname -a
+      uname -a >"${LOG_DIR:?}"/node_data/uname
+
       function setup() {
+        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "armv7l" &>/dev/null; then
+          UNAME_SYSTEM="armv7l"
+        fi
+        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
+          UNAME_SYSTEM="aarch64"
+        fi
+        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
+          UNAME_SYSTEM="x86_64"
+        fi
         # setup trumpcoin wallet
         mkdir /home/"$(whoami)"/TrumpCoin.old/ &>/dev/null
-        mv /home/"$(whoami)"/TrumpCoin.arm-*.* /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}".zip 2>&1
-        unzip -o /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}".zip -d /home/"$(whoami)"/TrumpCoin
-      }
-
-      function down_install() {
-
-        if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
-          printf '%b' "${G1:?}Downloading TrumpCoin wallet (armv7l)${N0:?}\n"
-          # download arm-linux-gnueabihf.zip
-          cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
-        fi
-
-        if [[ ! -f /home/"$(whoami)"/TrumpCoin/trumpcoind ]] &>/dev/null; then
-          printf '%b' "${G1:?}Installing trumpcoin node (armv7l)${N0:?}\n"
-          setup
-        fi
-
+        mv /home/"$(whoami)"/TrumpCoin.arm-*.* /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip 2>&1
+        unzip -o /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin
       }
 
       # armv7l
-      if uname -a 2>&1 | grep "armv7l" &>/dev/null; then
-        sudo service cron stop 2>&1
-        "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
-
-        # wait on node (daemon) to stop
-        until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
-          clear
-          printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
-          sleep 10 # kill after n seconds
-          kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
-        done
-
-        down_install
-        cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
-        setup
-        read -r -p "[YN] Start node (daemon)? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          echo "[Ok] $(start_daemon)"
+      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "armv7l" &>/dev/null; then
+        echo "armv7l System"
+        if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
+          # download arm-linux-gnueabihf.zip
+          cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
+          setup
         fi
-        echo
-        read -r -p "[Ok] Press Enter to continue" </dev/tty
-        echo
-        sudo service cron start 2>&1
-      else
-        echo "[!!] This is not armv7l! (ARM)"
       fi
+
+      # aarch64
+      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
+        echo "aarch64 System"
+        if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
+          # download trumpcoin.aarch64-linux-gnu.zip
+          cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
+          setup
+        fi
+      fi
+
+      # x86_64
+      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
+        echo "x86_64 System"
+        if [[ ! -f /home/"$(whoami)"/TrumpCoin.Linux.zip ]] &>/dev/null; then
+          # download trumpcoin.linux.zip
+          cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.Linux.zip
+          setup
+        fi
+      fi
+
+      sudo service cron stop 2>&1
+      sleep 1
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+
+      # wait on node (daemon) to stop
+      until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+        clear
+        printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
+        sleep 5
+      done
+      kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
+      sleep 1
+      read -r -p "[YN] Start node (daemon)? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        echo "[Ok] $(start_daemon)"
+      fi
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+      sudo service cron start 2>&1
     fi
 
     ;;
