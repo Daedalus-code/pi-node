@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.3.6.1
+# 0.3.6.4
 
 source /usr/local/bin/include/pitrump.conf
 
@@ -81,11 +81,14 @@ rrdtool graph /var/www/html/peers_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:peers=/home/"$(whoami)"/stats/peers.rrd:peers:MAX \
+  DEF:banned_peers=/home/"$(whoami)"/stats/banned_peers.rrd:banned_peers:MAX \
   GPRINT:peers:LAST:%.0lf\ Now \
+  GPRINT:banned_peers:LAST:%.0lf\ Bans \
   GPRINT:peers:AVERAGE:%.0lf\ AVG \
   GPRINT:peers:MAX:%.0lf\ Max \
   GPRINT:peers:MIN:%.0lf\ Min \
-  AREA:peers#A28DB8:"Peers"
+  AREA:peers#A28DB8:"Peers" \
+  AREA:banned_peers#CC2C4B:"Bans"
 
 # stakes (24hour)
 rrdtool graph /var/www/html/stakes_graph.png \

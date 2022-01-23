@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.3.8.5
+# 0.3.9.4
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -165,6 +165,14 @@ if [ ! -f "/home/$(whoami)/stats/peers.rrd" ] &>/dev/null; then
     DS:peers:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
+# banned peers
+if [ ! -f "/home/$(whoami)/stats/banned_peers.rrd" ] &>/dev/null; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating banned_peers.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  rrdtool create /home/"$(whoami)"/stats/banned_peers.rrd \
+    --step=60 \
+    DS:banned_peers:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
+fi
 # difficulty
 if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating difficulty.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -226,6 +234,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(grep -c "BitcoinMiner" "${WALLET_DIR:?}"/staking 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)"
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
+  rrdtool update /home/"$(whoami)"/stats/banned_peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/bans 2>/dev/null)"
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
 
   ### auto pos grinding ########################################################
