@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222201
-# 0.3.5.8
+# 0.3.6.1
 
 source /usr/local/bin/include/pitrump.conf
 
@@ -124,10 +124,13 @@ rrdtool graph /var/www/html/balance_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:balance=/home/"$(whoami)"/stats/balance.rrd:balance:MAX \
   DEF:value=/home/"$(whoami)"/stats/value.rrd:value:MAX \
+  DEF:volume=/home/"$(whoami)"/stats/volume.rrd:volume:MAX \
   GPRINT:balance:LAST:%.2lf\ Trump \
   GPRINT:value:LAST:%.2lf\ USD \
+  GPRINT:volume:LAST:%.0lf\ Vol \
   AREA:balance#85bb65:"Balance" \
-  LINE2:value#668163:"USD"
+  LINE2:value#668163:"USD" \
+  LINE2:volume#6798DE:"Vol"
 
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
