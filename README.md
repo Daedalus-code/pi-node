@@ -23,8 +23,6 @@ arm-linux zip
 ### Setup script
 ``cd && git clone https://github.com/Daedalus-code/trump-node.git``  
 ``cd trump-node && bash include/install``  
-``cp pitrump.conf ../``  
-edit pitrump.conf  
 
 ### Setup rc.local
 
