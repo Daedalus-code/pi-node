@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.1.9.9
+# 1.2.0.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.9.9"
+VERSION="v1.2.0.0"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -491,7 +491,7 @@ if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     RC_LOADING="${N0:?}"
   fi
 else
-  RC_LOADING="${GR:?}        Loading${N0:?}"
+  RC_LOADING="${N0:?}"
 fi
 
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
@@ -1182,6 +1182,7 @@ else
     TIMELINE="${GR}Contain the costs${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
+    RC_LOADING="${GR:?}        Loading${N0:?}"
   fi
 fi
 
