@@ -96,8 +96,8 @@ else
   CPU_RAW_TEMP="0"
 fi
 # calculate celcius and fahrenheit
-CELCIUS=$(echo "$CELCIUS/100*0.1" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+CELCIUS=$(echo "$CPU_RAW_TEMP/100*0.1" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+FAHRENHEIT=$(echo "scale=2;((9/5) * $CPU_RAW_TEMP) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
 CPU_CTEMP="${CELCIUS:?}"
 CPU_FTEMP="${FAHRENHEIT:?}"
