@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.1.8.1
+# 1.1.8.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.8.1"
+VERSION="v1.1.8.2"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -473,11 +473,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   if [ ! -f "${LOG_DIR:?}"/node_data/synced ] &>/dev/null; then
     # look for sync has finished line, save it there and then
     grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
-    if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-      source /usr/local/bin/include/proc
-      WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
-    fi
   fi
+fi
+
+if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+  source /usr/local/bin/include/proc
+  WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
 fi
 
 # if synced is still empty
