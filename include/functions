@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.2.2.0
+# 1.2.2.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.2.0"
+VERSION="v1.2.2.2"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -333,10 +333,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/n
 
   # wallet sync var with percentage symbol
   WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
-fi
-
-if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
-  # non responsive
+else
   WALLET_SYNC="${GR:?}0${N0:?}"
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
@@ -488,15 +485,20 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
 fi
 
 TX="${G1:?}"
+# greater than n seconds, continue
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/null; then
+  RC_LOADING="${GR:?}        Loading${N0:?}"
+else
+  SYNC_PROGRESS_BAR="${GR:?}0.00%${N0:?}"
+  SYNC_PROGRESS_BAR="${N0:?}"
+fi
+
 if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   source /usr/local/bin/include/proc
   if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-    SYNC_PROGRESS_BAR="${GR:?}0.00%${N0:?}"
     # no progress bar while loading
     WALLET_TXLAST="${N0:?}"
     SYNC_PROGRESS_BAR="${N0:?}"
-    # non responsive
-    RC_LOADING="${GR:?}        Loading${N0:?}"
   else
     WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
     RC_LOADING="${N0:?}"
