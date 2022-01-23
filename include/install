@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.2.4.7
+# 0.2.5.0
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -48,6 +48,9 @@ source /usr/local/bin/include/color
 
 if [ ! -d "${LOG_DIR:?}"/node_data ] &>/dev/null; then
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+fi
+if [ ! -d "${LOG_DIR:?}"/node_data/stats ] &>/dev/null; then
+  mkdir "${LOG_DIR:?}"/node_data/stats &>/dev/null
 fi
 
 # date for logs

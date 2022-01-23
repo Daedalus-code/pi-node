@@ -63,7 +63,7 @@ case $CHOICE in
     truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/client/* &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/stats/* &>/dev/null
-    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
     # start node (daemon)
     sleep 1
     "${WALLET_DIR:?}"/trumpcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
@@ -217,7 +217,7 @@ case $CHOICE in
 
       # armv7l
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "armv7l" &>/dev/null; then
-        echo "armv7l System"
+        printf '%b' "[${G1:?}Ok${N0:?}] armv7l System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
           # download arm-linux-gnueabihf.zip
           cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
@@ -226,7 +226,7 @@ case $CHOICE in
 
       # aarch64
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
-        echo "aarch64 System"
+        printf '%b' "[${G1:?}Ok${N0:?}] aarch64 System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
           # download trumpcoin.aarch64-linux-gnu.zip
           cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
@@ -235,7 +235,7 @@ case $CHOICE in
 
       # x86_64
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
-        echo "x86_64 System"
+        printf '%b' "[${G1:?}Ok${N0:?}] x86_64 System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.Linux.zip ]] &>/dev/null; then
           # download trumpcoin.linux.zip
           cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.Linux.zip
@@ -243,9 +243,8 @@ case $CHOICE in
       fi
       setup
       sudo service cron stop 2>&1
-      setup_zip
-      sleep 1
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+      # stop running daemon
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop &>/dev/null && sleep 1
 
       # wait on node (daemon) to stop
       until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
@@ -255,7 +254,8 @@ case $CHOICE in
         sleep 5
       done
       kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
-      sleep 1
+      setup_zip
+
       read -r -p "[YN] Start node (daemon)? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
