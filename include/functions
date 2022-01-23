@@ -490,6 +490,14 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 fi
 
+if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+  # non responsive
+  RC_LOADING="${GR:?}        Loading${N0:?}"
+  # no progress bar while loading
+  WALLET_TXLAST="${N0:?}"
+  SYNC_PROGRESS_BAR="${N0:?}"
+fi
+
 if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   source /usr/local/bin/include/proc
   WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
@@ -498,14 +506,6 @@ fi
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   # non responsive
   WALLET_TXLAST="${N0:?}"
-fi
-
-if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-  # non responsive
-  RC_LOADING="${GR:?}        Loading${N0:?}"
-  # no progress bar while loading
-  WALLET_TXLAST="${N0:?}"
-  SYNC_PROGRESS_BAR="${N0:?}"
 fi
 
 # if synced is still empty
