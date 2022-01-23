@@ -1194,8 +1194,8 @@ else
     TIMELINE="${GR}Contain the costs${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
-    RC_LOADING="${GR:?}        Loading${N0:?}"
   fi
+  RC_LOADING="${GR:?}        Syncing${N0:?}"
 fi
 
 ### theme ######################################################################
