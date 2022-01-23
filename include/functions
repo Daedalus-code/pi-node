@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.2.0.4
+# 1.2.0.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.0.4"
+VERSION="v1.2.0.5"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -88,7 +88,8 @@ uname -a >"${LOG_DIR:?}"/node_data/uname
 
 # get system user
 USER=$(whoami 2>&1 | awk '{ print $1 }' 2>&1)
-if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "armv7l|aarch64" &>/dev/null; then
+
+if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
   # get cpu temp, celcius, fahrenheit, (raspberry pi)
   CPU_RAW_TEMP=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
 else
