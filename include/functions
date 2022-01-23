@@ -1181,7 +1181,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   fi
 fi
 
-if [[ -z "${TIMELINE:?}" ]]; then
+if [[ -z "${TIMELINE:?}" ]] &>/dev/null; then
   # non responsive (loading)
   TIMELINE="${N0:?}"
 fi
