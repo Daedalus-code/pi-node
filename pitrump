@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.0.4.1
+# 0.0.4.2
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
 sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz &>/dev/null
@@ -35,6 +35,7 @@ ${LAST_LOG:?}
 "
 
   sleep "${TIME:?}"
+  echo "$(date +%s 2>&1)" >/tmp/time # keep time
 
 done
 
