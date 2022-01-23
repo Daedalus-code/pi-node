@@ -948,9 +948,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     # calculate seconds
     SECONDS_TX=$(echo "$AVG_TX*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds into age
-    if [[ "$INPUT_AGE" -eq "0" ]] &>/dev/null; then
+    if [[ "$SECONDS_TX" -eq "0" ]] &>/dev/null; then
       # non responsive
-      INPUT_AGE="1"
+      SECONDS_TX="1"
     fi
     INPUT_AGE=$(printf '%dh:%dm' $(("$SECONDS_TX/3600")) $(("$SECONDS_TX%3600/60")))
     # save the value
@@ -1072,9 +1072,9 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds into age
       if [[ -f "${LOG_DIR:?}"/node_data/client/listunspent ]] &>/dev/null; then
-        if [[ "$INPUT_AGE" -eq "0" ]] &>/dev/null; then
+        if [[ "$TIMELINE_SEC" -eq "0" ]] &>/dev/null; then
           # non responsive
-          INPUT_AGE="1"
+          TIMELINE_SEC="1"
         fi
         INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
         INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
@@ -1094,9 +1094,9 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # calculate seconds
       TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds into age
-      if [[ "$INPUT_AGE" -eq "0" ]] &>/dev/null; then
+      if [[ "$TIMELINE_SEC" -eq "0" ]] &>/dev/null; then
         # non responsive
-        INPUT_AGE="1"
+        TIMELINE_SEC="1"
       fi
       INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
       INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
@@ -1115,9 +1115,9 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # calculate seconds
       TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds into age
-      if [[ "$INPUT_AGE" -eq "0" ]] &>/dev/null; then
+      if [[ "$TIMELINE_SEC" -eq "0" ]] &>/dev/null; then
         # non responsive
-        INPUT_AGE="1"
+        TIMELINE_SEC="1"
       fi
       INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
       # save the value
