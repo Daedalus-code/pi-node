@@ -491,7 +491,7 @@ if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     RC_LOADING="${N0:?}"
   fi
 else
-  RC_LOADING="${N0:?}"
+  RC_LOADING="${GR:?}        Loading${N0:?}"
 fi
 
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
