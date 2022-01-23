@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.2.2.8
+# 1.2.3.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.2.8"
+VERSION="v1.2.3.3"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -368,10 +368,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # wallet peers total (no color)
   WALLET_PEERS_TOTAL_N="$WALLET_PEERS_TOTAL"
   if [[ -z "$WALLET_PEERS_TOTAL_N" ]] &>/dev/null; then
-    # make sure peers exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/peers.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' >>"${LOG_DIR:?}"/node_data/stats/connections 2>&1
+    if [[ -f /home/"$(whoami)"/stats/peers.rrd ]] &>/dev/null; then
+      # make sure peers exist, use rrdtool database, if available
+      rrdtool info /home/"$(whoami)"/stats/peers.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/connections 2>&1
+    fi
     # non responsive
-    WALLET_PEERS_TOTAL_N=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | tail -1 2>&1)
+    WALLET_PEERS_TOTAL_N=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | tail -1 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   fi
   # create a list this time
   echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/stats/connections
@@ -424,8 +426,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # save balance valued value
   echo "${WALLET_VALUE:?}" >"${LOG_DIR:?}"/node_data/stats/balance_value 2>&1
   if [[ ! -f "${LOG_DIR:?}"/node_data/stats/volume ]] &>/dev/null; then
-    # make sure volume exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
+    if [[ -f /home/"$(whoami)"/stats/volume.rrd ]]; then
+      # make sure volume exist, use rrdtool database, if available
+      rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
+    fi
+    WALLET_VALUE=$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }')
   fi
 else # non responsive (color)
   WALLET_VALUE="${GR:?}0.00${N0:?}"
