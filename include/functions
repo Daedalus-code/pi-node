@@ -323,16 +323,16 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/n
     WALLET_SYNC="100"
   fi
 
-  if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
-    # non responsive
-    WALLET_SYNC="0"
-  fi
-
   # wallet sync (no color)
   WALLET_SYNC_N="$WALLET_SYNC"
 
   # wallet sync var with percentage symbol
   WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
+fi
+
+if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
+  # non responsive
+  WALLET_SYNC="0"
 fi
 
 # wallet_nodes function (color)
