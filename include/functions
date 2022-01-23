@@ -1141,7 +1141,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     fi
   fi
 
-  ### collect data for rrdtool (round robin databases) ###########################
+  ### collect data for rrdtool (round robin databases) #########################
 
   if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
 
