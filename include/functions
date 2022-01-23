@@ -419,7 +419,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   echo "${WALLET_VALUE:?}" >"${LOG_DIR:?}"/node_data/stats/balance_value 2>&1
   if [[ ! -f "${LOG_DIR:?}"/node_data/stats/volume ]] &>/dev/null; then
     # make sure volume exist
-    echo "0" "${LOG_DIR:?}"/node_data/stats/volume 2>&1
+    echo "0" >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
   fi
 else # non responsive (color)
   WALLET_VALUE="${GR:?}0.00${N0:?}"
