@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.6.8.6
+# 0.6.8.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -617,6 +617,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # unique connections
     UNIQP2P=$(grep "addr:" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "getaddr" 2>&1 | awk '{ print $2 }' 2>&1 | sed -r '/^.{,10}$/d' 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | wc -l 2>&1)
+    # get latest repository
+    LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
 
     display_result() {
       dialog --title "$1" \
@@ -651,10 +653,11 @@ Add/Saved...: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 
 Fail/Success: $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
 Balance.....: ${WALLET_BALANCE:?}
 Staking.....: ${NODE_PROOF:?}
+CoinSupply..: ${NODE_COIN_SUPPLY:?}
+
 Release.....: v${LATEST_VERSION:?}
 Installed...: ${WALLET_VERSION:?}
-
-CoinSupply..: ${NODE_COIN_SUPPLY:?}
+Repository..: ${LATEST_HEAD:?}
           ")
     display_result "System Information"
     clear
