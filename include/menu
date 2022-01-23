@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.6.8.5
+# 0.6.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -644,8 +644,6 @@ Network.....: ${WALLET_CHAIN:?} ${INTERFACE:?}
 Address.....: ${IP_ADDRESS_N:?}
 Download....: ${DOWNLOAD:?}
 Upload......: ${UPLOAD:?}
-Release.....: v${LATEST_VERSION:?}
-Installed...: ${WALLET_VERSION:?}
 
 Ban(s)......: ${WALLET_PEERS_BANNED:?}
 Connections.: ${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}
@@ -653,6 +651,9 @@ Add/Saved...: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 
 Fail/Success: $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
 Balance.....: ${WALLET_BALANCE:?}
 Staking.....: ${NODE_PROOF:?}
+Release.....: v${LATEST_VERSION:?}
+Installed...: ${WALLET_VERSION:?}
+
 CoinSupply..: ${NODE_COIN_SUPPLY:?}
           ")
     display_result "System Information"
