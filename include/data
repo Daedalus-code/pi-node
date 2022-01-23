@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222201
+# V20222301
 # 0.0.7.8
 
 source /usr/local/bin/include/pitrump.conf
@@ -55,10 +55,10 @@ fi
 
 # fetch price from coinmarketcap (api price)
 URL_TOKEN="https://coinmarketcap.com/currencies/trumpcoin/"
-curl -sf "$URL_TOKEN" >"$LOG_DIR"/node_data/stats/ticker 2>&1
+curl -sf "$URL_TOKEN" >"$LOG_DIR"/node_data/stats/ticker.cmc 2>&1
 
 # clean up file with html2text
-cat "$LOG_DIR"/node_data/stats/ticker 2>/dev/null | html2text >"$LOG_DIR"/node_data/stats/ticker.tmp 2>&1
+cat "$LOG_DIR"/node_data/stats/ticker.cmc 2>/dev/null | html2text >"$LOG_DIR"/node_data/stats/ticker.tmp 2>&1
 # get token price, remove old file
 cat "$LOG_DIR"/node_data/stats/ticker.tmp 2>/dev/null | grep -A1 "Trumpcoin Price Today" 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' 2>&1 | awk '{ printf "%.8f\n", $1 }' >"$LOG_DIR"/node_data/stats/ticker 2>&1 && rm "$LOG_DIR"/node_data/stats/ticker.tmp &>/dev/null
 
