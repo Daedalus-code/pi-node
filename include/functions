@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.2.2.2
+# 1.2.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.2.2"
+VERSION="v1.2.2.4"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -269,13 +269,6 @@ fi
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
-  if [[ -z "$WALLET_PEERS_TOTAL_N" ]] &>/dev/null; then
-    # non responsive
-    WALLET_PEERS_TOTAL_N="0"
-  fi
-  # create a list this time
-  echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/stats/connections
-
   # get wallet version, do this once
   if [[ ! -f "${LOG_DIR:?}"/node_data/client/version ]] &>/dev/null; then
     "$WALLET_DIR"/trumpcoin-cli -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/client/version 2>&1
@@ -372,6 +365,15 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)
   # wallet peers total (no color)
   WALLET_PEERS_TOTAL_N="$WALLET_PEERS_TOTAL"
+  if [[ -z "$WALLET_PEERS_TOTAL_N" ]] &>/dev/null; then
+    # make sure peers exist, use rrdtool database, if available
+    rrdtool info /home/"$(whoami)"/stats/peers.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' >>"${LOG_DIR:?}"/node_data/stats/connections 2>&1
+    # non responsive
+    WALLET_PEERS_TOTAL_N=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | tail -1 2>&1)
+  fi
+  # create a list this time
+  echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/stats/connections
+
   # wallet peers total (color)
   WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
 
