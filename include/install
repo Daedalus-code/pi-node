@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.2.3.0
+# 0.2.3.9
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -62,6 +62,15 @@ if ! [ -x "$(command -v screen)" ] &>/dev/null; then
   sudo /etc/init.d/screen-cleanup start
   echo
   read -r -p "[Ok] screen installed! Press Enter to continue" </dev/tty
+  echo
+fi
+
+# make sure cron is installed
+if ! [ -x "$(command -v cron)" ] &>/dev/null; then
+  echo "Installing cron"
+  sudo apt-get install cron -y
+  echo
+  read -r -p "[Ok] cron installed! Press Enter to continue" </dev/tty
   echo
 fi
 
