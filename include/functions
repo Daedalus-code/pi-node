@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.1.9.4
+# 1.1.9.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.9.4"
+VERSION="v1.1.9.8"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -336,6 +336,8 @@ else # wallet is loading/syncing
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
   RC_LOADING="${GR:?}        Loading${N0:?}"
+  # no progress bar while loading
+  WALLET_TXLAST="${N0:?}"
   # logo turns grey while loading
   RC="${GR:?}"
   # non responsive (loading)
@@ -495,7 +497,9 @@ fi
 if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
   # non responsive
   RC_LOADING="${GR:?}        Loading${N0:?}"
-  SYNC_PROGRESS_BAR="${RC_LOADING:?}"
+  # no progress bar while loading
+  WALLET_TXLAST="${N0:?}"
+  SYNC_PROGRESS_BAR="${N0:?}"
 fi
 
 # if synced is still empty
