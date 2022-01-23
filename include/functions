@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.2.3.3
+# 1.2.3.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.3.3"
+VERSION="v1.2.3.7"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -1216,7 +1216,11 @@ else
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
   fi
-  RC_LOADING="${GR:?}        Syncing${N0:?}"
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "360" ]] &>/dev/null; then
+    RC_LOADING="${GR:?}        Loading${N0:?}"
+  else
+    RC_LOADING="${GR:?}        Syncing${N0:?}"
+  fi
 fi
 
 ### theme ######################################################################
