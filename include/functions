@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.2.0.3
+# 1.2.0.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.0.3"
+VERSION="v1.2.0.4"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -327,6 +327,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/n
   if [[ $(egrep -o "progress=1.000000" "$WALLET_LOG_DIR"/debug.log) ]] &>/dev/null; then
     WALLET_SYNC="100"
   fi
+
+  if [[ -z "${WALLET_SYNC:?}" ]] &>/dev/null; then
+    # non responsive
+    WALLET_SYNC="0"
+  fi
+
   # wallet sync (no color)
   WALLET_SYNC_N="$WALLET_SYNC"
   # wallet sync var with percentage symbol
@@ -342,11 +348,6 @@ else # wallet is loading/syncing
   RC="${GR:?}"
   # non responsive (loading)
   WALLET_SYNC="${GR:?}0.00%${N0:?}"
-fi
-
-if [[ -z "${WALLET_SYNC:?}" ]] &>/dev/null; then
-  # non responsive
-  WALLET_SYNC="0"
 fi
 
 # wallet_nodes function (color)
