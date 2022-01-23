@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.1.9.6
+# 1.1.9.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.9.6"
+VERSION="v1.1.9.7"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -323,13 +323,14 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/n
     WALLET_SYNC="100"
   fi
 
+  # wallet sync (no color)
+  WALLET_SYNC_N="$WALLET_SYNC"
+
   if [[ -z "${WALLET_SYNC:?}" ]] &>/dev/null; then
     # non responsive
     WALLET_SYNC="0"
   fi
 
-  # wallet sync (no color)
-  WALLET_SYNC_N="$WALLET_SYNC"
   # wallet sync var with percentage symbol
   WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
 fi
