@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.7.9.2
+# 0.7.9.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -98,12 +98,12 @@ case $CHOICE in
         kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null && sleep 1
       else # normal shutdown, turn off crontab
         sudo service cron stop 2>&1
-        printf '%b' "[!!] "
+        printf '%b' "[${R1:?}!!${N0:?}] "
         "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
         # wait on node (daemon) to stop
         until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
           clear
-          printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+          printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
           printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
           sleep 5
         done
@@ -136,12 +136,12 @@ case $CHOICE in
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       sudo service cron stop 2>&1
       echo "[Ok] Re/Starting node!"
-      printf '%b' "[!!] "
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop &>/dev/null && sleep 1
+      printf '%b' "[${R1:?}!!${N0:?}] "
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
       # wait on node (daemon) to stop
       until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
         clear
-        printf '%b' "[!!] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
         printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
         sleep 5
       done
@@ -354,7 +354,13 @@ case $CHOICE in
     read -r -p "[YN] Unzip bootstrap? -> (${WALLET_DIR:?}) y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      # wait on node (daemon) to stop
+      until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
+        printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+      done
       unzip /home/"$(whoami)"/TrumpCoin.bootstrap.zip -d "${WALLET_DIR:?}"
+      sleep 2
+      clear
       echo
       read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
       echo
@@ -401,12 +407,12 @@ may report that the imported key exists but related transactions are still missi
     read -r IMPORT_KEY
     if [[ -z "$IMPORT_KEY" ]] &>/dev/null; then
       # non responsive
-      echo "[!!] Nothing was typed!"
+      printf '%b' "[${R1:?}!!${N0:?}] Nothing was typed!\n"
       sleep 1
       clear
       exit
     fi
-    echo "[!?] Please wait..! This call can take minutes to complete."
+    printf '%b' "[${R1:?}!!${GR:?}?${N0:?}] Please wait..! This call can take minutes to complete.\n"
     "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf importprivkey "${IMPORT_KEY:?}"
     clear
     echo
@@ -424,7 +430,7 @@ Then the importprivkey can be used with this output
     read -r DUMP_ADDRESS
     if [[ -z "$DUMP_ADDRESS" ]] &>/dev/null; then
       # non responsive
-      echo "[!!] Nothing was typed!"
+      printf '%b' "[${R1:?}!!${N0:?}] Nothing was typed!\n"
       sleep 1
       clear
       exit
@@ -528,7 +534,7 @@ ufw allow ${G1:?}smtp${N0:?}\n"
     read -r ALLOW_RULE
     if [[ -z "$ALLOW_RULE" ]] &>/dev/null; then
       # empty
-      echo "[!!] Empty, try again"
+      printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
       exit
     fi
     sudo ufw allow "${ALLOW_RULE:?}"
@@ -558,7 +564,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     read -r DENY_RULE
     if [[ -z "$DENY_RULE" ]] &>/dev/null; then
       # empty
-      echo "[!!] Empty, try again"
+      printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
       exit
     fi
     sudo ufw deny "${DENY_RULE:?}"
@@ -571,7 +577,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "6")
 
     # delete ufw rules
-    echo "[!!] Deleting allow rules 15110, 80, 22"
+    printf '%b' "[${R1:?}!!${N0:?}] Deleting allow rules 15110, 80, 22\n"
     sudo ufw delete allow 15110
     sudo ufw delete allow 80
     sudo ufw delete allow 22
@@ -765,7 +771,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     display_result "System Information"
     clear
   else
-    echo "[!!] Daemon not running!"
+    printf '%b' "[${R1:?}!!${N0:?}] Daemon not running!\n"
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
