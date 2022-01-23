@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.0.8.0
+# 0.0.8.6
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -68,13 +68,19 @@ grep "Trading Volume24h" "${LOG_DIR:?}"/node_data/stats/ticker.tmp 2>&1 | awk '{
 echo "$(tail -11 "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1)" >"${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1
 
-# api value
+# api values
 API_VALUE=$(cat "${LOG_DIR:?}"/node_data/stats/ticker 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
+API_VOLUME=$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 if [[ -z "$API_VALUE" ]]; then
   # non responsive
   API_VALUE="0"
 fi
+if [[ -z "$API_VOLUME" ]]; then
+  # non responsive
+  API_VOLUME="0"
+fi
 
 printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Found ${G1:?}${API_VALUE:?}${N0:?} Coinmarketcap price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Found ${G1:?}${API_VOLUME:?}${N0:?} Coinmarketcap volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # END
