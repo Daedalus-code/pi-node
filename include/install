@@ -238,7 +238,7 @@ if [[ -z "$OLD_HEAD" ]] &>/dev/null; then
   OLD_HEAD="${GR:?}[fsociety]${N0:?}"
 fi
 echo
-read -r -p "[Ok] Updated! Press Enter to continue" </dev/tty
+read -t 2 -r -p "[Ok] Updated! Press Enter to continue" </dev/tty
 echo
 clear
 printf '%b' "Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
