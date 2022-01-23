@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.1.9.2
+# 1.1.9.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.9.2"
+VERSION="v1.1.9.5"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -988,194 +988,197 @@ fi
 
 ### timeline ###################################################################
 
-# if rpc in warm-up, loading block index, wait
-if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
+if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
-  # random start number
-  RANDOM_TIMELINE=$((((RANDOM % 15) + 1)))
+  # if rpc in warm-up, loading block index, wait
+  if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
 
-  # difficulty
-  if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
-    TIMELINE=$(cat "${LOG_DIR:?}"/node_data/stats/difficulty 2>/dev/null | tail -1)
-    TIMELINE="Difficulty $TIMELINE"
-  # patriotnodes
-  elif [ "$RANDOM_TIMELINE" -eq "2" ] &>/dev/null; then
-    TIMELINE="Patriotnodes ${N0:?}${WALLET_NODES_STABLE:?}${N0:?}/${G1:?}${WALLET_NODES_TOTAL:?}${N0:?}/${G0:?}${WALLET_NODES_ENABLED:?}${N0:?}/${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}"
-  # moneysupply
-  elif [ "$RANDOM_TIMELINE" -eq "3" ] &>/dev/null; then
-    TIMELINE=$(grep "moneysupply" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1 | rev 2>&1 | sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
-    TIMELINE="Moneysupply $TIMELINE${N0:?}"
-  # unconfirmed_balance
-  elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
-    WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
-    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-      # hide unconfirmed
-      TIMELINE="Unconfirmed ${GR:?}****${N0:?} ${GR:?}****${N0:?} USD${N0:?}"
-    else
-      TIMELINE="Unconfirmed $WALLET_UNCONFIRMED ${GR:?}$WALLET_UNCONFIRMED_VALUE USD${N0:?}"
-    fi
-  # immature_balance
-  elif [ "$RANDOM_TIMELINE" -eq "5" ] &>/dev/null; then
-    WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
-    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-      # hide immature
-      TIMELINE="Immature ${GR:?}****${N0:?} ${GR:?}****${N0:?} USD${N0:?}"
-    else
-      TIMELINE="Immature $WALLET_IMMATURE ${GR:?}$WALLET_IMMATURE_VALUE USD${N0:?}"
-    fi
-  elif [ "$RANDOM_TIMELINE" -eq "6" ] &>/dev/null; then
-    # lowest confirmation
-    TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
-    # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
-    # calculate seconds into age
-    if [[ -f "${LOG_DIR:?}"/node_data/client/listunspent ]] &>/dev/null; then
+    # random start number
+    RANDOM_TIMELINE=$((((RANDOM % 15) + 1)))
+
+    # difficulty
+    if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
+      TIMELINE=$(cat "${LOG_DIR:?}"/node_data/stats/difficulty 2>/dev/null | tail -1)
+      TIMELINE="Difficulty $TIMELINE"
+    # patriotnodes
+    elif [ "$RANDOM_TIMELINE" -eq "2" ] &>/dev/null; then
+      TIMELINE="Patriotnodes ${N0:?}${WALLET_NODES_STABLE:?}${N0:?}/${G1:?}${WALLET_NODES_TOTAL:?}${N0:?}/${G0:?}${WALLET_NODES_ENABLED:?}${N0:?}/${GR:?}${WALLET_NODES_INQUEUE:?}${N0:?}"
+    # moneysupply
+    elif [ "$RANDOM_TIMELINE" -eq "3" ] &>/dev/null; then
+      TIMELINE=$(grep "moneysupply" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1 | rev 2>&1 | sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
+      TIMELINE="Moneysupply $TIMELINE${N0:?}"
+    # unconfirmed_balance
+    elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
+      WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+      if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+        # hide unconfirmed
+        TIMELINE="Unconfirmed ${GR:?}****${N0:?} ${GR:?}****${N0:?} USD${N0:?}"
+      else
+        TIMELINE="Unconfirmed $WALLET_UNCONFIRMED ${GR:?}$WALLET_UNCONFIRMED_VALUE USD${N0:?}"
+      fi
+    # immature_balance
+    elif [ "$RANDOM_TIMELINE" -eq "5" ] &>/dev/null; then
+      WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+      if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+        # hide immature
+        TIMELINE="Immature ${GR:?}****${N0:?} ${GR:?}****${N0:?} USD${N0:?}"
+      else
+        TIMELINE="Immature $WALLET_IMMATURE ${GR:?}$WALLET_IMMATURE_VALUE USD${N0:?}"
+      fi
+    elif [ "$RANDOM_TIMELINE" -eq "6" ] &>/dev/null; then
+      # lowest confirmation
+      TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
+      # calculate seconds
+      TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+      # calculate seconds into age
+      if [[ -f "${LOG_DIR:?}"/node_data/client/listunspent ]] &>/dev/null; then
+        INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
+        INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
+      else
+        INPUT_AGE="${N0:?}"
+        INPUT_AGE_D="${N0:?}"
+      fi
+      if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+        # hide new input
+        TIMELINE="New Input ${GR:?}****${N0:?} (${GR:?}****${N0:?}) ${GR:?}****${N0:?}${N0:?}"
+      else
+        TIMELINE="New Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
+      fi
+    elif [ "$RANDOM_TIMELINE" -eq "7" ] &>/dev/null; then
+      # highest confirmation
+      TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
+      # calculate seconds
+      TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+      # calculate seconds into age
       INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
       INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    else
-      INPUT_AGE="${N0:?}"
-      INPUT_AGE_D="${N0:?}"
+      if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+        # hide old input
+        TIMELINE="Old Input ${GR:?}****${N0:?} (${GR:?}****${N0:?}) ${GR:?}****${N0:?}${N0:?}"
+      else
+        TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
+      fi
+      # average confirmation
+    elif [ "$RANDOM_TIMELINE" -eq "8" ] &>/dev/null; then
+      UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)
+      TIMELINE=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)
+      # average calculated
+      TIMELINE_AVG=$(echo "$TIMELINE/$UNSPENT_COUNT" 2>&1 | bc 2>&1)
+      # calculate seconds
+      TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+      # calculate seconds into age
+      INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
+      # save the value
+      echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avgconfirmation
+      INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
+      TIMELINE="Average $TIMELINE_AVG (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
+      # wallet value
+    elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
+      if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+        # hide value
+        TIMELINE="Value ${GR:?}****${N0:?} USD ${GR:?}****${N0:?}"
+      else
+        TIMELINE="Value ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
+      fi
+      # highest input amount
+    elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
+      TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
+      if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+        # hide highest input
+        TIMELINE="Highest Input ${GR:?}****${N0:?}"
+      else
+        TIMELINE="Highest Input $TIMELINE"
+      fi
+      # lowest input amount
+    elif [ "$RANDOM_TIMELINE" -eq "11" ] &>/dev/null; then
+      TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
+      if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+        # hide lowest input
+        TIMELINE="Lowest Input ${GR:?}****${N0:?}"
+      else
+        TIMELINE="Lowest Input $TIMELINE"
+      fi
+      # daemon uptime
+    elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
+      TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
+      TIMELINE_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
+      TIMELINE="Uptime (${TIMELINE_DAYS:?}d) ${GR:?}$TIMELINE${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "13" ] &>/dev/null; then
+      # highest peer count
+      HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | sort -n 2>&1 | tail -1 2>&1)
+      # lowest peer count
+      LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | sort -n 2>&1 | head -1 2>&1)
+      TIMELINE="Low/High P2P $LOWS_P2P/$HIGH_P2P"
+    elif [ "$RANDOM_TIMELINE" -eq "14" ] &>/dev/null; then
+      TIMELINE_LINES=$(wc -l "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | awk '{ print $1 }' 2>&1)
+      TIMELINE_ACTIVE=$(grep "1" "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | wc -l 2>&1)
+      TIMELINE_NOACTIVE=$(grep "0" "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | wc -l 2>&1)
+      TIMELINE_PERC_ACTIVE=$(echo "100/$TIMELINE_LINES*$TIMELINE_ACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+      TIMELINE_PERC_NOACTIVE=$(echo "100/$TIMELINE_LINES*$TIMELINE_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+      TIMELINE_PERC_ACTIVE="${TIMELINE_PERC_ACTIVE:?}%"
+      TIMELINE_PERC_NOACTIVE="${TIMELINE_PERC_NOACTIVE:?}%"
+      TIMELINE="${N0:?}Alive ${TIMELINE_PERC_ACTIVE:?} Dead ${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "15" ] &>/dev/null; then
+      # get interface
+      IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
+      # interface icon (top right)
+      INTERFACE=$(echo "${IFCONFIG:?}" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
+      # interface w speed
+      TIMELINE="$(sudo ethtool "${INTERFACE:?}" 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
+      TIMELINE="Network ${INTERFACE:?} ${TIMELINE:?}"
     fi
-    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-      # hide new input
-      TIMELINE="New Input ${GR:?}****${N0:?} (${GR:?}****${N0:?}) ${GR:?}****${N0:?}${N0:?}"
-    else
-      TIMELINE="New Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
+  else # wait on wallet (--donald john trump quotes - art of the deal)
+    # random start number
+    RANDOM_TIMELINE=$((((RANDOM % 10) + 1)))
+    # quotes - art of the deal
+    if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
+      TIMELINE="${GR}Think big${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "2" ] &>/dev/null; then
+      TIMELINE="${GR}Maximize your options${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "3" ] &>/dev/null; then
+      TIMELINE="${GR}Know your market${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
+      TIMELINE="${GR}Use your leverage${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "5" ] &>/dev/null; then
+      TIMELINE="${GR}Enhance your location${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "6" ] &>/dev/null; then
+      TIMELINE="${GR}Get the word out${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "7" ] &>/dev/null; then
+      TIMELINE="${GR}Fight back${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "8" ] &>/dev/null; then
+      TIMELINE="${GR}Deliver the goods${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
+      TIMELINE="${GR}Contain the costs${N0:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
+      TIMELINE="${GR}Have fun${N0:?}"
     fi
-  elif [ "$RANDOM_TIMELINE" -eq "7" ] &>/dev/null; then
-    # highest confirmation
-    TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
-    # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
-    # calculate seconds into age
-    INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-      # hide old input
-      TIMELINE="Old Input ${GR:?}****${N0:?} (${GR:?}****${N0:?}) ${GR:?}****${N0:?}${N0:?}"
-    else
-      TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
-    fi
-    # average confirmation
-  elif [ "$RANDOM_TIMELINE" -eq "8" ] &>/dev/null; then
-    UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)
-    TIMELINE=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)
-    # average calculated
-    TIMELINE_AVG=$(echo "$TIMELINE/$UNSPENT_COUNT" 2>&1 | bc 2>&1)
-    # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
-    # calculate seconds into age
-    INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-    # save the value
-    echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avgconfirmation
-    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1)
-    TIMELINE="Average $TIMELINE_AVG (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
-    # wallet value
-  elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
-    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-      # hide value
-      TIMELINE="Value ${GR:?}****${N0:?} USD ${GR:?}****${N0:?}"
-    else
-      TIMELINE="Value ${WALLET_VALUE:?} USD ${GR:?}$WALLET_TICKER${N0:?}"
-    fi
-    # highest input amount
-  elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
-    TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
-    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-      # hide highest input
-      TIMELINE="Highest Input ${GR:?}****${N0:?}"
-    else
-      TIMELINE="Highest Input $TIMELINE"
-    fi
-    # lowest input amount
-  elif [ "$RANDOM_TIMELINE" -eq "11" ] &>/dev/null; then
-    TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
-    if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-      # hide lowest input
-      TIMELINE="Lowest Input ${GR:?}****${N0:?}"
-    else
-      TIMELINE="Lowest Input $TIMELINE"
-    fi
-    # daemon uptime
-  elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
-    TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
-    TIMELINE_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
-    TIMELINE="Uptime (${TIMELINE_DAYS:?}d) ${GR:?}$TIMELINE${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "13" ] &>/dev/null; then
-    # highest peer count
-    HIGH_P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | sort -n 2>&1 | tail -1 2>&1)
-    # lowest peer count
-    LOWS_P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | sort -n 2>&1 | head -1 2>&1)
-    TIMELINE="Low/High P2P $LOWS_P2P/$HIGH_P2P"
-  elif [ "$RANDOM_TIMELINE" -eq "14" ] &>/dev/null; then
-    TIMELINE_LINES=$(wc -l "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | awk '{ print $1 }' 2>&1)
-    TIMELINE_ACTIVE=$(grep "1" "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | wc -l 2>&1)
-    TIMELINE_NOACTIVE=$(grep "0" "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | wc -l 2>&1)
-    TIMELINE_PERC_ACTIVE=$(echo "100/$TIMELINE_LINES*$TIMELINE_ACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE_PERC_NOACTIVE=$(echo "100/$TIMELINE_LINES*$TIMELINE_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE_PERC_ACTIVE="${TIMELINE_PERC_ACTIVE:?}%"
-    TIMELINE_PERC_NOACTIVE="${TIMELINE_PERC_NOACTIVE:?}%"
-    TIMELINE="${N0:?}Alive ${TIMELINE_PERC_ACTIVE:?} Dead ${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "15" ] &>/dev/null; then
-    # get interface
-    IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
-    # interface icon (top right)
-    INTERFACE=$(echo "${IFCONFIG:?}" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
-    # interface w speed
-    TIMELINE="$(sudo ethtool "${INTERFACE:?}" 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
-    TIMELINE="Network ${INTERFACE:?} ${TIMELINE:?}"
   fi
-else # wait on wallet (--donald john trump quotes - art of the deal)
-  # random start number
-  RANDOM_TIMELINE=$((((RANDOM % 10) + 1)))
-  # quotes - art of the deal
-  if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
-    TIMELINE="${GR}Think big${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "2" ] &>/dev/null; then
-    TIMELINE="${GR}Maximize your options${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "3" ] &>/dev/null; then
-    TIMELINE="${GR}Know your market${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
-    TIMELINE="${GR}Use your leverage${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "5" ] &>/dev/null; then
-    TIMELINE="${GR}Enhance your location${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "6" ] &>/dev/null; then
-    TIMELINE="${GR}Get the word out${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "7" ] &>/dev/null; then
-    TIMELINE="${GR}Fight back${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "8" ] &>/dev/null; then
-    TIMELINE="${GR}Deliver the goods${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
-    TIMELINE="${GR}Contain the costs${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
-    TIMELINE="${GR}Have fun${N0:?}"
+
+  ### collect data for rrdtool (round robin databases) ###########################
+
+  if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
+
+    DIR_NAME="${LOG_DIR:?}"/node_data/stats
+    if [ ! -d "${DIR_NAME:?}" ] &>/dev/null; then
+      # create data, peers, tmp directory, ruled by configuration
+      mkdir "${DIR_NAME:?}" &>/dev/null
+    fi
+    # echo values into files (no color)
+    echo "$TOTAL_MEM_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats/memtotal 2>&1
+    echo "$FREE_MEM_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats/memfree 2>&1
+    egrep "TX|Bytes" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/stats/txbytes 2>&1
+    egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/stats/rxbytes 2>&1
+    # setup graphs
+    bash /usr/local/bin/include/stats
   fi
-fi
 
-### collect data for rrdtool (round robin databases) ###########################
-
-if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
-
-  DIR_NAME="${LOG_DIR:?}"/node_data/stats
-  if [ ! -d "${DIR_NAME:?}" ] &>/dev/null; then
-    # create data, peers, tmp directory, ruled by configuration
-    mkdir "${DIR_NAME:?}" &>/dev/null
+  if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+    # hide balance and inputs
+    WALLET_BALANCE="${GR:?}****${N0:?}"
+    WALLET_INPUTS="${GR:?}****${N0:?}"
+    WALLET_STAKES="${GR:?}****${N0:?}"
+    WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
   fi
-  # echo values into files (no color)
-  echo "$TOTAL_MEM_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats/memtotal 2>&1
-  echo "$FREE_MEM_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats/memfree 2>&1
-  egrep "TX|Bytes" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/stats/txbytes 2>&1
-  egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/stats/rxbytes 2>&1
-  # setup graphs
-  bash /usr/local/bin/include/stats
-fi
-
-if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-  # hide balance and inputs
-  WALLET_BALANCE="${GR:?}****${N0:?}"
-  WALLET_INPUTS="${GR:?}****${N0:?}"
-  WALLET_STAKES="${GR:?}****${N0:?}"
-  WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
 fi
 
 ### theme ######################################################################
