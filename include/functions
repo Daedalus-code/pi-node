@@ -485,8 +485,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
 fi
 
 TX="${G1:?}"
-# greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/null; then
+# less than n seconds, continue
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "360" ]] &>/dev/null; then
   RC_LOADING="${GR:?}        Loading${N0:?}"
 else
   SYNC_PROGRESS_BAR="${GR:?}0.00%${N0:?}"
