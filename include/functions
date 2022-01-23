@@ -270,7 +270,7 @@ fi
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
   # get wallet version, do this once
-  if [[ ! -f "${LOG_DIR:?}"/node_data/client/version ]] &>/dev/null; then
+  if ! grep "v" "${LOG_DIR:?}"/node_data/client/version &>/dev/null; then
     "$WALLET_DIR"/trumpcoin-cli -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/client/version 2>&1
   fi
   WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
