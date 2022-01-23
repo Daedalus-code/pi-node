@@ -26,7 +26,7 @@ if wc -l "${LOG_DIR:?}"/node_data/synced 2>&1 | awk '{ print $1 }' &>/dev/null; 
     touch "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null
 
     # output progress value several times
-    SYNCING_REPLACE_TX=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | tr -d "0" 2>&1)
+    SYNCING_REPLACE_TX=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1)
 
     if [[ -z "$SYNCING_REPLACE_TX" ]] &>/dev/null; then
       # non responsive
