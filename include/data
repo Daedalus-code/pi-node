@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.0.8.6
+# 0.0.9.1
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -43,11 +43,14 @@ grepcidr -f "${LOG_DIR:?}"/node_data/nodes.all "${LOG_DIR:?}"/node_data/nodes.al
 TOTAL_NODES=$(echo "$API_NEW+$ARP_NEW" 2>&1 | bc 2>&1)
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script Total ${G1:?}${TOTAL_NODES:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-### token price ################################################################
+### token price, volume ########################################################
 
-# need curl, html2text for this
+# make sure curl, html2text and rrdtool exist
 if ! [ -x "$(command -v curl)" ] &>/dev/null; then
   sudo apt-get install curl -y
+fi
+if ! [ -x "$(command -v rrdtool)" ] &>/dev/null; then
+  sudo apt-get install rrdtool -y
 fi
 if ! [ -x "$(command -v html2text)" ] &>/dev/null; then
   sudo apt-get install html2text -y
@@ -71,13 +74,18 @@ mv "${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp "${LOG_DIR:?}"/node_data/stats/
 # api values
 API_VALUE=$(cat "${LOG_DIR:?}"/node_data/stats/ticker 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
 API_VOLUME=$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
-if [[ -z "$API_VALUE" ]]; then
+
+if [[ -z "$API_VALUE" ]] &>/dev/null; then
+  # make sure ticker exist, use rrdtool database, if available
+  rrdtool info /home/"$(whoami)"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/ticker 2>&1
   # non responsive
-  API_VALUE="0"
+  API_VALUE=$(cat "${LOG_DIR:?}"/node_data/stats/ticker 2>/dev/null)
 fi
-if [[ -z "$API_VOLUME" ]]; then
+if [[ -z "$API_VOLUME" ]] &>/dev/null; then
+  # make sure volume exist, use rrdtool database, if available
+  rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
   # non responsive
-  API_VOLUME="0"
+  API_VOLUME=$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null)
 fi
 
 printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Found ${G1:?}${API_VALUE:?}${N0:?} Coinmarketcap price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1

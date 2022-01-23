@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.2.1.2
+# 1.2.2.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.1.2"
+VERSION="v1.2.2.0"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -423,7 +423,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # save balance valued value
   echo "${WALLET_VALUE:?}" >"${LOG_DIR:?}"/node_data/stats/balance_value 2>&1
   if [[ ! -f "${LOG_DIR:?}"/node_data/stats/volume ]] &>/dev/null; then
-    # make sure volume exist, use rrdtool database
+    # make sure volume exist, use rrdtool database, if available
     rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
   fi
 else # non responsive (color)
@@ -604,7 +604,15 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/ticker ] &>/dev/null; then
   cp "${LOG_DIR:?}"/node_data/stats/ticker "${WALLET_DIR:?}"/ticker 2>&1
 else # restore it
   cp "${WALLET_DIR:?}"/ticker "${LOG_DIR:?}"/node_data/stats/ticker 2>&1
-  printf '%b' "${LOG_DATE:?} Status() C.Gecko.API(): Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
+
+# backup ticker volume
+if [ -f "${LOG_DIR:?}"/node_data/stats/volume ] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/stats/volume "${WALLET_DIR:?}"/volume 2>&1
+else # restore it
+  cp "${WALLET_DIR:?}"/volume "${LOG_DIR:?}"/node_data/stats/volume 2>&1
+  printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Restored API Volume! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume 2>&1)${GR:?} :: ${N0:?}Ticker volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### adding nodes, create failed and success lists ##############################
