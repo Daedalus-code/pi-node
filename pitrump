@@ -29,7 +29,7 @@ ${RC:?}        #######        ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} 
 ${RC:?}      ###########      ${N0:?} TxCount ${N0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
 ${N0:?}                       ${N0:?} ${TIMELINE:?}
 ${RC_LOADING:?}${N0:?}
-${RC:?} ${WALLET_TXLAST:?}${N0:?}
+${TX:?} ${WALLET_TXLAST:?}${N0:?}
 
 ${LAST_LOG:?}
 "
