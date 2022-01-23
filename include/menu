@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222201
-# 0.6.8.1
+# V20222301
+# 0.6.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -615,6 +615,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # interface icon (top right)
     INTERFACE=$(echo "${IFCONFIG:?}" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
 
+    # unique connections
+    UNIQP2P=$(grep "addr:" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "getaddr" 2>&1 | awk '{ print $2 }' 2>&1 | sed -r '/^.{,10}$/d' 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | wc -l 2>&1)
+
     display_result() {
       dialog --title "$1" \
         --no-collapse \
@@ -645,8 +648,10 @@ Release.....: v${LATEST_VERSION:?}
 Installed...: ${WALLET_VERSION:?}
 
 Ban(s)......: ${WALLET_PEERS_BANNED:?}
-Connections.: ${WALLET_PEERS_TOTAL:?}
-Addnodes....: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)
+Connections.: ${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}
+Add_Peers...: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)
+Addnodes....: $(wc -l "${WALLET_DIR:?}"addnodes 2>&1 | awk '{ print $1 }' 2>&1)
+Failed......: $(wc -l "${WALLET_DIR:?}"failed 2>&1 | awk '{ print $1 }' 2>&1)
 Balance.....: ${WALLET_BALANCE:?}
 Staking.....: ${NODE_PROOF:?}
 CoinSupply..: ${NODE_COIN_SUPPLY:?}
