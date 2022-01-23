@@ -36,7 +36,7 @@ BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
 
-OPTIONS=(1 "Node Menu        Shutdown, Restart, Update"
+OPTIONS=(1 "Node Menu        Shutdown, Re/Start, Update"
   2 "Keys Menu        Dump/Import keys, PoS (${POS_COUNT:?})"
   3 "UFW Menu         Uncomplicated firewall"
   4 "Information      Trump node status"
@@ -63,7 +63,7 @@ case $CHOICE in
   MENU="Choose one of the following options:"
 
   OPTIONS=(1 "Shutdown         Shutdown reboot, graphs"
-    2 "Restart          Restart trumpcoin daemon"
+    2 "Re/Start          Re/Start trumpcoin daemon"
     3 "Install          Install trumpcoin wallet")
 
   CHOICE=$(dialog --clear \
@@ -125,13 +125,13 @@ case $CHOICE in
 
   "2")
 
-    read -r -p "[YN] Restart node (daemon)? y/n " -n 1 -r
+    read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       sudo service cron stop 2>&1
-      echo "[Ok] Restarting node!"
+      echo "[Ok] Re/Starting node!"
       printf '%b' "[!!] "
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop &>/dev/null && sleep 1
       # wait on node (daemon) to stop
       until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
         clear
