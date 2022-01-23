@@ -15,11 +15,6 @@ Trump Node - RaspberryPi with LCD monitoring
 Download latest TrumpCoin wallet  
 https://github.com/trumpcoinsupport/TrumpCoin/releases  
 
-arm-linux zip  
-``cd && wget https://github.com/trumpcoinsupport/TrumpCoin/releases/download/5.0.0.0/TrumpCoin.arm-linux-gnueabihf.zip``  
-
-``unzip TrumpCoin.arm-linux-gnueabihf.zip``  
-
 ### Setup script
 ``sudo apt-get install git -y``  
 ``cd && git clone https://github.com/Daedalus-code/trump-node.git``  
