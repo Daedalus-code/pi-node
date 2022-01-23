@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222201
-# 0.2.1.2
+# V20222301
+# 0.2.2.4
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -23,17 +23,26 @@ fi
 sudo mkdir /usr/local/bin/include &>/dev/null
 
 if [[ ! -f /usr/local/bin/include/pitrump.conf ]] &>/dev/null; then
+
   cp /home/"$(whoami)"/trump-node/pitrump.conf /tmp/pt.tmp 2>/dev/null
   sudo mv /tmp/pt.tmp /usr/local/bin/include/pitrump.conf 2>/dev/null
+
   if [[ ! -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
     cp /home/"$(whoami)"/trump-node/pitrump.conf /home/"$(whoami)"/pitrump.conf 2>/dev/null
   fi
+
   if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
     cp /home/"$(whoami)"/pitrump.conf /tmp/pt.tmp 2>/dev/null
     sudo mv /tmp/pt.tmp /usr/local/bin/include/pitrump.conf 2>/dev/null
   fi
+
 fi
 source /usr/local/bin/include/pitrump.conf
+if [ ! -d /usr/local/bin/include ] &>/dev/null; then
+  sudo mkdir /usr/local/bin/include &>/dev/null
+fi
+cp /home/"$(whoami)"/trump-node/include/color /tmp/color.tmp 2>/dev/null
+sudo mv /tmp/color.tmp /usr/local/bin/include/color 2>/dev/null
 source /usr/local/bin/include/color
 
 # date for logs
@@ -46,6 +55,9 @@ if ! [ -x "$(command -v screen)" ] &>/dev/null; then
   echo "Installing screen"
   sudo apt-get install screen -y
   sudo /etc/init.d/screen-cleanup start
+  echo
+  read -r -p "[Ok] screen installed! Press Enter to continue" </dev/tty
+  echo
 fi
 
 # make sure tor is installed
@@ -82,6 +94,9 @@ ${HIDDEN_SERVICE:?}
     # restart tor after configuration
     sudo service tor restart 2>&1
   fi
+  echo
+  read -r -p "[Ok] tor installed! Press Enter to continue" </dev/tty
+  echo
 fi
 
 # make sure grepcidr is installed
@@ -89,7 +104,7 @@ if ! [ -x "$(command -v grepcidr)" ] &>/dev/null; then
   echo "Installing grepcidr"
   sudo apt-get install grepcidr -y
   echo
-  read -r -p "[Ok] Press Enter to continue" </dev/tty
+  read -r -p "[Ok] grepcidr installed! Press Enter to continue" </dev/tty
   echo
 fi
 
@@ -105,7 +120,7 @@ if ! [ -x "$(command -v ufw)" ] &>/dev/null; then
   echo "Using different ports?"
   echo "sudo ufw status & sudo ufw --help"
   echo
-  read -r -p "[Ok] Press Enter to continue" </dev/tty
+  read -r -p "[Ok] ufw installed! Press Enter to continue" </dev/tty
   echo
 fi
 
@@ -169,7 +184,6 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 else
   echo "Please run install one more time after editing pitrump.conf!"
 fi
-clear
 
 # look for screen session, if found, killall
 if screen -list 2>&1 |
@@ -181,9 +195,7 @@ fi
 if [ ! -d "${LOG_DIR:?}"/node_data ] &>/dev/null; then
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 fi
-if [ ! -d /usr/local/bin/include ] &>/dev/null; then
-  sudo mkdir /usr/local/bin/include &>/dev/null
-fi
+
 # pitrump.conf, do this once
 if [[ ! -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
   cd || exit && cp /home/"$(whoami)"/trump-node/pitrump.conf ../
