@@ -42,7 +42,7 @@ rrdtool graph /var/www/html/load_graph.png \
   GPRINT:load:LAST:%.2lf \
   GPRINT:load5:AVERAGE:%.2lf \
   GPRINT:load15:AVERAGE:%.2lf \
-  AREA:load#45DC63:"Load 1m" \
+  LINE1:load#45DC63:"Load 1m" \
   LINE2:load5#FFE000:"Load 5m" \
   LINE2:load15#FF5100:"Load 15m"
 
