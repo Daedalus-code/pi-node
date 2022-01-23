@@ -18,7 +18,7 @@ https://github.com/trumpcoinsupport/TrumpCoin/releases
 ### Setup script
 ``sudo apt-get install git -y``  
 ``cd && git clone https://github.com/Daedalus-code/trump-node.git``  
-``cd trump-node && bash include/install``  
+``bash trump-node/include/install``  
 
 ### Setup rc.local
 
