@@ -1183,7 +1183,7 @@ fi
 
 if [[ -z "${TIMELINE:?}" ]] &>/dev/null; then
   # non responsive (loading)
-  TIMELINE="${N0:?}"
+  TIMELINE=" "
 fi
 
 ### theme ######################################################################
