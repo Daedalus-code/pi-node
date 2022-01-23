@@ -90,7 +90,7 @@ uname -a >"${LOG_DIR:?}"/node_data/uname
 USER=$(whoami 2>&1 | awk '{ print $1 }' 2>&1)
 if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "armv7l" &>/dev/null; then
   # get cpu temp, celcius, fahrenheit, (raspberry pi)
-  CPU_CTEMP=$(</sys/class/thermal/thermal_zone0/temp)
+  CPU_CTEMP=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
 else
   CPU_CTEMP="0"
 fi
