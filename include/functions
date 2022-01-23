@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.1.8.7
+# 1.1.9.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.8.7"
+VERSION="v1.1.9.4"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -276,10 +276,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     "$WALLET_DIR"/trumpcoin-cli -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/client/version 2>&1
   fi
   WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
-  if [[ -z "$WALLET_VERSION" ]]; then
-    # wallet version, grey, waiting on daemon data
-    WALLET_VERSION="${GR:?}vLoading${N0:?}"
-  fi
+fi
+
+if [[ -z "$WALLET_VERSION" ]]; then
+  # wallet version, grey, waiting on daemon data
+  WALLET_VERSION="${GR:?}vLoading${N0:?}"
 fi
 
 # running mainnet or testnet
@@ -486,15 +487,21 @@ if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
 fi
 
+if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+  # non responsive
+  WALLET_TXLAST="${N0:?}"
+fi
+
+if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+  # non responsive
+  RC_LOADING="${GR:?}        Loading${N0:?}"
+  SYNC_PROGRESS_BAR="${RC_LOADING:?}"
+fi
+
 # if synced is still empty
 if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # look for sync line, save it there and then
   grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
-fi
-
-if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
-  # non responsive
-  WALLET_TXLAST="${N0:?}"
 fi
 
 # greater than n seconds, continue
