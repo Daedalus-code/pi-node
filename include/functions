@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.1.9.4
+# 1.1.9.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.9.4"
+VERSION="v1.1.9.6"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -487,6 +487,8 @@ if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
     RC_LOADING="${N0:?}"
   fi
+else
+  RC_LOADING="${N0:?}"
 fi
 
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
