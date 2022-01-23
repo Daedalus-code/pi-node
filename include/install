@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.2.2.8
+# 0.2.3.0
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -133,6 +133,8 @@ if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
 
   # install trumpcoin.conf, do this once
   if [[ ! -f "${WALLET_DIR:?}"/trumpcoin.conf ]] &>/dev/null; then
+
+    mkdir "${WALLET_DIR:?}" &>/dev/null
 
     # create random rpcuser & rpcpassword
     RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
