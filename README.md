@@ -21,6 +21,7 @@ arm-linux zip
 ``unzip TrumpCoin.arm-linux-gnueabihf.zip``  
 
 ### Setup script
+``sudo apt-get install git -y``  
 ``cd && git clone https://github.com/Daedalus-code/trump-node.git``  
 ``cd trump-node && bash include/install``  
 
