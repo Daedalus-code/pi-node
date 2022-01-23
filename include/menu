@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.6.8.9
+# 0.6.9.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -617,8 +617,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # unique connections
     UNIQP2P=$(grep "addr:" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "getaddr" 2>&1 | awk '{ print $2 }' 2>&1 | sed -r '/^.{,10}$/d' 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | wc -l 2>&1)
-    # get latest repository
+    # get latest repository and date
     LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+    LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S')
 
     display_result() {
       dialog --title "$1" \
@@ -627,37 +628,37 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     }
 
     RESULT=$(echo "
-OS..........: $(uname -o 2>&1) $(uname -p 2>&1)
-Kernel......: $(uname -r 2>&1)
-NodeName....: $(uname -n 2>&1)
-Load........: ${LOAD:?}
-Uptime......: ${UPTIME:?}
+OS...........: $(uname -o 2>&1) $(uname -p 2>&1)
+Kernel.......: $(uname -r 2>&1)
+NodeName.....: $(uname -n 2>&1)
+Load.........: ${LOAD:?}
+Uptime.......: ${UPTIME:?}
 
-FreeMemory..: ${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M
-UsedSwap....: ${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M
-UsedHDD.....: ${USED_HDD:?} ${USED_HDD_P:?}
-UserSpace...: $(du -sh /home/* 2>/dev/null | xargs 2>&1)
-CPUTemp.....: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
-Users.......: ${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))
+FreeMemory...: ${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M
+UsedSwap.....: ${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M
+UsedHDD......: ${USED_HDD:?} ${USED_HDD_P:?}
+UserSpace....: $(du -sh /home/* 2>/dev/null | xargs 2>&1)
+CPUTemp......: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
+Users........: ${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))
 
-Daemon......: ${PID_DAEMON:?} (trumpcoind)
-Block.......: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
-Network.....: ${WALLET_CHAIN:?} ${INTERFACE:?}
-Address.....: ${IP_ADDRESS_N:?}
-Download....: ${DOWNLOAD:?}
-Upload......: ${UPLOAD:?}
+Daemon.......: ${PID_DAEMON:?} (trumpcoind)
+Block........: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
+Network......: ${WALLET_CHAIN:?} ${INTERFACE:?}
+Address......: ${IP_ADDRESS_N:?}
+Download.....: ${DOWNLOAD:?}
+Upload.......: ${UPLOAD:?}
 
-Ban(s)......: ${WALLET_PEERS_BANNED:?}
-Connections.: ${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}
-Add/Saved...: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
-Fail/Success: $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
-Balance.....: ${WALLET_BALANCE:?}
-Staking.....: ${NODE_PROOF:?}
-CoinSupply..: ${NODE_COIN_SUPPLY:?}
+Ban(s).......: ${WALLET_PEERS_BANNED:?}
+Connections..: ${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}
+Add/Saved....: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
+Fail/Success.: $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
+Balance......: ${WALLET_BALANCE:?}
+Staking......: ${NODE_PROOF:?}
+CoinSupply...: ${NODE_COIN_SUPPLY:?}
 
-Release.....: v${LATEST_VERSION:?}
-Installed...: ${WALLET_VERSION:?}
-Repository..: ${LATEST_HEAD:?}
+Release......: v${LATEST_VERSION:?}
+Installed....: ${WALLET_VERSION:?}
+Repository...: ${LATEST_HEAD:?} ${LATEST_DATE:?}
           ")
     display_result "System Information"
     clear
