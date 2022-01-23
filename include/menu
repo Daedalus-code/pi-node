@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.6.9.4
+# 0.6.9.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -201,6 +201,11 @@ case $CHOICE in
         fi
 
       }
+
+      if [[ -z "$UNAME_FILE" ]]; then
+        # non responsive
+        UNAME_FILE=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+      fi
 
       function setup_zip() {
         # setup trumpcoin wallet
