@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222201
-# 0.3.6.1
+# V20222301
+# 0.3.6.0
 
 source /usr/local/bin/include/pitrump.conf
 
@@ -127,7 +127,6 @@ rrdtool graph /var/www/html/balance_graph.png \
   DEF:volume=/home/"$(whoami)"/stats/volume.rrd:volume:MAX \
   GPRINT:balance:LAST:%.2lf\ Trump \
   GPRINT:value:LAST:%.2lf\ USD \
-  GPRINT:volume:LAST:%.0lf\ Vol \
   AREA:balance#85bb65:"Balance" \
   LINE2:value#668163:"USD" \
   LINE2:volume#6798DE:"Vol"
