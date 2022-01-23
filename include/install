@@ -38,12 +38,17 @@ if [[ ! -f /usr/local/bin/include/pitrump.conf ]] &>/dev/null; then
 
 fi
 source /usr/local/bin/include/pitrump.conf
+
 if [ ! -d /usr/local/bin/include ] &>/dev/null; then
   sudo mkdir /usr/local/bin/include &>/dev/null
 fi
 cp /home/"$(whoami)"/trump-node/include/color /tmp/color.tmp 2>/dev/null
 sudo mv /tmp/color.tmp /usr/local/bin/include/color 2>/dev/null
 source /usr/local/bin/include/color
+
+if [ ! -d "${LOG_DIR:?}"/node_data ] &>/dev/null; then
+  mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+fi
 
 # date for logs
 LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
@@ -191,11 +196,6 @@ fi
 if screen -list 2>&1 |
   grep -q "add_peers" &>/dev/null; then
   killall screen &>/dev/null
-fi
-
-# install/update
-if [ ! -d "${LOG_DIR:?}"/node_data ] &>/dev/null; then
-  mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 fi
 
 # pitrump.conf, do this once
