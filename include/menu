@@ -619,7 +619,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     UNIQP2P=$(grep "addr:" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "getaddr" 2>&1 | awk '{ print $2 }' 2>&1 | sed -r '/^.{,10}$/d' 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | wc -l 2>&1)
     # get latest repository and date
     LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
-    LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S')
+    LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y %H:%M:%S')
 
     display_result() {
       dialog --title "$1" \
