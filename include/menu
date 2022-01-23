@@ -219,9 +219,9 @@ case $CHOICE in
         unzip -j /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin/
       }
 
-      # armv7l
+      # armv7l & aarch64
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] armv7l System\n"
+        printf '%b' "[${G1:?}Ok${N0:?}] armv7l & aarch64 System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
           # download arm-linux-gnueabihf.zip
           cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
