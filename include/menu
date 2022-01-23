@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222301
-# 0.7.9.0
+# V20222401
+# 0.7.9.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -134,7 +134,10 @@ case $CHOICE in
     read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      "${WALLET_DIR:?}"/trumpcoin-cli stop &>/dev/null
+      sleep 5
       sudo service cron stop 2>&1
+      killall trumpcoind &>/dev/null
       echo "[Ok] Re/Starting node!"
       # make sure debug.log exist
       touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
