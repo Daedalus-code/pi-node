@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222301
-# 0.2.5.0
+# 0.2.5.9
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -65,6 +65,15 @@ if ! [ -x "$(command -v screen)" ] &>/dev/null; then
   sudo /etc/init.d/screen-cleanup start
   echo
   read -r -p "[Ok] screen installed! Press Enter to continue" </dev/tty
+  echo
+fi
+
+# make sure ethtool is installed
+if ! [ -x "$(command -v ethtool)" ] &>/dev/null; then
+  echo "Installing ethtool"
+  sudo apt-get install ethtool -y
+  echo
+  read -r -p "[Ok] ethtool installed! Press Enter to continue" </dev/tty
   echo
 fi
 
