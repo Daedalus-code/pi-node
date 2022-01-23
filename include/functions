@@ -117,8 +117,8 @@ FREE_MEM="${G1:?}$FREE_MEM${N0:?}"
 
 ### system space ###############################################################
 
-# get free Space, mmc block device #0, partition #2, partition #2, dev/root
-USED_HDD=$(df -k 2>&1 | head -2 2>&1 | awk '{ print $3 }' 2>&1 2>&1 | tail -1 2>&1)
+# get used space, disregard boot
+USED_HDD=$(df -k 2>&1 | sort -n 2>&1 | grep -v "boot" 2>&1 | head -1 2>&1 | awk '{ print $3 }' 2>&1)
 # get bytes from kilo
 USED_HDD=$(echo "$USED_HDD*1024" 2>&1 | bc -l 2>&1)
 # human-readable format
