@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222201
+# V20222301
 # 1.1.8.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -326,10 +326,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/n
   # wallet sync var with percentage symbol
   WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
 
-  if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-    source /usr/local/bin/include/proc
-  fi
-
 else # wallet is loading/syncing
   WALLET_HEADS="${GR:?}0${N0:?}"
   WALLET_BLOCK="${GR:?}0${N0:?}"
@@ -477,6 +473,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   if [ ! -f "${LOG_DIR:?}"/node_data/synced ] &>/dev/null; then
     # look for sync has finished line, save it there and then
     grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
+    if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+      source /usr/local/bin/include/proc
+      WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
+    fi
   fi
 fi
 
