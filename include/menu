@@ -188,7 +188,7 @@ case $CHOICE in
 
       function setup() {
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
-          UNAME_SYSTEM="armv7l"
+          UNAME_SYSTEM="armv7l & aarch64"
           UNAME_FILE="TrumpCoin.arm-linux-gnueabihf.zip"
         fi
         #        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
