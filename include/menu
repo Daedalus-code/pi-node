@@ -187,14 +187,14 @@ case $CHOICE in
       uname -a >"${LOG_DIR:?}"/node_data/uname
 
       function setup() {
-        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "armv7l" &>/dev/null; then
+        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
           UNAME_SYSTEM="armv7l"
           UNAME_FILE="TrumpCoin.arm-linux-gnueabihf.zip"
         fi
-        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
-          UNAME_SYSTEM="aarch64"
-          UNAME_FILE="TrumpCoin.aarch64-linux-gnu.zip"
-        fi
+        #        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
+        #          UNAME_SYSTEM="aarch64"
+        #          UNAME_FILE="TrumpCoin.aarch64-linux-gnu.zip"
+        #        fi
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
           UNAME_SYSTEM="x86_64"
           UNAME_FILE="TrumpCoin.Linux.zip"
@@ -216,7 +216,7 @@ case $CHOICE in
       }
 
       # armv7l
-      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "armv7l" &>/dev/null; then
+      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
         printf '%b' "[${G1:?}Ok${N0:?}] armv7l System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
           # download arm-linux-gnueabihf.zip
@@ -225,13 +225,13 @@ case $CHOICE in
       fi
 
       # aarch64
-      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] aarch64 System\n"
-        if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
-          # download trumpcoin.aarch64-linux-gnu.zip
-          cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
-        fi
-      fi
+      #      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
+      #        printf '%b' "[${G1:?}Ok${N0:?}] aarch64 System\n"
+      #        if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
+      #          # download trumpcoin.aarch64-linux-gnu.zip
+      #          cd || exit && wget -N https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
+      #        fi
+      #      fi
 
       # x86_64
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
