@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222301
-# 1.2.0.0
+# 1.2.0.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.0.0"
+VERSION="v1.2.0.4"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -417,6 +417,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
   # save balance valued value
   echo "${WALLET_VALUE:?}" >"${LOG_DIR:?}"/node_data/stats/balance_value 2>&1
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/volume ]] &>/dev/null; then
+    # make sure volume exist
+    echo "0" "${LOG_DIR:?}"/node_data/stats/volume 2>&1
+  fi
 else # non responsive (color)
   WALLET_VALUE="${GR:?}0.00${N0:?}"
   WALLET_BALANCE="${GR:?}0.00${N0:?}"
