@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222401
-# 1.2.5.9
+# 1.2.3.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.5.9"
+VERSION="v1.2.3.5"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -948,17 +948,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     # calculate seconds
     SECONDS_TX=$(echo "$AVG_TX*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds into age
-    if [[ -z "$SECONDS_TX" ]] &>/dev/null; then
-      # non responsive
-      SECONDS_TX="1"
-      AVG_POS_TIME="${GR:?}No Input(s)${N0:?}"
-    else
-      INPUT_AGE=$(printf '%dh:%dm' $(("$SECONDS_TX/3600")) $(("$SECONDS_TX%3600/60")))
-      # save the value
-      echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avgconfirmation
-      INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-      AVG_POS_TIME="Average Time $AVG_TX (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
-    fi
+    INPUT_AGE=$(printf '%dh:%dm' $(("$SECONDS_TX/3600")) $(("$SECONDS_TX%3600/60")))
+    # save the value
+    echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avgconfirmation
+    INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    AVG_POS_TIME="Average Time $AVG_TX (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
 
     SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
 
@@ -1074,15 +1068,8 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds into age
       if [[ -f "${LOG_DIR:?}"/node_data/client/listunspent ]] &>/dev/null; then
-        if [[ -z "$TIMELINE_SEC" ]] &>/dev/null; then
-          # non responsive
-          TIMELINE_SEC="1"
-        fi
         INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
         INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-      else
-        INPUT_AGE="${N0:?}"
-        INPUT_AGE_D="${N0:?}"
       fi
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
         # hide new input
@@ -1096,40 +1083,29 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # calculate seconds
       TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds into age
-      if [[ -z "$TIMELINE_SEC" ]] &>/dev/null; then
-        # non responsive
-        TIMELINE_SEC="1"
-        TIMELINE="${GR:?}No Input(s)${N0:?}"
+      INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
+      INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+        # hide old input
+        TIMELINE="Old Input ${GR:?}****${N0:?} (${GR:?}****${N0:?}) ${GR:?}****${N0:?}${N0:?}"
       else
-        INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-        INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-        if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-          # hide old input
-          TIMELINE="Old Input ${GR:?}****${N0:?} (${GR:?}****${N0:?}) ${GR:?}****${N0:?}${N0:?}"
-        else
-          TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
-        fi
+        TIMELINE="Old Input $TIMELINE_CONF (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
       fi
+
       # average confirmation
     elif [ "$RANDOM_TIMELINE" -eq "8" ] &>/dev/null; then
       UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       TIMELINE=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # average calculated
-      TIMELINE_AVG=$(echo "$TIMELINE/$UNSPENT_COUNT" 2>&1 | bc 2>&1)
+      TIMELINE_AVG=$(echo "$TIMELINE/$UNSPENT_COUNT" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds
       TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds into age
-      if [[ -z "$TIMELINE_SEC" ]] &>/dev/null; then
-        # non responsive
-        TIMELINE_SEC="1"
-        TIMELINE="${GR:?}No Input(s)${N0:?}"
-      else
-        INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-        # save the value
-        echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avgconfirmation
-        INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-        TIMELINE="Average $TIMELINE_AVG (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
-      fi
+      INPUT_AGE=$(printf '%dh:%dm' $(("${TIMELINE_SEC:?}/3600")) $(("${TIMELINE_SEC:?}%3600/60")))
+      # save the value
+      echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avgconfirmation
+      INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      TIMELINE="Average $TIMELINE_AVG (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
       # wallet value
     elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
