@@ -61,7 +61,7 @@ case $CHOICE in
 "1")
 
   HEIGHT=9
-  WIDTH=50
+  WIDTH=55
   CHOICE_HEIGHT=2
   BACKTITLE="Trump-Node"
   TITLE="Wallet Menu"
