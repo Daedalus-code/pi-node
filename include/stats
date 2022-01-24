@@ -229,7 +229,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   rrdtool update /home/"$(whoami)"/stats/hdd_total.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $2 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/network.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/rxbytes 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/stats/txbytes 2>/dev/null)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/balance.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/volume.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/volume.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/volume.avg)/$(wc -l "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }')" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/value.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/balance_value 2>/dev/null)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(grep -c "BitcoinMiner" "${WALLET_DIR:?}"/staking 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>/dev/null
