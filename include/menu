@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222401
-# 0.8.8.5
+# 0.8.9.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -32,9 +32,9 @@ fi
 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
-HEIGHT=13
+HEIGHT=14
 WIDTH=54
-CHOICE_HEIGHT=6
+CHOICE_HEIGHT=7
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
@@ -44,7 +44,8 @@ OPTIONS=(1 "Node Menu        Shutdown, Re/Start node"
   3 "UFW Menu         Uncomplicated firewall"
   4 "Information      Trump node status"
   5 "System Space     Disk space utilized"
-  6 "Download Menu    Download & Install")
+  6 "Download Menu    Download & Install"
+  7 "Reset Graphs     Reset/Remove graphs")
 
 CHOICE=$(dialog --clear \
   --backtitle "$BACKTITLE" \
@@ -66,7 +67,7 @@ case $CHOICE in
   TITLE="Wallet Menu"
   MENU="Choose one of the following options:"
 
-  OPTIONS=(1 "Shutdown         Stop, reboot, graphs"
+  OPTIONS=(1 "Shutdown         Stop daemon, reboot system"
     2 "Re/Start         Re/Start daemon ($(pidof trumpcoind 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1))")
 
   CHOICE=$(dialog --clear \
@@ -109,11 +110,6 @@ case $CHOICE in
           sleep 5
         done
         kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
-      fi
-      read -t 3 -r -p "[YN] Remove graph databases? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        rm -r /home/"$(whoami)"/stats/ &>/dev/null
       fi
       read -r -p "[YN] Reboot? y/n " -n 1 -r
       echo
@@ -877,6 +873,21 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     ;;
 
   esac
+
+  ;;
+
+  # remove rrdtool graphs
+
+"7")
+
+  read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    rm -r /home/"$(whoami)"/stats/* &>/dev/null
+    echo
+    read -r -p "[Ok] rrdtool graphs removed! Press Enter to continue" </dev/tty
+    echo
+  fi
 
   ;;
 
