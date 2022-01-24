@@ -252,7 +252,7 @@ if [[ -z "$OLD_HEAD" ]] &>/dev/null; then
   # non responsive
   OLD_HEAD="${GR:?}[fsociety]${N0:?}"
 fi
-PLEASE=$(printf '%b' "Please use ${GR:?}update${N0:?} & ${GR:?}menu${N0:?} to continue the install.\n" 2>&1)
+PLEASE=$(printf '%b' "Please use ${CY:?}update${N0:?} & ${CY:?}menu${N0:?} to continue the install.\n" 2>&1)
 echo "$PLEASE"
 read -t 2 -r -p "[Ok] Updated! Press Enter to continue" </dev/tty
 echo
