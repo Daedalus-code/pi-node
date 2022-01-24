@@ -107,9 +107,9 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
       "${WALLET_DIR:?}"/trumpcoin-cli stop && sleep 1
       sudo reboot
     fi
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord crashed! getting data from the background! (Reboot in $(echo "10-$(cat "${LOG_DIR:?}"/node_data/stats/time.limit 2>/dev/null)" 2>&1 | bc 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord crashed! Getting data from the background! (Reboot in $(echo "10-$(cat "${LOG_DIR:?}"/node_data/stats/time.limit 2>/dev/null)" 2>&1 | bc 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord ok! getting data normally!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord ${GR:?}::${G1:?} [${G1:?}Ok${N0:?}] ${GR:?}::${G1:?} Getting data normally!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
