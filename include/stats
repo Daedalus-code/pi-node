@@ -329,9 +329,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     NOT_POS_INPUT=$(cat "${LOG_DIR:?}"/node_data/stats/not_pos 2>/dev/null)
 
     # get amount of inputs, disregard with var not_pos_input value
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)+${NOT_POS_INPUT:?}" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)"
-    rrdtool update /home/"$(whoami)"/stats/total_tx_q.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)"
-    rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}"
+    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)+${NOT_POS_INPUT:?}" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
+    rrdtool update /home/"$(whoami)"/stats/total_tx_q.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
+    rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}" 2>/dev/null
   else
     if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
 
