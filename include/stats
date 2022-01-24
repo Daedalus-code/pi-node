@@ -324,7 +324,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     # get total confirmations from inputs that are below the con_diff var (with not_post_input var)
     TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
-    if [[ -z "$TOTAL_CONF_BELOW" ]]; then
+    if [[ -z "$TOTAL_CONF_BELOW" ]] &>/dev/null; then
       # non responsive
       TOTAL_CONF_BELOW="$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1)"
     fi
