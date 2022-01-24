@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222401
-# 0.2.5.8
+# V20222501
+# 0.2.5.3
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -15,7 +15,7 @@ if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /usr/local/bin/menu &>/dev/null
   sudo rm -r /tmp/node_data/ &>/dev/null
   sudo rm -r /tmp/add_peers* &>/dev/null
-  printf '%b' "No support for Microsoft.\n"
+  printf '%b' "${GR:?}No support for Microsoft.${N0:?}\n"
   exit
 fi
 
@@ -224,11 +224,6 @@ if screen -list 2>&1 |
   killall screen &>/dev/null
 fi
 
-# pitrump.conf, do this once
-if [[ ! -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
-  cd || exit && cp /home/"$(whoami)"/trump-node/pitrump.conf ../
-  printf '%b' "[${R1:?}!!${N0:?}] Please edit! -> /home/$(whoami)/pitrump.conf\n"
-fi
 sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/include/update /usr/local/bin/ 2>&1
