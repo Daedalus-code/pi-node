@@ -99,7 +99,7 @@ case $CHOICE in
       else # normal shutdown, turn off crontab
         sudo service cron stop 2>&1
         printf '%b' "[${R1:?}!!${N0:?}] "
-        "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+        "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
         # wait on node (daemon) to stop
         until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
           clear
@@ -348,7 +348,7 @@ case $CHOICE in
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
       # wait on node (daemon) to stop
       until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
         printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
