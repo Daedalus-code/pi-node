@@ -416,16 +416,16 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # save wallet value
   echo "${WALLET_BALANCE:?}" >"${LOG_DIR:?}"/node_data/stats/total_balance 2>&1
   # create average ticker price and volume, disregard zeros (no data)
-  cat "${LOG_DIR:?}"/node_data/stats/ticker 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/ticker.avg
+  cat "${LOG_DIR:?}"/node_data/stats/price 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/ticker.avg
   cat "${LOG_DIR:?}"/node_data/stats/volume 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/volume.avg
   # count price and volume lines
   TICKER_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1 | awk '{ print $1 }' 2>&1)
   VOLUME_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1 | awk '{ print $1 }' 2>&1)
   # calculate average price and volume
-  echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/ticker.avg)/${TICKER_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/ticker 2>&1
+  echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/ticker.avg)/${TICKER_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price 2>&1
   echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/volume.avg)/${VOLUME_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
   # get wallet value
-  WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+  WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
   # save balance valued value
   echo "${WALLET_VALUE:?}" >"${LOG_DIR:?}"/node_data/stats/balance_value 2>&1
   if [[ ! -f "${LOG_DIR:?}"/node_data/stats/volume ]] &>/dev/null; then
@@ -454,7 +454,7 @@ function wallet_balances() {
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
   # get wallet ticker.usd
-  WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/stats/ticker 2>/dev/null | tail -1 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)
+  WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/stats/price 2>/dev/null | tail -1 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)
   # get wallet mempool
   WALLET_MEMPOOL=$(grep "size" "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>&1 | egrep -o "[0-9]+" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # get wallet txcount
@@ -614,11 +614,11 @@ fi
 ### backup values ##############################################################
 
 # backup ticker price
-if [ -f "${LOG_DIR:?}"/node_data/stats/ticker ] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/stats/ticker "${WALLET_DIR:?}"/ticker 2>&1
+if [ -f "${LOG_DIR:?}"/node_data/stats/price ] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/stats/price "${WALLET_DIR:?}"/ticker 2>&1
 else # restore it
-  cp "${WALLET_DIR:?}"/ticker "${LOG_DIR:?}"/node_data/stats/ticker 2>&1
-  printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  cp "${WALLET_DIR:?}"/ticker "${LOG_DIR:?}"/node_data/stats/price 2>&1
+  printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # backup ticker volume
@@ -1048,7 +1048,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE="Moneysupply $TIMELINE${N0:?}"
     # unconfirmed_balance
     elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
-      WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+      WALLET_UNCONFIRMED_VALUE=$(echo "$WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/stats/price 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
         # hide unconfirmed
         TIMELINE="Unconfirmed ${GR:?}****${N0:?} ${GR:?}****${N0:?} USD${N0:?}"
@@ -1057,7 +1057,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       fi
     # immature_balance
     elif [ "$RANDOM_TIMELINE" -eq "5" ] &>/dev/null; then
-      WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/stats/ticker 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+      WALLET_IMMATURE_VALUE=$(echo "$WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/stats/price 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
         # hide immature
         TIMELINE="Immature ${GR:?}****${N0:?} ${GR:?}****${N0:?} USD${N0:?}"

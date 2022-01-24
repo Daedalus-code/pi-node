@@ -71,7 +71,7 @@ else
 fi
 
 # get token price
-grep -A1 "Trumpcoin Price Today" "${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/ticker 2>&1
+grep -A1 "Trumpcoin Price Today" "${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price 2>&1
 # get token volume, remove old file
 grep "Trading Volume24h" "${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$|,' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
 # remove old file
@@ -82,14 +82,14 @@ echo "$(tail -11 "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1)" >"${LOG_DIR:?}
 mv "${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1
 
 # api values
-API_VALUE=$(cat "${LOG_DIR:?}"/node_data/stats/ticker 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
+API_PRICE=$(cat "${LOG_DIR:?}"/node_data/stats/price 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
 API_VOLUME=$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
-if [[ -z "$API_VALUE" ]] &>/dev/null; then
+if [[ -z "$API_PRICE" ]] &>/dev/null; then
   # make sure ticker exist, use rrdtool database, if available
-  rrdtool info /home/"$(whoami)"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/ticker 2>&1
+  rrdtool info /home/"$(whoami)"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price 2>&1
   # non responsive
-  API_VALUE=$(cat "${LOG_DIR:?}"/node_data/stats/ticker 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
+  API_PRICE=$(cat "${LOG_DIR:?}"/node_data/stats/price 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 fi
 
 if [[ -z "$API_VOLUME" ]] &>/dev/null; then
@@ -99,7 +99,7 @@ if [[ -z "$API_VOLUME" ]] &>/dev/null; then
   API_VOLUME=$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 fi
 
-printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Found ${G1:?}${API_VALUE:?}${N0:?} Coinmarketcap price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Found ${G1:?}${API_PRICE:?}${N0:?} Coinmarketcap price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Found ${G1:?}${API_VOLUME:?}${N0:?} Coinmarketcap volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # END
