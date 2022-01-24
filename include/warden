@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222401
-# 0.1.1.6
+# 0.1.1.4
 
 # pitrump configurations
 source /usr/local/bin/include/pitrump.conf
@@ -96,12 +96,10 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   # run if dashbord has stopped
   if [[ "$TIME_ONE" -lt "$TIME_TWO" ]] &>/dev/null; then
     # create more time until reboot
-    echo "1" >"${LOG_DIR:?}"/node_data/stats/time.limit 2>&1
+    echo "1" >>"${LOG_DIR:?}"/node_data/stats/time.limit 2>&1
     # run script(s)
-    source /usr/local/bin/include/color
     source /usr/local/bin/include/functions
-    source /usr/local/bin/include/time_fix
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord crashed! Getting data from the background! (Reboot in $(echo "10-$(cat "${LOG_DIR:?}"/node_data/stats/time.limit 2>/dev/null)" 2>&1 | bc 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord crashed! Getting data from the background! (Reboot in $(echo "10-$(cat "${LOG_DIR:?}"/node_data/stats/time.limit 2>/dev/null)" 2>&1 | bc 2>&1) minutes!)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.limit 2>/dev/null)" -gt "10" ]] &>/dev/null; then
       # reboot system
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Shutting down wallet, rebooting system!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
