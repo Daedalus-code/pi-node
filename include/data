@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222401
-# 0.0.9.4
+# 0.1.0.4
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -60,12 +60,21 @@ fi
 URL_TOKEN="https://coinmarketcap.com/currencies/trumpcoin/"
 curl -sf "$URL_TOKEN" >"${LOG_DIR:?}"/node_data/stats/ticker.cmc 2>&1
 
-# clean up file with html2text
-cat "${LOG_DIR:?}"/node_data/stats/ticker.cmc 2>/dev/null | html2text >"${LOG_DIR:?}"/node_data/stats/ticker.tmp 2>&1
+# remove empty file, cmc
+if [ ! -s "${LOG_DIR:?}"/node_data/stats/ticker.cmc ] &>/dev/null; then
+  # store, backup ticker.cmc after the fact (html2text)
+  cp "${LOG_DIR:?}"/node_data/stats/ticker.cmc "${LOG_DIR:?}"/node_data/stats/ticker.tmp 2>&1
+else
+  # clean up file with html2text
+  cat "${LOG_DIR:?}"/node_data/stats/ticker.tmp 2>/dev/null | html2text >"${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1
+fi
+
 # get token price
-grep -A1 "Trumpcoin Price Today" "${LOG_DIR:?}"/node_data/stats/ticker.tmp 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/ticker 2>&1
+grep -A1 "Trumpcoin Price Today" "${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/ticker 2>&1
 # get token volume, remove old file
-grep "Trading Volume24h" "${LOG_DIR:?}"/node_data/stats/ticker.tmp 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$|,' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/stats/volume 2>&1 && rm "${LOG_DIR:?}"/node_data/stats/ticker.tmp &>/dev/null
+grep "Trading Volume24h" "${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$|,' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
+# remove old file
+rm "${LOG_DIR:?}"/node_data/stats/ticker.tmp &>/dev/null
 
 # keep last n of ticker price
 echo "$(tail -11 "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1)" >"${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp 2>&1
@@ -81,6 +90,7 @@ if [[ -z "$API_VALUE" ]] &>/dev/null; then
   # non responsive
   API_VALUE=$(cat "${LOG_DIR:?}"/node_data/stats/ticker 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 fi
+
 if [[ -z "$API_VOLUME" ]] &>/dev/null; then
   # make sure volume exist, use rrdtool database, if available
   rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
