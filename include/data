@@ -15,7 +15,7 @@ LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
   # add node address (api) internet, (ipv4) no ports on these
-  curl -sf https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/nodes.api 2>&1
+  curl -s https://chainz.cryptoid.info/trump/api.dws?q=nodes 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/nodes.api 2>&1
 
   # get new count
   API_NEW=$(wc -l "${LOG_DIR:?}"/node_data/nodes.api 2>&1 | awk '{ print $1 }' 2>&1)
@@ -58,7 +58,7 @@ fi
 
 # fetch price from coinmarketcap (api price)
 URL_TOKEN="https://coinmarketcap.com/currencies/trumpcoin/"
-curl -sf "$URL_TOKEN" >"${LOG_DIR:?}"/node_data/stats/ticker.cmc 2>&1
+curl -s "$URL_TOKEN" >"${LOG_DIR:?}"/node_data/stats/ticker.cmc 2>&1
 
 # move empty file, cmc
 if [ ! -s "${LOG_DIR:?}"/node_data/stats/ticker.cmc ] &>/dev/null; then
