@@ -33,7 +33,7 @@ date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 HEIGHT=13
-WIDTH=55
+WIDTH=54
 CHOICE_HEIGHT=6
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
@@ -60,7 +60,7 @@ case $CHOICE in
 "1")
 
   HEIGHT=9
-  WIDTH=55
+  WIDTH=50
   CHOICE_HEIGHT=2
   BACKTITLE="Trump-Node"
   TITLE="Wallet Menu"
