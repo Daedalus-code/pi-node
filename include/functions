@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222401
-# 1.2.5.0
+# 1.2.5.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.5.0"
+VERSION="v1.2.5.8"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -1132,6 +1132,10 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # highest input amount
     elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
       TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
+      if [[ -z "$TIMELINE" ]] &>/dev/null; then
+        # non responsive
+        TIMELINE="0"
+      fi
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
         # hide highest input
         TIMELINE="Highest Input ${GR:?}****${N0:?}"
@@ -1141,6 +1145,10 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # lowest input amount
     elif [ "$RANDOM_TIMELINE" -eq "11" ] &>/dev/null; then
       TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
+      if [[ -z "$TIMELINE" ]] &>/dev/null; then
+        # non responsive
+        TIMELINE="0"
+      fi
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
         # hide lowest input
         TIMELINE="Lowest Input ${GR:?}****${N0:?}"
