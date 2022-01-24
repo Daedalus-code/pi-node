@@ -134,7 +134,7 @@ case $CHOICE in
     read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      "${WALLET_DIR:?}"/trumpcoin-cli stop &>/dev/null
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop &>/dev/null
       sleep 5
       sudo service cron stop 2>&1
       killall trumpcoind &>/dev/null
@@ -651,7 +651,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # total connections
     WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)
     # total banned
-    WALLET_PEERS_BANNED=$("$WALLET_DIR"/trumpcoin-cli -datadir=./ listbanned 2>&1 | grep -c "address" 2>&1)
+    WALLET_PEERS_BANNED=$("${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf listbanned 2>&1 | grep -c "address" 2>&1)
 
     # get total Memory
     TOTAL_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)

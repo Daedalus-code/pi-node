@@ -62,7 +62,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     # error with server (daemon), stopping
     printf '%b' "${R1:?}${LOG_DATE:?} Status() Wallet.Warden: PID() $(pidof trumpcoind 2>&1) Couldn't connect to server! Stopping daemon now!${N0:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "[${R1:?}!!${N0:?}] "
-    "${WALLET_DIR:?}"/trumpcoin-cli stop && sleep 1
+    "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
     printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: ${GR:?}::${N0:?} [${R1:?}XX${N0:?}] ${GR:?}::${N0:?} Rebooting system now!${N0:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     sudo reboot 2>&1
   fi
@@ -104,7 +104,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
     if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.limit 2>/dev/null)" -gt "10" ]] &>/dev/null; then
       # reboot system
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Shutting down wallet, rebooting system!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      "${WALLET_DIR:?}"/trumpcoin-cli stop && sleep 1
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
       sudo reboot
     fi
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord crashed! Getting data from the background! (Reboot in $(echo "10-$(cat "${LOG_DIR:?}"/node_data/stats/time.limit 2>/dev/null)" 2>&1 | bc 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
