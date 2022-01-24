@@ -2,7 +2,9 @@
 
 # By Rainman
 # V20222401
-# 0.1.0.9
+# 0.1.0.0
+
+# shellcheck disable=SC2154
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -58,26 +60,15 @@ if ! [ -x "$(command -v html2text)" ] &>/dev/null; then
   sudo apt-get install html2text -y
 fi
 
-RANDOM_WAIT=$((((RANDOM % 3) + 1)))
+COIN_API="trumpcoin"
+CURRENCY_API="usd"
 
-# fetch price from coinmarketcap (api price)
-URL_TOKEN="https://coinmarketcap.com/currencies/trumpcoin/"
-sleep "${RANDOM_WAIT:?}" && curl -s "$URL_TOKEN" >"${LOG_DIR:?}"/node_data/stats/ticker.cmc 2>&1
-
-# move empty file, cmc
-if [ ! -s "${LOG_DIR:?}"/node_data/stats/ticker.cmc ] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/stats/ticker.tmp "${LOG_DIR:?}"/node_data/stats/ticker.cmc 2>&1
-else
-  # store, backup ticker.cmc after the fact (html2text)
-  cp "${LOG_DIR:?}"/node_data/stats/ticker.cmc "${LOG_DIR:?}"/node_data/stats/ticker.tmp 2>&1
-  # clean up file with html2text
-  cat "${LOG_DIR:?}"/node_data/stats/ticker.tmp 2>/dev/null | html2text >"${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1
-fi
+curl -o "${LOG_DIR:?}"/node_data/stats/price.api -X 'GET' 'https://api.coingecko.com/api/v3/coins/'$COIN_API'/market_chart?vs_currency='$CURRENCY_API'&days='$days'' -H 'accept: application/json' &>/dev/null
 
 # get token price
-grep -A1 "Trumpcoin Price Today" "${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price 2>&1
-# get token volume, remove old file
-grep "Trading Volume24h" "${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$|,' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
+grep -o -P '(?<=,).*(?=]],"m)' "${LOG_DIR:?}"/node_data/stats/price.api >"${LOG_DIR:?}"/node_data/stats/price 2>&1
+# get token volume
+cat "${LOG_DIR:?}"/node_data/stats/price.api 2>&1 | tr -d '"|:' 2>&1 | egrep -o "volumes.*" 2>&1 | awk -F, '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
 # remove old file
 rm "${LOG_DIR:?}"/node_data/stats/ticker.tmp &>/dev/null
 
@@ -103,7 +94,7 @@ if [[ -z "$API_VOLUME" ]] &>/dev/null; then
   API_VOLUME=$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 fi
 
-printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Found ${G1:?}${API_PRICE:?}${N0:?} Coinmarketcap price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Found ${G1:?}${API_VOLUME:?}${N0:?} Coinmarketcap volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Found ${G1:?}${API_PRICE:?}${N0:?} Coinmarketcap price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Found ${G1:?}${API_VOLUME:?}${N0:?} Coinmarketcap volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # END
