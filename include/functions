@@ -62,7 +62,7 @@ else # log lines (tail debug)
 fi
 if [[ -z "$LAST_LOG" ]] &>/dev/null; then
   # non responsive
-  LAST_LOG=" "
+  LAST_LOG="${N0:?}"
 fi
 
 # clock, log date, log check ###################################################
@@ -1080,7 +1080,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       fi
       if [[ -z "$TIMELINE_CONF" ]] &>/dev/null; then
         # non responsive
-        TIMELINE_CONF="0"
+        TIMELINE_CONF="${GR:?}0${N0:?}"
       fi
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
         # hide new input
@@ -1098,7 +1098,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       if [[ -z "$TIMELINE_CONF" ]] &>/dev/null; then
         # non responsive
-        TIMELINE_CONF="0"
+        TIMELINE_CONF="${GR:?}0${N0:?}"
       fi
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
         # hide old input
@@ -1134,7 +1134,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
       if [[ -z "$TIMELINE" ]] &>/dev/null; then
         # non responsive
-        TIMELINE="0"
+        TIMELINE="${GR:?}0${N0:?}"
       fi
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
         # hide highest input
@@ -1147,7 +1147,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE=$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
       if [[ -z "$TIMELINE" ]] &>/dev/null; then
         # non responsive
-        TIMELINE="0"
+        TIMELINE="${GR:?}0${N0:?}"
       fi
       if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
         # hide lowest input
