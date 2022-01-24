@@ -100,7 +100,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
     # run script(s)
     source /usr/local/bin/include/functions
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord crashed! Getting data from the background! (Reboot in $(echo "10-$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) minutes!)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.limit 2>/dev/null)" -gt "10" ]] &>/dev/null; then
+    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit 2>&1 | awk '{ print $1 }' 2>&1)" -gt "10" ]] &>/dev/null; then
       # reboot system
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Shutting down wallet, rebooting system!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 1
