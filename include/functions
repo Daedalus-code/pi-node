@@ -682,25 +682,25 @@ touch /home/"$(whoami)"/addnodes &>/dev/null
 if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
 
   # get clean ipv4 address, disregard non ipv4
-  egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' /home/"$(whoami)"/addnodes >/tmp/addnodes.ipv4 2>&1
+  egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/addnodes.ipv4 2>&1
   # get clean ipv6 address, disregard non ipv6 and lines shorter than n
-  egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' /home/"$(whoami)"/addnodes 2>&1 | sed -r '/^.{,38}$/d' >/tmp/addnodes.ipv6 2>&1
+  egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' /home/"$(whoami)"/addnodes 2>&1 | sed -r '/^.{,38}$/d' >"${LOG_DIR:?}"/addnodes.ipv6 2>&1
   # get clean dns address, disregard non dns
-  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' /home/"$(whoami)"/addnodes >/tmp/addnodes.dns 2>&1
+  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/addnodes.dns 2>&1
 
   # add extra(s), disregard invalid pattern address (cidr - classless inter-domain routing)
-  grepcidr -f /tmp/addnodes.ipv4 /tmp/addnodes.ipv4 >"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
-  grepcidr -f /tmp/addnodes.ipv6 /tmp/addnodes.ipv6 >>"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
+  grepcidr -f "${LOG_DIR:?}"/addnodes.ipv4 "${LOG_DIR:?}"/addnodes.ipv4 >"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
+  grepcidr -f "${LOG_DIR:?}"/addnodes.ipv6 "${LOG_DIR:?}"/addnodes.ipv6 >>"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
   # add extra(s) domain names
-  cat /tmp/addnodes.dns >>"${LOG_DIR:?}"/node_data/peers.x 2>&1
+  cat "${LOG_DIR:?}"/addnodes.dns >>"${LOG_DIR:?}"/node_data/peers.x 2>&1
 
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! IPv4 +$(wc -l /tmp/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1) IPv6 +$(wc -l /tmp/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1) DNS +$(wc -l /tmp/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! IPv4 +$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1) IPv6 +$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1) DNS +$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   # truncate/remove file(s), now old
   truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
-  rm /tmp/addnodes.ipv4 &>/dev/null
-  rm /tmp/addnodes.ipv6 &>/dev/null
-  rm /tmp/addnodes.dns &>/dev/null
+  rm "${LOG_DIR:?}"/addnodes.ipv4 &>/dev/null
+  rm "${LOG_DIR:?}"/addnodes.ipv6 &>/dev/null
+  rm "${LOG_DIR:?}"/addnodes.dns &>/dev/null
 fi
 
 # greater than n seconds, continue
@@ -832,7 +832,7 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
       # make sure add_peers exist
       if [ ! -f "${LOG_DIR:?}"/add_peers ] &>/dev/null; then
         # connect nodes found with nodes list above, (using tmp directory)
-        cat >"${LOG_DIR:?}"/add_peers <<'EOF'
+        cat >/tmp/add_peers <<'EOF'
 #!/bin/bash
 
 # By Rainman
