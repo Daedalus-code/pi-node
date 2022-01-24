@@ -32,20 +32,21 @@ fi
 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
-HEIGHT=14
+HEIGHT=15
 WIDTH=54
-CHOICE_HEIGHT=7
+CHOICE_HEIGHT=8
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
 
-OPTIONS=(1 "Node Menu        Shutdown, Re/Start node"
+OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   2 "Keys Menu        Dump/Import keys, PoS (${POS_COUNT:?})"
   3 "UFW Menu         Uncomplicated firewall"
   4 "Information      Trump node status"
   5 "System Space     Disk space utilized"
   6 "Download Menu    Download & Install"
-  7 "Reset Graphs     Reset/Remove graphs")
+  7 "Reset Graphs     Reset/Remove graphs"
+  8 "Configuration    Node configuration(s)")
 
 CHOICE=$(dialog --clear \
   --backtitle "$BACKTITLE" \
@@ -586,6 +587,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
   WIDTH=57
   CHOICE_HEIGHT=3
   BACKTITLE="Download & Install"
+  TITLE="Download trumpcoin tools"
   MENU="Choose one of the following options:"
 
   OPTIONS=(1 "Download         Download wallet manually"
@@ -888,6 +890,172 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     read -r -p "[Ok] rrdtool graphs removed! Press Enter to continue" </dev/tty
     echo
   fi
+
+  ;;
+
+"8")
+
+  HEIGHT=11
+  WIDTH=44
+  CHOICE_HEIGHT=4
+  BACKTITLE="Node configuration(s)"
+  TITLE="Edit confirmations"
+  MENU="Choose one of the following options:"
+
+  OPTIONS=(1 "TrumpCoin.conf   trumpcoin.conf"
+    2 "PiTrump.conf     pitrump.conf"
+    3 "Config.txt       boot/config.txt"
+    4 "Reset            Reset config(s)")
+
+  CHOICE=$(dialog --clear \
+    --backtitle "$BACKTITLE" \
+    --title "$TITLE" \
+    --menu "$MENU" \
+    $HEIGHT $WIDTH $CHOICE_HEIGHT \
+    "${OPTIONS[@]}" \
+    2>&1 >/dev/tty)
+
+  clear
+  case $CHOICE in
+
+  "1")
+
+    echo "edit trumpcoin.conf!"
+    nano "${WALLET_DIR:?}"/trumpcoin.conf
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  "2")
+
+    echo "edit pitrump.conf!"
+    nano /usr/local/bin/include/pitrump.conf
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  "3")
+
+    echo "edit config.txt!"
+    sudo nano /boot/config.txt
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  "4")
+
+    HEIGHT=11
+    WIDTH=31
+    CHOICE_HEIGHT=4
+    BACKTITLE="Reset configuration(s)"
+    TITLE="Reset a specific configuration"
+    MENU="Choose one of the following options:"
+
+    OPTIONS=(1 "Reset trumpcoin.conf"
+      2 "Reset pitrump.conf"
+      3 "Reset config.txt")
+
+    CHOICE=$(dialog --clear \
+      --backtitle "$BACKTITLE" \
+      --title "$TITLE" \
+      --menu "$MENU" \
+      $HEIGHT $WIDTH $CHOICE_HEIGHT \
+      "${OPTIONS[@]}" \
+      2>&1 >/dev/tty)
+
+    clear
+    case $CHOICE in
+
+    "1")
+
+      mkdir "${WALLET_DIR:?}" &>/dev/null
+
+      # create random rpcuser & rpcpassword
+      RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
+      RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
+
+      # get proxy (tor) hostname with root
+      EXTERNALIP=$(sudo cat /var/lib/tor/trumpcoin-service/hostname 2>/dev/null)
+
+      if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
+        # non responsive
+        EXTERNALIP="#externalip=PLEASE_EDIT"
+      else
+        EXTERNALIP="externalip=${EXTERNALIP:?}"
+      fi
+
+      echo "## trumpcoin.conf configuration file.
+# Network-related settings:
+
+# Run on the test network instead of the real trumpcoin network.
+#testnet=1
+
+# RPC credentials
+rpcuser=${RANDOM_RPCL:?}${RANDOM_RPCN:?}
+rpcpassword=${RANDOM_RPCN:?}${RANDOM_RPCL:?}
+rpcallowip=${RPC_IP:?}
+rpcbind=${RPC_IP:?}
+
+# Connect via a SOCKS5 proxy (default: 127.0.0.1:9050)
+proxy=${PROXY:?}
+
+# Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: -proxy)
+onion=${PROXY:?}
+
+# Tor control port to use if onion listening enabled (default: 127.0.0.1:9051)
+torcontrol=${TOR_CONTROL:?}
+
+# Tor onion externalip
+${EXTERNALIP:?}
+
+# Listening mode, enabled by default except when 'connect' is being used
+listen=1
+discover=1
+
+# Maximum number of inbound+outbound connections. (default: 125)
+maxconnections=${MAX_P2P:?}
+
+# can be commented out if you use the service script
+daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
+      mv "${WALLET_DIR:?}"/trumpcoin.conf.tmp "${WALLET_DIR:?}"/trumpcoin.conf 2>&1
+      echo "[Ok] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+
+      ;;
+
+    "2")
+
+      echo "Reset pitrump.conf!"
+      cp /home/"$(whoami)"/trump-node/pitrump.conf /home/"$(whoami)"/
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+
+      ;;
+
+    "3")
+
+      echo "Creating backup! (/boot/config.txt)"
+      cp /boot/config.txt /home/"$(whoami)"/
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+
+      ;;
+
+    esac
+
+    ;;
+
+  esac
 
   ;;
 

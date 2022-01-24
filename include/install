@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222401
-# 0.2.6.5
+# 0.2.5.5
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -15,35 +15,25 @@ if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /usr/local/bin/menu &>/dev/null
   sudo rm -r /tmp/node_data/ &>/dev/null
   sudo rm -r /tmp/add_peers* &>/dev/null
-  echo "No support for Microsoft"
+  printf '%b' "No support for Microsoft.\n"
   exit
 fi
 
 # create directories, ruled by configuration
-sudo mkdir /usr/local/bin/include &>/dev/null
-
-if [[ ! -f /usr/local/bin/include/pitrump.conf ]] &>/dev/null; then
-
-  cp /home/"$(whoami)"/trump-node/pitrump.conf /tmp/pt.tmp 2>/dev/null
-  sudo mv /tmp/pt.tmp /usr/local/bin/include/pitrump.conf 2>/dev/null
-
-  if [[ ! -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
-    cp /home/"$(whoami)"/trump-node/pitrump.conf /home/"$(whoami)"/pitrump.conf 2>/dev/null
-  fi
-
-  if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
-    cp /home/"$(whoami)"/pitrump.conf /tmp/pt.tmp 2>/dev/null
-    sudo mv /tmp/pt.tmp /usr/local/bin/include/pitrump.conf 2>/dev/null
-  fi
-
-fi
-source /usr/local/bin/include/pitrump.conf
-
 if [ ! -d /usr/local/bin/include ] &>/dev/null; then
   sudo mkdir /usr/local/bin/include &>/dev/null
 fi
-cp /home/"$(whoami)"/trump-node/include/color /tmp/color.tmp 2>/dev/null
-sudo mv /tmp/color.tmp /usr/local/bin/include/color 2>/dev/null
+
+if [[ ! -f /usr/local/bin/include/pitrump.conf ]] &>/dev/null; then
+  cp /home/"$(whoami)"/trump-node/pitrump.conf /tmp/pitrump.conf.tmp 2>/dev/null
+  sudo mv /tmp/pitrump.conf.tmp /usr/local/bin/include/pitrump.conf 2>/dev/null
+fi
+source /usr/local/bin/include/pitrump.conf
+
+if [[ ! -f /usr/local/bin/include/color ]] &>/dev/null; then
+  cp /home/"$(whoami)"/trump-node/include/color /tmp/color.tmp 2>/dev/null
+  sudo mv /tmp/color.tmp /usr/local/bin/include/color 2>/dev/null
+fi
 source /usr/local/bin/include/color
 
 if [ ! -d "${LOG_DIR:?}"/node_data ] &>/dev/null; then
@@ -175,7 +165,7 @@ if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
     RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
     RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
-    # get proxy (tor) hostname
+    # get proxy (tor) hostname with root
     EXTERNALIP=$(sudo cat /var/lib/tor/trumpcoin-service/hostname 2>/dev/null)
 
     if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
@@ -219,10 +209,10 @@ maxconnections=${MAX_P2P:?}
 # can be commented out if you use the service script
 daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
     mv "${WALLET_DIR:?}"/trumpcoin.conf.tmp "${WALLET_DIR:?}"/trumpcoin.conf 2>&1
-    echo "Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
+    printf '%b' "[${G1:?}Ok${N0:?}] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
   fi
 else
-  echo "Please run install one more time after editing pitrump.conf!"
+  printf '%b' "[${R1:?}!!${N0:?}] Please run install one more time after editing pitrump.conf!\n"
 fi
 
 # look for screen session, if found, killall
@@ -234,7 +224,7 @@ fi
 # pitrump.conf, do this once
 if [[ ! -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
   cd || exit && cp /home/"$(whoami)"/trump-node/pitrump.conf ../
-  echo "Please edit! -> /home/$(whoami)/pitrump.conf"
+  printf '%b' "[${R1:?}!!${N0:?}] Please edit! -> /home/$(whoami)/pitrump.conf\n"
 fi
 sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
@@ -252,12 +242,12 @@ if [[ -z "$OLD_HEAD" ]] &>/dev/null; then
   # non responsive
   OLD_HEAD="${GR:?}[fsociety]${N0:?}"
 fi
-PLEASE=$(printf '%b' "Please use ${CY:?}update${N0:?} & ${CY:?}menu${N0:?} to continue the install.\n" 2>&1)
+PLEASE=$(printf '%b' "[${G1:?}!?${N0:?}] Please use ${CY:?}update${N0:?} & ${CY:?}menu${N0:?} to continue the install.\n" 2>&1)
 echo "$PLEASE"
 read -t 2 -r -p "[Ok] Updated! Press Enter to continue" </dev/tty
 echo
 clear
-printf '%b' "Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
+printf '%b' "[${G1:?}!?${N0:?}] Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
 printf '%b' "${LOG_DATE:?} Status() Update.Script: Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] $LATEST_DATE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 ls -lSh /usr/local/bin/include/
 echo "$PLEASE"
