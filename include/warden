@@ -91,8 +91,8 @@ fi
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
   # get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
-  TIME_ONE=$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null | sed 's/.//10g' 2>&1)
-  TIME_TWO=$(cat "${LOG_DIR:?}"/node_data/stats/time.warden 2>/dev/null | sed 's/.//10g' 2>&1)
+  TIME_ONE=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
+  TIME_TWO=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)
   # run if dashbord has stopped
   if [[ "$TIME_ONE" -lt "$TIME_TWO" ]] &>/dev/null; then
     # create more time until reboot
