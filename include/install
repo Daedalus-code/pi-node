@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222401
-# 0.2.6.2
+# 0.2.6.3
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -252,6 +252,7 @@ if [[ -z "$OLD_HEAD" ]] &>/dev/null; then
   # non responsive
   OLD_HEAD="${GR:?}[fsociety]${N0:?}"
 fi
+printf '%b' "Please use ${GR:?}update${N0:?} & ${GR:?}menu${N0:?} to continue the install.\n"
 read -t 2 -r -p "[Ok] Updated! Press Enter to continue" </dev/tty
 echo
 clear
