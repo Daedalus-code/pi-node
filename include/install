@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222401
-# 0.2.5.5
+# 0.2.5.8
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -27,6 +27,14 @@ fi
 if [[ ! -f /usr/local/bin/include/pitrump.conf ]] &>/dev/null; then
   cp /home/"$(whoami)"/trump-node/pitrump.conf /tmp/pitrump.conf.tmp 2>/dev/null
   sudo mv /tmp/pitrump.conf.tmp /usr/local/bin/include/pitrump.conf 2>/dev/null
+  printf '%b' "[${R1:?}!!${N0:?}] Please edit pitrump.conf before going any further!\n"
+  echo "pitrump.conf data is being used by the trumpcoin.conf (new install)"
+  read -r -p "[Ok] Press Enter to edit pitrump.conf!" </dev/tty
+  clear
+  sudo nano /usr/local/bin/include/pitrump.conf
+  echo
+  read -r -p "[Ok] Press Enter to continue" </dev/tty
+  echo
 fi
 source /usr/local/bin/include/pitrump.conf
 
@@ -154,28 +162,26 @@ if ! grep "configuration" "${WALLET_DIR:?}"/trumpcoin.conf &>/dev/null; then
   rm "${WALLET_DIR:?}"/trumpcoin.conf &>/dev/null
 fi
 
-if [[ -f /home/"$(whoami)"/pitrump.conf ]] &>/dev/null; then
+# install trumpcoin.conf, do this once
+if [[ ! -f "${WALLET_DIR:?}"/trumpcoin.conf ]] &>/dev/null; then
 
-  # install trumpcoin.conf, do this once
-  if [[ ! -f "${WALLET_DIR:?}"/trumpcoin.conf ]] &>/dev/null; then
+  mkdir "${WALLET_DIR:?}" &>/dev/null
 
-    mkdir "${WALLET_DIR:?}" &>/dev/null
+  # create random rpcuser & rpcpassword
+  RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
+  RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
-    # create random rpcuser & rpcpassword
-    RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
-    RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
+  # get proxy (tor) hostname with root
+  EXTERNALIP=$(sudo cat /var/lib/tor/trumpcoin-service/hostname 2>/dev/null)
 
-    # get proxy (tor) hostname with root
-    EXTERNALIP=$(sudo cat /var/lib/tor/trumpcoin-service/hostname 2>/dev/null)
+  if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
+    # non responsive
+    EXTERNALIP="#externalip=PLEASE_EDIT"
+  else
+    EXTERNALIP="externalip=${EXTERNALIP:?}"
+  fi
 
-    if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
-      # non responsive
-      EXTERNALIP="#externalip=PLEASE_EDIT"
-    else
-      EXTERNALIP="externalip=${EXTERNALIP:?}"
-    fi
-
-    echo "## trumpcoin.conf configuration file.
+  echo "## trumpcoin.conf configuration file.
 # Network-related settings:
 
 # Run on the test network instead of the real trumpcoin network.
@@ -208,11 +214,8 @@ maxconnections=${MAX_P2P:?}
 
 # can be commented out if you use the service script
 daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
-    mv "${WALLET_DIR:?}"/trumpcoin.conf.tmp "${WALLET_DIR:?}"/trumpcoin.conf 2>&1
-    printf '%b' "[${G1:?}Ok${N0:?}] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
-  fi
-else
-  printf '%b' "[${R1:?}!!${N0:?}] Please run install one more time after editing pitrump.conf!\n"
+  mv "${WALLET_DIR:?}"/trumpcoin.conf.tmp "${WALLET_DIR:?}"/trumpcoin.conf 2>&1
+  printf '%b' "[${G1:?}Ok${N0:?}] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
 fi
 
 # look for screen session, if found, killall
