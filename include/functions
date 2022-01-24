@@ -615,9 +615,9 @@ fi
 
 # backup ticker price
 if [ -f "${LOG_DIR:?}"/node_data/stats/price ] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/stats/price "${WALLET_DIR:?}"/ticker 2>&1
+  cp "${LOG_DIR:?}"/node_data/stats/price "${WALLET_DIR:?}"/price 2>&1
 else # restore it
-  cp "${WALLET_DIR:?}"/ticker "${LOG_DIR:?}"/node_data/stats/price 2>&1
+  cp "${WALLET_DIR:?}"/price "${LOG_DIR:?}"/node_data/stats/price 2>&1
   printf '%b' "${LOG_DATE:?} Status() C.Market.Cap() Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
