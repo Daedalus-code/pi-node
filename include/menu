@@ -2,7 +2,10 @@
 
 # By Rainman
 # V20222401
-# 0.7.9.3
+# 0.8.8.5
+
+# dialog, ncurses no utf8 acs
+export NCURSES_NO_UTF8_ACS=1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -22,25 +25,26 @@ if [[ ! -s "${LOG_DIR:?}"/node_data/client/listunspent ]] &>/dev/null; then
   # non responsive
   POS_COUNT="0"
 else # get input count
-  POS_COUNT=$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)
+  POS_COUNT=$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 fi
 
 # date for logs
 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
-HEIGHT=12
+HEIGHT=13
 WIDTH=55
-CHOICE_HEIGHT=5
+CHOICE_HEIGHT=6
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
 
-OPTIONS=(1 "Node Menu        Shutdown, Re/Start, Update"
+OPTIONS=(1 "Node Menu        Shutdown, Re/Start node"
   2 "Keys Menu        Dump/Import keys, PoS (${POS_COUNT:?})"
   3 "UFW Menu         Uncomplicated firewall"
   4 "Information      Trump node status"
-  5 "System Space     Disk space utilized")
+  5 "System Space     Disk space utilized"
+  6 "Download Menu    Download & Install")
 
 CHOICE=$(dialog --clear \
   --backtitle "$BACKTITLE" \
@@ -55,18 +59,15 @@ case $CHOICE in
 
 "1")
 
-  HEIGHT=12
-  WIDTH=57
-  CHOICE_HEIGHT=5
+  HEIGHT=9
+  WIDTH=55
+  CHOICE_HEIGHT=2
   BACKTITLE="Trump-Node"
   TITLE="Wallet Menu"
   MENU="Choose one of the following options:"
 
   OPTIONS=(1 "Shutdown         Stop, reboot, graphs"
-    2 "Re/Start         Re/Start daemon"
-    3 "Download         Download wallet manually"
-    4 "Download         Download wallet automatically"
-    5 "Bootstrap        Download/Install bootstrap")
+    2 "Re/Start         Re/Start daemon ($(pidof trumpcoind 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1))")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -154,211 +155,6 @@ case $CHOICE in
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
       sudo service cron start 2>&1
-    fi
-
-    ;;
-
-    # download manually
-
-  "3")
-
-    # get latest release
-    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-
-    HEIGHT=16
-    WIDTH=45
-    CHOICE_HEIGHT=9
-    BACKTITLE="Download manually"
-    TITLE="Download Menu"
-    MENU="Choose one of the following options:"
-
-    OPTIONS=(1 "libs.zip"
-      2 "TrumpCoin.aarch64-linux-gnu.zip"
-      3 "TrumpCoin.arm-linux-gnueabihf.zip"
-      4 "TrumpCoin.Linux.zip"
-      5 "TrumpCoin.Mac.dmg"
-      6 "TrumpCoin.Mac.zip"
-      7 "TrumpCoin.Ubuntu16.zip"
-      8 "Source code (zip)"
-      9 "Source code (tar.gz)")
-
-    CHOICE=$(dialog --clear \
-      --backtitle "$BACKTITLE" \
-      --title "$TITLE" \
-      --menu "$MENU" \
-      $HEIGHT $WIDTH $CHOICE_HEIGHT \
-      "${OPTIONS[@]}" \
-      2>&1 >/dev/tty)
-
-    clear
-    case $CHOICE in
-    "1")
-      echo "Downloading libs.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/libs.zip
-      ;;
-    "2")
-      echo "Downloading TrumpCoin.aarch64-linux-gnu.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.aarch64-linux-gnu.zip
-      ;;
-    "3")
-      echo "Downloading TrumpCoin.arm-linux-gnueabihf.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.arm-linux-gnueabihf.zip
-      ;;
-    "4")
-      echo "Downloading TrumpCoin.Linux.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.Linux.zip
-      ;;
-    "5")
-      echo "Downloading TrumpCoin.Mac.dmg"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.Mac.dmg
-      ;;
-    "6")
-      echo "Downloading TrumpCoin.Ubuntu16.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.Ubuntu16.zip
-      ;;
-    "7")
-      echo "Downloading Source code (zip)"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/5.0.0.0.zip
-      ;;
-    "8")
-      echo "Downloading Source code (tar.gz)"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/5.0.0.0.tar.gz
-      ;;
-    "9")
-      echo "Downloading libs.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/
-      ;;
-    esac
-
-    ;;
-
-    # install automatically
-
-  "4")
-
-    # get latest release
-    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-    # get wallet version
-    WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
-
-    if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
-      # non responsive
-      WALLET_VERSION="${GR:?}vLoading${N0:?}"
-    fi
-
-    printf '%b' "Latest....: ${G0:?}v${LATEST_VERSION:?}${N0:?}\n"
-    printf '%b' "Installed.: ${G1:?}${WALLET_VERSION:?}${N0:?}\n"
-    echo
-    read -r -p "[YN] Install automatically? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-      # create uname -a
-      uname -a >"${LOG_DIR:?}"/node_data/uname
-
-      function setup() {
-        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
-          UNAME_SYSTEM="armv7l"
-          UNAME_FILE="TrumpCoin.arm-linux-gnueabihf.zip"
-        fi
-        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
-          UNAME_SYSTEM="aarch64"
-          UNAME_FILE="TrumpCoin.aarch64-linux-gnu.zip"
-        fi
-        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
-          UNAME_SYSTEM="x86_64"
-          UNAME_FILE="TrumpCoin.Linux.zip"
-        fi
-
-      }
-
-      if [[ -z "$UNAME_FILE" ]] &>/dev/null; then
-        # non responsive
-        UNAME_FILE=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
-      fi
-      if [[ -z "$UNAME_SYSTEM" ]] &>/dev/null; then
-        # non responsive
-        UNAME_SYSTEM=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
-      fi
-
-      function setup_zip() {
-        # setup trumpcoin wallet
-        mkdir /home/"$(whoami)"/TrumpCoin.old &>/dev/null
-        mkdir /home/"$(whoami)"/TrumpCoin &>/dev/null
-        cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip
-        unzip -j /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin/
-      }
-
-      # armv7l & aarch64
-      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] armv7l & aarch64 System\n"
-        if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
-          # download arm-linux-gnueabihf.zip
-          cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
-        fi
-      fi
-
-      # aarch64
-      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] aarch64 System\n"
-        if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
-          # download trumpcoin.aarch64-linux-gnu.zip
-          cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
-        fi
-      fi
-
-      # x86_64
-      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] x86_64 System\n"
-        if [[ ! -f /home/"$(whoami)"/TrumpCoin.Linux.zip ]] &>/dev/null; then
-          # download trumpcoin.linux.zip
-          cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.Linux.zip
-        fi
-      fi
-
-      setup
-      sudo service cron stop 2>&1
-      setup_zip
-
-      echo
-      read -r -p "[Ok] Wallet installed! Press Enter to continue" </dev/tty
-      echo
-      sudo service cron start 2>&1
-    fi
-
-    ;;
-
-    # download/install bootstrap
-
-  "5")
-
-    # get latest release
-    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-    cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.bootstrap.zip
-    read -r -p "[YN] Unzip bootstrap? -> (${WALLET_DIR:?}) y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
-      # wait on node (daemon) to stop
-      until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
-        printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
-      done
-      unzip /home/"$(whoami)"/TrumpCoin.bootstrap.zip -d "${WALLET_DIR:?}"
-      sleep 2
-      clear
-      echo
-      read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
-      echo
     fi
 
     ;;
@@ -785,6 +581,302 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
   RESULT=$(df -h)
   display_result "Disk Space"
   clear
+
+  ;;
+
+"6")
+
+  HEIGHT=10
+  WIDTH=57
+  CHOICE_HEIGHT=3
+  BACKTITLE="Download & Install"
+  MENU="Choose one of the following options:"
+
+  OPTIONS=(1 "Download         Download wallet manually"
+    2 "Download         Download wallet automatically"
+    3 "Bootstrap        Download/Install bootstrap")
+
+  CHOICE=$(dialog --clear \
+    --backtitle "$BACKTITLE" \
+    --title "$TITLE" \
+    --menu "$MENU" \
+    $HEIGHT $WIDTH $CHOICE_HEIGHT \
+    "${OPTIONS[@]}" \
+    2>&1 >/dev/tty)
+
+  clear
+  case $CHOICE in
+
+  # download manually
+
+  "1")
+
+    # get latest release
+    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+
+    function setup_zip() {
+      read -r -p "[YN] Install new wallet? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        # setup trumpcoin wallet
+        mkdir /home/"$(whoami)"/TrumpCoin.old &>/dev/null
+        mkdir /home/"$(whoami)"/TrumpCoin &>/dev/null
+        cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}"
+        unzip -j /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}" -d /home/"$(whoami)"/TrumpCoin/
+      fi
+    }
+
+    HEIGHT=16
+    WIDTH=45
+    CHOICE_HEIGHT=9
+    BACKTITLE="Download manually"
+    TITLE="Download Menu"
+    MENU="Choose one of the following options:"
+
+    OPTIONS=(1 "libs.zip"
+      2 "TrumpCoin.aarch64-linux-gnu.zip"
+      3 "TrumpCoin.arm-linux-gnueabihf.zip"
+      4 "TrumpCoin.Linux.zip"
+      5 "TrumpCoin.Mac.dmg"
+      6 "TrumpCoin.Mac.zip"
+      7 "TrumpCoin.Ubuntu16.zip"
+      8 "Source code (zip)"
+      9 "Source code (tar.gz)")
+
+    CHOICE=$(dialog --clear \
+      --backtitle "$BACKTITLE" \
+      --title "$TITLE" \
+      --menu "$MENU" \
+      $HEIGHT $WIDTH $CHOICE_HEIGHT \
+      "${OPTIONS[@]}" \
+      2>&1 >/dev/tty)
+
+    clear
+    case $CHOICE in
+
+    "1")
+
+      echo "Downloading libs.zip"
+      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/libs.zip
+      UNAME_SYSTEM="libs.zip"
+      setup_zip
+
+      ;;
+
+    "2")
+
+      echo "Downloading TrumpCoin.aarch64-linux-gnu.zip"
+      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/TrumpCoin.aarch64-linux-gnu.zip
+      UNAME_SYSTEM="TrumpCoin.aarch64-linux-gnu.zip"
+      setup_zip
+
+      ;;
+
+    "3")
+
+      echo "Downloading TrumpCoin.arm-linux-gnueabihf.zip"
+      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/TrumpCoin.arm-linux-gnueabihf.zip
+      UNAME_SYSTEM="TrumpCoin.arm-linux-gnueabihf.zip"
+      setup_zip
+
+      ;;
+
+    "4")
+
+      echo "Downloading TrumpCoin.Linux.zip"
+      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/TrumpCoin.Linux.zip
+      UNAME_SYSTEM="TrumpCoin.Linux.zip"
+      setup_zip
+
+      ;;
+
+    "5")
+
+      echo "Downloading TrumpCoin.Mac.dmg"
+      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/TrumpCoin.Mac.dmg
+      UNAME_SYSTEM="TrumpCoin.Mac.dmg"
+      setup_zip
+
+      ;;
+
+    "6")
+
+      echo "Downloading TrumpCoin.Mac.zip"
+      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/TrumpCoin.Mac.zip
+      UNAME_SYSTEM="TrumpCoin.Mac.zip"
+      setup_zip
+
+      ;;
+
+    "7")
+
+      echo "Downloading TrumpCoin.Ubuntu16.zip"
+      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/TrumpCoin.Ubuntu16.zip
+      UNAME_SYSTEM="TrumpCoin.Ubuntu16.zip"
+      setup_zip
+
+      ;;
+
+    "8")
+
+      echo "Downloading Source code (zip)"
+      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
+      UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
+      setup_zip
+
+      ;;
+
+    "9")
+
+      echo "Downloading Source code (tar.gz)"
+      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".tar.gz
+      UNAME_SYSTEM="${LATEST_VERSION:?}"
+      setup_zip
+
+      ;;
+
+    esac
+
+    ;;
+
+    # install automatically
+
+  "2")
+
+    # get latest release
+    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+    # get wallet version
+    WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
+
+    if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
+      # non responsive
+      WALLET_VERSION="${GR:?}vLoading${N0:?}"
+    fi
+
+    printf '%b' "Latest....: ${G0:?}v${LATEST_VERSION:?}${N0:?}\n"
+    printf '%b' "Installed.: ${G1:?}${WALLET_VERSION:?}${N0:?}\n"
+    echo
+    read -r -p "[YN] Install automatically? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+      # create uname -a
+      uname -a >"${LOG_DIR:?}"/node_data/uname
+
+      function setup() {
+        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
+          UNAME_SYSTEM="armv7l"
+          UNAME_FILE="TrumpCoin.arm-linux-gnueabihf.zip"
+        fi
+        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
+          UNAME_SYSTEM="aarch64"
+          UNAME_FILE="TrumpCoin.aarch64-linux-gnu.zip"
+        fi
+        if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
+          UNAME_SYSTEM="x86_64"
+          UNAME_FILE="TrumpCoin.Linux.zip"
+        fi
+
+      }
+
+      if [[ -z "$UNAME_FILE" ]] &>/dev/null; then
+        # non responsive
+        UNAME_FILE=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+      fi
+      if [[ -z "$UNAME_SYSTEM" ]] &>/dev/null; then
+        # non responsive
+        UNAME_SYSTEM=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+      fi
+
+      function setup_zip() {
+        read -r -p "[YN] Install new wallet? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          # setup trumpcoin wallet
+          mkdir /home/"$(whoami)"/TrumpCoin.old &>/dev/null
+          mkdir /home/"$(whoami)"/TrumpCoin &>/dev/null
+          cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip
+          unzip -j /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin/
+        fi
+      }
+
+      # armv7l & aarch64
+      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
+        printf '%b' "[${G1:?}Ok${N0:?}] armv7l & aarch64 System\n"
+        if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
+          # download arm-linux-gnueabihf.zip
+          cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
+        fi
+      fi
+
+      # aarch64
+      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
+        printf '%b' "[${G1:?}Ok${N0:?}] aarch64 System\n"
+        if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
+          # download trumpcoin.aarch64-linux-gnu.zip
+          cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
+        fi
+      fi
+
+      # x86_64
+      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
+        printf '%b' "[${G1:?}Ok${N0:?}] x86_64 System\n"
+        if [[ ! -f /home/"$(whoami)"/TrumpCoin.Linux.zip ]] &>/dev/null; then
+          # download trumpcoin.linux.zip
+          cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.Linux.zip
+        fi
+      fi
+
+      setup
+      sudo service cron stop 2>&1
+      setup_zip
+
+      echo
+      read -r -p "[Ok] Wallet installed! Press Enter to continue" </dev/tty
+      echo
+      sudo service cron start 2>&1
+    fi
+
+    ;;
+
+    # download/install bootstrap
+
+  "3")
+
+    printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
+    # get latest release
+    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+    cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.bootstrap.zip
+    read -r -p "[YN] Unzip bootstrap? -> (${WALLET_DIR:?}) y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      printf '%b' "[${R1:?}!!${N0:?}] "
+      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+      # wait on node (daemon) to stop
+      until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
+        clear
+        printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        sleep 1
+      done
+      printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
+      unzip /home/"$(whoami)"/TrumpCoin.bootstrap.zip -d "${WALLET_DIR:?}"
+      echo
+      read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
+      echo
+    fi
+
+    ;;
+
+  esac
 
   ;;
 
