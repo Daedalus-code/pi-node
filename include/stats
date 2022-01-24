@@ -219,23 +219,23 @@ fi
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
-  rrdtool update /home/"$(whoami)"/stats/load.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $1 }' 2>&1)"
-  rrdtool update /home/"$(whoami)"/stats/load5.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $2 }' 2>&1)"
-  rrdtool update /home/"$(whoami)"/stats/load15.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $3 }' 2>&1)"
-  rrdtool update /home/"$(whoami)"/stats/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" | bc)"
-  rrdtool update /home/"$(whoami)"/stats/memory_total.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/memtotal 2>/dev/null)"
-  rrdtool update /home/"$(whoami)"/stats/memory_free.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/memfree 2>/dev/null)"
-  rrdtool update /home/"$(whoami)"/stats/hdd.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1)"
-  rrdtool update /home/"$(whoami)"/stats/hdd_total.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $2 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1)"
-  rrdtool update /home/"$(whoami)"/stats/network.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/rxbytes 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/stats/txbytes 2>/dev/null)"
-  rrdtool update /home/"$(whoami)"/stats/balance.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)"
-  rrdtool update /home/"$(whoami)"/stats/volume.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null)"
-  rrdtool update /home/"$(whoami)"/stats/value.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/balance_value 2>/dev/null)"
-  rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(grep -c "BitcoinMiner" "${WALLET_DIR:?}"/staking 2>&1)"
-  rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)"
-  rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
-  rrdtool update /home/"$(whoami)"/stats/banned_peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/bans 2>/dev/null)"
-  rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)"
+  rrdtool update /home/"$(whoami)"/stats/load.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/load5.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $2 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/load15.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $3 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" 2>&1 | bc 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/memory_total.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/memtotal 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/memory_free.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/memfree 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/hdd.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/hdd_total.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $2 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/network.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/rxbytes 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/stats/txbytes 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/balance.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/volume.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/value.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/balance_value 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(grep -c "BitcoinMiner" "${WALLET_DIR:?}"/staking 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/banned_peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/bans 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)" 2>/dev/null
 
   ### auto pos grinding ########################################################
 
@@ -349,14 +349,14 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       # get total confirmations from inputs that are below the con_diff var (withouth not_post_input var)
       TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
-      rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)"
+      rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
     else
       # original normal values
-      rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)"
+      rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
     fi
   fi
-  rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)"
-  rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}"
+  rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}" 2>/dev/null
 fi
 
 #### create index.php ##########################################################
