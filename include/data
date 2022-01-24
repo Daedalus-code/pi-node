@@ -78,8 +78,8 @@ grep "Trading Volume24h" "${LOG_DIR:?}"/node_data/stats/ticker.html2text 2>&1 | 
 rm "${LOG_DIR:?}"/node_data/stats/ticker.tmp &>/dev/null
 
 # keep last n of ticker price
-echo "$(tail -11 "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1)" >"${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp 2>&1
-mv "${LOG_DIR:?}"/node_data/stats/ticker.avg.tmp "${LOG_DIR:?}"/node_data/stats/ticker.avg 2>&1
+echo "$(tail -11 "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1)" >"${LOG_DIR:?}"/node_data/stats/price.avg.tmp 2>&1
+mv "${LOG_DIR:?}"/node_data/stats/price.avg.tmp "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1
 
 # api values
 API_PRICE=$(cat "${LOG_DIR:?}"/node_data/stats/price 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
