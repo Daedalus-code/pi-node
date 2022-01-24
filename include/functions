@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222401
-# 1.2.5.3
+# 1.2.5.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.5.3"
+VERSION="v1.2.5.9"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -745,9 +745,9 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev
 fi
 
 # create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
-# note: only use addr, disregard addrlocal, no port
+# note: only use addr, no port
 if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
-  egrep -o "addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+  egrep -o "addrlocal: [0-9]+.[0-9]+.[0-9]+.[0-9]+|addr: [0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | grep -v "127." >"${LOG_DIR:?}"/node_data/peers/success 2>&1
 fi
 
 ### add_peers screen script ####################################################
