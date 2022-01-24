@@ -948,7 +948,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     # calculate seconds
     SECONDS_TX=$(echo "$AVG_TX*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds into age
-    if [[ "$SECONDS_TX" -eq "0" ]] &>/dev/null; then
+    if [[ -z "$SECONDS_TX" ]] &>/dev/null; then
       # non responsive
       SECONDS_TX="1"
       AVG_POS_TIME="${GR:?}No Input(s)${N0:?}"
@@ -1074,7 +1074,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds into age
       if [[ -f "${LOG_DIR:?}"/node_data/client/listunspent ]] &>/dev/null; then
-        if [[ "$TIMELINE_SEC" -eq "0" ]] &>/dev/null; then
+        if [[ -z "$TIMELINE_SEC" ]] &>/dev/null; then
           # non responsive
           TIMELINE_SEC="1"
         fi
@@ -1096,7 +1096,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # calculate seconds
       TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds into age
-      if [[ "$TIMELINE_SEC" -eq "0" ]] &>/dev/null; then
+      if [[ -z "$TIMELINE_SEC" ]] &>/dev/null; then
         # non responsive
         TIMELINE_SEC="1"
         TIMELINE="${GR:?}No Input(s)${N0:?}"
@@ -1119,7 +1119,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # calculate seconds
       TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # calculate seconds into age
-      if [[ "$TIMELINE_SEC" -eq "0" ]] &>/dev/null; then
+      if [[ -z "$TIMELINE_SEC" ]] &>/dev/null; then
         # non responsive
         TIMELINE_SEC="1"
         TIMELINE="${GR:?}No Input(s)${N0:?}"
