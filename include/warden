@@ -2,9 +2,9 @@
 
 # By Rainman
 # V20222401
-# 0.1.1.9
+# 0.1.2.1
 
-# pitrump configurations
+# pitrump configuration
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
 
@@ -97,9 +97,11 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   if [[ "$TIME_ONE" -lt "$TIME_TWO" ]] &>/dev/null; then
     # create more time until reboot
     echo "1" >>"${LOG_DIR:?}"/node_data/stats/time.limit 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord crashed! Getting data from the background! (Reboot in $(echo "10-$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) minutes!)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord crashed! Getting data from the background! (Reboot in $(echo "11-$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) minutes!)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # run script(s)
-    bash /usr/local/bin/include/functions
+    source /usr/local/bin/include/color
+    source /usr/local/bin/include/pitrump.conf
+    cd || exit && bash /usr/local/bin/include/functions
     if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit 2>&1 | awk '{ print $1 }' 2>&1)" -gt "10" ]] &>/dev/null; then
       # reboot system
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Shutting down wallet, rebooting system!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
