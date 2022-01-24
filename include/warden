@@ -93,7 +93,7 @@ if [[ -f /tmp/time ]] &>/dev/null; then
   echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time 2>&1 # keep time
   TIME_ONE=$(cat /tmp/time 2>/dev/null)
   TIME_TWO=$(cat "${LOG_DIR:?}"/node_data/stats/time 2>/dev/null)
-  if [[ "$TIME_ONE" -lt "$TIME_TWO" ]]; then
+  if [[ "$TIME_ONE" -lt "$TIME_TWO" ]] &>/dev/null; then
     # run script(s)
     source /usr/local/bin/include/color
     source /usr/local/bin/include/functions
