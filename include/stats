@@ -266,7 +266,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
         echo "$(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)
 Auto PoS Configuration
 ConfirmationsAVG.: $CONF_AVG
-ConfigDIFF.......: $CON_DIFF
+ConfigThreshold..: $CON_DIFF
 DifficultyAVG....: $DIFF_AVG
 $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
       }
@@ -339,7 +339,7 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
   else # non responsive, use backup values
     if [[ -f "${WALLET_DIR:?}"/auto_pos ]] &>/dev/null; then
       CONF_AVG="$(grep "ConfirmAVG" "${WALLET_DIR:?}"/auto_pos 2>&1 | awk '{ print $2 }' 2>&1)"
-      CON_DIFF="$(grep "ConfigDIFF" "${WALLET_DIR:?}"/auto_pos 2>&1 | awk '{ print $2 }' 2>&1)"
+      CON_DIFF="$(grep "ConfigThreshold" "${WALLET_DIR:?}"/auto_pos 2>&1 | awk '{ print $2 }' 2>&1)"
       DIFF_AVG="$(grep "DifficultyAVG" "${WALLET_DIR:?}"/auto_pos 2>&1 | awk '{ print $2 }' 2>&1)"
       TOTAL_CONF_BELOW="0"
     else # non responsive
