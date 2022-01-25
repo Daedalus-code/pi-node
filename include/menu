@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 1.1.7.5
+# 1.1.7.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -807,6 +807,10 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
           fi
           echo
           read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
+          echo
+        else
+          echo
+          read -r -p "[Ok] Bootstrap downloaded! Press Enter to continue" </dev/tty
           echo
         fi
       }
