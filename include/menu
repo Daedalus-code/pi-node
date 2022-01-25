@@ -899,7 +899,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
   WIDTH=45
   CHOICE_HEIGHT=5
   BACKTITLE="Node configuration(s)"
-  TITLE="Edit confirmations"
+  TITLE="Edit configuration"
   MENU="Choose one of the following options:"
 
   OPTIONS=(1 "TrumpCoin.conf   trumpcoin.conf"
