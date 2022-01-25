@@ -943,7 +943,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
         # update graphs manually
         echo "already_doing_it" >"${LOG_DIR:?}"/node_data/graph.lock 2>&1
-        printf '%b' "[${G1:?}Ok${N0:?}] Updating graphs..\n"
+        printf '%b' "[${G1:?}Ok${N0:?}] Updating graphs!\n"
         echo
         bash /usr/local/bin/include/graphs
         echo
