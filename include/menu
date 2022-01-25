@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 1.1.2.9
+# 1.1.5.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -589,15 +589,15 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 "6")
 
   HEIGHT=10
-  WIDTH=57
+  WIDTH=68
   CHOICE_HEIGHT=3
   BACKTITLE="Download & Install"
   TITLE="Download trumpcoin tools"
   MENU="Choose one of the following options:"
 
-  OPTIONS=(1 "Download         Download wallet manually"
-    2 "Download         Download wallet automatically"
-    3 "Bootstrap        Download/Install bootstrap")
+  OPTIONS=(1 "Download         Download a specific wallet manually"
+    2 "Download         Download wallet, bootstrap automatically"
+    3 "Bootstrap        Download and Install bootstrap")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -751,7 +751,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     ;;
 
-    # install automatically
+    # install wallet & bootstrap automatically
 
   "2")
 
@@ -772,8 +772,35 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
+      mkdir /home/"$(whoami)"/TrumpCoin.old &>/dev/null
+      mkdir /home/"$(whoami)"/TrumpCoin &>/dev/null
+
       # create uname -a
       uname -a >"${LOG_DIR:?}"/node_data/uname
+
+      function bootstrap() {
+        printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
+        # get latest release
+        LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+        cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.bootstrap.zip
+        read -r -p "[YN] Unzip bootstrap? -> (${WALLET_DIR:?}) y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          printf '%b' "[${R1:?}!!${N0:?}] "
+          "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+          # wait on node (daemon) to stop
+          until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
+            clear
+            printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+            sleep 1
+          done
+          printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
+          unzip /home/"$(whoami)"/TrumpCoin.bootstrap.zip -d "${WALLET_DIR:?}"
+          echo
+          read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
+          echo
+        fi
+      }
 
       function setup() {
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
@@ -805,19 +832,18 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           # setup trumpcoin wallet
-          mkdir /home/"$(whoami)"/TrumpCoin.old &>/dev/null
-          mkdir /home/"$(whoami)"/TrumpCoin &>/dev/null
           cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip
           unzip -j /home/"$(whoami)"/TrumpCoin.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/TrumpCoin/
         fi
       }
 
-      # armv7l & aarch64
-      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
+      # armv7l
+      if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
         printf '%b' "[${G1:?}Ok${N0:?}] armv7l & aarch64 System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
           # download arm-linux-gnueabihf.zip
           cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
+          bootstrap # install bootstrap
         fi
       fi
 
@@ -827,6 +853,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
           # download trumpcoin.aarch64-linux-gnu.zip
           cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
+          bootstrap # install bootstrap
         fi
       fi
 
@@ -836,6 +863,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.Linux.zip ]] &>/dev/null; then
           # download trumpcoin.linux.zip
           cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.Linux.zip
+          bootstrap # install bootstrap
         fi
       fi
 
