@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222401
+# V20222501
 # 0.1.0.0
 
 # shellcheck disable=SC2154
@@ -71,9 +71,9 @@ grep -o -P '(?<=,).*(?=]],"m)' "${LOG_DIR:?}"/node_data/stats/ticker.api >"${LOG
 egrep -o "volumes.*" "${LOG_DIR:?}"/node_data/stats/ticker.api 2>&1 | tr -d '"|:' 2>&1 | awk -F, '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
 
 # keep last n of ticker price and volume
-echo "$(tail -33 "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price.avg.tmp 2>&1
+echo "$(tail -21 "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price.avg.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/stats/price.avg.tmp "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1
-echo "$(tail -33 "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume.avg.tmp 2>&1
+echo "$(tail -21 "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume.avg.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/stats/volume.avg.tmp "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1
 
 # api values
