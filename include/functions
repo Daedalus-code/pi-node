@@ -762,13 +762,13 @@ fi
 
 ### add_peers screen script ####################################################
 
-cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
-# make sure addnodes is clean of successfully peers, as above as below
-grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-
 # look for screen session, if not found, run this block
 if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
+
+  cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
+  # make sure addnodes is clean of successfully peers, as above as below
+  grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
+  mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
 
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
@@ -778,7 +778,7 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
       touch "${LOG_DIR:?}"/node_data/peers/success 2>&1
     fi
 
-    ### random address #########################################################
+    ### random address ##################################################### ###
 
     # generate random ip address (ipv4)
     RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
@@ -792,7 +792,7 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     cat "${LOG_DIR:?}"/node_data/peers.ipv4.r 2>/dev/null | tail -1 >>"${LOG_DIR:?}"/node_data/add_peers
     cat "${LOG_DIR:?}"/node_data/peers.ipv6.r 2>/dev/null | tail -1 >>"${LOG_DIR:?}"/node_data/add_peers
 
-    ### remove failed, connected peers and invalid pattern address #############
+    ### remove failed, connected peers and invalid pattern address ######### ###
 
     # disregard already connected peers (success list)
     grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
