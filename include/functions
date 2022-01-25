@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222501
-# 1.2.7.8
+# 1.2.7.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.7.8"
+VERSION="v1.2.7.9"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -87,8 +87,9 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
   CORES=$(grep "Core(s) per socket:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $4 }' 2>&1)
   VENDORID=$(grep "Vendor ID:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
   MODEL=$(grep "Model name:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
+  SPEED=$(echo "$(grep "CPU max MHz: " "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)/1000" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   # create cpu information
-  echo "CPUs ($CPUS) $THREADS/$CORES - $VENDORID ${GR:?}$MODEL${N0:?}" >"${LOG_DIR:?}"/node_data/stats/cpuinfo 2>&1
+  echo "CPUs ($CPUS) ${GR:?}$THREADS/$CORES${N0:?} - $VENDORID ${GR:?}$MODEL${N0:?} ${SPEED:?}GHz" >"${LOG_DIR:?}"/node_data/stats/cpuinfo 2>&1
 fi
 
 # get system load
