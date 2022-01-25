@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 1.1.2.0
+# 1.1.2.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -938,6 +938,12 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     echo "looking into pitrump.conf!"
     nano /usr/local/bin/include/pitrump.conf
+    read -r -p "[YN] Update graphs? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      # update graphs manually
+      bash /usr/local/bin/include/graphs
+    fi
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
