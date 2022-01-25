@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222501
-# 1.2.8.6
+# 1.2.8.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.8.6"
+VERSION="v1.2.8.9"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -506,6 +506,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     # make sure add_peers exist
     touch "${LOG_DIR:?}"/node_data/add_peers &>/dev/null
   fi
+
+  # make sure addnodes is clean of successfully peers, as above as below
+  grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers 2>&1
 
   # get last confirmation (smallest one)
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
