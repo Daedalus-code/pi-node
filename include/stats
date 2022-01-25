@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 0.4.5.8
+# 0.4.6.0
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -30,7 +30,7 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
   sudo chown -R "$(whoami)":"$(whoami)" /var/www/html
   rm /var/www/html/index.html &>/dev/null
   printf '%b' "[${G1:?}OK${N0:?}] Restarting Apache\n"
-  sudo systemctl restart apache2 2>&1
+  sudo systemctl restart apache2 &>/dev/null
   LOCAL=$(ifconfig 2>&1 | grep "inet" 2>&1 | head -1 2>&1 | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' 2>&1)
   # installing on a osmc, openelec, kodi system, with port 80 already in use
   uname -a >"${LOG_DIR:?}"/node_data/uname 2>&1
@@ -56,6 +56,8 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
     # make sure ufw opens up port 8080
     sudo ufw allow 8080 comment "TrumpCoin Graphs"
     sudo ufw status
+    printf '%b' "[${G1:?}OK${N0:?}] Restarting Apache\n"
+    sudo systemctl restart apache2 2>&1
   else # port free for use
     PORT="80"
   fi
