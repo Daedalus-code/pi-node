@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 0.3.9.1
+# 0.3.9.2
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -251,18 +251,19 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "600" ]] &>/dev/null; then
 
     if [[ "${AUTO_POS:?}" -gt "0" ]] &>/dev/null; then
+
+      # get total average confirmations
+      CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }')
+      # get autocombine threshold (apc)
+      CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }')
+      # get difficulty average
+      DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>/dev/null | awk '{ printf "%.0f\n", $1 }')
+      # get total confirmations from inputs that are below the con_diff var (with not_post_input var)
+      TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+
       echo "${POS_LIMIT:?}" >"${LOG_DIR:?}"/node_data/client/pos_limit 2>&1
       # continue if lock is missing
       if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
-
-        # get total average confirmations
-        CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep last_ds 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }')
-        # get autocombine threshold (apc)
-        CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }')
-        # get difficulty average
-        DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>/dev/null | awk '{ printf "%.0f\n", $1 }')
-        # get total confirmations from inputs that are below the con_diff var (with not_post_input var)
-        TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
         printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
