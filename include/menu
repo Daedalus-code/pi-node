@@ -90,17 +90,17 @@ case $CHOICE in
     read -r -p "[YN] Stop node, are you sure? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      # turn off cron
+      sudo service cron stop 2>&1
       if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
         cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
       fi
       read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        # hard shutdown, turn off crontab
-        sudo service cron stop 2>&1
+        # hard shutdown
         kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null && sleep 1
-      else # normal shutdown, turn off crontab
-        sudo service cron stop 2>&1
+      else # normal shutdown
         printf '%b' "[${R1:?}!!${N0:?}] "
         "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
         # wait on node (daemon) to stop
