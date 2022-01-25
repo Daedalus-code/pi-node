@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222501
-# 1.2.9.0
+# 1.2.8.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.9.0"
+VERSION="v1.2.8.9"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -507,10 +507,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     touch "${LOG_DIR:?}"/node_data/add_peers &>/dev/null
   fi
 
-  # make sure addnodes is clean of successfully peers, as above as below
-  grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-  mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-
   # get last confirmation (smallest one)
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # get last wallet txid with help of last_tx var
@@ -767,6 +763,9 @@ fi
 ### add_peers screen script ####################################################
 
 cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
+# make sure addnodes is clean of successfully peers, as above as below
+grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
+mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
 
 # look for screen session, if not found, run this block
 if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
