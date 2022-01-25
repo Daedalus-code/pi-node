@@ -558,7 +558,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
   # get wallet stakes count
   grep -c "BitcoinMiner : proof-of-stake block was signed" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/staking 2>&1
-  # get wallet proof of work value
+  # get wallet proof-of-stake value
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null)
   # count saved vs wallet stakes
   SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
@@ -567,7 +567,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
     # get bitcoinminer, remove duplicates
     grep "BitcoinMiner : proof-of-stake block was signed" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/staking 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof of work data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Stake Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}proof-of-stake data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else # non responsive (color)
   WALLET_STAKES="${GR:?}0${N0:?}"
@@ -895,25 +895,25 @@ EOF
   fi
 fi
 
-### restore proof of work data #################################################
+### restore proof-of-stake data ################################################
 
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
-  # save proof of work data from debug.log
+  # save proof-of-stake data from debug.log
   # count saved vs wallet stakes
   SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-  # get wallet proof of work value
+  # get wallet proof-of-stake value
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null)
   # if wallet pos is less than saved pos
   if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
-    # restore missing proof of work data
+    # restore missing proof-of-stake data
     cat "${WALLET_DIR:?}"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Work: Restored PoS Data! - ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}Proof of work data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Stake Restored PoS Data! - ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}proof-of-stake data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
-### backup, clean up lists, logs (truncate) keep proof of work data ############
+### backup, clean up lists, logs (truncate) keep proof-of-stake data ###########
 
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then

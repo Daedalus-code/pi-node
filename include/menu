@@ -421,10 +421,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # staking status
     if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1)" ]] &>/dev/null; then
 
-      # proof-of-work active
+      # proof-of-stake active
       NODE_PROOF="Active"
     else
-      # proof-of-work not active
+      # proof-of-stake not active
       NODE_PROOF="Not active"
     fi
 
