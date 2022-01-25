@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 0.8.9.6
+# 1.1.1.5
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -895,9 +895,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
 "8")
 
-  HEIGHT=11
-  WIDTH=44
-  CHOICE_HEIGHT=4
+  HEIGHT=12
+  WIDTH=45
+  CHOICE_HEIGHT=5
   BACKTITLE="Node configuration(s)"
   TITLE="Edit confirmations"
   MENU="Choose one of the following options:"
@@ -905,7 +905,8 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
   OPTIONS=(1 "TrumpCoin.conf   trumpcoin.conf"
     2 "PiTrump.conf     pitrump.conf"
     3 "Config.txt       boot/config.txt"
-    4 "Reset            Reset config(s)")
+    4 "Torrc            Tor configuration"
+    5 "Reset            Reset config(s)")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -920,7 +921,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "1")
 
-    echo "edit trumpcoin.conf!"
+    echo "looking into trumpcoin.conf!"
     nano "${WALLET_DIR:?}"/trumpcoin.conf
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -930,7 +931,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "2")
 
-    echo "edit pitrump.conf!"
+    echo "looking into pitrump.conf!"
     nano /usr/local/bin/include/pitrump.conf
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -940,7 +941,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "3")
 
-    echo "edit config.txt!"
+    echo "looking into config.txt!"
     sudo nano /boot/config.txt
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -949,6 +950,16 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     ;;
 
   "4")
+
+    echo "looking into torrc!"
+    sudo nano /etc/tor/torrc
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  "5")
 
     HEIGHT=11
     WIDTH=31
@@ -959,7 +970,8 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     OPTIONS=(1 "Reset trumpcoin.conf"
       2 "Reset pitrump.conf"
-      3 "Reset config.txt")
+      3 "Reset config.txt"
+      4 "Reset torrc")
 
     CHOICE=$(dialog --clear \
       --backtitle "$BACKTITLE" \
@@ -1047,6 +1059,45 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
       cp /boot/config.txt /home/"$(whoami)"/
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+
+      ;;
+
+    "4")
+
+      # tor group, user configuration
+      TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>/dev/null)
+      sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>/dev/null
+      read -r -p "[YN] Public .onion web server? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        HIDDEN_SERVICE="HiddenServicePort 80 127.0.0.1:80"
+      else
+        HIDDEN_SERVICE="#HiddenServicePort 80 127.0.0.1:80"
+      fi
+
+      echo "Reset torrc!"
+      echo "RunAsDaemon 1
+
+        ControlPort 9051
+        CookieAuthentication 1
+        CookieAuthFileGroupReadable 1
+
+        HiddenServiceDir /var/lib/tor/trumpcoin-service/
+        HiddenServicePort 15110 127.0.0.1:15110
+        ${HIDDEN_SERVICE:?}
+        " >/tmp/torrc 2>&1
+      cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
+      # remove old files
+      rm /tmp/torrc &>/dev/null
+      read -r -p "[YN] Restart tor? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        # restart tor after configuration
+        sudo service tor restart 2>&1
+      fi
+      echo
+      read -r -p "[Ok] tor configuration installed! Press Enter to continue" </dev/tty
       echo
 
       ;;
