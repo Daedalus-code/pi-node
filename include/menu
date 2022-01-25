@@ -961,7 +961,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "5")
 
-    HEIGHT=11
+    HEIGHT=12
     WIDTH=31
     CHOICE_HEIGHT=4
     BACKTITLE="Reset configuration(s)"
