@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 0.4.2.7
+# 0.4.2.9
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -263,10 +263,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
       function save_auto_pos_values() {
         # save auto proof-of-stake values
-        echo "Auto PoS Configuration
-      ConfirmAVG...: $CONF_AVG
-      ConfigDIFF...: $CON_DIFF
-      DifficultyAVG: $DIFF_AVG" >"${WALLET_DIR:?}"/auto_pos 2>&1
+        echo "$(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)
+Auto PoS Configuration
+ConfirmAVG...: $CONF_AVG
+ConfigDIFF...: $CON_DIFF
+DifficultyAVG: $DIFF_AVG
+$(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
       }
 
       if [[ ! -f "${WALLET_DIR:?}"/auto_pos ]] &>/dev/null; then
