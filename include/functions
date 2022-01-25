@@ -88,7 +88,7 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
   VENDORID=$(grep "Vendor ID:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
   MODEL=$(grep "Model name:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
   # create cpu information
-  echo "CPUs $CPUS - ($THREADS/$CORES) $VENDORID ($MODEL)" >"${LOG_DIR:?}"/node_data/stats/cpuinfo 2>&1
+  echo "CPUs $CPUS - ($THREADS/$CORES) $VENDORID ${GR:?}$MODEL${N0:?}" >"${LOG_DIR:?}"/node_data/stats/cpuinfo 2>&1
 fi
 
 # get system load
