@@ -78,7 +78,7 @@ LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
 
 ### system information, load, user, cpu temp ###################################
 
-if [[ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ]] &>/dev/null; then
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
   # save lscpu values to lscpu, do this once
   lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu
   # get cpu count

@@ -470,10 +470,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     CPU_CTEMP=$(echo "$CPU_CTEMP / 100 * 0.1" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     CPU_FTEMP=$(echo "(1.8 * $CPU_CTEMP) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
-    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ]] &>/dev/null; then
-      # save lscpu values to lscpu, do this once
-      lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu
-    fi
+    # save lscpu values to lscpu, do this once
+    lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu
+    # get cpu count
+    CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
 
     # get cpu count
     CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
