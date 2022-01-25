@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 1.1.7.2
+# 1.1.8.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -934,18 +934,19 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
 "8")
 
-  HEIGHT=12
+  HEIGHT=13
   WIDTH=45
-  CHOICE_HEIGHT=5
+  CHOICE_HEIGHT=6
   BACKTITLE="Node configuration(s)"
   TITLE="Edit configuration"
   MENU="Choose one of the following options:"
 
-  OPTIONS=(1 "TrumpCoin.conf   trumpcoin.conf"
-    2 "PiTrump.conf     pitrump.conf"
-    3 "Config.txt       boot/config.txt"
-    4 "Torrc            Tor configuration"
-    5 "Reset            Reset config(s)")
+  OPTIONS=(1 "TrumpCoin        trumpcoin.conf"
+    2 "PatriotNode      patriotnode.conf"
+    3 "PiTrump.conf     pitrump.conf"
+    4 "Config.txt       boot/config.txt"
+    5 "Torrc            Tor configuration"
+    6 "Reset            Reset config(s)")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -969,6 +970,15 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "2")
 
+    printf '%b' "[${G1:?}Ok${N0:?}] looking into patriotnode.conf!\n"
+    nano "${WALLET_DIR:?}"/patriotnode.conf
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  "3")
+
     printf '%b' "[${G1:?}Ok${N0:?}] looking into pitrump.conf!\n"
     nano /usr/local/bin/include/pitrump.conf
     if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
@@ -989,7 +999,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     ;;
 
-  "3")
+  "4")
 
     printf '%b' "[${G1:?}Ok${N0:?}] looking into config.txt!\n"
     sudo nano /boot/config.txt
@@ -998,7 +1008,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     ;;
 
-  "4")
+  "5")
 
     printf '%b' "[${G1:?}Ok${N0:?}] looking into torrc!\n"
     sudo nano /etc/tor/torrc
@@ -1007,7 +1017,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     ;;
 
-  "5")
+  "6")
 
     HEIGHT=12
     WIDTH=31
