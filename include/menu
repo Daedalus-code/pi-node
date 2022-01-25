@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222501
-# 1.1.8.2
+# V20222601
+# 1.2.0.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1044,23 +1044,27 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     "1")
 
-      mkdir "${WALLET_DIR:?}" &>/dev/null
+      read -r -p "[YN] Hard reset of trumpcoin.conf? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-      # create random rpcuser & rpcpassword
-      RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
-      RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
+        mkdir "${WALLET_DIR:?}" &>/dev/null
 
-      # get proxy (tor) hostname with root
-      EXTERNALIP=$(sudo cat /var/lib/tor/trumpcoin-service/hostname 2>/dev/null)
+        # create random rpcuser & rpcpassword
+        RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
+        RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
-      if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
-        # non responsive
-        EXTERNALIP="#externalip=PLEASE_EDIT"
-      else
-        EXTERNALIP="externalip=${EXTERNALIP:?}"
-      fi
+        # get proxy (tor) hostname with root
+        EXTERNALIP=$(sudo cat /var/lib/tor/trumpcoin-service/hostname 2>/dev/null)
 
-      echo "## trumpcoin.conf configuration file.
+        if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
+          # non responsive
+          EXTERNALIP="#externalip=PLEASE_EDIT"
+        else
+          EXTERNALIP="externalip=${EXTERNALIP:?}"
+        fi
+
+        echo "## trumpcoin.conf configuration file.
 # Network-related settings:
 
 # Run on the test network instead of the real trumpcoin network.
@@ -1093,70 +1097,88 @@ maxconnections=${MAX_P2P:?}
 
 # can be commented out if you use the service script
 daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
-      mv "${WALLET_DIR:?}"/trumpcoin.conf.tmp "${WALLET_DIR:?}"/trumpcoin.conf 2>&1
-      echo "[Ok] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
-      echo
-      read -r -p "[Ok] Press Enter to continue" </dev/tty
-      echo
+        mv "${WALLET_DIR:?}"/trumpcoin.conf.tmp "${WALLET_DIR:?}"/trumpcoin.conf 2>&1
+        echo "[Ok] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
+        echo
+        read -r -p "[Ok] Press Enter to continue" </dev/tty
+        echo
+      fi
 
       ;;
 
     "2")
 
-      echo "Reset pitrump.conf!"
-      cp /home/"$(whoami)"/trump-node/pitrump.conf /home/"$(whoami)"/
+      read -r -p "[YN] Hard reset of pitrump.conf? y/n " -n 1 -r
       echo
-      read -r -p "[Ok] Press Enter to continue" </dev/tty
-      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+        echo "Reset pitrump.conf!"
+        cp /home/"$(whoami)"/trump-node/pitrump.conf /home/"$(whoami)"/
+        echo
+        read -r -p "[Ok] Press Enter to continue" </dev/tty
+        echo
+      fi
 
       ;;
 
     "3")
 
-      echo "Creating backup! (/boot/config.txt)"
-      cp /boot/config.txt /home/"$(whoami)"/
+      read -r -p "[YN] Hard reset of config.txt? y/n " -n 1 -r
       echo
-      read -r -p "[Ok] Press Enter to continue" </dev/tty
-      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+        echo "Creating backup! (/boot/config.txt)"
+        cp /boot/config.txt /home/"$(whoami)"/
+        echo
+        read -r -p "[Ok] Press Enter to continue" </dev/tty
+        echo
+      fi
 
       ;;
 
     "4")
 
-      # tor group, user configuration
-      TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>/dev/null)
-      sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>/dev/null
-      read -r -p "[YN] Public .onion web server? y/n " -n 1 -r
+      read -r -p "[YN] Hard reset of tor? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        HIDDEN_SERVICE="HiddenServicePort 80 127.0.0.1:80"
-      else
-        HIDDEN_SERVICE="#HiddenServicePort 80 127.0.0.1:80"
-      fi
+        sudo rm -R /var/lib/tor/trumpcoin-service/ &>/dev/null
 
-      echo "Reset torrc!"
-      echo "RunAsDaemon 1
+        # tor group, user configuration
+        TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>/dev/null)
+        sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>/dev/null
 
-        ControlPort 9051
-        CookieAuthentication 1
-        CookieAuthFileGroupReadable 1
+        # if data missing, add values
+        if ! grep "trumpcoin" /etc/tor/torrc &>/dev/null; then
 
-        HiddenServiceDir /var/lib/tor/trumpcoin-service/
-        HiddenServicePort 15110 127.0.0.1:15110
-        ${HIDDEN_SERVICE:?}
-        " >/tmp/torrc 2>&1
-      cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
-      # remove old files
-      rm /tmp/torrc &>/dev/null
-      read -r -p "[YN] Restart tor? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          read -r -p "[YN] Public .onion web server? y/n " -n 1 -r
+          echo
+          if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+            HIDDEN_SERVICE="HiddenServicePort 80 127.0.0.1:80"
+          else
+            HIDDEN_SERVICE="#HiddenServicePort 80 127.0.0.1:80"
+          fi
+          echo "RunAsDaemon 1
+
+    ControlPort 9051
+    CookieAuthentication 1
+    CookieAuthFileGroupReadable 1
+
+    HiddenServiceDir /var/lib/tor/trumpcoin-service/
+    HiddenServicePort 15110 127.0.0.1:15110
+    ${HIDDEN_SERVICE:?}
+    " >/tmp/torrc 2>&1
+          cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
+          # remove old files
+          rm /tmp/torrc &>/dev/null
+        fi
+
         # restart tor after configuration
         sudo service tor restart 2>&1
+        printf '%b' "[${Y1:?}!!${N0:?}] Please reset trumpcoin.conf!\n"
+        echo
+        read -r -p "[Ok] Hard reset of tor done! Press Enter to continue" </dev/tty
+        echo
       fi
-      echo
-      read -r -p "[Ok] tor configuration installed! Press Enter to continue" </dev/tty
-      echo
 
       ;;
 
@@ -1171,12 +1193,12 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 "9")
 
   exit # exit menu
-  printf '%b' "${GR:?}$(uptime)${N0:?}\n"
 
   ;;
 
 esac
 
+printf '%b' "${GR:?}$(uptime)${N0:?}\n"
 exec /bin/bash "$0" "$@"
 
 # END
