@@ -773,6 +773,8 @@ fi
 
 ### add_peers screen script ####################################################
 
+cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
+
 # look for screen session, if not found, run this block
 if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
 
@@ -783,8 +785,6 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
       # make sure success exist
       touch "${LOG_DIR:?}"/node_data/peers/success 2>&1
     fi
-
-    cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
     ### random address #########################################################
 
