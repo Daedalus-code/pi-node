@@ -633,24 +633,6 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1 | awk '{ print $1 
   echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/difficulty 2>&1)" >"${LOG_DIR:?}"/node_data/stats/difficulty 2>&1
 fi
 
-### backup values ##############################################################
-
-# backup ticker price
-if [ -f "${LOG_DIR:?}"/node_data/stats/price ] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/stats/price "${WALLET_DIR:?}"/price 2>&1
-else # restore it
-  cp "${WALLET_DIR:?}"/price "${LOG_DIR:?}"/node_data/stats/price 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-fi
-
-# backup ticker volume
-if [ -f "${LOG_DIR:?}"/node_data/stats/volume ] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/stats/volume "${WALLET_DIR:?}"/volume 2>&1
-else # restore it
-  cp "${WALLET_DIR:?}"/volume "${LOG_DIR:?}"/node_data/stats/volume 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Restored API Volume! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume 2>&1)${GR:?} :: ${N0:?}Ticker volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-fi
-
 ### adding nodes, create failed and success lists ##############################
 
 if [ ! -f "${WALLET_DIR:?}"/addnodes ] &>/dev/null; then
@@ -1270,6 +1252,24 @@ else
   else
     RC_LOADING="${GR:?}        Syncing${N0:?}"
   fi
+fi
+
+### backup values ##############################################################
+
+# backup ticker price
+if [ -f "${LOG_DIR:?}"/node_data/stats/price ] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/stats/price "${WALLET_DIR:?}"/price 2>&1
+else # restore it
+  cp "${WALLET_DIR:?}"/price "${LOG_DIR:?}"/node_data/stats/price 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
+
+# backup ticker volume
+if [ -f "${LOG_DIR:?}"/node_data/stats/volume ] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/stats/volume "${WALLET_DIR:?}"/volume 2>&1
+else # restore it
+  cp "${WALLET_DIR:?}"/volume "${LOG_DIR:?}"/node_data/stats/volume 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Restored API Volume! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume 2>&1)${GR:?} :: ${N0:?}Ticker volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### theme ######################################################################
