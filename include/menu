@@ -926,7 +926,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "1")
 
-    echo "looking into trumpcoin.conf!"
+    printf '%b' "[${G1:?}Ok${N0:?}] looking into trumpcoin.conf!\n"
     nano "${WALLET_DIR:?}"/trumpcoin.conf
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -936,7 +936,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "2")
 
-    echo "looking into pitrump.conf!"
+    printf '%b' "[${G1:?}Ok${N0:?}] looking into pitrump.conf!\n"
     nano /usr/local/bin/include/pitrump.conf
     read -r -p "[YN] Update graphs? y/n " -n 1 -r
     echo
@@ -956,7 +956,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "3")
 
-    echo "looking into config.txt!"
+    printf '%b' "[${G1:?}Ok${N0:?}] looking into config.txt!\n"
     sudo nano /boot/config.txt
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -966,7 +966,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "4")
 
-    echo "looking into torrc!"
+    printf '%b' "[${G1:?}Ok${N0:?}] looking into torrc!\n"
     sudo nano /etc/tor/torrc
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
