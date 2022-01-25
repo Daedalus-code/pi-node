@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222501
-# 1.2.8.2
+# 1.2.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.8.2"
+VERSION="v1.2.8.6"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -327,7 +327,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "360" ]] &>/dev/n
 
   if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     # output progress value several times
-    WALLET_SYNC=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | sed 's/^0*//' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null; then
+      WALLET_SYNC=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | sed 's/^0*//' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    else # non responsive (loading) color white
+      WALLET_SYNC="0.00%"
+    fi
   else
     # calculate blockchain sync
     WALLET_SYNC=$(echo "100/$WALLET_HEADS*$WALLET_BLOCK" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
