@@ -81,7 +81,7 @@ LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
   # save lscpu values to lscpu, do this once
   lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu
-  # get cpu count
+  # get cpu count, threads, cores, vendor id, model and speed
   CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
   THREADS=$(grep "Thread(s) per core:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $4 }' 2>&1)
   CORES=$(grep "Core(s) per socket:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $4 }' 2>&1)
