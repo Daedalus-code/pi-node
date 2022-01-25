@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 1.1.3.2
+# 1.1.2.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -928,7 +928,6 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     printf '%b' "[${G1:?}Ok${N0:?}] looking into trumpcoin.conf!\n"
     nano "${WALLET_DIR:?}"/trumpcoin.conf
-    echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
 
@@ -950,7 +949,6 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
         rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
       fi
     fi
-    echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
 
@@ -960,7 +958,6 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     printf '%b' "[${G1:?}Ok${N0:?}] looking into config.txt!\n"
     sudo nano /boot/config.txt
-    echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
 
@@ -970,7 +967,6 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     printf '%b' "[${G1:?}Ok${N0:?}] looking into torrc!\n"
     sudo nano /etc/tor/torrc
-    echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
 
