@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 1.1.5.7
+# 1.1.6.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -32,9 +32,9 @@ fi
 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
-HEIGHT=15
+HEIGHT=16
 WIDTH=54
-CHOICE_HEIGHT=8
+CHOICE_HEIGHT=9
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
@@ -46,9 +46,11 @@ OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   5 "System Space     Disk space utilized"
   6 "Download Menu    Download & Install"
   7 "Reset Graphs     Reset/Remove graphs"
-  8 "Configuration    Node configuration(s)")
+  8 "Configuration    Node configuration(s)"
+  9 "Quit             Exit menu")
 
 CHOICE=$(dialog --clear \
+  --nocancel \
   --backtitle "$BACKTITLE" \
   --title "$TITLE" \
   --menu "$MENU" \
@@ -1007,7 +1009,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     WIDTH=31
     CHOICE_HEIGHT=4
     BACKTITLE="Reset configuration(s)"
-    TITLE="Reset a specific configuration"
+    TITLE="Reset a specific config"
     MENU="Choose one of the following options:"
 
     OPTIONS=(1 "Reset trumpcoin.conf"
@@ -1152,6 +1154,15 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 
   ;;
 
+"9")
+
+  exit # exit menu
+  printf '%b' "${GR:?}$(uptime)${N0:?}\n"
+
+  ;;
+
 esac
+
+exec /bin/bash "$0" "$@"
 
 # END
