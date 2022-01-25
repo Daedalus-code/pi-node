@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 1.1.2.8
+# 1.1.2.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -944,6 +944,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
         # update graphs manually
         echo "already_doing_it" >"${LOG_DIR:?}"/node_data/graph.lock 2>&1
         printf '%b' "[${G1:?}Ok${N0:?}] Updating graphs..\n"
+        echo
         bash /usr/local/bin/include/graphs
         echo
         rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
