@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222401
-# 1.2.6.2
+# V20222501
+# 1.2.7.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.6.2"
+VERSION="v1.2.7.8"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -77,6 +77,19 @@ date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
 LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
 
 ### system information, load, user, cpu temp ###################################
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ]] &>/dev/null; then
+  # save lscpu values to lscpu, do this once
+  lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu
+  # get cpu count
+  CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
+  THREADS=$(grep "Thread(s) per core:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $4 }' 2>&1)
+  CORES=$(grep "Core(s) per socket:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $4 }' 2>&1)
+  VENDORID=$(grep "Vendor ID:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
+  MODEL=$(grep "Model name:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
+  # create cpu information
+  echo "CPUs $CPUS - ($THREADS/$CORES) $VENDORID ($MODEL)" >"${LOG_DIR:?}"/node_data/stats/cpuinfo 2>&1
+fi
 
 # get system load
 uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/stats/uptime 2>&1
@@ -1037,7 +1050,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
 
     # random start number
-    RANDOM_TIMELINE=$((((RANDOM % 15) + 1)))
+    RANDOM_TIMELINE=$((((RANDOM % 16) + 1)))
 
     # difficulty
     if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
@@ -1187,6 +1200,9 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # interface w speed
       TIMELINE="$(sudo ethtool "${INTERFACE:?}" 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
       TIMELINE="Network ${INTERFACE:?} ${TIMELINE:?}"
+    elif [ "$RANDOM_TIMELINE" -eq "16" ] &>/dev/null; then
+      # get cpu information
+      TIMELINE=$(cat "${LOG_DIR:?}"/node_data/stats/cpuinfo 2>/dev/null)
     fi
   fi
 

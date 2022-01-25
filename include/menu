@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222501
-# 1.1.1.5
+# 1.1.2.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -470,6 +470,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     CPU_CTEMP=$(echo "$CPU_CTEMP / 100 * 0.1" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     CPU_FTEMP=$(echo "(1.8 * $CPU_CTEMP) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
+    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ]] &>/dev/null; then
+      # save lscpu values to lscpu, do this once
+      lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu
+    fi
+
+    # get cpu count
+    CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
+
     # get free Space, mmc block device #0, partition #2, partition #2, dev/root
     USED_HDD=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)
     # get bytes from kilo
@@ -499,8 +507,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # get ip address (no color)
     IP_ADDRESS_N="$IP_ADDRESS"
 
-    # get latest release
-    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
     # get wallet version
     WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
     # get wallet balance
@@ -534,7 +540,7 @@ FreeTotalMemory....: ${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M
 UsedTotalSwap......: ${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M
 UsedHDD............: ${USED_HDD:?} ${USED_HDD_P:?}
 UserSpace..........: $(du -sh /home/* 2>/dev/null | xargs 2>&1)
-CPUTemp............: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
+CPUTemp............: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F (${CPUS:?})
 Users..............: ${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))
 
 Daemon.............: ${PID_DAEMON:?} (trumpcoind)
@@ -552,7 +558,6 @@ WalletBalance......: ${WALLET_BALANCE:?}
 StakingStatus......: ${NODE_PROOF:?}
 CoinSupply.........: ${NODE_COIN_SUPPLY:?}
 
-WalletRelease......: v${LATEST_VERSION:?}
 WalletInstalled....: ${WALLET_VERSION:?}
 Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
           ")
