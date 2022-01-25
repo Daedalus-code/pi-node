@@ -88,7 +88,7 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
   VENDORID=$(grep "Vendor ID:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
   MODEL=$(grep "Model name:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
   # create cpu information
-  echo "CPUs $CPUS - ($THREADS/$CORES) $VENDORID ${GR:?}$MODEL${N0:?}" >"${LOG_DIR:?}"/node_data/stats/cpuinfo 2>&1
+  echo "CPUs $CPUS - $VENDORID ${GR:?}$MODEL${N0:?} $THREADS/$CORES" >"${LOG_DIR:?}"/node_data/stats/cpuinfo 2>&1
 fi
 
 # get system load
@@ -1202,7 +1202,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE="Network ${INTERFACE:?} ${TIMELINE:?}"
     elif [ "$RANDOM_TIMELINE" -eq "16" ] &>/dev/null; then
       # get cpu information
-      TIMELINE=$(cat "${LOG_DIR:?}"/node_data/stats/cpuinfo 2>/dev/null)
+      TIMELINE=$(printf '%b' "$(cat "${LOG_DIR:?}"/node_data/stats/cpuinfo 2>/dev/null)" 2>&1)
     fi
   fi
 
