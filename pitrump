@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.0.4.5
+# 0.0.4.2
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
 sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz &>/dev/null
@@ -12,6 +12,7 @@ for (( ; ; )); do # loop dashbord
   source /usr/local/bin/include/color
   source /usr/local/bin/include/functions
   source /usr/local/bin/include/time_fix
+
   clear
   # dashbord
   printf '%b' "
@@ -33,11 +34,7 @@ ${TX:?} ${WALLET_TXLAST:?}${N0:?}
 ${LAST_LOG:?}
 "
 
-  # no_display
-  if [[ "${NO_DISPLAY:?}" -eq "1" ]] &>/dev/null; then
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # keep dashbord time
-  fi
-
+  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # keep dashbord time
   sleep "${TIME:?}"
 
 done
