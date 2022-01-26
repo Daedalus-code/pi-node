@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.3.4
+# 0.1.3.5
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -102,7 +102,7 @@ echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep 
 TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
-# run with/without display (warden controls everything)
+# warden controls everything
 if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
   # run if dashbord has stopped
@@ -115,8 +115,10 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
   else
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${GR:?} [ pitrump ]${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
+fi
 
-else # (pitrump controls everything)
+# pitrump controls everything
+if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
 
   # run if dashbord has stopped
   if [[ "$TIME_DASH" -lt "$TIME_WARD" ]] &>/dev/null; then
@@ -128,7 +130,6 @@ else # (pitrump controls everything)
   else
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${GR:?} [ pitrump ]${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-
 fi
 
 # END
