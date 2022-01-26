@@ -566,9 +566,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # get wallet stakes count
   grep -c "BitcoinMiner : proof-of-stake block was signed" "$WALLET_LOG_DIR"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/staking 2>&1
   # get wallet proof-of-stake value
-  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null)
+  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # count saved vs wallet stakes
-  SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
+  SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   WALLET_STAKES="${WALLET_POS:?}"
   # wallet pos value greater then saved pos value
   if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
