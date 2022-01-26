@@ -120,7 +120,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
 else # (pitrump controls everything, but did it crash?)
 
-  if [[ "$TIME_DASH" -gt "$TIME_WARD" ]] &>/dev/null; then
+  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]]; then
 
     # save crashed log
     echo "1" >"${LOG_DIR:?}"/node_data/crashed 2>&1
