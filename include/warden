@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.6.5
+# 0.1.6.7
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -143,7 +143,9 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
   else
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # create lock file
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
+    if [[ "${TIME_WARD:?}" -gt "${TIME_DASH:?}" ]] &>/dev/null; then
+      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
+    fi
   fi
 
   # no lock, continue
