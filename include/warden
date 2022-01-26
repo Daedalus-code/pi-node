@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.4.8
+# 0.1.5.5
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -95,6 +95,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
 fi
 
 ### run with or without a display ##############################################
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+  touch "${LOG_DIR:?}"/node_data/stats/time.dashbord
+fi
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
+  touch "${LOG_DIR:?}"/node_data/stats/time.warden
+fi
 
 # get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
 TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
