@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.9.0
+# 0.1.8.6
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -94,31 +94,27 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
 
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
 
-    if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null | sed 's/.//10g' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
-      rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-    fi
+    # get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
+    TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
+    TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)
 
-    # greater than n seconds, continue
-    if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "150" ]] &>/dev/null; then
+    # run if dashbord has stopped
+    if [[ "$TIME_DASH" -lt "$TIME_WARD" ]] &>/dev/null; then
+      # make sure we know where we are
+      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
+      # create more time until reboot
+      echo "1" >>"${LOG_DIR:?}"/node_data/stats/time.limit 2>&1
+      # reboot when limit is met
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Crashed! (Scripts still running in the background!) ${R1:?}::${N0:?} Reboot in $(echo "11-$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) minutes! ${R1:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      # run script 'functions' while script 'pitrump' is down, until limit is met
+      cd || exit && bash /usr/local/bin/include/functions
 
-      # run if dashbord has stopped
-      if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-        # make sure we know where we are
-        PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-        # create more time until reboot
-        echo "1" >>"${LOG_DIR:?}"/node_data/stats/time.limit 2>&1
-        # reboot when limit is met
-        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Crashed! (Scripts still running in the background!) ${R1:?}::${N0:?} Reboot in $(echo "11-$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) minutes! ${R1:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        # run script 'functions' while script 'pitrump' is down, until limit is met
-        cd || exit && bash /usr/local/bin/include/functions
-
-        if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit 2>&1 | awk '{ print $1 }' 2>&1)" -gt "10" ]] &>/dev/null; then
-          # shutdown wallet (daemon)
-          printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Shutting down wallet, rebooting system!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
-          # reboot system
-          sudo reboot
-        fi
+      if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit 2>&1 | awk '{ print $1 }' 2>&1)" -gt "10" ]] &>/dev/null; then
+        # shutdown wallet (daemon)
+        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Shutting down wallet, rebooting system!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+        # reboot system
+        sudo reboot
       fi
 
     else
