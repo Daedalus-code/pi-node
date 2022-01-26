@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222601
-# 1.3.0.1
+# 1.3.0.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.3.0.1"
+VERSION="v1.3.0.5"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -575,6 +575,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # count saved vs wallet stakes
   SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  if [[ -z "$WALLET_POS" ]] &>/dev/null; then
+    # non responsive
+    WALLET_POS="0"
+  fi
   WALLET_STAKES="${WALLET_POS:?}"
   # wallet pos value greater then saved pos value
   if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
