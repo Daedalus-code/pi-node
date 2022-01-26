@@ -101,7 +101,7 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
     if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
       # run if dashbord has stopped
-      if [[ "$TIME_DASH" -lt "$(date +%s 2>&1 | sed 's/.//10g')" ]] &>/dev/null; then
+      if [[ ! "$TIME_DASH" -eq "$(date +%s 2>&1 | sed 's/.//10g')" ]] &>/dev/null; then
         # make sure we know where we are
         PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
         # create more time until reboot
