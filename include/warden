@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.5.0
+# 0.1.5.2
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -122,9 +122,10 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
     fi
   fi
 else
-
-  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
-
+  # do this once
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
+  fi
   # if dashbord is greater than warden in time, means it's running again
   if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null)" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/time.warden 2>/dev/null)" ]] &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -141,6 +142,7 @@ else
     NYD="${N0:?}" # no, yes display - run normally
     CONTROLLER="Warden"
   else
+    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
     NYD="${G1:?}" # no, yes display - run with no_display set, and still run a display
     CONTROLLER="${G1:?}PiTrump${G1:?}"
   fi
