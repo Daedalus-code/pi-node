@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.7.9
+# 0.1.6.2
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -132,32 +132,16 @@ fi
 # no_display set in configuration
 if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
-  # make sure both files don't exist
-  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
-    if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-      # truncate dashbord
-      truncate -s 0 "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-    fi
-  fi
-
-  # make sure dashbord is not old, keep warden time
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null | sed 's/.//10g' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
-    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
-  fi
-
-  # if warden exist
-  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
+  # pitrump still rules the data
+  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+    # create lock file
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
+    # remove warden
+    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${NYD:?}No${N0:?} Display! ${CY:?}::${N0:?} ${CONTROLLER:?}${N0:?} controls everything! ${CY:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  else # remove lock file
     rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-    # no display status, not running (warden is boss)
-  fi
-
-  # if dashbord exist
-  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
-    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
-    # no display status, running (pitrump is boss)
   fi
 
   # no lock, continue
@@ -173,7 +157,6 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     NYD="${G1:?}" # no, yes display - run with no_display set, and still run a display
     CONTROLLER="${G1:?}PiTrump${G1:?}"
   fi
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${NYD:?}No${N0:?} Display! ${CY:?}::${N0:?} ${CONTROLLER:?}${N0:?} controls everything! ${CY:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # END
