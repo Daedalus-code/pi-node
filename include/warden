@@ -94,11 +94,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 fi
 
+### run with or without display ################################################
+
 # get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
 TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
 TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)
 
-# run with/without display (warden controls everything)
+# (warden controls everything)
 if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
   echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
