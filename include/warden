@@ -122,7 +122,7 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
 else # make sure we know where we are
   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
   cd || exit && bash /usr/local/bin/include/functions
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: No Display! ${R1:?}::${N0:?} Warden controls everything! ${R1:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: No Display! ${CY:?}::${N0:?} Warden controls everything! ${CY:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # END
