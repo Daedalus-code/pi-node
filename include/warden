@@ -138,7 +138,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
     # remove warden
     rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${NYD:?}No${N0:?} Display! ${CY:?}::${N0:?} ${CONTROLLER:?}${N0:?} controls everything! ${CY:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else # remove lock file and dashbord
     rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
@@ -156,7 +156,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     NYD="${G1:?}" # no, yes display - run with no_display set, and still run a display
     CONTROLLER="${G1:?}PiTrump${G1:?}"
   fi
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${NYD:?}No${N0:?} Display! ${CY:?}::${N0:?} ${CONTROLLER:?}${N0:?} controls everything! ${CY:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # END
