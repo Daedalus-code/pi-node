@@ -139,7 +139,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     # remove warden
     rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${NYD:?}No${N0:?} Display! ${CY:?}::${N0:?} ${CONTROLLER:?}${N0:?} controls everything! ${CY:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  else # remove lock file
+  else # remove lock file and dashbord
     rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
   fi
