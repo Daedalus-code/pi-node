@@ -153,10 +153,10 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     NYD="${N0:?}" # no, yes display - run normally
     CONTROLLER="Warden"
   else
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     NYD="${G1:?}" # no, yes display - run with no_display set, and still run a display
     CONTROLLER="${G1:?}PiTrump${G1:?}"
   fi
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # END
