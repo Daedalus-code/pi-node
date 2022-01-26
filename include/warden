@@ -85,7 +85,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 fi
 
-# run wit/without display (warden/pitrump controls everything)
+# run with/without display (warden/pitrump controls everything)
 if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
 
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
