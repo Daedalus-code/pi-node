@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.5.6
+# 0.1.4.5
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -130,24 +130,13 @@ else # (pitrump controls everything, but did it crash?)
   # run if dashbord has stopped
   if [[ "$TIME_DASH" -lt "$TIME_WARD" ]] &>/dev/null; then
 
-    # save crashed log
-    echo "1" >"${LOG_DIR:?}"/node_data/crashed 2>&1
-
     # make sure we know where we are
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
     # run script 'functions' while script 'pitrump' is down, until limit is met
     cd || exit && bash /usr/local/bin/include/functions
 
-    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/crashed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "9" ]] &>/dev/null; then
-      # limit n minutes, stop daemon, reboot system
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
-      sudo reboot
-    fi
-
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display probably crashed! ${R1:?}::${N0:?} [${GR:?} warden ${N0:?}] ($(echo "$(wc -l "${LOG_DIR:?}"/node_data/crashed 2>&1 | awk '{ print $1 }' 2>&1)-10" 2>&1 | bc 2>&1) min/reboot!)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
-    # remove crashed log
-    rm "${LOG_DIR:?}"/node_data/crashed &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [${GR:?} pitrump ${N0:?}] *\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
