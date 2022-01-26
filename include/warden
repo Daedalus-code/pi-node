@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.7.0
+# 0.1.7.8
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -132,12 +132,19 @@ fi
 # no_display set in configuration
 if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
+  # make sure both files don't exist
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
     if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
       rm "${LOG_DIR:?}"/node_data/stats/time.* &>/dev/null
     fi
-
   fi
+
+  # make sure dashbord is not old
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null | sed 's/.//10g' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
+    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
+  fi
+
+  # if warden exist
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
     rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
@@ -145,6 +152,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     # no display status, not running (warden is boss)
   fi
 
+  # if dashbord exist
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
     rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
