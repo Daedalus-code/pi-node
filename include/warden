@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.7.5
+# 0.1.7.4
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -129,30 +129,30 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
   fi
 fi
 
+# no_display set in configuration
 if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
-
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null | sed 's/.//10g' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
-    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-  fi
 
   # if dashbord is greater than warden in time, means it's running again
   # get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
-  TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
-  TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)
+  TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
   if [[ "${TIME_WARD:?}" -gt "${TIME_DASH:?}" ]] &>/dev/null; then
+    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
+  else
+    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
+  fi
+
+  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
     rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
   else
-    if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-      # create lock file
-      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
-    else
-      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
-      rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
-      rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-    fi
+    # create lock file
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
+    rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
+    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
   fi
 
   # no lock, continue
