@@ -96,7 +96,7 @@ fi
 
 ### run with or without a display ##############################################
 
-REAL_CTRL="warden"
+REAL_CTRL="pitrump"
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   REAL_CTRL="${G1:?}*${N0:?}" # found data
   # remove old file
@@ -105,7 +105,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else # no data
-  REAL_CTRL="pitrump"
+  REAL_CTRL="warden"
 fi
 
 echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
