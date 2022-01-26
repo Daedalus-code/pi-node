@@ -148,7 +148,7 @@ else # (pitrump controls everything, but did it crash?)
   else
     # remove crashed log
     rm "${LOG_DIR:?}"/node_data/crashed &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [${GR:?} pitrump ${N0:?}]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [${GR:?} pitrump ${N0:?}] *\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
 fi
