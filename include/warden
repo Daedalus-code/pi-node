@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222601
+# V20222701
 # 0.1.2.4
 
 # pitrump configuration
@@ -98,7 +98,7 @@ fi
 
 REAL_CTRL="pitrump"
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-  REAL_CTRL="${G1:?}*${N0:?}" # found data
+  REAL_CTRL="[${G1:?}*${N0:?}]" # found data
   # remove old file
   if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
@@ -116,9 +116,9 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   # run script 'functions' while script 'pitrump' is lurking
   cd || exit && bash /usr/local/bin/include/functions
 
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # END
