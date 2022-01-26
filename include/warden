@@ -98,7 +98,7 @@ fi
 
 echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 # create dashbord do this once
-if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]]; then
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # save dashbord time
 fi
 
@@ -106,7 +106,7 @@ fi
 TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
 TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)
 
-if [[ "${TIME_DASH:?}" -lt "${TIME_WARD:?}" ]]; then
+if [[ "${TIME_DASH:?}" -lt "${TIME_WARD:?}" ]] &>/dev/null; then
   # make sure we know where we are
   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
   # run script 'functions' while script 'pitrump' is down, until limit is met
