@@ -246,8 +246,8 @@ echo "$PLEASE"
 read -t 2 -r -p "[Ok] Updated! Press Enter to continue" </dev/tty
 echo
 clear
-printf '%b' "[${G1:?}!?${N0:?}] Updating new version! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
-printf '%b' "${LOG_DATE:?} Status() Update.Script: Updating new version! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] $LATEST_DATE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "[${G1:?}!?${N0:?}] Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
+printf '%b' "${LOG_DATE:?} Status() Update.Script: Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] $LATEST_DATE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 ls -lSh /usr/local/bin/include/
 echo "$PLEASE"
 
