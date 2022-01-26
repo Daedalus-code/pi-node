@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.2.8
+# 0.1.5.1
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -31,26 +31,28 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
   SCREEN_IND="${GR:?}N${N0:?}"
 else
   NOW_TIME=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
-  SCR_TIME=$(screen -list 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
-  SCR_CALC=$(echo "$NOW_TIME-$SCR_TIME" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1)
-  if [[ -z "$SCR_CALC" ]] &>/dev/null; then
+  SCREEN_TIME=$(screen -list 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  SCREEN_CALC=$(echo "$NOW_TIME-$SCREEN_TIME" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  if [[ -z "$SCREEN_CALC" ]] &>/dev/null; then
     # non responsive
-    SCR_CALC="0"
+    SCREEN_VALUE="0"
+  else
+    SCREEN_VALUE="${SCREEN_CALC:?}"
   fi
   ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/add_peers.check 2>&1 | awk '{ print $1 }' 2>&1)
   # kill time jump
-  if [[ "$SCR_CALC" -gt "42" ]] &>/dev/null; then
+  if [[ "$SCREEN_CALC" -gt "42" ]] &>/dev/null; then
     killall screen &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script. (time jump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND="${GR:?}*${N0:?}"
-    SCR_CALC="${GR:?}0${N0:?}"
+    SCREEN_VALUE="${GR:?}0${N0:?}"
   fi
   # kill wrong list
-  if [[ "$SCR_CALC" -gt "$(echo "$ADD_LINE/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+  if [[ "$SCREEN_CALC" -gt "$(echo "$ADD_LINE/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     killall screen &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND="${GR:?}*${N0:?}"
-    SCR_CALC="${GR:?}0${N0:?}"
+    SCREEN_VALUE="${GR:?}0${N0:?}"
   fi # still running
   SCREEN_IND="${CY:?}*${N0:?}"
 fi
@@ -71,7 +73,7 @@ fi
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   if pgrep -x trumpcoind &>/dev/null; then
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?} ${GR:?}$SCR_CALC${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?} ${GR:?}$SCREEN_VALUE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() System.Warden: $(cat "${LOG_DIR:?}"/node_data/stats/uptime 2>/dev/null)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # make sure debug.log exist
@@ -85,7 +87,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 fi
 
-# run with/without display (warden/pitrump controls everything)
+# run with/without display (warden controls everything)
 if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
 
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
@@ -119,10 +121,31 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Working!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
-else # make sure we know where we are
+else
+  # do this once
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
+  fi
+  # if dashbord is greater than warden in time, means it's running again
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null)" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/time.warden 2>/dev/null)" ]] &>/dev/null; then
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # create lock file
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
+  else # remove lock file
+    rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
+  fi
+  # make sure we know where we are
   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-  cd || exit && bash /usr/local/bin/include/functions
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() No Display! ${CY:?}::${N0:?} Warden controls everything! ${CY:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # no lock, continue
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.lock ]] &>/dev/null; then
+    cd || exit && bash /usr/local/bin/include/functions
+    NYD="${N0:?}" # no, yes display - run normally
+    CONTROLLER="Warden"
+  else
+    NYD="${G1:?}" # no, yes display - run with no_display set, and still run a display
+    CONTROLLER="${G1:?}PiTrump${G1:?}"
+  fi
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${NYD:?}No${N0:?} Display! ${CY:?}::${N0:?} ${CONTROLLER:?} controls everything! ${CY:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # END
