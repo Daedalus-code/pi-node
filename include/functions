@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222601
-# 1.2.9.5
+# 1.3.0.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.9.5"
+VERSION="v1.3.0.1"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -354,6 +354,12 @@ fi
 
 if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
   WALLET_SYNC="${GR:?}0.00%${N0:?}"
+fi
+if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
+  WALLET_HEADS="${GR:?}0${N0:?}"
+fi
+if [[ -z "$WALLET_BLOCK" ]] &>/dev/null; then
+  WALLET_BLOCK="${GR:?}0${N0:?}"
 fi
 
 # wallet_nodes function (color)
