@@ -131,8 +131,7 @@ fi
 
 if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
-  TIME_REAL=$(echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.real 2>&1)
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null)" -lt "${TIME_REAL:?}" ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null | sed 's/.//10g' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
   fi
 
