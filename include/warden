@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.5.0
+# 0.1.4.8
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -120,9 +120,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
 else # (pitrump controls everything, but did it crash?)
 
-  rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null # remove time
-
-  if [[ "$TIME_DASH" -lt "$TIME_WARD" ]] &>/dev/null; then
+  if [[ "$TIME_DASH" -gt "$TIME_WARD" ]] &>/dev/null; then
 
     # save crashed log
     echo "1" >"${LOG_DIR:?}"/node_data/crashed 2>&1
