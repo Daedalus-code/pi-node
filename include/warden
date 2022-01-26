@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.5.6
+# 0.1.5.9
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -132,7 +132,10 @@ else
   fi
 
   # if dashbord is greater than warden in time, means it's running again
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null)" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/time.warden 2>/dev/null)" ]] &>/dev/null; then
+  # get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
+  TIME_ONE=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
+  TIME_TWO=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)
+  if [[ "$TIME_ONE" -gt "$TIME_TWO" ]] &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # create lock file
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
