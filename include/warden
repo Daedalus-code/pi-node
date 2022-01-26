@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.1.9
+# 0.1.2.3
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -100,18 +100,22 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   # remove old file
   if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! ( ${GR:?}time.dashbord${N0:?} )${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    DASH_FACT="${N0:?}"
   fi
+else
+  DASH_FACT="${G1:?}*${N0:?}"
 fi
 
 echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-  # where are we
+  # where are we?
   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-  # run script 'functions' while script 'pitrump' is down
+  # run script 'functions' while script 'pitrump' is lurking
   cd || exit && bash /usr/local/bin/include/functions
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}warden${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}warden${N0:?} ] ${DASH_FACT:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
