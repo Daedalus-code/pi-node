@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222501
-# 1.2.8.6
+# V20222601
+# 1.2.9.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.8.6"
+VERSION="v1.2.9.5"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -775,7 +775,9 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
   cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
   # make sure addnodes is clean of successfully peers, as above as below
   grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-  mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+  if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+  fi
 
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
@@ -803,16 +805,23 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
 
     # disregard already connected peers (success list)
     grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-    mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+    if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
+      cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+    fi
+
     # disregard failed peers (failed list), remove 127. address (localhost)
     grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n 2>&1 | grep -v "127." >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-    mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+    if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
+      cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+    fi
 
     # disregard invalid pattern address (cidr - classless inter-domain routing) and count wrong patterns (cidr)
     grepcidr -f "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>"${LOG_DIR:?}"/node_data/peers.cidr
     # count all invalid patterns
     INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/peers.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
-    mv "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+    if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
+      cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
+    fi
 
     # create total cidr list
     cat "${LOG_DIR:?}"/node_data/peers.cidr >>"${LOG_DIR:?}"/node_data/stats/total.cidr 2>&1
