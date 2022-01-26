@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.1.1
+# 0.1.1.9
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -98,7 +98,7 @@ fi
 
 echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
-if [[ ! "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null)" -eq "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>/dev/null)" ]] &>/dev/null; then
+if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" -gt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" ]] &>/dev/null; then
   # make sure we know where we are
   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
   # run script 'functions' while script 'pitrump' is down, until limit is met
