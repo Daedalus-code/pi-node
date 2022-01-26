@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222401
+# V20222601
 # 0.0.4.2
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
@@ -34,8 +34,8 @@ ${TX:?} ${WALLET_TXLAST:?}${N0:?}
 ${LAST_LOG:?}
 "
 
-  sleep "${TIME:?}"
   echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # keep time
+  sleep "${TIME:?}"
 
 done
 
