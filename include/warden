@@ -87,99 +87,29 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 fi
 
+# get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
+TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
+TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)
+
 # run with/without display (warden controls everything)
-if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
-
-  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
-
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
-
-    # get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
-    TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
-    TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)
-
-    # run if dashbord has stopped
-    if [[ "$TIME_DASH" -lt "$TIME_WARD" ]] &>/dev/null; then
-
-      # create more time until reboot
-      echo "1" >>"${LOG_DIR:?}"/node_data/stats/time.limit 2>&1
-      # reboot when limit is met
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Crashed! (Scripts still running in the background!) ${R1:?}::${N0:?} Reboot in $(echo "11-$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) minutes! ${R1:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
-      # make sure we know where we are
-      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-      # run script 'functions' while script 'pitrump' is down, until limit is met
-      cd || exit && bash /usr/local/bin/include/functions
-
-      if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit 2>&1 | awk '{ print $1 }' 2>&1)" -gt "10" ]] &>/dev/null; then
-        # shutdown wallet (daemon)
-        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Shutting down wallet, rebooting system!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
-        # reboot system
-        sudo reboot
-      fi
-
-    else
-
-      if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
-        # reset limit
-        echo "1" >"${LOG_DIR:?}"/node_data/stats/time.limit 2>&1
-        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Crash limit reset! ($(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit 2>&1 | awk '{ print $1 }' 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      fi
-
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Working!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
-  fi
-fi
-
-# no_display set in configuration
 if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
-  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
-  fi
+  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
 
-  # warden rules the data
-  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
-    rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
-    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
-  else
-    # create lock file
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
-    # remove warden
-    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
-    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
-      rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-      if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
-        echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time, pitrump is out
-      fi
-    fi
-  fi
-
-  # no lock, continue
-  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.lock ]] &>/dev/null; then
-
-    # remove time lock
-    rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
-
-    NYD="${G1:?}" # no, yes display - run with no_display set, and still run a display
-    CONTROLLER="${G1:?}PiTrump${G1:?}"
-
-  else
-
+  # run if dashbord has stopped
+  if [[ "$TIME_DASH" -lt "$TIME_WARD" ]] &>/dev/null; then
     # make sure we know where we are
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-    # run script 'functions' while script 'pitrump' is down
+    # run script 'functions' while script 'pitrump' is down, until limit is met
     cd || exit && bash /usr/local/bin/include/functions
-
-    NYD="${N0:?}" # no, yes display - run normally
-    CONTROLLER="Warden"
-
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! (Data from warden)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${NYD:?}No${N0:?} Display! ${CY:?}::${N0:?} ${CONTROLLER:?}${N0:?} controls everything! ${CY:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+else # (pitrump controls everything)
+
+  if [[ "$TIME_DASH" -eq "$TIME_WARD" ]] &>/dev/null; then
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! (Data from pitrump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 fi
 
 # END

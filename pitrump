@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.0.4.4
+# 0.0.4.5
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
 sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz &>/dev/null
@@ -33,10 +33,11 @@ ${TX:?} ${WALLET_TXLAST:?}${N0:?}
 ${LAST_LOG:?}
 "
 
-  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # keep time, remove warden file if no_display is set to 1
+  # no_display
   if [[ "${NO_DISPLAY:?}" -eq "1" ]] &>/dev/null; then
-    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # keep dashbord time
   fi
+
   sleep "${TIME:?}"
 
 done
