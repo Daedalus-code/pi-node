@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.7.0
+# 0.1.7.1
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -154,6 +154,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
   # no lock, continue
   if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.lock ]] &>/dev/null; then
+    rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
     # make sure we know where we are
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
     # run script 'functions' while script 'pitrump' is down
