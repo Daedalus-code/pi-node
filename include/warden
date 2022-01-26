@@ -147,7 +147,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
   fi
 
   if [[ "${TIME_WARD:?}" -gt "${TIME_DASH:?}" ]] &>/dev/null; then
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
+    rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
   fi
 
   # no lock, continue
