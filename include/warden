@@ -98,42 +98,4 @@ fi
 
 echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
 
-# get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
-TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
-TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)
-
-# warden controls everything
-if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
-
-  if [[ "${TIME_DASH:?}" -lt "${TIME_WARD:?}" ]] &>/dev/null; then
-
-    # make sure we know where we are
-    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-
-    # run script 'functions' while script 'pitrump' is down
-    cd || exit && bash /usr/local/bin/include/functions
-
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}warden${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  else
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-fi
-
-# pitrump controls everything
-if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
-
-  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-
-    # make sure we know where we are
-    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-
-    # run script 'functions' while script 'pitrump' is down
-    cd || exit && bash /usr/local/bin/include/functions
-
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}warden${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  else
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-fi
-
 # END
