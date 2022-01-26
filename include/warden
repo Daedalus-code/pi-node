@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.2.2
+# 0.1.2.0
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -114,9 +114,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
 else # (pitrump controls everything)
 
-  if [[ "$TIME_DASH" -eq "$TIME_WARD" ]] &>/dev/null; then
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! (Data from pitrump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! (Data from pitrump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # END
