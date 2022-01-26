@@ -116,9 +116,9 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   # run script 'functions' while script 'pitrump' is lurking
   cd || exit && bash /usr/local/bin/include/functions
 
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ] ${DASH_FACT:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?} data${N0:?} ] ${DASH_FACT:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [ ${GR:?}pitrump data${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # END
