@@ -132,12 +132,6 @@ fi
 # no_display set in configuration
 if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
 
-  # remove old files
-  if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
-    rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
-    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-  fi
-
   # pitrump still rules the data
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
     # create lock file
@@ -145,6 +139,12 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     # remove warden
     rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display are running while NO_DISPLAY is SET!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+
+  # remove old files
+  if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
+    rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
+    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
   fi
 
   # no lock, continue
