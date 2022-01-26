@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.8.9
+# 0.1.9.0
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -94,14 +94,15 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
 
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
 
-    # get seconds since 1970-01-01 00:00:00 UTC, only first 10 characters
-    TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)
+    if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>/dev/null | sed 's/.//10g' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
+      rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
+    fi
 
     # greater than n seconds, continue
-    if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+    if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "150" ]] &>/dev/null; then
 
       # run if dashbord has stopped
-      if [[ ! "$TIME_DASH" -eq "$(date +%s 2>&1 | sed 's/.//10g')" ]] &>/dev/null; then
+      if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
         # make sure we know where we are
         PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
         # create more time until reboot
