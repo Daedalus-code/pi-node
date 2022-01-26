@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.7.5
+# 0.1.6.9
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -137,23 +137,17 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
   TIME_DASH=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   TIME_WARD=$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
-  if [[ "${TIME_WARD:?}" -lt "${TIME_DASH:?}" ]] &>/dev/null; then
-    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-  else
-    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
-    if [[ "${TIME_DASH:?}" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
-      rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-      rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
-      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
-    fi
-  fi
-
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
     rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-  else
-    # create lock file
+    # no display status, not running (warden is boss)
+  fi
+
+  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
+    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
+    # no display status, running (pitrump is boss)
   fi
 
   # no lock, continue
