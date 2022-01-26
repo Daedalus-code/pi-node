@@ -133,6 +133,7 @@ else
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.lock 2>&1
   else # remove lock file
     rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
+    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
   fi
   # make sure we know where we are
   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
@@ -142,7 +143,6 @@ else
     NYD="${N0:?}" # no, yes display - run normally
     CONTROLLER="Warden"
   else
-    rm "${LOG_DIR:?}"/node_data/stats/time.warden &>/dev/null
     NYD="${G1:?}" # no, yes display - run with no_display set, and still run a display
     CONTROLLER="${G1:?}PiTrump${G1:?}"
   fi
