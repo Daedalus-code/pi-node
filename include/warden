@@ -123,7 +123,7 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
   fi
 else
   # do this once
-  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
   fi
   # if dashbord is greater than warden in time, means it's running again
