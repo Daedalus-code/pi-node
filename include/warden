@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.8.6
+# 0.1.9.1
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -90,7 +90,7 @@ fi
 # run with/without display (warden controls everything)
 if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
 
-  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
 
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
 
@@ -100,12 +100,14 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
 
     # run if dashbord has stopped
     if [[ "$TIME_DASH" -lt "$TIME_WARD" ]] &>/dev/null; then
-      # make sure we know where we are
-      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
+
       # create more time until reboot
       echo "1" >>"${LOG_DIR:?}"/node_data/stats/time.limit 2>&1
       # reboot when limit is met
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Crashed! (Scripts still running in the background!) ${R1:?}::${N0:?} Reboot in $(echo "11-$(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) minutes! ${R1:?}::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+      # make sure we know where we are
+      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
       # run script 'functions' while script 'pitrump' is down, until limit is met
       cd || exit && bash /usr/local/bin/include/functions
 
@@ -124,6 +126,7 @@ if [[ "$NO_DISPLAY" -eq "0" ]] &>/dev/null; then
         echo "1" >"${LOG_DIR:?}"/node_data/stats/time.limit 2>&1
         printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Crash limit reset! ($(wc -l "${LOG_DIR:?}"/node_data/stats/time.limit 2>&1 | awk '{ print $1 }' 2>&1))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
+
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Working!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
@@ -168,10 +171,12 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
 
     if [[ -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
+
       # make sure we know where we are
       PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
       # run script 'functions' while script 'pitrump' is down
       cd || exit && bash /usr/local/bin/include/functions
+
       NYD="${N0:?}" # no, yes display - run normally
       CONTROLLER="Warden"
     else
