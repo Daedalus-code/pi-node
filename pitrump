@@ -34,7 +34,7 @@ ${TX:?} ${WALLET_TXLAST:?}${N0:?}
 ${LAST_LOG:?}
 "
 
-  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # keep dashbord time
+  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # save dashbord time
   sleep "${TIME:?}"
 
 done
