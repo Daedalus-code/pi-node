@@ -111,9 +111,9 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
     # run script 'functions' while script 'pitrump' is down, until limit is met
     cd || exit && bash /usr/local/bin/include/functions
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [${GR:?}warden${N0:?}]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [${GR:?} warden ${N0:?}]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [${GR:?}pitrump${N0:?}]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [${GR:?} pitrump ${N0:?}]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else # (pitrump controls everything, but did it crash?)
   if [[ "$TIME_DASH" -lt "$TIME_WARD" ]] &>/dev/null; then
@@ -121,9 +121,9 @@ else # (pitrump controls everything, but did it crash?)
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
     # run script 'functions' while script 'pitrump' is down, until limit is met
     cd || exit && bash /usr/local/bin/include/functions
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display probably crashed! ${R1:?}::${N0:?} [${GR:?}warden${N0:?}]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display probably crashed! ${R1:?}::${N0:?} [${GR:?} warden ${N0:?}]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [${GR:?}pitrump${N0:?}]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Display Ok! ${G1:?}<${N0:?} [${GR:?} pitrump ${N0:?}]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
