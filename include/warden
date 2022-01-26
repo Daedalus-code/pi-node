@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.6.4
+# 0.1.6.6
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -144,6 +144,8 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
       rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
       rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
     fi
+  else
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time
   fi
 
   # no lock, continue
