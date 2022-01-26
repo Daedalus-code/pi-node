@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222601
-# 0.1.7.1
+# 0.1.7.2
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -147,6 +147,7 @@ if [[ "$NO_DISPLAY" -eq "1" ]] &>/dev/null; then
     if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.warden ]] &>/dev/null; then
       rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
       if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
+        rm "${LOG_DIR:?}"/node_data/stats/time.lock &>/dev/null
         echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # keep time, pitrump is out
       fi
     fi
