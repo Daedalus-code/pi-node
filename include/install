@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.2.5.5
+# 0.2.6.4
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -91,6 +91,15 @@ if ! [ -x "$(command -v git)" ] &>/dev/null; then
   sudo apt-get install git -y
   echo
   read -r -p "[Ok] git installed! Press Enter to continue" </dev/tty
+  echo
+fi
+
+# make sure torsocks is installed
+if ! [ -x "$(command -v torsocks)" ] &>/dev/null; then
+  echo "Installing torsocks"
+  sudo apt-get install torsocks -y
+  echo
+  read -r -p "[Ok] torsocks installed! Press Enter to continue" </dev/tty
   echo
 fi
 
