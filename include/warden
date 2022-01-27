@@ -102,8 +102,8 @@ NOGO="${G1:?}Ok${N0:?}"
 
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
-  NRANDOM_0=$((((RANDOM % 3) + 1)))
-  NRANDOM_1=$((((RANDOM % 2) + 1)))
+  NRANDOM_0=$((((RANDOM % 4) + 1)))
+  NRANDOM_1=$((((RANDOM % 3) + 1)))
   NRANDOM_3=$(echo "${NRANDOM_0:?}+${NRANDOM_1:?}" 2>&1 | bc 2>&1)
   URANDOM=$(tr -dc 'aA0-zZ9' </dev/urandom 2>&1 | head -c "${NRANDOM_3:?}" 2>&1 | rev 2>&1)
   REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}" # found data, (messy data, from whom?)
