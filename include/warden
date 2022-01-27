@@ -122,8 +122,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
     if [[ "${PITRUMP:?}" -gt "${WARDEN:?}" ]] &>/dev/null; then
 
-      NOGO="${CY:?}O${G1:?}k${N0:?}"
-      NOGO_N="0"
+      NOGO="${GR:?}O${G1:?}k${N0:?}"
+      NOGO_N="1"
     else
       NRANDOM_0=$((((RANDOM % 4) + 1)))
       NRANDOM_1=$((((RANDOM % 3) + 1)))
@@ -132,7 +132,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}" # found data, (messy data, from whom?)
 
       NOGO="${CY:?}Ok${N0:?}"
-      NOGO_N="1"
+      NOGO_N="0"
     fi
 
   else # no data
