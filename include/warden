@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.1.4.1
+# 0.1.4.9
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -129,11 +129,19 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     # no double trouble when overlapping pitrump <> warden
     if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
 
+      # create a lock file
+      touch /tmp/func.lock &>/dev/null
+
       DETACH="${G0:?}<${N0:?} [ ${G0:?}warden${N0:?} ]"
-      run_functions
+      if [[ ! -f /tmp/func.lock ]] &>/dev/null; then
+
+        run_functions
+      fi
     else
       DETACH="${CY:?}<<${N0:?} [ ${GR:?}pitrump${N0:?} ]"
     fi
+    # remove lock file
+    rm /tmp/func.lock &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
