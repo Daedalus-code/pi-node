@@ -128,7 +128,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     # no double trouble when overlapping pitrump <> warden
     if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
 
-      DETACH="${G1:?}<${N0:?} [ ${G1:?}warden${N0:?} ]"
+      DETACH="${G0:?}<${N0:?} [ ${G0:?}warden${N0:?} ]"
       run_functions
     else
       DETACH="${CY:?}<<${N0:?} [ ${GR:?}pitrump${N0:?} ]"
