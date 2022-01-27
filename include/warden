@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.6.9
+# 0.1.7.0
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -120,22 +120,23 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     PITRUMP=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "pitrump" 2>&1)
     WARDEN=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "warden" 2>&1)
 
-    if [[ "${PITRUMP:?}" -gt "${WARDEN:?}" ]] &>/dev/null; then
+    if [[ "${PITRUMP:?}" -lt "${WARDEN:?}" ]] &>/dev/null; then
 
+      # data, go
       NOGO="${GR:?}O${G1:?}k${N0:?}"
       NOGO_N="1"
-    else
+    else # data?, go
       NRANDOM_0=$((((RANDOM % 4) + 1)))
       NRANDOM_1=$((((RANDOM % 3) + 1)))
       NRANDOM_3=$(echo "${NRANDOM_0:?}+${NRANDOM_1:?}" 2>&1 | bc 2>&1)
       URANDOM=$(tr -dc 'aA0-zZ9' </dev/urandom 2>&1 | head -c "${NRANDOM_3:?}" 2>&1 | rev 2>&1)
-      REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}" # found data, (messy data, from whom?)
+      REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}"
 
       NOGO="${CY:?}Ok${N0:?}"
       NOGO_N="0"
     fi
 
-  else # no data
+  else # no data, go
     NOGO_N="0"
     REAL_CTRL="warden"
     NOGO="${G0:?}Ok${N0:?}"
