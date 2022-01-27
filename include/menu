@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 1.3.8.0
+# 1.3.8.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1162,6 +1162,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
         sudo rm -R /var/lib/tor/trumpcoin-service/ &>/dev/null
+        sudo rm -R "${WALLET_DIR:?}"/onion* &>/dev/null
 
         # tor group, user configuration
         TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>/dev/null)
