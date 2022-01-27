@@ -109,10 +109,10 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   NOGO="${GR:?}1${N0:?}"
   NOGO_N="1"
 
-  if tail -10 "${LOG_DIR:?}"/debug.log 2>&1 | grep "pitrump" &>/dev/null; then
-    NOGO_N="0"
-  else
+  if tail -10 "${LOG_DIR:?}"/debug.log 2>&1 | egrep "pitrump|warden" &>/dev/null; then
     NOGO_N="1"
+  else
+    NOGO_N="0"
   fi
 
   # remove old file
