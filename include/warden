@@ -96,6 +96,12 @@ fi
 
 ### run with or without a display ##############################################
 
+# remove old file
+if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
+  rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
+
 NOGO_N="0"
 REAL_CTRL="pitrump"
 NOGO="${G1:?}Ok${N0:?}"
@@ -116,12 +122,6 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   else
     NOGO="${CY:?}O${G1:?}k${N0:?}"
     NOGO_N="0"
-  fi
-
-  # remove old file
-  if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
-    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
 else # no data
