@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.7.0
+# 0.1.6.7
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -136,14 +136,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       NOGO_N="0"
     fi
 
-  else # no data, go
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+  else # no data from pitrump, go
+
     NOGO_N="0"
     REAL_CTRL="warden"
     NOGO="${G0:?}Ok${N0:?}"
-  fi
-
-  # time.dashbord is missing
-  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
     function run_functions() {
       # where are we now?
@@ -162,8 +161,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     fi
 
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}${NOGO:?}${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  else
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
