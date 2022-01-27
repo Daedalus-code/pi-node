@@ -952,7 +952,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
     DIS_LOCAL=$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/ip_address 2>/dev/null)" 2>&1 | egrep -o "[0-9]+" 2>&1 | head -1 2>&1)
     # keep last n of failed connections
-    echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -v "${DIS_LOCAL:?}" 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
+    RANDOM_FAILED=$((((RANDOM % 512) + 256)))
+    echo "$(tail -"${RANDOM_FAILED:?}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -v "${DIS_LOCAL:?}" 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
 
     # repository latest head
     LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
@@ -1052,7 +1053,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
     else
       DIS_LOCAL=$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/ip_address 2>/dev/null)" 2>&1 | egrep -o "[0-9]+" 2>&1 | head -1 2>&1)
       # keep last n of failed connections
-      echo "$(tail -512 "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -v "${DIS_LOCAL:?}" 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
+      RANDOM_FAILED=$((((RANDOM % 512) + 256)))
+      echo "$(tail -"${RANDOM_FAILED:?}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -v "${DIS_LOCAL:?}" 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
     fi
   fi
 fi
@@ -1289,6 +1291,11 @@ else
   else
     RC_LOADING="${GR:?}        Syncing${N0:?}"
   fi
+fi
+
+# less than n seconds, continue
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/null; then
+  RC_LOADING="${GR:?}        Loading${N0:?}"
 fi
 
 ### backup values ##############################################################
