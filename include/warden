@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.5.0
+# 0.1.5.3
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -98,17 +98,17 @@ fi
 
 echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
-# remove old file
-if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
-  rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-fi
-
 REAL_CTRL="pitrump"
 NOGO="${N0:?}"
 CHANGED="${N0:?}"
 NOGO_N="0"
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+
+  # remove old file
+  if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
+    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 
   NRANDOM=$((((RANDOM % 5) + 2)))
   URANDOM=$(tr -dc 'aA0-zZ9' </dev/urandom 2>&1 | head -c "${NRANDOM:?}" 2>&1 | rev 2>&1)
@@ -117,7 +117,10 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   NOGO="${R1:?}S${N0:?}"
   NOGO_N="1"
 
-  if tail -10 "${LOG_DIR:?}"/debug.log 2>&1 | egrep "pitrump|warden" &>/dev/null; then
+  WAR_CON=$(tail -30 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Dashbord() Data" 2>&1 | tail -10 2>&1 | grep -c "warden" 2>&1)
+  PIT_CON=$(tail -30 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Dashbord() Data" 2>&1 | tail -10 2>&1 | grep -c "pitrump" 2>&1)
+
+  if [[ "$WAR_CON" -gt "$PIT_CON" ]] &>/dev/null; then
     NOGO="${R1:?}S${N0:?}"
     NOGO_N="1"
   else
