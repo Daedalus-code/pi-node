@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.6.5
+# 0.1.6.9
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -96,70 +96,74 @@ fi
 
 ### run with or without a display ##############################################
 
-if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+# greater than n seconds, continue
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "180" ]] &>/dev/null; then
 
-  if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
-    # remove old file
-    rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-fi
+  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
-echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
-
-NOGO_N="0"
-REAL_CTRL="pitrump"
-NOGO="${G1:?}Ok${N0:?}"
-
-# time.dashbord exist
-if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-
-  PITRUMP=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "pitrump" 2>&1)
-  WARDEN=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "warden" 2>&1)
-
-  if [[ "${PITRUMP:?}" -gt "${WARDEN:?}" ]] &>/dev/null; then
-
-    NOGO="${CY:?}O${G1:?}k${N0:?}"
-    NOGO_N="0"
-  else
-    NRANDOM_0=$((((RANDOM % 4) + 1)))
-    NRANDOM_1=$((((RANDOM % 3) + 1)))
-    NRANDOM_3=$(echo "${NRANDOM_0:?}+${NRANDOM_1:?}" 2>&1 | bc 2>&1)
-    URANDOM=$(tr -dc 'aA0-zZ9' </dev/urandom 2>&1 | head -c "${NRANDOM_3:?}" 2>&1 | rev 2>&1)
-    REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}" # found data, (messy data, from whom?)
-
-    NOGO="${CY:?}Ok${N0:?}"
-    NOGO_N="1"
-  fi
-
-else # no data
-  NOGO_N="0"
-  REAL_CTRL="warden"
-  NOGO="${G0:?}Ok${N0:?}"
-fi
-
-# time.dashbord is missing
-if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-
-  function run_functions() {
-    # where are we now?
-    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-    # get data from functions
-    cd || exit && bash /usr/local/bin/include/functions
-  }
-
-  if [[ "$NOGO_N" -eq "0" ]] &>/dev/null; then
-
-    # no double trouble when overlapping pitrump <> warden
-    if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Starting adding nodes!" &>/dev/null; then
-
-      run_functions
+    if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
+      # remove old file
+      rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}${NOGO:?}${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-else
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
+
+  NOGO_N="0"
+  REAL_CTRL="pitrump"
+  NOGO="${G1:?}Ok${N0:?}"
+
+  # time.dashbord exist
+  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+
+    PITRUMP=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "pitrump" 2>&1)
+    WARDEN=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "warden" 2>&1)
+
+    if [[ "${PITRUMP:?}" -gt "${WARDEN:?}" ]] &>/dev/null; then
+
+      NOGO="${CY:?}O${G1:?}k${N0:?}"
+      NOGO_N="0"
+    else
+      NRANDOM_0=$((((RANDOM % 4) + 1)))
+      NRANDOM_1=$((((RANDOM % 3) + 1)))
+      NRANDOM_3=$(echo "${NRANDOM_0:?}+${NRANDOM_1:?}" 2>&1 | bc 2>&1)
+      URANDOM=$(tr -dc 'aA0-zZ9' </dev/urandom 2>&1 | head -c "${NRANDOM_3:?}" 2>&1 | rev 2>&1)
+      REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}" # found data, (messy data, from whom?)
+
+      NOGO="${CY:?}Ok${N0:?}"
+      NOGO_N="1"
+    fi
+
+  else # no data
+    NOGO_N="0"
+    REAL_CTRL="warden"
+    NOGO="${G0:?}Ok${N0:?}"
+  fi
+
+  # time.dashbord is missing
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+
+    function run_functions() {
+      # where are we now?
+      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
+      # get data from functions
+      cd || exit && bash /usr/local/bin/include/functions
+    }
+
+    if [[ "$NOGO_N" -eq "0" ]] &>/dev/null; then
+
+      # no double trouble when overlapping pitrump <> warden
+      if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Starting adding nodes!" &>/dev/null; then
+
+        run_functions
+      fi
+    fi
+
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}${NOGO:?}${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  else
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 fi
 
 # END
