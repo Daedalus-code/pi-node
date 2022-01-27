@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.2.6.4
+# 0.2.6.2
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -248,13 +248,11 @@ LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%a
 LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
 OLD_HEAD=$(grep "Update.Script" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $7 }' 2>&1 | tail -1 2>&1 | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" 2>&1)
 if [[ -z "$OLD_HEAD" ]] &>/dev/null; then
-  # non responsive
+  # non responsive (fsociety)
   OLD_HEAD="${GR:?}[fsociety]${N0:?}"
 fi
+sleep 1
 PLEASE=$(printf '%b' "[${G1:?}!?${N0:?}] Please use ${CY:?}update${N0:?} & ${CY:?}menu${N0:?} to continue the install.\n" 2>&1)
-echo "$PLEASE"
-read -t 2 -r -p "[Ok] Updated! Press Enter to continue" </dev/tty
-echo
 clear
 printf '%b' "[${G1:?}!?${N0:?}] Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
 printf '%b' "${LOG_DATE:?} Status() Update.Script: Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] $LATEST_DATE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
