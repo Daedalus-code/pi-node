@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.2.5.4
+# 0.2.5.5
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -229,6 +229,7 @@ sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/pitrump /usr/local/bin/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/include/update /usr/local/bin/ 2>&1
 sudo cp -R /home/"$(whoami)"/trump-node/include/menu /usr/local/bin/ 2>&1
+sudo chmod +x /usr/local/bin/pitrump 2>&1
 sudo chmod +x /usr/local/bin/update 2>&1
 sudo chmod +x /usr/local/bin/menu 2>&1
 rm "${LOG_DIR:?}"/add_peers &>/dev/null
