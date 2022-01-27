@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.5.9
+# 0.1.6.1
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -97,8 +97,9 @@ fi
 ### run with or without a display ##############################################
 
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-  # remove old file
+
   if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
+    # remove old file
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
@@ -110,6 +111,7 @@ NOGO_N="0"
 REAL_CTRL="pitrump"
 NOGO="${G1:?}Ok${N0:?}"
 
+# time.dashbord exist
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
   NRANDOM_0=$((((RANDOM % 4) + 1)))
@@ -124,6 +126,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   WAR_CON=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "warden" 2>&1)
 
   if [[ "${PIT_CON:?}" -gt "${WAR_CON:?}" ]] &>/dev/null; then
+
     NOGO="${CY:?}O${G1:?}k${N0:?}"
     NOGO_N="0"
   else
@@ -137,6 +140,7 @@ else # no data
   NOGO="${G0:?}Ok${N0:?}"
 fi
 
+# time.dashbord is missing
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
   if [[ "$NOGO_N" -eq "0" ]] &>/dev/null; then
@@ -148,9 +152,7 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
       # run script 'functions' while script 'pitrump' is lurking
       cd || exit && bash /usr/local/bin/include/functions
     fi
-
   fi
-
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}${NOGO:?}${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
