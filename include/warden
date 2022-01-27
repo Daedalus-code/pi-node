@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.3.6
+# 0.1.3.7
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -99,6 +99,7 @@ fi
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
 
+  # time.dashbord exist, continue
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
     if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
@@ -110,12 +111,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
   echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
-  # time.dashbord exist
+  # time.dashbord exist, continue
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-  else # no data from pitrump, go
+  else # time.dashbord don't exist, continue with warden
 
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}warden${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
