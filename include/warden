@@ -96,10 +96,10 @@ fi
 
 ### run with or without a display ##############################################
 
+NOGO_N="0"
 REAL_CTRL="pitrump"
 NOGO="${G1:?}Ok${N0:?}"
-CHANGED="${N0:?}"
-NOGO_N="0"
+
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
   NRANDOM_0=$((((RANDOM % 3) + 1)))
@@ -107,13 +107,14 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   NRANDOM_3=$(echo "${NRANDOM_0:?}+${NRANDOM_1:?}" 2>&1 | bc 2>&1)
   URANDOM=$(tr -dc 'aA0-zZ9' </dev/urandom 2>&1 | head -c "${NRANDOM_3:?}" 2>&1 | rev 2>&1)
   REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}" # found data, (messy data, from whom?)
-  CHANGED="${CY:?}<${G1:?}>${N0:?}"
   NOGO="${CY:?}Ok${N0:?}"
   NOGO_N="1"
 
-  if tail -15 "${LOG_DIR:?}"/debug.log 2>&1 | egrep "pitrump|warden" &>/dev/null; then
+  if tail -23 "${LOG_DIR:?}"/debug.log 2>&1 | egrep "pitrump|warden" &>/dev/null; then
+    NOGO="${GR:?}Ok${N0:?}"
     NOGO_N="1"
   else
+    NOGO="${CY:?}O${G1:?}k${N0:?}"
     NOGO_N="0"
   fi
 
@@ -124,10 +125,9 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   fi
 
 else # no data
+  NOGO_N="0"
   REAL_CTRL="warden"
   NOGO="${G0:?}Ok${N0:?}"
-  CHANGED="${N0:?}"
-  NOGO_N="0"
 fi
 
 echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
@@ -142,7 +142,7 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
     cd || exit && bash /usr/local/bin/include/functions
   fi
 
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}${NOGO:?}${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ] ${CHANGED:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}${NOGO:?}${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
