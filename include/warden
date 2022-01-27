@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.3.8
+# 0.1.4.0
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -102,10 +102,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # time.dashbord exist, continue
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
-    DETACH="pitrump"
+    DETACH="${G1:?}<${N0:?} [ ${G1:?}pitrump${N0:?} ]"
 
     if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
-      DETACH=$(tr -dc '0aA-zZ9' </dev/urandom 2>&1 | head -c 5 2>&1 | rev 2>&1)
+
+      DETACH="${CY:?}<<${N0:?} [ ${GR:?}warden swap${N0:?} ]"
       # remove old file
       rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -113,7 +114,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${DETACH:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   else # time.dashbord don't exist, continue with warden
 
@@ -126,12 +127,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
     # no double trouble when overlapping pitrump <> warden
     if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
-      DETACH="warden"
+
+      DETACH="${G1:?}<${N0:?} [ ${G1:?}warden${N0:?} ]"
       run_functions
     else
-      DETACH="swap"
+      DETACH="${CY:?}<<${N0:?} [ ${GR:?}pitrump swap${N0:?} ]"
     fi
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${DETACH:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
