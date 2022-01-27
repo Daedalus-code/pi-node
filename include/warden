@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.5.7
+# 0.1.5.9
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -96,17 +96,21 @@ fi
 
 ### run with or without a display ##############################################
 
-NOGO_N="0"
-REAL_CTRL="pitrump"
-NOGO="${G1:?}Ok${N0:?}"
+echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-
   # remove old file
   if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
+fi
+
+NOGO_N="0"
+REAL_CTRL="pitrump"
+NOGO="${G1:?}Ok${N0:?}"
+
+if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
   NRANDOM_0=$((((RANDOM % 4) + 1)))
   NRANDOM_1=$((((RANDOM % 3) + 1)))
@@ -132,8 +136,6 @@ else # no data
   REAL_CTRL="warden"
   NOGO="${G0:?}Ok${N0:?}"
 fi
-
-echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
