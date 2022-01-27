@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.4.2
+# 0.1.3.8
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -102,17 +102,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
   # time.dashbord exist, continue
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
-    # time.dashbord exist, continue
-    if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+    DETACH="pitrump"
 
-      if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
-        DETACH=$(tr -dc '0aA-zZ9' </dev/urandom 2>&1 | head -c 7 2>&1 | rev 2>&1)
-        # remove old file
-        rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      else
-        DETACH="pitrump"
-      fi
+    if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
+      DETACH=$(tr -dc '0aA-zZ9' </dev/urandom 2>&1 | head -c 7 2>&1 | rev 2>&1)
+      # remove old file
+      rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
 
     echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
