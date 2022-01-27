@@ -124,9 +124,9 @@ echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save 
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
   if tail -10 "${LOG_DIR:?}"/debug.log 2>&1 | grep "pitrump" &>/dev/null; then
-    NOGO_N="1"
-  else
     NOGO_N="0"
+  else
+    NOGO_N="1"
   fi
 
   # no double trouble
