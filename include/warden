@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.2.6
+# 0.1.2.9
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -97,10 +97,12 @@ fi
 ### run with or without a display ##############################################
 
 REAL_CTRL="pitrump"
+CHANGED="${N0:?}"
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   NRANDOM=$((((RANDOM % 5) + 2)))
   URANDOM=$(tr -dc 'aA0-zZ9' </dev/urandom 2>&1 | head -c "${NRANDOM:?}" 2>&1 | rev 2>&1)
   REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}" # found data, (messy data, from whom?)
+  CHANGED="${GR:?}<>${N0:?}"
   # remove old file
   if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
     rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
@@ -108,6 +110,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   fi
 else # no data
   REAL_CTRL="warden"
+  CHANGED="${N0:?}"
 fi
 
 echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
@@ -118,7 +121,7 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   # run script 'functions' while script 'pitrump' is lurking
   cd || exit && bash /usr/local/bin/include/functions
 
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ] ${GR:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ] ${CHANGED:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
