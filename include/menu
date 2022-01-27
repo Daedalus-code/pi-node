@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 1.3.7.0
+# 1.3.7.3
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1221,6 +1221,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
     sudo free -h
     echo
     sudo swapon --show
+    echo
     read -r -p "[Ok] No need for swap! Press Enter to continue" </dev/tty
     echo
   else
@@ -1313,6 +1314,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
     sudo free -h
     echo
     sudo swapon --show
+    echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
 
@@ -1348,6 +1350,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
     sudo free -h
     echo
     sudo swapon --show
+    echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
 
