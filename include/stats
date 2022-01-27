@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222601
-# 0.4.6.0
+# V20222701
+# 0.4.6.5
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -453,7 +453,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
       printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Skipping graphs! (already running!)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   else
-    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Saving data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    if tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "rrdtoolStats() Saving data" &>/dev/null; then
+      SAVING_DATA="${CY:?}Saving data.${N0:?}"
+    else
+      SAVING_DATA="${N0:?}Saving data.${N0:?}"
+    fi
+    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() ${SAVING_DATA:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 

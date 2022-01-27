@@ -152,7 +152,7 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
   if [[ "$NOGO_N" -eq "0" ]] &>/dev/null; then
 
-    # no double trouble
+    # no double trouble when overlapping pitrump <> warden
     if ! tail -7 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Dashbord() Removing old file!" &>/dev/null; then
       run_functions
     fi
