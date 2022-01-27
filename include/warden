@@ -106,7 +106,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
     if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
 
-      DETACH="${CY:?}<<${N0:?} [ ${GR:?}warden swap${N0:?} ]"
+      DETACH="${CY:?}<<${N0:?} [ ${GR:?}warden${N0:?} ]"
       # remove old file
       rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -131,7 +131,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       DETACH="${G1:?}<${N0:?} [ ${G1:?}warden${N0:?} ]"
       run_functions
     else
-      DETACH="${CY:?}<<${N0:?} [ ${GR:?}pitrump swap${N0:?} ]"
+      DETACH="${CY:?}<<${N0:?} [ ${GR:?}pitrump${N0:?} ]"
     fi
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
