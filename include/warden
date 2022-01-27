@@ -114,10 +114,10 @@ NOGO="${G1:?}Ok${N0:?}"
 # time.dashbord exist
 if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
-  PIT_CON=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "pitrump" 2>&1)
-  WAR_CON=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "warden" 2>&1)
+  PITRUMP=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "pitrump" 2>&1)
+  WARDEN=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "warden" 2>&1)
 
-  if [[ "${PIT_CON:?}" -gt "${WAR_CON:?}" ]] &>/dev/null; then
+  if [[ "${PITRUMP:?}" -gt "${WARDEN:?}" ]] &>/dev/null; then
 
     NOGO="${CY:?}O${G1:?}k${N0:?}"
     NOGO_N="0"
