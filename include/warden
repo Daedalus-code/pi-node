@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.6.7
+# 0.1.5.7
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -110,37 +110,30 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
   echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
-  NOGO_N="0"
-  REAL_CTRL="pitrump"
-  NOGO="${G1:?}Ok${N0:?}"
+  PITRUMP=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "pitrump" 2>&1)
+  WARDEN=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "warden" 2>&1)
+
+  if [[ "${PITRUMP:?}" -lt "${WARDEN:?}" ]] &>/dev/null; then
+
+    # data, go
+    NOGO="${GR:?}O${G1:?}k${N0:?}"
+  else # data?, go
+    NRANDOM_0=$((((RANDOM % 4) + 1)))
+    NRANDOM_1=$((((RANDOM % 3) + 1)))
+    NRANDOM_3=$(echo "${NRANDOM_0:?}+${NRANDOM_1:?}" 2>&1 | bc 2>&1)
+    URANDOM=$(tr -dc 'aA0-zZ9' </dev/urandom 2>&1 | head -c "${NRANDOM_3:?}" 2>&1 | rev 2>&1)
+    REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}"
+
+    NOGO="${CY:?}Ok${N0:?}"
+  fi
 
   # time.dashbord exist
   if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-
-    PITRUMP=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "pitrump" 2>&1)
-    WARDEN=$(egrep "pitrump|warden" "${LOG_DIR:?}"/debug.log 2>&1 | tail -5 2>&1 | grep -c "warden" 2>&1)
-
-    if [[ "${PITRUMP:?}" -lt "${WARDEN:?}" ]] &>/dev/null; then
-
-      # data, go
-      NOGO="${GR:?}O${G1:?}k${N0:?}"
-      NOGO_N="1"
-    else # data?, go
-      NRANDOM_0=$((((RANDOM % 4) + 1)))
-      NRANDOM_1=$((((RANDOM % 3) + 1)))
-      NRANDOM_3=$(echo "${NRANDOM_0:?}+${NRANDOM_1:?}" 2>&1 | bc 2>&1)
-      URANDOM=$(tr -dc 'aA0-zZ9' </dev/urandom 2>&1 | head -c "${NRANDOM_3:?}" 2>&1 | rev 2>&1)
-      REAL_CTRL="${GR:?}${URANDOM:?}${N0:?}"
-
-      NOGO="${CY:?}Ok${N0:?}"
-      NOGO_N="0"
-    fi
 
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   else # no data from pitrump, go
 
-    NOGO_N="0"
     REAL_CTRL="warden"
     NOGO="${G0:?}Ok${N0:?}"
 
@@ -151,13 +144,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
       cd || exit && bash /usr/local/bin/include/functions
     }
 
-    if [[ "$NOGO_N" -eq "0" ]] &>/dev/null; then
+    # no double trouble when overlapping pitrump <> warden
+    if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Starting adding nodes!" &>/dev/null; then
 
-      # no double trouble when overlapping pitrump <> warden
-      if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Starting adding nodes!" &>/dev/null; then
-
-        run_functions
-      fi
+      run_functions
     fi
 
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}${NOGO:?}${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
