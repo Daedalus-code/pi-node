@@ -1025,7 +1025,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
+    clear
     crontab -e
 
     ;;
@@ -1250,7 +1250,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
       if ! grep "swap" /etc/fstab &>/dev/null; then
         # no swap installed, continue
         echo "[Ok] No Swap installed"
-        #To make the change permanent open the /etc/fstab file and append the following line:
+        # make change permanent
         echo "/swapfile swap swap defaults 0 0" >/tmp/fstab.tmp
         cat /tmp/fstab.tmp 2>/dev/null | sudo tee -a /tmp/fstab 2>&1
         # remove old file
