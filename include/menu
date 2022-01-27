@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222601
-# 1.2.0.3
+# V20222701
+# 1.3.7.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -32,9 +32,9 @@ fi
 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
-HEIGHT=16
+HEIGHT=17
 WIDTH=54
-CHOICE_HEIGHT=9
+CHOICE_HEIGHT=10
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
 MENU="Choose one of the following options:"
@@ -47,7 +47,8 @@ OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   6 "Download Menu    Download & Install"
   7 "Reset Graphs     Reset/Remove graphs"
   8 "Configuration    Node configuration(s)"
-  9 "Quit             Exit menu")
+  9 "Swap Menu        Swap space options"
+  10 "Quit             Exit menu")
 
 CHOICE=$(dialog --clear \
   --nocancel \
@@ -934,9 +935,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
 "8")
 
-  HEIGHT=13
+  HEIGHT=14
   WIDTH=45
-  CHOICE_HEIGHT=6
+  CHOICE_HEIGHT=7
   BACKTITLE="Node configuration(s)"
   TITLE="Edit configuration"
   MENU="Choose one of the following options:"
@@ -946,7 +947,8 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     3 "PiTrump.conf     pitrump.conf"
     4 "Config.txt       boot/config.txt"
     5 "Torrc            Tor configuration"
-    6 "Reset            Reset config(s)")
+    6 "Crontab          Job scheduler"
+    7 "Reset            Reset config(s)")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1017,7 +1019,18 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     ;;
 
+    # crontab
+
   "6")
+
+    printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+    crontab -e
+
+    ;;
+
+  "7")
 
     HEIGHT=12
     WIDTH=31
@@ -1190,7 +1203,161 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 
   ;;
 
+  # swap options
+
 "9")
+
+  # get total physical system memory, do this once
+  if [[ ! -f "${WALLET_DIR:?}"/swapinfo ]] &>/dev/null; then
+    echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)" 2>&1 | bc >"${WALLET_DIR:?}"/swapinfo 2>&1
+  fi
+
+  # if physical memory greater than n megabytes, don't install
+  if [[ "$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
+    # system has enough memory
+    printf '%b' "[${G1:?}Ok${N0:?}] System has enough sufficient memory ${G1:?}$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)MB${N0:?}\n"
+    # output memory, swap info
+    echo
+    sudo free -h
+    echo
+    sudo swapon --show
+    read -r -p "[Ok] No need for swap! Press Enter to continue" </dev/tty
+    echo
+  else
+    read -r -p "[YN] Automatically setup new swap? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+      if [[ ! -f /swapfile ]]; then
+        # fallocate a file that will be used for swap
+        sudo fallocate -l 1G /swapfile
+      else
+        echo "[Ok] Already created!"
+      fi
+
+      read -r -p "[YN] chmod, mkswap, swapon? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        # root user should be able to write and read the swap file
+        sudo chmod 600 /swapfile
+        # mkswap utility to set up the file as Linux swap area
+        sudo mkswap /swapfile
+        # enable the swap
+        sudo swapon /swapfile
+      fi
+
+      if ! grep "swap" /etc/fstab &>/dev/null; then
+        # no swap installed, continue
+        echo "[Ok] No Swap installed"
+        #To make the change permanent open the /etc/fstab file and append the following line:
+        echo "/swapfile swap swap defaults 0 0" >/tmp/fstab.tmp
+        cat /tmp/fstab.tmp 2>/dev/null | sudo tee -a /tmp/fstab 2>&1
+        # remove old file
+        rm /tmp/fstab.tmp &>/dev/null
+      else
+        echo "[Ok] Swap already installed! -> /etc/fstab"
+      fi
+    fi
+  fi
+
+  # swap menu, after the fact
+
+  HEIGHT=11
+  WIDTH=23
+  CHOICE_HEIGHT=3
+  BACKTITLE="Swap options"
+  TITLE="Setup Swap space"
+  MENU="Choose one of the following options:"
+
+  OPTIONS=(1 "Create Swap"
+    2 "Delete Swap"
+    3 "Swap status")
+
+  CHOICE=$(dialog --clear \
+    --backtitle "$BACKTITLE" \
+    --title "$TITLE" \
+    --menu "$MENU" \
+    $HEIGHT $WIDTH $CHOICE_HEIGHT \
+    "${OPTIONS[@]}" \
+    2>&1 >/dev/tty)
+
+  clear
+  case $CHOICE in
+
+  # create swap
+
+  "1")
+
+    echo "Creating Swap manually!"
+    printf '%b' "Enter Gigabyte(s) ${G1:?}>${N0:?} "
+    read -r SWAPG
+    if [[ -z "$SWAPG" ]] &>/dev/null; then
+      echo "empty!"
+      exit
+    fi
+    sudo fallocate -l "${SWAPG:?}"G /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    if ! grep "swap" /etc/fstab &>/dev/null; then
+      # no swap installed, continue
+      echo "[Ok] No Swap installed"
+      #To make the change permanent open the /etc/fstab file and append the following line:
+      echo "/swapfile swap swap defaults 0 0" >/tmp/fstab.tmp
+      cat /tmp/fstab.tmp 2>/dev/null | sudo tee -a /tmp/fstab 2>&1
+      # remove old file
+      rm /tmp/fstab.tmp &>/dev/null
+    fi
+    # output memory, swap info
+    echo
+    sudo free -h
+    echo
+    sudo swapon --show
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+    # delete swap
+
+  "2")
+
+    read -r -p "[YN] Remove Swap? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      sudo rm /swapfile &>/dev/null
+      echo "Remove line -> '/swapfile swap swap defaults 0 0' in /etc/fstab"
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      sudo nano /etc/fstab
+      read -r -p "[YN] Reboot system? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        sudo reboot
+      fi
+    fi
+
+    ;;
+
+    # swap status
+
+  "3")
+
+    # output total memory, swap info
+    printf '%b' "[${G1:?}Ok${N0:?}] Total system memory ${G1:?}$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)MB${N0:?}\n"
+    echo
+    sudo free -h
+    echo
+    sudo swapon --show
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  esac
+
+  ;;
+
+"10")
 
   exit # exit menu
 
