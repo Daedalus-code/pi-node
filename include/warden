@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.5.4
+# 0.1.5.7
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -116,12 +116,15 @@ if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   NOGO="${CY:?}Ok${N0:?}"
   NOGO_N="1"
 
-  if tail -23 "${LOG_DIR:?}"/debug.log 2>&1 | grep "warden" &>/dev/null; then
-    NOGO="${GR:?}Ok${N0:?}"
-    NOGO_N="1"
-  else
+  PIT_CON=$(egrep "pitrump|warden" /tmp/debug.log 2>&1 | tail -3 2>&1 | grep -c "pitrump" 2>&1)
+  WAR_CON=$(egrep "pitrump|warden" /tmp/debug.log 2>&1 | tail -3 2>&1 | grep -c "warden" 2>&1)
+
+  if [[ "${PIT_CON:?}" -gt "${WAR_CON:?}" ]] &>/dev/null; then
     NOGO="${CY:?}O${G1:?}k${N0:?}"
     NOGO_N="0"
+  else
+    NOGO="${GR:?}Ok${N0:?}"
+    NOGO_N="1"
   fi
 
 else # no data
