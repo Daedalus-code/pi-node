@@ -455,7 +455,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     fi
     rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
   else
-    if tail -10 "${LOG_DIR:?}"/debug.log 2>&1 | grep "rrdtoolStats() Saving data" &>/dev/null; then
+    if tail -10 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Saving data" &>/dev/null; then
       SAVING_DATA="${CY:?}Saving data.${N0:?}"
     else
       SAVING_DATA="${N0:?}Saving data.${N0:?}"
