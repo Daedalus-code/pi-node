@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222701
-# 0.1.6.1
+# 0.1.7.1
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -143,16 +143,26 @@ fi
 # time.dashbord is missing
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
+  function run_functions() {
+    # where are we now?
+    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
+    # get data from functions
+    cd || exit && bash /usr/local/bin/include/functions
+  }
+
   if [[ "$NOGO_N" -eq "0" ]] &>/dev/null; then
 
     # no double trouble
     if ! tail -7 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Dashbord() Removing old file!" &>/dev/null; then
-      # where are we?
-      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-      # run script 'functions' while script 'pitrump' is lurking
-      cd || exit && bash /usr/local/bin/include/functions
+      run_functions
     fi
   fi
+
+  # if time.dashbord is older than time.warden, run_functions
+  if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
+    run_functions
+  fi
+
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}${NOGO:?}${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}${REAL_CTRL:?}${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 else
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${G1:?}<${N0:?} [ ${GR:?}pitrump${N0:?} ]\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
