@@ -142,7 +142,7 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
   if [[ "$NOGO_N" -eq "0" ]] &>/dev/null; then
 
     # no double trouble
-    if ! tail -7 "${LOG_DIR:?}"/debug.log 2>&1 | grep "(CIDR)" &>/dev/null; then
+    if ! tail -7 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Dashbord() Removing old file!" &>/dev/null; then
       # where are we?
       PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
       # run script 'functions' while script 'pitrump' is lurking
