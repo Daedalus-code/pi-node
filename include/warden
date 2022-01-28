@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.2.2.4
+# 0.2.2.8
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -154,14 +154,16 @@ fi
 ### run with or without a display ##############################################
 
 function run_functions() {
-  # no double trouble when overlapping pitrump <> warden
-  if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
-    # time.dashbord exist, don't continue
-    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-      # where are we now?
-      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-      # get data from functions
-      cd || exit && bash /usr/local/bin/include/functions
+  if [[ -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
+    # no double trouble when overlapping pitrump <> warden
+    if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
+      # time.dashbord exist, don't continue
+      if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+        # where are we now?
+        PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
+        # get data from functions
+        cd || exit && bash /usr/local/bin/include/functions
+      fi
     fi
   fi
 }
@@ -195,14 +197,16 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
         printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
 
-      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
-
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
       # remove lock file
       rm "${LOG_DIR:?}"/node_data/func.lock &>/dev/null
 
+      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
+
     else # time.dashbord don't exist, continue with warden
+
+      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
       # no double trouble when overlapping pitrump <> warden
       if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
