@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.4.9.5
+# 0.4.9.6
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -462,10 +462,11 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<img src='stakes_graph.png' alt='Stakes' />";
   echo "<img src='inputs_graph.png' alt='Inputs' />";
   echo "<img src='peers_graph.png' alt='Peers' />";
-  echo "<img src='total_tx_graph.png' alt='Total TX' />";
   echo "<img src='rank_graph.png' alt='Peers' />";
-  echo "<img src='difficulty_graph.png' alt='Difficulty' />";
+  echo "<img src='total_tx_graph.png' alt='Total TX' />";
   echo "<img src='watchlist_graph.png' alt='Peers' />";
+  echo "<img src='difficulty_graph.png' alt='Difficulty' />";
+
 EOF
 
 # greater than n seconds, continue
