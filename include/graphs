@@ -257,7 +257,7 @@ rrdtool graph /var/www/html/temp_graph.png \
 function difficulty_auto() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 1394 -h 142 -a PNG \
+    -w 1394 -h 140 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
@@ -338,7 +338,7 @@ function avgconfirmation_auto_two() {
 function difficulty_normal() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 1394 -h 142 -a PNG \
+    -w 1394 -h 140 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
