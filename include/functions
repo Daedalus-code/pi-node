@@ -88,8 +88,8 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuspeed ]] &>/dev/null; then
 
   # greater or equal to 1800MHz + (1.8GHz + ) -> pi4
   if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1800" ]] &>/dev/null; then
-    echo "240" >"${LOG_DIR:?}"/node_data/wait && echo "300" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1800MHz+ ] ${G1:?}240${N0:?}/${G0:?}300${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    echo "200" >"${LOG_DIR:?}"/node_data/wait && echo "240" >>"${LOG_DIR:?}"/node_data/wait
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1800MHz+ ] ${G1:?}200${N0:?}/${G0:?}240${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # greater or equal to 1400MHz + (1.4GHz + ) -> pi3+
   elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1400" ]] &>/dev/null; then
     echo "260" >"${LOG_DIR:?}"/node_data/wait && echo "320" >>"${LOG_DIR:?}"/node_data/wait
