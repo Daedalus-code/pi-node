@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.1.0.4
+# 0.1.1.2
 
 # shellcheck disable=SC2154
 
@@ -12,9 +12,17 @@ source /usr/local/bin/include/color
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
+# get waiting orders
+WAIT_TIME=$(head -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
+
+# non responsive, use default timer
+if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
+  WAIT_TIME="300"
+fi
+
 ### addnodes ###################################################################
 
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   RANDOM_WAIT=$((((RANDOM % 3) + 1)))
 

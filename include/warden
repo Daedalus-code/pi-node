@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.1.6.9
+# 0.1.7.8
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -18,6 +18,15 @@ if [ ! -f "${LOG_DIR:?}"/node_data/stats/date ] &>/dev/null; then
 
   date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 fi
+
+# get waiting orders
+WAIT_TIME=$(head -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
+
+# non responsive, use default timer
+if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
+  WAIT_TIME="300"
+fi
+
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
@@ -117,7 +126,7 @@ if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/func.lock 2>&1)" -lt "$(date +%
 fi
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   if [[ ! -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
 
