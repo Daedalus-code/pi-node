@@ -92,7 +92,7 @@ cat >/tmp/add_cg <<'EOF'
 
 # By Rainman
 # V20222801
-# 0.0.3.1
+# 0.0.3.6
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -211,6 +211,8 @@ if ! screen -list 2>&1 | grep -q "add_cmc" &>/dev/null; then
   screen -dmS add_cmc 2>&1
 
   screen -S add_cmc -X -p 0 stuff $'torify bash /tmp/add_cmc\n'
+
+  printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # if success, continue
@@ -238,7 +240,5 @@ echo "$(tail -14 "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1)" 2>&1 | awk '{ p
 mv "${LOG_DIR:?}"/node_data/stats/price.avg.tmp "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1
 echo "$(tail -14 "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume.avg.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/stats/volume.avg.tmp "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1
-
-printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # END
