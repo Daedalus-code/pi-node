@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.1.8.3
+# 0.2.3.2
 
 # shellcheck disable=SC2154
 
@@ -18,6 +18,33 @@ WAIT_TIME=$(head -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
   WAIT_TIME="300"
+fi
+
+### data dependencies ##########################################################
+
+# make sure screen is installed
+if ! [ -x "$(command -v curl)" ] &>/dev/null; then
+  echo "Installing curl"
+  sudo apt-get install curl -y
+  echo
+  read -t 1 -r -p "[Ok] curl installed!" </dev/tty
+  echo
+fi
+# make sure rrdtool is installed
+if ! [ -x "$(command -v rrdtool)" ] &>/dev/null; then
+  echo "Installing rrdtool"
+  sudo apt-get install rrdtool -y
+  echo
+  read -t 1 -r -p "[Ok] rrdtool installed!" </dev/tty
+  echo
+fi
+# make sure html2text is installed
+if ! [ -x "$(command -v html2text)" ] &>/dev/null; then
+  echo "Installing html2text"
+  sudo apt-get install html2text -y
+  echo
+  read -t 1 -r -p "[Ok] html2text installed!" </dev/tty
+  echo
 fi
 
 ### addnodes ###################################################################
@@ -59,28 +86,50 @@ printf '%b' "${LOG_DATE:?} Status() Addnode.Script Total ${G1:?}${TOTAL_NODES:?}
 
 ### coingecko price, volume ####################################################
 
-# make sure curl, html2text and rrdtool exist
-if ! [ -x "$(command -v curl)" ] &>/dev/null; then
-  sudo apt-get install curl -y
+cat >/tmp/add_cg <<'EOF'
+#!/bin/bash
+
+# By Rainman
+# V20222801
+# 0.0.3.1
+
+source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/color
+
+# date for logs
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
+
+printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Fetching CoinGecko API data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+# remove requests
+truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cg
+
+for (( ; ; )); do # loop until success
+  clear
+  COIN_API="trumpcoin"
+  CURRENCY_API="usd"
+
+  RANDOM_WAIT=$((((RANDOM % 3) + 1)))
+
+  sleep "${RANDOM_WAIT:?}" && torify curl -o "${LOG_DIR:?}"/node_data/stats/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'$COIN_API'/market_chart?vs_currency='$CURRENCY_API'&days='$days'' -H 'accept: application/json' &>/dev/null
+
+  sleep 1
+  echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
+
+  if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
+    echo "success" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cg 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    exit
+  fi
+
+done
+EOF
+
+# reset requests.cg file
+if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
+
+  rm "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null
 fi
-if ! [ -x "$(command -v rrdtool)" ] &>/dev/null; then
-  sudo apt-get install rrdtool -y
-fi
-if ! [ -x "$(command -v html2text)" ] &>/dev/null; then
-  sudo apt-get install html2text -y
-fi
-
-COIN_API="trumpcoin"
-CURRENCY_API="usd"
-
-RANDOM_WAIT=$((((RANDOM % 3) + 1)))
-
-sleep "${RANDOM_WAIT:?}" && torify curl -o "${LOG_DIR:?}"/node_data/stats/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'$COIN_API'/market_chart?vs_currency='$CURRENCY_API'&days='$days'' -H 'accept: application/json' &>/dev/null
-
-# get token price
-grep -o -P '(?<=,).*(?=]],"m)' "${LOG_DIR:?}"/node_data/stats/raw.coingcko >"${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
-# get token volume
-egrep -o "volumes.*" "${LOG_DIR:?}"/node_data/stats/raw.coingcko 2>&1 | tr -d '"|:' 2>&1 | awk -F, '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1
 
 # api values
 API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/stats/price 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
@@ -103,7 +152,7 @@ fi
 printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Found ${G1:?}${API_PRICE_CG:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Found ${G1:?}${API_VOLUME_CG:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-### coinmarketcap price, volume ################################################
+### coinmarketcap price, volume, rank, watchlist ###############################
 
 cat >/tmp/add_cmc <<'EOF'
 #!/bin/bash
@@ -118,21 +167,21 @@ source /usr/local/bin/include/color
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
-printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Fetching CoinMarketCap data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Fetching CoinMarketCap API data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # remove requests
-truncate -s 0 "${LOG_DIR:?}"/node_data/requests
+truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cmc
 
 for (( ; ; )); do # loop until success
   clear
   URL="https://coinmarketcap.com/currencies/trumpcoin/"
   curl -s -L "$URL" 2>&1 | html2text >"${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1
   sleep 1
-  echo "fail" >>"${LOG_DIR:?}"/node_data/requests 2>&1
+  echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
 
   if grep "trump" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
-    echo "success" >>"${LOG_DIR:?}"/node_data/requests 2>&1
-    printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    echo "success" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cmc 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     exit
   fi
 
