@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.1.5.8
+# 0.1.6.0
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -97,10 +97,12 @@ fi
 ### run with or without a display ##############################################
 
 function run_functions() {
-  # where are we now?
-  PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-  # get data from functions
-  cd || exit && bash /usr/local/bin/include/functions
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+    # where are we now?
+    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
+    # get data from functions
+    cd || exit && bash /usr/local/bin/include/functions
+  fi
 }
 
 # greater than n seconds, continue
