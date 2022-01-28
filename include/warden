@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.2.2.6
+# 0.2.2.4
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -154,16 +154,14 @@ fi
 ### run with or without a display ##############################################
 
 function run_functions() {
-  if [[ -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
-    # no double trouble when overlapping pitrump <> warden
-    if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
-      # time.dashbord exist, don't continue
-      if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-        # where are we now?
-        PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-        # get data from functions
-        cd || exit && bash /usr/local/bin/include/functions
-      fi
+  # no double trouble when overlapping pitrump <> warden
+  if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
+    # time.dashbord exist, don't continue
+    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+      # where are we now?
+      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
+      # get data from functions
+      cd || exit && bash /usr/local/bin/include/functions
     fi
   fi
 }
