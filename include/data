@@ -99,7 +99,7 @@ source /usr/local/bin/include/color
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
-printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Fetching CoinGecko API data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Fetching CoinGecko API data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # remove requests
 truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cg
@@ -118,7 +118,7 @@ for (( ; ; )); do # loop until success
 
   if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
     echo "success" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cg 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cg 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     exit
   fi
 
@@ -173,7 +173,7 @@ source /usr/local/bin/include/color
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
-printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Fetching CoinMarketCap API data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Fetching CoinMarketCap API data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # remove requests
 truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cmc
@@ -187,7 +187,7 @@ for (( ; ; )); do # loop until success
 
   if grep "trump" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
     echo "success" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
-    printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cmc 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cmc 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     exit
   fi
 

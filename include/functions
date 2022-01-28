@@ -281,10 +281,10 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   API_VOLUME_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   API_RANK_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
   API_WATCH_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Found ${G1:?}${API_PRICE_CMC:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Found ${G1:?}${API_VOLUME_CMC:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Found ${G1:?}${API_RANK_CMC:?}${N0:?} rank!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Found ${G1:?}${API_WATCH_CMC:?}${N0:?} watchlist!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_PRICE_CMC:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_VOLUME_CMC:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_RANK_CMC:?}${N0:?} rank!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_WATCH_CMC:?}${N0:?} watchlist!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   screen -X -S add_cmc quit
   rm "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null
@@ -303,8 +303,8 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   # coingecko api values
   API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/stats/price.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
   API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Found ${G1:?}${API_PRICE_CG:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Found ${G1:?}${API_VOLUME_CG:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Found ${G1:?}${API_PRICE_CG:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Found ${G1:?}${API_VOLUME_CG:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   screen -X -S add_cg quit
   rm "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null
@@ -1370,7 +1370,7 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/price ] &>/dev/null; then
   cp "${LOG_DIR:?}"/node_data/stats/price "${WALLET_DIR:?}"/price 2>&1
 else # restore it
   cp "${WALLET_DIR:?}"/price "${LOG_DIR:?}"/node_data/stats/price 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # backup ticker volume
@@ -1378,7 +1378,7 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/volume ] &>/dev/null; then
   cp "${LOG_DIR:?}"/node_data/stats/volume "${WALLET_DIR:?}"/volume 2>&1
 else # restore it
   cp "${WALLET_DIR:?}"/volume "${LOG_DIR:?}"/node_data/stats/volume 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Restored API Volume! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume 2>&1)${GR:?} :: ${N0:?}Ticker volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Volume! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume 2>&1)${GR:?} :: ${N0:?}Ticker volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### theme ######################################################################
