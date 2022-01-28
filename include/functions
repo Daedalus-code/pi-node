@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 1.4.1.3
+# 1.4.6.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -77,53 +77,6 @@ date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
 LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
 
 ### system information, load, user, cpu temp ###################################
-
-# do this once (cpu speed, wait time)
-if [[ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ]] &>/dev/null; then
-  # where are we now?
-  PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/lscpu
-  lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu 2>&1
-  cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
-fi
-
-if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuspeed ]] &>/dev/null; then
-
-  ### wait time based on cpu speed ######################################### ###
-
-  # greater or equal to 1800MHz + (1.8GHz + ) -> pi4
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1800" ]] &>/dev/null; then
-    echo "200" >"${LOG_DIR:?}"/node_data/wait && echo "240" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1800MHz+ ] ${G1:?}200${N0:?}/${G0:?}240${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # greater or equal to 1400MHz + (1.4GHz + ) -> pi3+
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1400" ]] &>/dev/null; then
-    echo "260" >"${LOG_DIR:?}"/node_data/wait && echo "320" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1400 - 1800MHz ] ${G1:?}260${N0:?}/${G0:?}320${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # greater or equal to 1200MHz + (1.2GHz + ) -> pi3
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1200" ]] &>/dev/null; then
-    echo "300" >"${LOG_DIR:?}"/node_data/wait && echo "360" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1200 - 1400MHz ] ${G1:?}300${N0:?}/${G0:?}360${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # greater or equal to 900MHz + (0.9GHz + ) -> pi2
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "900" ]] &>/dev/null; then
-    echo "420" >"${LOG_DIR:?}"/node_data/wait && echo "480" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 900 - 1200MHz ] ${G1:?}420${N0:?}/${G0:?}480${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # greater or equal to 600MHz + (0.6GHz + ) -> pi
-  elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "600" ]] &>/dev/null; then
-    echo "600" >"${LOG_DIR:?}"/node_data/wait && echo "940" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 600 - 900MHz ] ${G1:?}600${N0:?}/${G0:?}940${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-fi
-
-# get waiting orders
-WAIT_TIME=$(head -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
-WAIT_TIME_BLOCK=$(tail -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
-
-# non responsive, use default timer
-if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
-  WAIT_TIME="300"
-fi
-if [[ -z "$WAIT_TIME_BLOCK" ]] &>/dev/null; then
-  WAIT_TIME_BLOCK="360"
-fi
 
 # do this once (lscpu values)
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
