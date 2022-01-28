@@ -151,7 +151,7 @@ rrdtool graph /var/www/html/rank_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:rank=/home/"$(whoami)"/stats/rank.rrd:rank:MAX \
   GPRINT:rank:LAST:%.0lf\ Rank \
-  LINE1:rank#8A8FAB
+  LINE1:rank#8A8FAB:"Rank"
 
 # watchlist (24hour)
 rrdtool graph /var/www/html/watchlist_graph.png \
