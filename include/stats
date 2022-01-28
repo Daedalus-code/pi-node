@@ -463,8 +463,8 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<img src='inputs_graph.png' alt='Inputs' />";
   echo "<img src='peers_graph.png' alt='Peers' />";
   echo "<img src='total_tx_graph.png' alt='Total TX' />";
-  echo "<img src='difficulty_graph.png' alt='Difficulty' />";
   echo "<img src='rank_graph.png' alt='Peers' />";
+  echo "<img src='difficulty_graph.png' alt='Difficulty' />";
   echo "<img src='watchlist_graph.png' alt='Peers' />";
 EOF
 
