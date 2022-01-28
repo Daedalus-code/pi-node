@@ -757,10 +757,10 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   # add extra(s) domain names
   cat "${LOG_DIR:?}"/addnodes.dns >>"${LOG_DIR:?}"/node_data/peers.x 2>&1
 
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! IPv4 +$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! IPv6 +$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! DNS +$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding total nodes! ${G1:?}$(echo "$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes! IPv4  +$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script                   | IPv6  +$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script                   | DNS   +$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script                   | Total +${G1:?}$(echo "$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   # truncate/remove file(s), now old
   truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
