@@ -758,7 +758,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   cat "${LOG_DIR:?}"/addnodes.dns >>"${LOG_DIR:?}"/node_data/peers.x 2>&1
 
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script  _IPv4 $(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_IPv4 $(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_IPv6 $(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_DNS+ $(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script | ${G1:?}$(echo "$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) Total ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
