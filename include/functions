@@ -89,23 +89,23 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuspeed ]] &>/dev/null; then
   # greater or equal to 1800MHz + (1.8GHz + ) -> pi4
   if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1800" ]] &>/dev/null; then
     echo "240" >"${LOG_DIR:?}"/node_data/wait && echo "300" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?} 1800MHz + (${G1:?}240${N0:?}/${G0:?}300${N0:?} Wait)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m")${N0:?} 1800MHz + ${G1:?}240${N0:?}/${G0:?}300${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # greater or equal to 1400MHz + (1.4GHz + ) -> pi3+
   elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1400" ]] &>/dev/null; then
     echo "260" >"${LOG_DIR:?}"/node_data/wait && echo "320" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?} 1400 - 1800MHz (${G1:?}260${N0:?}/${G0:?}320${N0:?} Wait)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m")${N0:?} 1400 - 1800MHz ${G1:?}260${N0:?}/${G0:?}320${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # greater or equal to 1200MHz + (1.2GHz + ) -> pi3
   elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1200" ]] &>/dev/null; then
     echo "300" >"${LOG_DIR:?}"/node_data/wait && echo "360" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?} 1200 - 1400MHz (${G1:?}300${N0:?}/${G0:?}360${N0:?} Wait)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m")${N0:?} 1200 - 1400MHz ${G1:?}300${N0:?}/${G0:?}360${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # greater or equal to 900MHz + (0.9GHz + ) -> pi2
   elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "900" ]] &>/dev/null; then
     echo "420" >"${LOG_DIR:?}"/node_data/wait && echo "480" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?} 900 - 1200MHz (${G1:?}420${N0:?}/${G0:?}480${N0:?} Wait)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m")${N0:?} 900 - 1200MHz ${G1:?}420${N0:?}/${G0:?}480${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # greater or equal to 600MHz + (0.6GHz + ) -> pi
   elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "600" ]] &>/dev/null; then
     echo "600" >"${LOG_DIR:?}"/node_data/wait && echo "940" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?} 600 - 900MHz (${G1:?}600${N0:?}/${G0:?}940${N0:?} Wait)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() ${GR:?}$(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m")${N0:?} 600 - 900MHz ${G1:?}600${N0:?}/${G0:?}940${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
