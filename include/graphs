@@ -283,7 +283,7 @@ function difficulty_auto() {
 function avgconfirmation_auto_one() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 142 -a PNG \
+    -w 400 -h 160 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
@@ -309,7 +309,7 @@ function avgconfirmation_auto_one() {
 function avgconfirmation_auto_two() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 142 -a PNG \
+    -w 400 -h 160 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
@@ -361,7 +361,7 @@ function difficulty_normal() {
 function avgconfirmation_normal() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 142 -a PNG \
+    -w 400 -h 160 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
