@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.1.5.7
+# 0.1.6.5
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -99,15 +99,13 @@ fi
 function run_functions() {
   # no double trouble when overlapping pitrump <> warden
   if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
-    # not allowed to run if time.dashbord exist
+    # time.dashbord exist, don't continue
     if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
       # where are we now?
       PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
       # get data from functions
       cd || exit && bash /usr/local/bin/include/functions
     fi
-  else
-    DETACH="${CY:?}<<${N0:?} [ ${CY:?}pitrump${N0:?} ]"
   fi
 }
 
@@ -126,9 +124,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
       if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
 
-        DETACH="${CY:?}<<${N0:?} [ ${CY:?}warden${N0:?} ]"
+        # no double trouble when overlapping pitrump <> warden
+        if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
 
-        run_functions
+          DETACH="${CY:?}<<${N0:?} [ ${GR:?}warden${N0:?} ]"
+
+          run_functions
+        fi
         # remove old file
         rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
         printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -143,10 +145,16 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/n
 
     else # time.dashbord don't exist, continue with warden
 
-      DETACH="${G0:?}<${N0:?} [ ${G0:?}warden${N0:?} ]"
+      # no double trouble when overlapping pitrump <> warden
+      if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
 
-      run_functions
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${Gr:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        DETACH="${G0:?}<${N0:?} [ ${G0:?}warden${N0:?} ]"
+
+        run_functions
+      else
+        DETACH="${CY:?}<<${N0:?} [ ${GR:?}pitrump${N0:?} ]"
+      fi
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
       # remove lock file
       rm "${LOG_DIR:?}"/func.lock &>/dev/null
