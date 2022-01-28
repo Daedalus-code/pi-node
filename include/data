@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.2.3.2
+# 0.2.4.4
 
 # shellcheck disable=SC2154
 
@@ -61,6 +61,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
   # setup api file
   cat "${LOG_DIR:?}"/node_data/nodes.api 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/nodes.all 2>&1
+  printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Found ${G1:?}${API_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   ### arp -a intranet ##########################################################
@@ -129,6 +130,15 @@ EOF
 if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
 
   rm "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null
+fi
+
+# look for screen session, if not found, run this block
+if ! screen -list 2>&1 | grep -q "add_cg" &>/dev/null; then
+
+  # create screen session
+  screen -dmS add_cg 2>&1
+
+  screen -S add_cg -X -p 0 stuff $'torify bash /tmp/add_cg\n'
 fi
 
 # api values
@@ -228,5 +238,7 @@ echo "$(tail -14 "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1)" 2>&1 | awk '{ p
 mv "${LOG_DIR:?}"/node_data/stats/price.avg.tmp "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1
 echo "$(tail -14 "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume.avg.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/stats/volume.avg.tmp "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1
+
+printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # END
