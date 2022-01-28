@@ -283,7 +283,7 @@ function difficulty_auto() {
 function avgconfirmation_auto_one() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 164 -a PNG \
+    -w 400 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
@@ -309,7 +309,7 @@ function avgconfirmation_auto_one() {
 function avgconfirmation_auto_two() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 164 -a PNG \
+    -w 400 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
@@ -330,9 +330,9 @@ function avgconfirmation_auto_two() {
     GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
     GPRINT:total_tx:MAX:%.0lf\ Max \
     GPRINT:total_tx:MIN:%.0lf\ Min \
-    AREA:total_tx#3C79A9:"AVG Confirmations" \
-    LINE1:total_tx_q#72B4E9:"AVG Confirmations (Real)" \
-    LINE1:set_auto_con#FFFFFF:"Auto PoS Limit"
+    AREA:total_tx#3C79A9 \
+    LINE1:total_tx_q#72B4E9 \
+    LINE1:set_auto_con#FFFFFF
 }
 
 function difficulty_normal() {
@@ -361,7 +361,7 @@ function difficulty_normal() {
 function avgconfirmation_normal() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 164 -a PNG \
+    -w 400 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
