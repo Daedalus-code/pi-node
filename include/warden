@@ -112,7 +112,7 @@ function run_functions() {
 }
 
 # delete old time lock
-if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/func.lock 2>&1)" -lt "$(date +%s 2>&1)" ]] &>/dev/null; then
+if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/func.lock 2>&1)" -lt "$(date +%s 2>&1 | sed 's/.//10g' 2>&1)" ]] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/func.lock &>/dev/null
 fi
 
