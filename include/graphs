@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222301
-# 0.3.6.4
+# V20222801
+# 0.4.0.0
 
 source /usr/local/bin/include/pitrump.conf
 
@@ -135,6 +135,42 @@ rrdtool graph /var/www/html/balance_graph.png \
   LINE2:value#668163:"USD" \
   LINE2:volume#6798DE
 
+# rank (24hour)
+rrdtool graph /var/www/html/rank_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "CoinMarketCap Rank" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-"${GRAPH_TIME:?}" \
+  DEF:rank=/home/"$(whoami)"/stats/rank.rrd:rank:MAX \
+  GPRINT:rank:LAST:%.0lf\ Rank \
+  LINE1:rank#8A8FAB
+
+# watchlist (24hour)
+rrdtool graph /var/www/html/watchlist_graph.png \
+  -w 400 -h 164 -a PNG \
+  --slope-mode \
+  --vertical-label "CoinMarketCap Watchlist" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-"${GRAPH_TIME:?}" \
+  DEF:watchlist=/home/"$(whoami)"/stats/watchlist.rrd:watchlist:MAX \
+  GPRINT:watchlist:LAST:%.0lf\ Watchlist \
+  LINE1:watchlist#65AABB:"Watchlist"
+
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
   -w 400 -h 164 -a PNG \
@@ -221,7 +257,7 @@ rrdtool graph /var/www/html/temp_graph.png \
 function difficulty_auto() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 1394 -h 142 -a PNG \
+    -w 800 -h 142 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
@@ -247,7 +283,7 @@ function difficulty_auto() {
 function avgconfirmation_auto_one() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 1394 -h 142 -a PNG \
+    -w 800 -h 142 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
@@ -273,7 +309,7 @@ function avgconfirmation_auto_one() {
 function avgconfirmation_auto_two() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 1394 -h 142 -a PNG \
+    -w 800 -h 142 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
@@ -302,7 +338,7 @@ function avgconfirmation_auto_two() {
 function difficulty_normal() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 1394 -h 142 -a PNG \
+    -w 800 -h 142 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
@@ -325,7 +361,7 @@ function difficulty_normal() {
 function avgconfirmation_normal() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 1394 -h 142 -a PNG \
+    -w 800 -h 142 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
