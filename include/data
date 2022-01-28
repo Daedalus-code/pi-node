@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.2.4.2
+# 0.2.3.9
 
 # shellcheck disable=SC2154
 
@@ -158,9 +158,6 @@ if [[ -z "$API_VOLUME_CG" ]] &>/dev/null; then
   # non responsive
   API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 fi
-
-printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Found ${G1:?}${API_PRICE_CG:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-printf '%b' "${LOG_DATE:?} Status() Coingcko.Api() Found ${G1:?}${API_VOLUME_CG:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 ### coinmarketcap price, volume, rank, watchlist ###############################
 
