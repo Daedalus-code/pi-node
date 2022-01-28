@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222701
-# 1.3.8.0
+# V20222801
+# 1.4.4.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1186,10 +1186,10 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
     HiddenServiceDir /var/lib/tor/trumpcoin-service/
     HiddenServicePort 15110 127.0.0.1:15110
     ${HIDDEN_SERVICE:?}
-    " >/tmp/torrc 2>&1
-          cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
+    " >"${LOG_DIR:?}"/torrc 2>&1
+          cat "${LOG_DIR:?}"/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
           # remove old files
-          rm /tmp/torrc &>/dev/null
+          rm "${LOG_DIR:?}"/torrc &>/dev/null
         fi
 
         # restart tor after configuration
@@ -1258,10 +1258,10 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
         # no swap installed, continue
         echo "[Ok] No Swap installed"
         # make change permanent
-        echo "/swapfile swap swap defaults 0 0" >/tmp/fstab.tmp
-        cat /tmp/fstab.tmp 2>/dev/null | sudo tee -a /tmp/fstab 2>&1
+        echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp
+        cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a "${LOG_DIR:?}"/fstab 2>&1
         # remove old file
-        rm /tmp/fstab.tmp &>/dev/null
+        rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
       else
         echo "[Ok] Swap already installed! -> /etc/fstab"
       fi
@@ -1270,16 +1270,17 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 
   # swap menu, after the fact
 
-  HEIGHT=11
+  HEIGHT=12
   WIDTH=23
-  CHOICE_HEIGHT=3
+  CHOICE_HEIGHT=4
   BACKTITLE="Swap options"
   TITLE="Setup Swap space"
   MENU="Choose one of the following options:"
 
   OPTIONS=(1 "Create Swap"
     2 "Delete Swap"
-    3 "Swap status")
+    3 "Swap status"
+    4 "Data to RAM")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1311,10 +1312,10 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
       # no swap installed, continue
       echo "[Ok] No Swap installed"
       #To make the change permanent open the /etc/fstab file and append the following line:
-      echo "/swapfile swap swap defaults 0 0" >/tmp/fstab.tmp
-      cat /tmp/fstab.tmp 2>/dev/null | sudo tee -a /tmp/fstab 2>&1
+      echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp
+      cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a "${LOG_DIR:?}"/fstab 2>&1
       # remove old file
-      rm /tmp/fstab.tmp &>/dev/null
+      rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
     fi
     # output memory, swap info
     echo
@@ -1357,6 +1358,67 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
     sudo free -h
     echo
     sudo swapon --show
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+    # setup data to ram
+
+  "4")
+
+    if grep "tmpfs /tmp tmpfs defaults,noatime,nosuid,size=" /etc/fstab &>/dev/null; then
+      printf '%b' "[${G1:?}Ok${N0:?}] This has already been setup!\n"
+    else
+
+      read -r -p "[YN] Setup data to RAM? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+        printf '%b' "Enter tmp size ${GR:?}Enter for default${N0:?} ${G1:?}>${N0:?} \n"
+        read -r RAM_SIZE
+        if [[ -z "$RAM_SIZE" ]] &>/dev/null; then
+          printf '%b' "[${Y1:?}!!${N0:?}] Empty! Using default 128 (megabytes)\n"
+          RAM_SIZE="128" # default set
+          sleep 2
+        else # user set
+          printf '%b' "[${G1:?}!!${N0:?}] Using ${RAM_SIZE:?} (megabytes)\n"
+        fi
+        printf '%b' "Enter spool size ${GR:?}Enter for default${N0:?} ${G1:?}>${N0:?} \n"
+        read -r RAM_SIZE_SPOOL
+        if [[ -z "$RAM_SIZE_SPOOL" ]] &>/dev/null; then
+          printf '%b' "[${Y1:?}!!${N0:?}] Empty! Using default 64 (megabytes)\n"
+          RAM_SIZE_SPOOL="64" # default set
+          sleep 2
+        else # user set
+          printf '%b' "[${G1:?}!!${N0:?}] Using ${RAM_SIZE_SPOOL:?} (megabytes)\n"
+        fi
+        # setup data to ram in fstab
+        echo "tmpfs /tmp tmpfs defaults,noatime,nosuid,size=${RAM_SIZE:?}m 0 0
+tmpfs /var/tmp tmpfs defaults,noatime,nosuid,size=${RAM_SIZE:?}m 0 0
+tmpfs /var/log tmpfs defaults,noatime,nosuid,mode=0755,size=${RAM_SIZE:?}m 0 0
+tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RAM_SIZE_SPOOL:?}m 0 0" >"${LOG_DIR:?}"/fstab.tmp
+        cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a "${LOG_DIR:?}"/fstab 2>&1
+        # remove old file
+        rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
+        read -r -p "[YN] Reboot system? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          printf '%b' "[${R1:?}!!${N0:?}] "
+          "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+          # wait on node (daemon) to stop
+          until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+            clear
+            printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+            printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
+            sleep 5
+          done
+          kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
+          sudo reboot
+        fi
+      fi
+    fi
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
