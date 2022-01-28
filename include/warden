@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222801
-# 0.2.2.9
+# V20222901
+# 0.2.3.2
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -34,26 +34,29 @@ if ! egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wait &>/dev/null; then
     cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
   fi
 
-  # greater or equal to 1800MHz + (1.8GHz + ) -> pi4
+  # 168s load = 1800 MHz average time for a default raspberry pi 400 rev 1.1
+  # 244s load = 1200 MHz average time for a default raspberry pi 3 model b rev 1.2
+
+  # greater or equal to 1800MHz + (1.8GHz + )
   if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1800" ]] &>/dev/null; then
-    echo "200" >"${LOG_DIR:?}"/node_data/wait && echo "240" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1800MHz+ ] ${G1:?}200${N0:?}/${G0:?}240${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # greater or equal to 1400MHz + (1.4GHz + ) -> pi3+
+    echo "180" >"${LOG_DIR:?}"/node_data/wait && echo "200" >>"${LOG_DIR:?}"/node_data/wait
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1800MHz+ ] ${G1:?}180${N0:?}/${G0:?}200${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # greater or equal to 1400MHz + (1.4GHz + )
   elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1400" ]] &>/dev/null; then
-    echo "260" >"${LOG_DIR:?}"/node_data/wait && echo "320" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1400 - 1800MHz ] ${G1:?}260${N0:?}/${G0:?}320${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # greater or equal to 1200MHz + (1.2GHz + ) -> pi3
+    echo "220" >"${LOG_DIR:?}"/node_data/wait && echo "240" >>"${LOG_DIR:?}"/node_data/wait
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1400 - 1800MHz ] ${G1:?}220${N0:?}/${G0:?}240${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # greater or equal to 1200MHz + (1.2GHz + )
   elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "1200" ]] &>/dev/null; then
-    echo "300" >"${LOG_DIR:?}"/node_data/wait && echo "360" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1200 - 1400MHz ] ${G1:?}300${N0:?}/${G0:?}360${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # greater or equal to 900MHz + (0.9GHz + ) -> pi2
+    echo "245" >"${LOG_DIR:?}"/node_data/wait && echo "265" >>"${LOG_DIR:?}"/node_data/wait
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 1200 - 1400MHz ] ${G1:?}245${N0:?}/${G0:?}265${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # greater or equal to 900MHz + (0.9GHz + )
   elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "900" ]] &>/dev/null; then
-    echo "420" >"${LOG_DIR:?}"/node_data/wait && echo "480" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 900 - 1200MHz ] ${G1:?}420${N0:?}/${G0:?}480${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # greater or equal to 600MHz + (0.6GHz + ) -> pi
+    echo "300" >"${LOG_DIR:?}"/node_data/wait && echo "360" >>"${LOG_DIR:?}"/node_data/wait
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 900 - 1200MHz ] ${G1:?}300${N0:?}/${G0:?}360${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # greater or equal to 600MHz + (0.6GHz + )
   elif [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -ge "600" ]] &>/dev/null; then
-    echo "600" >"${LOG_DIR:?}"/node_data/wait && echo "940" >>"${LOG_DIR:?}"/node_data/wait
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 600 - 900MHz ] ${G1:?}600${N0:?}/${G0:?}940${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    echo "545" >"${LOG_DIR:?}"/node_data/wait && echo "600" >>"${LOG_DIR:?}"/node_data/wait
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ 600 - 900MHz ] ${G1:?}545${N0:?}/${G0:?}600${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -105,14 +108,14 @@ else
   ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/add_peers.check 2>&1 | awk '{ print $1 }' 2>&1)
   # kill time jump
   if [[ "$SCREEN_CALC" -gt "42" ]] &>/dev/null; then
-    killall screen &>/dev/null
+    screen -X -S add_peers quit
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script. (time jump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND="${GR:?}*${N0:?}"
     SCREEN_VALUE="${GR:?}0${N0:?}"
   fi
   # kill wrong list
   if [[ "$SCREEN_CALC" -gt "$(echo "$ADD_LINE/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-    killall screen &>/dev/null
+    screen -X -S add_peers quit
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND="${GR:?}*${N0:?}"
     SCREEN_VALUE="${GR:?}0${N0:?}"
