@@ -26,7 +26,7 @@ LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 ### wait time based on cpu speed ###############################################
 
-if [ ! -f "${LOG_DIR:?}"/node_data/stats/cpuspeed ] &>/dev/null; then
+if ! egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wait &>/dev/null; then
 
   # do this once (cpu speed, wait time)
   if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
