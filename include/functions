@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222701
-# 1.3.2.4
+# V20222801
+# 1.3.3.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.3.2.4"
+VERSION="v1.3.3.7"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -35,7 +35,7 @@ until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
 done
 
-# uptime_daemon function
+# wallet daemon uptime in seconds
 function uptime_daemon() {
   PID="$(pidof trumpcoind 2>&1)"
   HZ=$(getconf CLK_TCK 2>&1)
