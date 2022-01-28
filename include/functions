@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222701
-# 1.3.2.3
+# 1.3.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.3.2.3"
+VERSION="v1.3.2.4"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -1067,7 +1067,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
 
     # random start number
-    RANDOM_TIMELINE=$((((RANDOM % 17) + 1)))
+    RANDOM_TIMELINE=$((((RANDOM % 18) + 1)))
 
     if [[ -z "$RANDOM_TIMELINE" ]] &>/dev/null; then
       # non responsive, go with difficulty
@@ -1227,6 +1227,13 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE=$(printf '%b' "$(cat "${LOG_DIR:?}"/node_data/stats/cpuinfo 2>/dev/null)" 2>&1)
     elif [ "$RANDOM_TIMELINE" -eq "17" ] &>/dev/null; then
       TIMELINE="${SYS_UPTIME:?}"
+    # get model info
+    elif [ "$RANDOM_TIMELINE" -eq "18" ] &>/dev/null; then
+      TIMELINE_MODEL=$(cat /proc/device-tree/model 2>/dev/null)
+      TIMELINE_MODEL="Model ${TIMELINE_MODEL:?}"
+      if [[ -z "$TIMELINE_MODEL" ]] &>/dev/null; then
+        TIMELINE_MODEL="${GR:?}Unknown${N0:?}"
+      fi
 
       if [[ -z "$TIMELINE" ]]; then
         # non responsive (think)
