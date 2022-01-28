@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.2.0.6
+# 0.2.0.3
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -26,10 +26,10 @@ LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 ### wait time based on cpu speed ###############################################
 
-if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuspeed ]] &>/dev/null; then
+if [ ! -f "${LOG_DIR:?}"/node_data/stats/cpuspeed ] &>/dev/null; then
 
   # do this once (cpu speed, wait time)
-  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ]] &>/dev/null; then
+  if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
     lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu 2>&1
     cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
   fi
@@ -163,11 +163,8 @@ function run_functions() {
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
-  # create lock file
-  touch "${LOG_DIR:?}"/func.lock &>/dev/null
-
   # time.dashbord exist, continue
-  if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+  if [ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ] &>/dev/null; then
 
     DETACH="${G1:?}<${N0:?} [ ${G1:?}pitrump${N0:?} ]"
 
