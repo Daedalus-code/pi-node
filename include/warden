@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.1.7.8
+# 0.1.8.4
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -88,6 +88,12 @@ fi
 # daemon uptime greater then n
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   if pgrep -x trumpcoind &>/dev/null; then
+
+    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/uptime ]] &>/dev/null; then
+      # get system uptime information
+      uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/stats/uptime 2>&1
+    fi
+
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?} ${GR:?}$SCREEN_VALUE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() System.Warden: $(cat "${LOG_DIR:?}"/node_data/stats/uptime 2>/dev/null)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
