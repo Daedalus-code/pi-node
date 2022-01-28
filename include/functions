@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222801
-# 1.4.0.4
+# 1.4.1.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.0.4"
+VERSION="v1.4.1.0"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -299,7 +299,7 @@ fi
 
 ### coinmarketcap data #########################################################
 
-# if success, create files
+# if success, create files, reset requests file
 if grep "success" "${LOG_DIR:?}"/node_data/requests &>/dev/null; then
 
   # get token price
@@ -310,6 +310,8 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests &>/dev/null; then
   grep "Market Rank" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1 | tail -1 2>&1 | tr -d '#' 2>&1 | awk '{ print $3 }' >"${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1
   # get token watchlist
   grep "watchlists" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1 | tr -d ',' 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1
+
+  rm "${LOG_DIR:?}"/node_data/requests &>/dev/null
 fi
 
 if [[ -f "${LOG_DIR:?}"/node_data/stats/price.cmc ]] &>/dev/null; then
