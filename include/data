@@ -199,9 +199,9 @@ done
 EOF
 
 # reset requests file
-if grep "success" "${LOG_DIR:?}"/node_data/requests &>/dev/null; then
+if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
-  rm "${LOG_DIR:?}"/node_data/requests &>/dev/null
+  rm "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null
 fi
 
 # look for screen session, if not found, run this block
@@ -216,7 +216,7 @@ if ! screen -list 2>&1 | grep -q "add_cmc" &>/dev/null; then
 fi
 
 # if success, continue
-if grep "success" "${LOG_DIR:?}"/node_data/requests &>/dev/null; then
+if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
   if [[ -z "$API_PRICE_CMC" ]] &>/dev/null; then
     # make sure ticker exist, use rrdtool database, if available
