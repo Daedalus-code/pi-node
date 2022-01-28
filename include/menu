@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 1.4.4.2
+# 1.4.4.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1376,7 +1376,8 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-        printf '%b' "Enter tmp size ${GR:?}Enter for default${N0:?} ${G1:?}>${N0:?} \n"
+        printf '%b' "Enter tmp size ${GR:?}Enter for default${N0:?}
+${G1:?}>${N0:?} "
         read -r RAM_SIZE
         if [[ -z "$RAM_SIZE" ]] &>/dev/null; then
           printf '%b' "[${Y1:?}!!${N0:?}] Empty! Using default 128 (megabytes)\n"
@@ -1385,7 +1386,8 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
         else # user set
           printf '%b' "[${G1:?}!!${N0:?}] Using ${RAM_SIZE:?} (megabytes)\n"
         fi
-        printf '%b' "Enter spool size ${GR:?}Enter for default${N0:?} ${G1:?}>${N0:?} \n"
+        printf '%b' "Enter spool size ${GR:?}Enter for default${N0:?}
+${G1:?}>${N0:?} "
         read -r RAM_SIZE_SPOOL
         if [[ -z "$RAM_SIZE_SPOOL" ]] &>/dev/null; then
           printf '%b' "[${Y1:?}!!${N0:?}] Empty! Using default 64 (megabytes)\n"
