@@ -1401,7 +1401,7 @@ ${G1:?}>${N0:?} "
 tmpfs /var/tmp tmpfs defaults,noatime,nosuid,size=${RAM_SIZE:?}m 0 0
 tmpfs /var/log tmpfs defaults,noatime,nosuid,mode=0755,size=${RAM_SIZE:?}m 0 0
 tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RAM_SIZE_SPOOL:?}m 0 0" >"${LOG_DIR:?}"/fstab.tmp
-        cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a "${LOG_DIR:?}"/fstab 2>&1
+        cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a /etc/fstab 2>&1
         # remove old file
         rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
         read -r -p "[YN] Reboot system? y/n " -n 1 -r
