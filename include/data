@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222801
-# 0.2.3.9
+# 0.2.3.8
 
 # shellcheck disable=SC2154
 
@@ -61,7 +61,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
   # setup api file
   cat "${LOG_DIR:?}"/node_data/nodes.api 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/nodes.all 2>&1
-  printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Found ${G1:?}${API_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   ### arp -a intranet ##########################################################
