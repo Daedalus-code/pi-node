@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222801
-# 1.4.1.0
+# 1.4.0.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.1.0"
+VERSION="v1.4.0.8"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -311,19 +311,17 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests &>/dev/null; then
   # get token watchlist
   grep "watchlists" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1 | tr -d ',' 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1
 
-  rm "${LOG_DIR:?}"/node_data/requests &>/dev/null
-fi
-
-if [[ -f "${LOG_DIR:?}"/node_data/stats/price.cmc ]] &>/dev/null; then
   # api values
   API_PRICE_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/price.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
   API_VOLUME_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  API_RANK_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
-  API_WATCH_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
+  API_RANK_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  API_WATCH_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
   printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Found ${G1:?}${API_PRICE_CMC:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Found ${G1:?}${API_VOLUME_CMC:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Found ${G1:?}${API_RANK_CMC:?}${N0:?} rank!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() CoinMCap.Api() Found ${G1:?}${API_WATCH_CMC:?}${N0:?} watchlist!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+  rm "${LOG_DIR:?}"/node_data/requests &>/dev/null
 fi
 
 ### wallet information #########################################################
