@@ -140,7 +140,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
       if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
 
-        DETACH="${CY:?}<<${N0:?} [ ${CY:?}Swap${N0:?} ]"
+        DETACH="${C1:?}>>${N0:?} [ ${C1:?}Swap${N0:?} ]"
 
         run_functions
         # remove old file
