@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222801
+# V20222901
 # 0.4.9.6
 
 source /usr/local/bin/include/pitrump.conf
@@ -15,7 +15,7 @@ if [ ! -d /home/"$(whoami)"/stats ] &>/dev/null; then
   mkdir /home/"$(whoami)"/stats &>/dev/null
 fi
 
-# get waiting orders
+# waiting values
 WAIT_TIME=$(head -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
 
 # non responsive, use default timer
