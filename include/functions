@@ -1040,9 +1040,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
     # repository latest time
     LATEST_TIME=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%H:%M:%S')
 
-    # count all new outbound peer inside debug.log
+    # count all new outbound peers inside debug.log
     P2P_SUCCESS=$(grep -c "New outbound peer" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
-    # count all new outbound peer inside debug.log
+    # count all new outbound peers inside failed
     P2P_FAILED=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
     # calculate p2p success rate
     P2P_RATE=$(echo "100/$P2P_FAILED*$P2P_SUCCESS" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
