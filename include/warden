@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222901
-# 0.2.9.0
+# 0.3.0.3
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -179,6 +179,19 @@ else
 
   # still running
   SCREEN_IND_P2P="${CY:?}*${N0:?}"
+fi
+
+if [[ -z "$SCREEN_VALUE_CG" ]] &>/dev/null; then
+  # non responsive
+  SCREEN_VALUE_CG="0"
+fi
+if [[ -z "$SCREEN_VALUE_CMC" ]] &>/dev/null; then
+  # non responsive
+  SCREEN_VALUE_CMC="0"
+fi
+if [[ -z "$SCREEN_VALUE_P2P" ]] &>/dev/null; then
+  # non responsive
+  SCREEN_VALUE_P2P="0"
 fi
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
