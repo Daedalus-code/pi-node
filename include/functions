@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222901
-# 1.3.9.7
+# 1.4.1.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.3.9.7"
+VERSION="v1.4.1.2"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -841,15 +841,30 @@ fi
 
 ### add_peers screen script ####################################################
 
+# create screen list
+screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+
 # kill dead screens
-if screen -list 2>&1 | grep "dead" &>/dev/null; then
-  screen -wipe &>/dev/null
-  killall screen &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script screen dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep "dead" &>/dev/null; then
+  if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then
+    screen -wipe &>/dev/null
+    screen -X -S add_peers quit
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_peers) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+  if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cmc" &>/dev/null; then
+    screen -wipe &>/dev/null
+    screen -X -S add_cmc quit
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cmc) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+  if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cg" &>/dev/null; then
+    screen -wipe &>/dev/null
+    screen -X -S add_cg quit
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cg) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 fi
 
 # look for screen session, if not found, run this block
-if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
+if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then
 
   cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
   # make sure addnodes is clean of successfully peers, as above as below
@@ -928,7 +943,7 @@ if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
     # make sure add_peers exist
     if [ ! -f "${LOG_DIR:?}"/add_peers ] &>/dev/null; then
       # connect nodes found with nodes list above, (using tmp directory)
-      cat >/tmp/add_peers <<'EOF'
+      cat >"${LOG_DIR:?}"/add_peers <<'EOF'
 #!/bin/bash
 
 # By Rainman
@@ -962,7 +977,7 @@ EOF
 
       # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
       # start adding nodes, inside screen session (timeout n seconds)
-      timeout 1800 screen -S add_peers -X -p 0 stuff $'bash /tmp/add_peers\n'
+      timeout 1800 screen -S add_peers -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
     else
       printf '%b' "${LOG_DATE:?} Status() Addnode.Script skipping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
