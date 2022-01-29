@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222901
-# 1.3.9.5
+# 1.3.9.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.3.9.5"
+VERSION="v1.3.9.7"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -288,12 +288,14 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
   screen -X -S add_cmc quit
   rm "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null
+  printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### coingecko data #############################################################
 
 # if success, create files, reset requests.cg file
 if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
+  printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   # get token price
   grep -o -P '(?<=,).*(?=]],"m)' "${LOG_DIR:?}"/node_data/stats/raw.coingcko >"${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
