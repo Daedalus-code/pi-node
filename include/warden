@@ -149,7 +149,7 @@ else
 
   # screen add_peers
   NOW_TIME_P2P=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
-  SCREEN_TIME_P2P=$(screen -list 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1 | tail -1 2>&1)
+  SCREEN_TIME_P2P=$(screen -list 2>&1 | grep "add_peers" 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1 | tail -1 2>&1)
   SCREEN_CALC_P2P=$(echo "$NOW_TIME_P2P-$SCREEN_TIME_P2P" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
   if [[ -z "$SCREEN_CALC_P2P" ]] &>/dev/null; then
