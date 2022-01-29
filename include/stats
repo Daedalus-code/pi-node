@@ -16,7 +16,7 @@ if [ ! -d /home/"$(whoami)"/stats ] &>/dev/null; then
 fi
 
 # waiting values
-WAIT_TIME=$(head -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
+WAIT_TIME=$(head -1 "${WALLET_DIR:?}"/wait 2>&1)
 
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then

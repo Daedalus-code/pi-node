@@ -77,8 +77,8 @@ date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
 LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
 
 # waiting values
-WAIT_TIME=$(head -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
-WAIT_TIME_BLOCK=$(tail -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
+WAIT_TIME=$(head -1 "${WALLET_DIR:?}"/wait 2>&1)
+WAIT_TIME_BLOCK=$(tail -1 "${WALLET_DIR:?}"/wait 2>&1)
 
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
