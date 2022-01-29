@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222901
-# 1.5.6.3
+# 1.5.7.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -945,9 +945,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
 "6")
 
-  HEIGHT=16
+  HEIGHT=17
   WIDTH=47
-  CHOICE_HEIGHT=9
+  CHOICE_HEIGHT=10
   BACKTITLE="Node configuration(s)"
   TITLE="Edit configuration"
   MENU="Choose one option:"
@@ -959,8 +959,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     5 "Torrc            Tor configuration"
     6 "Crontab          Job scheduler"
     7 "Crontab (root)   Admin job scheduler"
-    8 "Reset Graphs     Reset/Remove graphs"
-    9 "Reset            Reset config(s)")
+    8 "/etc/fstab       Filesystem table"
+    9 "Reset Graphs     Reset/Remove graphs"
+    10 "Reset            Reset config(s)")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -975,7 +976,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "1")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] looking into trumpcoin.conf!\n"
+    printf '%b' "[${G1:?}Ok${N0:?}] trumpcoin.conf!\n"
     nano "${WALLET_DIR:?}"/trumpcoin.conf
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
@@ -984,7 +985,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "2")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] looking into patriotnode.conf!\n"
+    printf '%b' "[${G1:?}Ok${N0:?}] patriotnode.conf!\n"
     nano "${WALLET_DIR:?}"/patriotnode.conf
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
@@ -993,7 +994,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "3")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] looking into pitrump.conf!\n"
+    printf '%b' "[${G1:?}Ok${N0:?}] pitrump.conf!\n"
     nano /usr/local/bin/include/pitrump.conf
     if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
       read -r -p "[YN] Update graphs? y/n " -n 1 -r
@@ -1015,7 +1016,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "4")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] looking into config.txt!\n"
+    printf '%b' "[${G1:?}Ok${N0:?}] config.txt!\n"
     sudo nano /boot/config.txt
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
@@ -1024,7 +1025,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "5")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] looking into torrc!\n"
+    printf '%b' "[${G1:?}Ok${N0:?}] torrc!\n"
     sudo nano /etc/tor/torrc
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
@@ -1051,10 +1052,22 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     ;;
 
-    # remove rrdtool graphs
+    # edit fstab - filesystem table
 
   "8")
 
+    printf '%b' "[${G1:?}Ok${N0:?}] fstab!\n"
+    sudo nano /etc/fstab
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+    # remove rrdtool graphs
+
+  "9")
+
+    echo "[IN] Databases has room for 3 year of data"
     read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -1066,7 +1079,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     ;;
 
-  "9")
+  "10")
 
     HEIGHT=11
     WIDTH=31

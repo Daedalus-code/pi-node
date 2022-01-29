@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222901
-# 1.4.1.5
+# 1.4.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.1.5"
+VERSION="v1.4.3.1"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -714,11 +714,11 @@ fi
 ### adding nodes, create failed and success lists ##############################
 
 if [ ! -f "${WALLET_DIR:?}"/addnodes ] &>/dev/null; then
-  # make sure addnodes backup exist
+  # make sure addnodes file exist
   touch "${WALLET_DIR:?}"/addnodes &>/dev/null
 fi
 if [ ! -f "${LOG_DIR:?}"/node_data/peers.tmp ] &>/dev/null; then
-  # make sure peers.tmp backup exist
+  # make sure peers.tmp file exist
   touch "${LOG_DIR:?}"/node_data/peers.tmp &>/dev/null
 fi
 
@@ -1385,20 +1385,36 @@ fi
 
 ### backup values ##############################################################
 
-# backup ticker price
-if [ -f "${LOG_DIR:?}"/node_data/stats/price ] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/stats/price "${WALLET_DIR:?}"/price 2>&1
+# backup api price (coingecko)
+if [ -f "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg 2>&1
 else # restore it
-  cp "${WALLET_DIR:?}"/price "${LOG_DIR:?}"/node_data/stats/price 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Price! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price 2>&1)${GR:?} :: ${N0:?}Ticker price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Price! (CG) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1)${GR:?} :: ${N0:?}API price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
-# backup ticker volume
-if [ -f "${LOG_DIR:?}"/node_data/stats/volume ] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/stats/volume "${WALLET_DIR:?}"/volume 2>&1
+# backup api volume (coingecko)
+if [ -f "${LOG_DIR:?}"/node_data/stats/volume.cg ] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/stats/volume.cg "${WALLET_DIR:?}"/volume.cg 2>&1
 else # restore it
-  cp "${WALLET_DIR:?}"/volume "${LOG_DIR:?}"/node_data/stats/volume 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Volume! - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume 2>&1)${GR:?} :: ${N0:?}Ticker volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  cp "${WALLET_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Volume! (CG) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1)${GR:?} :: ${N0:?}API volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
+
+# backup api rank (coinmarketcap)
+if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/stats/rank.cmc "${WALLET_DIR:?}"/rank.cmc 2>&1
+else # restore it
+  cp "${WALLET_DIR:?}"/rank.cmc "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1
+  printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Rank! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1)${GR:?} :: ${N0:?}API rank data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
+
+# backup api watchlist (coinmarketcap)
+if [ -f "${LOG_DIR:?}"/node_data/stats/watchlist.cmc ] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/stats/watchlist.cmc "${WALLET_DIR:?}"/watchlist.cmc 2>&1
+else # restore it
+  cp "${WALLET_DIR:?}"/watchlist.cmc "${LOG_DIR:?}"/node_data/stats/watchlist.cmc 2>&1
+  printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Watchlist! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/watchlist.cmc 2>&1)${GR:?} :: ${N0:?}API watchlist data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### theme ######################################################################
