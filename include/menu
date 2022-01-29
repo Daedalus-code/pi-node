@@ -46,7 +46,7 @@ TITLE="Node Options"
 MENU="Choose one option:"
 
 OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
-  2 "Keys Menu        Dump/Import keys, PoS (${POS_COUNT:?})"
+  2 "Keys Menu        Dump/Import keys PoS (${POS_COUNT:?})"
   3 "Information      Trump node status"
   4 "System Space     Disk space utilized"
   5 "Download Menu    Download & Install"
