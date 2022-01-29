@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222901
-# 1.4.9.0
+# 1.5.6.3
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -51,9 +51,9 @@ OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   4 "System Space     Disk space utilized"
   5 "Download Menu    Download & Install"
   6 "Configuration    Node configuration(s)"
-  7 "Reset Graphs     Reset/Remove graphs"
-  8 "Swap Menu        Swap space options"
-  9 "UFW Menu         Uncomplicated firewall"
+  7 "Swap Menu        Swap space options"
+  8 "UFW Menu         Uncomplicated firewall"
+  9 "Tor Menu         Proxy options (tor)"
   10 "Quit             Exit menu")
 
 CHOICE=$(dialog --clear \
@@ -247,7 +247,7 @@ Then the importprivkey can be used with this output
 
   ;;
 
-"9")
+"8")
 
   HEIGHT=14
   WIDTH=46
@@ -943,26 +943,11 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   ;;
 
-  # remove rrdtool graphs
-
-"7")
-
-  read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-    rm -r /home/"$(whoami)"/stats/* &>/dev/null
-    echo
-    read -r -p "[Ok] rrdtool graphs removed! Press Enter to continue" </dev/tty
-    echo
-  fi
-
-  ;;
-
 "6")
 
-  HEIGHT=15
+  HEIGHT=16
   WIDTH=47
-  CHOICE_HEIGHT=8
+  CHOICE_HEIGHT=9
   BACKTITLE="Node configuration(s)"
   TITLE="Edit configuration"
   MENU="Choose one of the following options:"
@@ -974,7 +959,8 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     5 "Torrc            Tor configuration"
     6 "Crontab          Job scheduler"
     7 "Crontab (root)   Admin job scheduler"
-    8 "Reset            Reset config(s)")
+    8 "Reset Graphs     Reset/Remove graphs"
+    9 "Reset            Reset config(s)")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1065,7 +1051,22 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
     ;;
 
+    # remove rrdtool graphs
+
   "8")
+
+    read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      rm -r /home/"$(whoami)"/stats/* &>/dev/null
+      echo
+      read -r -p "[Ok] rrdtool graphs removed! Press Enter to continue" </dev/tty
+      echo
+    fi
+
+    ;;
+
+  "9")
 
     HEIGHT=12
     WIDTH=31
@@ -1241,7 +1242,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 
   # swap options
 
-"8")
+"7")
 
   # get total physical system memory, do this once
   if [[ ! -f "${WALLET_DIR:?}"/swapinfo ]] &>/dev/null; then
@@ -1470,6 +1471,78 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
+
+    ;;
+
+  esac
+
+  ;;
+
+  # proxy (tor) menu
+
+"9")
+
+  HEIGHT=11
+  WIDTH=33
+  CHOICE_HEIGHT=3
+  BACKTITLE="Tor menu"
+  TITLE="Proxy options (tor)"
+  MENU="Choose one of the following options:"
+
+  OPTIONS=(1 "Stop tor (service)"
+    2 "Restart tor (service)"
+    3 "Nyx Monitor")
+
+  CHOICE=$(dialog --clear \
+    --backtitle "$BACKTITLE" \
+    --title "$TITLE" \
+    --menu "$MENU" \
+    $HEIGHT $WIDTH $CHOICE_HEIGHT \
+    "${OPTIONS[@]}" \
+    2>&1 >/dev/tty)
+
+  clear
+  case $CHOICE in
+
+  "1")
+
+    printf '%b' "[${Y1:?}!!${N0:?}] Stopping!\n"
+    printf '%b' "[${Y1:?}!!${N0:?}] $(sudo service tor stop)!\n"
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+  "2")
+
+    printf '%b' "[${Y1:?}!!${N0:?}] Restarting!\n"
+    printf '%b' "[${Y1:?}!!${N0:?}] $(sudo service tor restart)!\n"
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    ;;
+
+    # nyx - https://nyx.torproject.org
+
+  "3")
+
+    if ! [ -x "$(command -v nyx)" ] &>/dev/null; then
+      read -r -p "[YN] Install Nyx (command-line monitor for Tor)? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        sudo apt-get install nyx -y
+        echo
+        read -r -p "[Ok] nyx installed! Press Enter to continue" </dev/tty
+        echo
+        # run nyx
+        sudo nyx
+      fi
+    else
+      # run nyx
+      sudo nyx
+    fi
 
     ;;
 
