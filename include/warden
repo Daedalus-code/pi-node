@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222901
+# V20223001
 # 0.3.0.3
 
 # pitrump configuration
@@ -26,15 +26,15 @@ LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 ### wait time based on cpu speed ###############################################
 
+# do this once (cpu speed, wait time)
+if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
+  lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu 2>&1
+  cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
+fi
+
 if ! egrep "[0-9]+" "${WALLET_DIR:?}"/wait &>/dev/null; then
 
   if grep "LoadBlockIndexDB: last block file info: CBlockFileInfo(blocks=" "${LOG_DIR:?}"/debug.log &>/dev/null; then
-
-    # do this once (cpu speed, wait time)
-    if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
-      lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu 2>&1
-      cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
-    fi
 
     # 142s load = 1800 MHz average time for a default raspberry pi 400 rev 1.1
     # 360s load = 1200 MHz average time for a default raspberry pi 3 model b rev 1.2
