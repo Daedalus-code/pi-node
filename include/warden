@@ -94,7 +94,7 @@ else
 
   if [[ -z "$SCREEN_CALC_CG" ]] &>/dev/null; then
     # non responsive
-    SCREEN_VALUE_CG="${GR:?}0${N0:?}"
+    SCREEN_VALUE_CG="${GR:?}0${GR:?}"
   else
     SCREEN_VALUE_CG="${SCREEN_CALC_CG:?}"
   fi
@@ -104,7 +104,7 @@ else
     screen -X -S add_cg quit
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cg script. (old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND_CG="${GR:?}*${N0:?}"
-    SCREEN_VALUE_CG="${GR:?}0${N0:?}"
+    SCREEN_VALUE_CG="${GR:?}0${GR:?}"
   fi
 
   # still running
@@ -124,7 +124,7 @@ else
 
   if [[ -z "$SCREEN_CALC_CMC" ]] &>/dev/null; then
     # non responsive
-    SCREEN_VALUE_CMC="${GR:?}0${N0:?}"
+    SCREEN_VALUE_CMC="${GR:?}0${GR:?}"
   else
     SCREEN_VALUE_CMC="${SCREEN_CALC_CMC:?}"
   fi
@@ -134,7 +134,7 @@ else
     screen -X -S add_cmc quit
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cmc script. (old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND_CMC="${GR:?}*${N0:?}"
-    SCREEN_VALUE_CMC="${GR:?}0${N0:?}"
+    SCREEN_VALUE_CMC="${GR:?}0${GR:?}"
   fi
 
   # still running
@@ -154,7 +154,7 @@ else
 
   if [[ -z "$SCREEN_CALC_P2P" ]] &>/dev/null; then
     # non responsive
-    SCREEN_VALUE_P2P="${GR:?}0${N0:?}"
+    SCREEN_VALUE_P2P="${GR:?}0${GR:?}"
   else
     SCREEN_VALUE_P2P="${SCREEN_CALC_P2P:?}"
   fi
@@ -166,7 +166,7 @@ else
     screen -X -S add_peers quit
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script. (time jump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND_P2P="${GR:?}*${N0:?}"
-    SCREEN_VALUE_P2P="${GR:?}0${N0:?}"
+    SCREEN_VALUE_P2P="${GR:?}0${GR:?}"
   fi
 
   # kill screen session being to long (max 30 seconds on average for each connection attempt)
@@ -174,7 +174,7 @@ else
     screen -X -S add_peers quit
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND_P2P="${GR:?}*${N0:?}"
-    SCREEN_VALUE_P2P="${GR:?}0${N0:?}"
+    SCREEN_VALUE_P2P="${GR:?}0${GR:?}"
   fi
 
   # still running
@@ -183,15 +183,15 @@ fi
 
 if [[ -z "$SCREEN_VALUE_CG" ]] &>/dev/null; then
   # non responsive
-  SCREEN_VALUE_CG="${GR:?}0${N0:?}"
+  SCREEN_VALUE_CG="${GR:?}0${GR:?}"
 fi
 if [[ -z "$SCREEN_VALUE_CMC" ]] &>/dev/null; then
   # non responsive
-  SCREEN_VALUE_CMC="${GR:?}0${N0:?}"
+  SCREEN_VALUE_CMC="${GR:?}0${GR:?}"
 fi
 if [[ -z "$SCREEN_VALUE_P2P" ]] &>/dev/null; then
   # non responsive
-  SCREEN_VALUE_P2P="${GR:?}0${N0:?}"
+  SCREEN_VALUE_P2P="${GR:?}0${GR:?}"
 fi
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
