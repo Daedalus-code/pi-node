@@ -1372,10 +1372,10 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
       # look for crontab setup
       if ! sudo crontab -l 2>&1 | grep "@reboot" &>/dev/null; then
         CRON_JOB="@reboot sudo mkdir /var/log/apache2"
-        (# add cron job fro apache2
-          crontab -l 2>/dev/null
+        (# add cron job for apache2 @reboot (root)
+          sudo crontab -l 2>/dev/null
           echo "${CRON_JOB:?}"
-        ) | crontab -
+        ) | sudo crontab -
         printf '%b' "[${G1:?}Ok${N0:?}] (sudo) Crontab installing!\n"
       else
         printf '%b' "[${G1:?}Ok${N0:?}] (sudo) Crontab installed!\n"
