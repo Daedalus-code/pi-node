@@ -104,7 +104,7 @@ case $CHOICE in
       if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
         cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
       fi # only ask if wallet is not synced
-      if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+      if ! grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
         read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
