@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222801
+# V20222901
 # 1.3.9.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -407,7 +407,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME_BLOC
   # wallet sync (no color)
   WALLET_SYNC_N="$WALLET_SYNC"
   # wallet sync (color+symbol)
-  WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
+  WALLET_SYNC="${G1:?}${WALLET_SYNC:?}${N0:?}"
 
 else
   WALLET_SYNC="${GR:?}0.00%${N0:?}"
