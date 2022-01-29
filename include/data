@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222901
-# 0.2.7.2
+# 0.2.7.6
 
 # shellcheck disable=SC2154
 
@@ -205,6 +205,8 @@ if [[ "$RANDOM_SCREEN" -eq "1" ]] &>/dev/null; then
     sleep 1
     screen -S add_cg -X -p 0 stuff $'torify bash '"${LOG_DIR:?}"'/add_cg\n'
   fi
+  # create screen list
+  screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 fi
 
 # run with cmc
@@ -222,6 +224,8 @@ if [[ "$RANDOM_SCREEN" -eq "2" ]] &>/dev/null; then
     sleep 1
     screen -S add_cmc -X -p 0 stuff $'torify bash '"${LOG_DIR:?}"'/add_cmc\n'
   fi
+  # create screen list
+  screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 fi
 
 ### screen session(s) done #####################################################

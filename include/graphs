@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222801
-# 0.4.0.0
+# V20222901
+# 0.4.0.6
 
 source /usr/local/bin/include/pitrump.conf
 
@@ -81,8 +81,10 @@ rrdtool graph /var/www/html/peers_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:peers=/home/"$(whoami)"/stats/peers.rrd:peers:MAX \
+  DEF:peers=/home/"$(whoami)"/stats/peers.rrd:peers:AVERAGE \
   DEF:banned_peers=/home/"$(whoami)"/stats/banned_peers.rrd:banned_peers:MAX \
   GPRINT:peers:LAST:%.0lf\ Now \
+  GPRINT:peers:LAST:%.0lf\ AVG \
   GPRINT:banned_peers:LAST:%.0lf\ Bans \
   GPRINT:peers:AVERAGE:%.0lf\ AVG \
   GPRINT:peers:MAX:%.0lf\ Max \
@@ -150,7 +152,9 @@ rrdtool graph /var/www/html/rank_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:rank=/home/"$(whoami)"/stats/rank.rrd:rank:MAX \
+  DEF:rank=/home/"$(whoami)"/stats/rank.rrd:rank:AVERAGE \
   GPRINT:rank:LAST:%.0lf\ Rank \
+  GPRINT:rank:LAST:%.0lf\ Rank AVG \
   LINE1:rank#8A8FAB:"Rank"
 
 # watchlist (24hour)
@@ -168,7 +172,9 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:watchlist=/home/"$(whoami)"/stats/watchlist.rrd:watchlist:MAX \
+  DEF:watchlist=/home/"$(whoami)"/stats/watchlist.rrd:watchlist:AVERAGE \
   GPRINT:watchlist:LAST:%.0lf\ Watchlist \
+  GPRINT:watchlist:LAST:%.0lf\ Watchlist AVG \
   LINE1:watchlist#65AABB:"Watchlist"
 
 # network (24hour)
