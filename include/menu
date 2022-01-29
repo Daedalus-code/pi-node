@@ -1376,7 +1376,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
           sudo crontab -l 2>/dev/null
           echo "${CRON_JOB:?}"
         ) | sudo crontab -
-        printf '%b' "[${G1:?}Ok${N0:?}] (sudo) Crontab installing!\n"
+        printf '%b' "[${Y1:?}Ok${N0:?}] (sudo) Crontab installing!\n"
       else
         printf '%b' "[${G1:?}Ok${N0:?}] (sudo) Crontab installed!\n"
       fi
