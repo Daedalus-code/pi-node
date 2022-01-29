@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222901
-# 1.4.6.4
+# 1.4.7.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.6.4"
+VERSION="v1.4.7.0"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -92,6 +92,12 @@ fi
 
 # do this once (lscpu values)
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
+
+  # do this once (cpu speed, wait time)
+  if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
+    lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu 2>&1
+    cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
+  fi
 
   # get cpu count, threads, cores, vendor id, model and speed
   CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
