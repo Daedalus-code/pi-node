@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222901
-# 0.2.3.3
+# 0.2.2.7
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -28,40 +28,34 @@ LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 if ! egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wait &>/dev/null; then
 
-  # do this once (cpu speed, wait time)
-  if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
-    lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu 2>&1
-    cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
-  fi
+  if grep "LoadBlockIndexDB: last block file info: CBlockFileInfo(blocks=" "${LOG_DIR:?}"/debug.log &>/dev/null; then
 
-  # 142s load = 1800 MHz average time for a default raspberry pi 400 rev 1.1
-  # 360s load = 1200 MHz average time for a default raspberry pi 3 model b rev 1.2
-
-  BOOTS=$(head -1 "${LOG_DIR:?}"/debug.log 2>&1)
-  READY=$(grep "LoadBlockIndexDB: last block file info: CBlockFileInfo(blocks=" "${LOG_DIR:?}"/debug.log 2>&1 | head -1 2>&1 | awk '{ print $1 }' 2>&1)
-
-  BOOTS=$(echo "$BOOTS" 2>&1 | egrep -o "T[0-9]+:[0-9]+:[0-9]+" 2>&1 | tr -d 'T' 2>&1)
-  READY=$(echo "$READY" 2>&1 | egrep -o "T[0-9]+:[0-9]+:[0-9]+" 2>&1 | tr -d 'T' 2>&1)
-
-  # creat wait_time
-  echo "$(echo "$READY" 2>&1 | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }' 2>&1)-$(echo "$BOOTS" 2>&1 | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }')" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wait
-  # create wait_time_block
-  echo "$(cat "${LOG_DIR:?}"/node_data/wait)+60" 2>&1 | bc -l >>"${LOG_DIR:?}"/node_data/wait 2>&1
-
-  # cpu less than 1200MHz, use default values
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -lt "1200" ]] &>/dev/null; then
-    echo "360" >"${LOG_DIR:?}"/node_data/wait && echo "420" >>"${LOG_DIR:?}"/node_data/wait
-    # cpu less than 900MHz, use default values
-    if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)" -lt "900" ]] &>/dev/null; then
-      echo "480" >"${LOG_DIR:?}"/node_data/wait && echo "560" >>"${LOG_DIR:?}"/node_data/wait
+    # do this once (cpu speed, wait time)
+    if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
+      lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu 2>&1
+      cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
     fi
+
+    # 142s load = 1800 MHz average time for a default raspberry pi 400 rev 1.1
+    # 360s load = 1200 MHz average time for a default raspberry pi 3 model b rev 1.2
+
+    BOOTS=$(head -1 "${LOG_DIR:?}"/debug.log 2>&1)
+    READY=$(grep "LoadBlockIndexDB: last block file info: CBlockFileInfo(blocks=" "${LOG_DIR:?}"/debug.log 2>&1 | head -1 2>&1 | awk '{ print $1 }' 2>&1)
+
+    BOOTS=$(echo "$BOOTS" 2>&1 | egrep -o "T[0-9]+:[0-9]+:[0-9]+" 2>&1 | tr -d 'T' 2>&1)
+    READY=$(echo "$READY" 2>&1 | egrep -o "T[0-9]+:[0-9]+:[0-9]+" 2>&1 | tr -d 'T' 2>&1)
+
+    # creat wait_time
+    echo "$(echo "$READY" 2>&1 | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }' 2>&1)-$(echo "$BOOTS" 2>&1 | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }')" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wait
+    # create wait_time_block
+    echo "$(cat "${LOG_DIR:?}"/node_data/wait 2>/dev/null)+60" 2>&1 | bc -l >>"${LOG_DIR:?}"/node_data/wait 2>&1
+
+    # waiting values
+    WAIT_TIME=$(head -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
+    WAIT_TIME_BLOCK=$(tail -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
+
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ ${G1:?}$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)MHz${N0:?} ] ${G1:?}${WAIT_TIME:?}${N0:?}/${G0:?}${WAIT_TIME_BLOCK:?}${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-
-  # waiting values
-  WAIT_TIME=$(head -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
-  WAIT_TIME_BLOCK=$(tail -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
-
-  printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' 2>&1)\e[0m") [ ${G1:?}$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)MHz${N0:?} ] ${G1:?}${WAIT_TIME:?}${N0:?}/${G0:?}${WAIT_TIME_BLOCK:?}${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # waiting values
@@ -70,10 +64,10 @@ WAIT_TIME_BLOCK=$(tail -1 "${LOG_DIR:?}"/node_data/wait 2>&1)
 
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
-  WAIT_TIME="300"
+  WAIT_TIME="360"
 fi
 if [[ -z "$WAIT_TIME_BLOCK" ]] &>/dev/null; then
-  WAIT_TIME_BLOCK="360"
+  WAIT_TIME_BLOCK="420"
 fi
 
 # non responsive, use default timer
