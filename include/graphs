@@ -154,7 +154,7 @@ rrdtool graph /var/www/html/rank_graph.png \
   DEF:rank=/home/"$(whoami)"/stats/rank.rrd:rank:MAX \
   DEF:rank=/home/"$(whoami)"/stats/rank.rrd:rank:AVERAGE \
   GPRINT:rank:LAST:%.0lf\ Rank \
-  GPRINT:rank:LAST:%.0lf\ Rank AVG \
+  GPRINT:rank:LAST:%.0lf\ Rank \AVG \
   LINE1:rank#8A8FAB:"Rank"
 
 # watchlist (24hour)
@@ -174,7 +174,7 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   DEF:watchlist=/home/"$(whoami)"/stats/watchlist.rrd:watchlist:MAX \
   DEF:watchlist=/home/"$(whoami)"/stats/watchlist.rrd:watchlist:AVERAGE \
   GPRINT:watchlist:LAST:%.0lf\ Watchlist \
-  GPRINT:watchlist:LAST:%.0lf\ Watchlist AVG \
+  GPRINT:watchlist:LAST:%.0lf\ Watchlist \AVG \
   LINE1:watchlist#65AABB:"Watchlist"
 
 # network (24hour)
