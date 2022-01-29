@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222901
-# 1.4.8.0
+# 1.4.9.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -681,7 +681,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
       URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/libs.zip
       UNAME_SYSTEM="libs.zip"
-      setup_zip
+      echo
+      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
@@ -721,7 +723,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
       URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/TrumpCoin.Mac.dmg
       UNAME_SYSTEM="TrumpCoin.Mac.dmg"
-      setup_zip
+      echo
+      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
@@ -731,7 +735,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
       URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/TrumpCoin.Mac.zip
       UNAME_SYSTEM="TrumpCoin.Mac.zip"
-      setup_zip
+      echo
+      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
@@ -751,7 +757,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
       URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
       UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
-      setup_zip
+      echo
+      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
@@ -761,7 +769,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
       URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".tar.gz
       UNAME_SYSTEM="${LATEST_VERSION:?}"
-      setup_zip
+      echo
+      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
