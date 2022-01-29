@@ -40,8 +40,8 @@ rrdtool graph /var/www/html/load_graph.png \
   DEF:load5=/home/"$(whoami)"/stats/load5.rrd:load5:MAX \
   DEF:load15=/home/"$(whoami)"/stats/load15.rrd:load15:MAX \
   GPRINT:load:LAST:%.2lf \
-  GPRINT:load5:AVERAGE:%.2lf \
-  GPRINT:load15:AVERAGE:%.2lf \
+  GPRINT:load5:LAST:%.2lf \
+  GPRINT:load15:LAST:%.2lf \
   LINE1:load#45DC63:"Load 1m" \
   LINE2:load5#FFE000:"Load 5m" \
   LINE2:load15#FF5100:"Load 15m"
@@ -84,7 +84,7 @@ rrdtool graph /var/www/html/peers_graph.png \
   DEF:peers=/home/"$(whoami)"/stats/peers.rrd:peers:AVERAGE \
   DEF:banned_peers=/home/"$(whoami)"/stats/banned_peers.rrd:banned_peers:MAX \
   GPRINT:peers:LAST:%.0lf\ Now \
-  GPRINT:peers:LAST:%.0lf\ AVG \
+  GPRINT:peers:AVERAGE:%.0lf\ AVG \
   GPRINT:banned_peers:LAST:%.0lf\ Bans \
   GPRINT:peers:AVERAGE:%.0lf\ AVG \
   GPRINT:peers:MAX:%.0lf\ Max \
@@ -154,7 +154,7 @@ rrdtool graph /var/www/html/rank_graph.png \
   DEF:rank=/home/"$(whoami)"/stats/rank.rrd:rank:MAX \
   DEF:rank=/home/"$(whoami)"/stats/rank.rrd:rank:AVERAGE \
   GPRINT:rank:LAST:%.0lf\ Rank \
-  GPRINT:rank:LAST:%.0lf\ Rank\ AVG \
+  GPRINT:rank:AVERAGE:%.0lf\ Rank\ AVG \
   LINE1:rank#8A8FAB:"Rank"
 
 # watchlist (24hour)
@@ -174,7 +174,7 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   DEF:watchlist=/home/"$(whoami)"/stats/watchlist.rrd:watchlist:MAX \
   DEF:watchlist=/home/"$(whoami)"/stats/watchlist.rrd:watchlist:AVERAGE \
   GPRINT:watchlist:LAST:%.0lf\ Watchlist \
-  GPRINT:watchlist:LAST:%.0lf\ Watchlist\ AVG \
+  GPRINT:watchlist:AVERAGE:%.0lf\ Watchlist\ AVG \
   LINE1:watchlist#65AABB:"Watchlist"
 
 # network (24hour)
