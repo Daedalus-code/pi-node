@@ -43,7 +43,7 @@ WIDTH=54
 CHOICE_HEIGHT=10
 BACKTITLE="Trump-Node"
 TITLE="Node Options"
-MENU="Choose one of the following options:"
+MENU="Choose one option:"
 
 OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   2 "Keys Menu        Dump/Import keys, PoS (${POS_COUNT:?})"
@@ -75,7 +75,7 @@ case $CHOICE in
   CHOICE_HEIGHT=2
   BACKTITLE="Trump-Node"
   TITLE="Wallet Menu"
-  MENU="Choose one of the following options:"
+  MENU="Choose one option:"
 
   OPTIONS=(1 "Shutdown         Stop daemon, reboot system"
     2 "Re/Start         Re/Start daemon ($(pidof trumpcoind 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1))")
@@ -178,7 +178,7 @@ case $CHOICE in
   CHOICE_HEIGHT=2
   BACKTITLE="Trump-Node"
   TITLE="Key Menu"
-  MENU="Choose one of the following options:"
+  MENU="Choose one option:"
 
   OPTIONS=(1 "Import key       Adds a private key"
     2 "Dump key         Reveals the private key")
@@ -254,7 +254,7 @@ Then the importprivkey can be used with this output
   CHOICE_HEIGHT=7
   BACKTITLE="Trump-Node"
   TITLE="Uncomplicated firewall Menu"
-  MENU="Choose one of the following options:"
+  MENU="Choose one option:"
 
   OPTIONS=(1 "Status       Show firewall status"
     2 "Enable       Enables the firewall"
@@ -611,7 +611,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
   CHOICE_HEIGHT=3
   BACKTITLE="Download & Install"
   TITLE="Download trumpcoin tools"
-  MENU="Choose one of the following options:"
+  MENU="Choose one option:"
 
   OPTIONS=(1 "Download         Download a specific wallet manually"
     2 "Download         Download wallet, bootstrap automatically"
@@ -652,7 +652,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     CHOICE_HEIGHT=9
     BACKTITLE="Download manually"
     TITLE="Download Menu"
-    MENU="Choose one of the following options:"
+    MENU="Choose one option:"
 
     OPTIONS=(1 "libs.zip"
       2 "TrumpCoin.aarch64-linux-gnu.zip"
@@ -950,7 +950,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
   CHOICE_HEIGHT=9
   BACKTITLE="Node configuration(s)"
   TITLE="Edit configuration"
-  MENU="Choose one of the following options:"
+  MENU="Choose one option:"
 
   OPTIONS=(1 "TrumpCoin        trumpcoin.conf"
     2 "PatriotNode      patriotnode.conf"
@@ -1068,12 +1068,12 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "9")
 
-    HEIGHT=12
+    HEIGHT=11
     WIDTH=31
     CHOICE_HEIGHT=4
     BACKTITLE="Reset configuration(s)"
     TITLE="Reset a specific config"
-    MENU="Choose one of the following options:"
+    MENU="Choose one option:"
 
     OPTIONS=(1 "Reset trumpcoin.conf"
       2 "Reset pitrump.conf"
@@ -1300,12 +1300,12 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 
   # swap menu, after the fact
 
-  HEIGHT=12
+  HEIGHT=11
   WIDTH=23
   CHOICE_HEIGHT=4
   BACKTITLE="Swap options"
   TITLE="Setup Swap space"
-  MENU="Choose one of the following options:"
+  MENU="Choose one option:"
 
   OPTIONS=(1 "Create Swap"
     2 "Delete Swap"
@@ -1482,16 +1482,16 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
 "9")
 
-  HEIGHT=11
-  WIDTH=33
+  HEIGHT=10
+  WIDTH=34
   CHOICE_HEIGHT=3
   BACKTITLE="Tor menu"
   TITLE="Proxy options (tor)"
-  MENU="Choose one of the following options:"
+  MENU="Choose one option:"
 
-  OPTIONS=(1 "Stop tor (service)"
-    2 "Restart tor (service)"
-    3 "Nyx Monitor")
+  OPTIONS=(1 "Stop tor     (service)"
+    2 "Restart tor  (service)"
+    3 "Nyx          (Monitor)")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
