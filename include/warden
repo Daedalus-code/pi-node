@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222901
-# 0.2.2.2
+# 0.2.9.0
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -81,36 +81,104 @@ function uptime_daemon() {
 # create uptime
 echo "$(uptime_daemon 2>&1)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
 
-# screen indicator (is it running)
+# screen indicator (is add_cg running)
+if ! screen -list 2>&1 | grep -q "add_cg" &>/dev/null; then
+  # below one round
+  SCREEN_IND_CG="${GR:?}N${N0:?}"
+else
+
+  # screen add_cg
+  NOW_TIME_CG=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  SCREEN_TIME_CG=$(screen -list 2>&1 | grep "add_cg" 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1 | tail -1 2>&1)
+  SCREEN_CALC_CG=$(echo "$NOW_TIME_CG-$SCREEN_TIME_CG" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+  if [[ -z "$SCREEN_CALC_CG" ]] &>/dev/null; then
+    # non responsive
+    SCREEN_VALUE_CG="0"
+  else
+    SCREEN_VALUE_CG="${SCREEN_CALC_CG:?}"
+  fi
+
+  # kill time jump
+  if [[ "$SCREEN_CALC_CG" -gt "42" ]] &>/dev/null; then
+    screen -X -S add_cg quit
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cg script. (time jump or just old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    SCREEN_IND_CG="${GR:?}*${N0:?}"
+    SCREEN_VALUE_CG="${GR:?}0${N0:?}"
+  fi
+
+  # still running
+  SCREEN_IND_CG="${CY:?}*${N0:?}"
+fi
+
+# screen indicator (is add_cmc running)
+if ! screen -list 2>&1 | grep -q "add_cmc" &>/dev/null; then
+  # below one round
+  SCREEN_IND_CMC="${GR:?}N${N0:?}"
+else
+
+  # screen add_cg
+  NOW_TIME_CMC=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  SCREEN_TIME_CMC=$(screen -list 2>&1 | grep "add_cmc" 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1 | tail -1 2>&1)
+  SCREEN_CALC_CMC=$(echo "$NOW_TIME_CMC-$SCREEN_TIME_CMC" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+  if [[ -z "$SCREEN_CALC_CMC" ]] &>/dev/null; then
+    # non responsive
+    SCREEN_VALUE_CMC="0"
+  else
+    SCREEN_VALUE_CMC="${SCREEN_CALC_CMC:?}"
+  fi
+
+  # kill time jump
+  if [[ "$SCREEN_CALC_CMC" -gt "42" ]] &>/dev/null; then
+    screen -X -S add_cmc quit
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cmc script. (time jump or just old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    SCREEN_IND_CMC="${GR:?}*${N0:?}"
+    SCREEN_VALUE_CMC="${GR:?}0${N0:?}"
+  fi
+
+  # still running
+  SCREEN_IND_CMC="${CY:?}*${N0:?}"
+fi
+
+# screen indicator (is add_peers running)
 if ! screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
   # below one round
-  SCREEN_IND="${GR:?}N${N0:?}"
+  SCREEN_IND_P2P="${GR:?}N${N0:?}"
 else
-  NOW_TIME=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
-  SCREEN_TIME=$(screen -list 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1 | tail -1 2>&1)
-  SCREEN_CALC=$(echo "$NOW_TIME-$SCREEN_TIME" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  if [[ -z "$SCREEN_CALC" ]] &>/dev/null; then
+
+  # screen add_peers
+  NOW_TIME_P2P=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  SCREEN_TIME_P2P=$(screen -list 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1 | tail -1 2>&1)
+  SCREEN_CALC_P2P=$(echo "$NOW_TIME_P2P-$SCREEN_TIME_P2P" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+  if [[ -z "$SCREEN_CALC_P2P" ]] &>/dev/null; then
     # non responsive
-    SCREEN_VALUE="0"
+    SCREEN_VALUE_P2P="0"
   else
-    SCREEN_VALUE="${SCREEN_CALC:?}"
+    SCREEN_VALUE_P2P="${SCREEN_CALC_P2P:?}"
   fi
+
   ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/add_peers.check 2>&1 | awk '{ print $1 }' 2>&1)
+
   # kill time jump
-  if [[ "$SCREEN_CALC" -gt "42" ]] &>/dev/null; then
+  if [[ "$SCREEN_CALC_P2P" -gt "42" ]] &>/dev/null; then
     screen -X -S add_peers quit
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script. (time jump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    SCREEN_IND="${GR:?}*${N0:?}"
-    SCREEN_VALUE="${GR:?}0${N0:?}"
+    SCREEN_IND_P2P="${GR:?}*${N0:?}"
+    SCREEN_VALUE_P2P="${GR:?}0${N0:?}"
   fi
-  # kill wrong list
-  if [[ "$SCREEN_CALC" -gt "$(echo "$ADD_LINE/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+
+  # kill screen session being to long (max 30 seconds on average for each connection attempt)
+  if [[ "$SCREEN_CALC_P2P" -gt "$(echo "${ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     screen -X -S add_peers quit
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    SCREEN_IND="${GR:?}*${N0:?}"
-    SCREEN_VALUE="${GR:?}0${N0:?}"
-  fi # still running
-  SCREEN_IND="${CY:?}*${N0:?}"
+    SCREEN_IND_P2P="${GR:?}*${N0:?}"
+    SCREEN_VALUE_P2P="${GR:?}0${N0:?}"
+  fi
+
+  # still running
+  SCREEN_IND_P2P="${CY:?}*${N0:?}"
 fi
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
@@ -130,7 +198,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   if pgrep -x trumpcoind &>/dev/null; then
 
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${SCREEN_IND:?} ${GR:?}$SCREEN_VALUE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof trumpcoind 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${GR:?}(${SCREEN_VALUE_P2P:?}/${SCREEN_VALUE_CG:?}/${SCREEN_VALUE_CMC:?})${N0:?} ${SCREEN_IND_P2P:?}${SCREEN_IND_CG:?}${SCREEN_IND_CMC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() System.Warden: $(cat "${LOG_DIR:?}"/node_data/stats/uptime 2>/dev/null)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # make sure debug.log exist
