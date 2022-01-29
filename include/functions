@@ -82,10 +82,10 @@ WAIT_TIME_BLOCK=$(tail -1 "${WALLET_DIR:?}"/wait 2>&1)
 
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
-  WAIT_TIME="300"
+  WAIT_TIME="360"
 fi
 if [[ -z "$WAIT_TIME_BLOCK" ]] &>/dev/null; then
-  WAIT_TIME_BLOCK="360"
+  WAIT_TIME_BLOCK="420"
 fi
 
 ### system information, load, user, cpu temp ###################################

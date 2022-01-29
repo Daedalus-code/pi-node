@@ -22,7 +22,7 @@ WAIT_TIME=$(head -1 "${WALLET_DIR:?}"/wait 2>&1)
 
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
-  WAIT_TIME="300"
+  WAIT_TIME="360"
 fi
 
 RANDOM_WAIT=$((((RANDOM % 2) + 1)))
