@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222901
-# 0.2.7.9
+# 0.2.6.9
 
 # shellcheck disable=SC2154
 
@@ -191,18 +191,18 @@ EOF
 
 ### screen session(s) ##########################################################
 
+RANDOM_WAIT=$(cat "${LOG_DIR:?}"/node_data/waiting 2>/dev/null)
+if [[ -z "$RANDOM_WAIT" ]] &>/dev/null; then
+  # non responsive
+  RANDOM_WAIT="2"
+fi
+
 # random api
 RANDOM_SCREEN=$((((RANDOM % 2) + 1)))
 
 if [[ -z "$RANDOM_SCREEN" ]] &>/dev/null; then
   # non responsive
-  RANDOM_SCREEN="1"
-fi
-
-RANDOM_WAIT=$(cat "${LOG_DIR:?}"/node_data/waiting 2>/dev/null)
-if [[ -z "$RANDOM_WAIT" ]] &>/dev/null; then
-  # non responsive
-  RANDOM_WAIT="2"
+  RANDOM_SCREEN="2"
 fi
 
 # run with cg
@@ -219,8 +219,10 @@ if [[ "$RANDOM_SCREEN" -eq "1" ]] &>/dev/null; then
     sleep 1
     screen -S add_cg -X -p 0 stuff $'torify bash '"${LOG_DIR:?}"'/add_cg\n'
   fi
+fi
 
-else # run with cmc
+# run with cmc
+if [[ "$RANDOM_SCREEN" -eq "2" ]] &>/dev/null; then
 
   # reset requests file
   if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
@@ -234,18 +236,6 @@ else # run with cmc
     sleep 1
     screen -S add_cmc -X -p 0 stuff $'torify bash '"${LOG_DIR:?}"'/add_cmc\n'
   fi
-fi
-
-# reset requests file
-if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
-  rm "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null
-fi
-
-# look for screen session, if not found, run this block
-if ! screen -list 2>&1 | grep -q "add_cmc" &>/dev/null; then
-  # create screen session
-  screen -dmS add_cmc 2>&1
-  screen -S add_cmc -X -p 0 stuff $'torify bash /tmp/add_cmc\n'
 fi
 
 ### screen session(s) done #####################################################
