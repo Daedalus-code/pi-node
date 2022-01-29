@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222901
-# 1.4.4.7
+# 1.4.4.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.4.7"
+VERSION="v1.4.4.3"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -1390,7 +1390,6 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
 
     # backup api price (coingecko)
     if [ -f "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
-      printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Backup data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg 2>&1
     else # restore it
       cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
@@ -1399,7 +1398,6 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
 
     # backup api volume (coingecko)
     if [ -f "${LOG_DIR:?}"/node_data/stats/volume.cg ] &>/dev/null; then
-      printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Backup data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       cp "${LOG_DIR:?}"/node_data/stats/volume.cg "${WALLET_DIR:?}"/volume.cg 2>&1
     else # restore it
       cp "${WALLET_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1
@@ -1414,7 +1412,6 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
 
     # backup api rank (coinmarketcap)
     if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
-      printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Backup data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       cp "${LOG_DIR:?}"/node_data/stats/rank.cmc "${WALLET_DIR:?}"/rank.cmc 2>&1
     else # restore it
       cp "${WALLET_DIR:?}"/rank.cmc "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1
@@ -1423,7 +1420,6 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
 
     # backup api watchlist (coinmarketcap)
     if [ -f "${LOG_DIR:?}"/node_data/stats/watchers.cmc ] &>/dev/null; then
-      printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Backup data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       cp "${LOG_DIR:?}"/node_data/stats/watchers.cmc "${WALLET_DIR:?}"/watchers.cmc 2>&1
     else # restore it
       cp "${WALLET_DIR:?}"/watchers.cmc "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1
