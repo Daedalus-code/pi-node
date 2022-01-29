@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222901
-# 1.4.5.2
+# 1.4.6.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.5.2"
+VERSION="v1.4.6.4"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -1395,46 +1395,58 @@ fi
 ### backup values ##############################################################
 
 if [ -f "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
-  if [ -f "${LOG_DIR:?}"/node_data/stats/volume.cg ] &>/dev/null; then
 
-    # backup api price (coingecko)
-    if [ -f "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
-      cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg 2>&1
-    else # restore it
-      cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
-      printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Price! (CG) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1)${GR:?} :: ${N0:?}API price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
+  if [[ ! -f "${WALLET_DIR:?}"/price.cg ]] &>/dev/null; then
+    # create backup if missing
+    cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg 2>&1
+  fi
 
-    # backup api volume (coingecko)
-    if [ -f "${LOG_DIR:?}"/node_data/stats/volume.cg ] &>/dev/null; then
-      cp "${LOG_DIR:?}"/node_data/stats/volume.cg "${WALLET_DIR:?}"/volume.cg 2>&1
-    else # restore it
-      cp "${WALLET_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1
-      printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Volume! (CG) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1)${GR:?} :: ${N0:?}API volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
+else # restore it
+  if [[ -f "${WALLET_DIR:?}"/price.cmc ]] &>/dev/null; then
+    cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Price! (CG) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1)${GR:?} :: ${N0:?}API price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+fi
 
+if [ -f "${LOG_DIR:?}"/node_data/stats/volume.cg ] &>/dev/null; then
+
+  if [[ ! -f "${WALLET_DIR:?}"/volume.cg ]] &>/dev/null; then
+    # create backup if missing
+    cp "${LOG_DIR:?}"/node_data/stats/volume.cg "${WALLET_DIR:?}"/volume.cg 2>&1
+  fi
+
+else # restore it
+  if [[ -f "${WALLET_DIR:?}"/volume.cmc ]] &>/dev/null; then
+    cp "${WALLET_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Volume! (CG) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1)${GR:?} :: ${N0:?}API volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
-  if [ -f "${LOG_DIR:?}"/node_data/stats/watchers.cmc ] &>/dev/null; then
 
-    # backup api rank (coinmarketcap)
-    if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
-      cp "${LOG_DIR:?}"/node_data/stats/rank.cmc "${WALLET_DIR:?}"/rank.cmc 2>&1
-    else # restore it
-      cp "${WALLET_DIR:?}"/rank.cmc "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1
-      printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Rank! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1)${GR:?} :: ${N0:?}API rank data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
+  if [[ ! -f "${WALLET_DIR:?}"/rank.cmc ]] &>/dev/null; then
+    # create backup if missing
+    cp "${LOG_DIR:?}"/node_data/stats/rank.cmc "${WALLET_DIR:?}"/rank.cmc 2>&1
+  fi
 
-    # backup api watchlist (coinmarketcap)
-    if [ -f "${LOG_DIR:?}"/node_data/stats/watchers.cmc ] &>/dev/null; then
-      cp "${LOG_DIR:?}"/node_data/stats/watchers.cmc "${WALLET_DIR:?}"/watchers.cmc 2>&1
-    else # restore it
-      cp "${WALLET_DIR:?}"/watchers.cmc "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1
-      printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Watchlist! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1)${GR:?} :: ${N0:?}API watchlist data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
+else # restore it
+  if [[ -f "${WALLET_DIR:?}"/rank.cmc ]] &>/dev/null; then
+    cp "${WALLET_DIR:?}"/rank.cmc "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Rank! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1)${GR:?} :: ${N0:?}API rank data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+fi
 
+if [ -f "${LOG_DIR:?}"/node_data/stats/watchers.cmc ] &>/dev/null; then
+
+  if [[ ! -f "${WALLET_DIR:?}"/watchers.cmc ]] &>/dev/null; then
+    # create backup if missing
+    cp "${LOG_DIR:?}"/node_data/stats/watchers.cmc "${WALLET_DIR:?}"/watchers.cmc 2>&1
+  fi
+
+else # restore it
+  if [[ -f "${WALLET_DIR:?}"/watchers.cmc ]] &>/dev/null; then
+    cp "${WALLET_DIR:?}"/watchers.cmc "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Watchlist! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1)${GR:?} :: ${N0:?}API watchlist data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
