@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222701
-# 0.2.7.0
+# V20222901
+# 0.2.6.9
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -229,9 +229,8 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 fi
 
 # look for screen session, if found, killall
-if screen -list 2>&1 |
-  grep -q "add_peers" &>/dev/null; then
-  killall screen &>/dev/null
+if screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
+  screen -X -S add_peers quit
 fi
 
 sudo cp -R /home/"$(whoami)"/trump-node/include/* /usr/local/bin/include/ 2>&1
