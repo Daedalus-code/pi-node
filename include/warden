@@ -99,10 +99,10 @@ else
     SCREEN_VALUE_CG="${SCREEN_CALC_CG:?}"
   fi
 
-  # kill time jump
-  if [[ "$SCREEN_CALC_CG" -gt "42" ]] &>/dev/null; then
+  # kill old session
+  if [[ "$SCREEN_CALC_CG" -gt "7" ]] &>/dev/null; then
     screen -X -S add_cg quit
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cg script. (time jump or just old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cg script. (old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND_CG="${GR:?}*${N0:?}"
     SCREEN_VALUE_CG="${GR:?}0${N0:?}"
   fi
@@ -129,10 +129,10 @@ else
     SCREEN_VALUE_CMC="${SCREEN_CALC_CMC:?}"
   fi
 
-  # kill time jump
-  if [[ "$SCREEN_CALC_CMC" -gt "42" ]] &>/dev/null; then
+  # kill old session
+  if [[ "$SCREEN_CALC_CMC" -gt "7" ]] &>/dev/null; then
     screen -X -S add_cmc quit
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cmc script. (time jump or just old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cmc script. (old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND_CMC="${GR:?}*${N0:?}"
     SCREEN_VALUE_CMC="${GR:?}0${N0:?}"
   fi
