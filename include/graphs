@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222901
-# 0.4.0.6
+# 0.4.0.5
 
 source /usr/local/bin/include/pitrump.conf
 
@@ -86,7 +86,6 @@ rrdtool graph /var/www/html/peers_graph.png \
   GPRINT:peers:LAST:%.0lf\ Now \
   GPRINT:peers:AVERAGE:%.0lf\ AVG \
   GPRINT:banned_peers:LAST:%.0lf\ Bans \
-  GPRINT:peers:AVERAGE:%.0lf\ AVG \
   GPRINT:peers:MAX:%.0lf\ Max \
   GPRINT:peers:MIN:%.0lf\ Min \
   AREA:peers#A28DB8:"Peers" \
