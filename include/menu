@@ -946,7 +946,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 "6")
 
   HEIGHT=17
-  WIDTH=47
+  WIDTH=48
   CHOICE_HEIGHT=10
   BACKTITLE="Node configuration(s)"
   TITLE="Edit configuration"
@@ -959,7 +959,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     5 "Torrc            Tor configuration"
     6 "Crontab          Job scheduler"
     7 "Crontab (root)   Admin job scheduler"
-    8 "/etc/fstab       Filesystem table"
+    8 "Filesystem       /etc/fstab"
     9 "Reset Graphs     Reset/Remove graphs"
     10 "Reset            Reset config(s)")
 
@@ -976,7 +976,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "1")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] trumpcoin.conf!\n"
+    printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     nano "${WALLET_DIR:?}"/trumpcoin.conf
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
@@ -985,7 +985,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "2")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] patriotnode.conf!\n"
+    printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     nano "${WALLET_DIR:?}"/patriotnode.conf
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
@@ -994,7 +994,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "3")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] pitrump.conf!\n"
+    printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     nano /usr/local/bin/include/pitrump.conf
     if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
       read -r -p "[YN] Update graphs? y/n " -n 1 -r
@@ -1016,7 +1016,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "4")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] config.txt!\n"
+    printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     sudo nano /boot/config.txt
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
@@ -1025,7 +1025,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "5")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] torrc!\n"
+    printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     sudo nano /etc/tor/torrc
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
@@ -1056,7 +1056,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   "8")
 
-    printf '%b' "[${G1:?}Ok${N0:?}] fstab!\n"
+    printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     sudo nano /etc/fstab
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
