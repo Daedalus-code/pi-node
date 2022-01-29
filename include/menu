@@ -954,7 +954,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
     4 "Config.txt       boot/config.txt"
     5 "Torrc            Tor configuration"
     6 "Crontab          Job scheduler"
-    7 "Cronatb (root)   Admin job scheduler"
+    7 "Crontab (root)   Admin job scheduler"
     8 "Reset            Reset config(s)")
 
   CHOICE=$(dialog --clear \
