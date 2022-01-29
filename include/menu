@@ -977,24 +977,26 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
   "1")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    nano "${WALLET_DIR:?}"/trumpcoin.conf
     read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
+    clear
+    nano "${WALLET_DIR:?}"/trumpcoin.conf
 
     ;;
 
   "2")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    nano "${WALLET_DIR:?}"/patriotnode.conf
     read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
+    clear
+    nano "${WALLET_DIR:?}"/patriotnode.conf
 
     ;;
 
   "3")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    clear
     nano /usr/local/bin/include/pitrump.conf
     if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
       read -r -p "[YN] Update graphs? y/n " -n 1 -r
@@ -1009,26 +1011,24 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
         rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
       fi
     fi
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
 
     ;;
 
   "4")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    sudo nano /boot/config.txt
     read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
+    clear
+    sudo nano /boot/config.txt
 
     ;;
 
   "5")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    sudo nano /etc/tor/torrc
     read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
+    clear
+    sudo nano /etc/tor/torrc
 
     ;;
 
@@ -1057,9 +1057,9 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
   "8")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    sudo nano /etc/fstab
     read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
+    clear
+    sudo nano /etc/fstab
 
     ;;
 
