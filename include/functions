@@ -409,7 +409,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME_BLOC
   fi
   # if progress equals 1, then 100% synced
   if [[ $(egrep -o "progress=1.000000" "$WALLET_LOG_DIR"/debug.log 2>&1) ]] &>/dev/null; then
-    WALLET_SYNC="100"
+    WALLET_SYNC="100%" # wallet blockchain is synced 100%
   fi
 
   # wallet sync (no color)
