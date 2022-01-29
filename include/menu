@@ -942,7 +942,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 "8")
 
   HEIGHT=15
-  WIDTH=45
+  WIDTH=47
   CHOICE_HEIGHT=8
   BACKTITLE="Node configuration(s)"
   TITLE="Edit configuration"
