@@ -47,13 +47,13 @@ MENU="Choose one of the following options:"
 
 OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   2 "Keys Menu        Dump/Import keys, PoS (${POS_COUNT:?})"
-  3 "UFW Menu         Uncomplicated firewall"
-  4 "Information      Trump node status"
-  5 "System Space     Disk space utilized"
-  6 "Download Menu    Download & Install"
+  3 "Information      Trump node status"
+  4 "System Space     Disk space utilized"
+  5 "Download Menu    Download & Install"
+  6 "Configuration    Node configuration(s)"
   7 "Reset Graphs     Reset/Remove graphs"
-  8 "Configuration    Node configuration(s)"
-  9 "Swap Menu        Swap space options"
+  8 "Swap Menu        Swap space options"
+  9 "UFW Menu         Uncomplicated firewall"
   10 "Quit             Exit menu")
 
 CHOICE=$(dialog --clear \
@@ -247,7 +247,7 @@ Then the importprivkey can be used with this output
 
   ;;
 
-"3")
+"9")
 
   HEIGHT=14
   WIDTH=46
@@ -405,7 +405,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   ;;
 
-"4")
+"3")
 
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
@@ -480,7 +480,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     USER=$(users 2>&1 | wc -w 2>&1)
 
     # system load
-    LOAD="$(cat /proc/loadavg 2>&1 | awk '{ print $1,$2,$3 }' 2>&1)"
+    LOAD=$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null)
 
     # get cpu temp, celcius, fahrenheit, (raspberry pi)
     CPU_CTEMP=$(</sys/class/thermal/thermal_zone0/temp)
@@ -535,7 +535,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     INTERFACE=$(echo "${IFCONFIG:?}" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
 
     # unique connections
-    UNIQP2P=$(egrep "addr:|addrlocal:" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "getaddr" 2>&1 | awk '{ print $2 }' 2>&1 | sed -r '/^.{,10}$/d' 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | wc -l 2>&1)
+    UNIQP2P=$(egrep "addr:|addrlocal:" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "getaddr" 2>&1 | awk '{ print $2 }' 2>&1 | sed -r '/^.{,10}$/d' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
     # get latest repository and date
     LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
     LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y')
@@ -590,7 +590,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   ;;
 
-"5")
+"4")
 
   display_result() {
     dialog --title "$1" \
@@ -604,7 +604,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   ;;
 
-"6")
+"5")
 
   HEIGHT=10
   WIDTH=68
@@ -958,7 +958,7 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
 
   ;;
 
-"8")
+"6")
 
   HEIGHT=15
   WIDTH=47
@@ -1241,7 +1241,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 
   # swap options
 
-"9")
+"8")
 
   # get total physical system memory, do this once
   if [[ ! -f "${WALLET_DIR:?}"/swapinfo ]] &>/dev/null; then
