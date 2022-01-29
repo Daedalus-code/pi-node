@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222801
-# 1.4.4.4
+# V20222901
+# 1.4.6.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1368,14 +1368,31 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 
   "4")
 
+    function check_crontab() {
+      # look for crontab setup
+      if ! sudo crontab -l 2>&1 | grep "@reboot" &>/dev/null; then
+        CRON_JOB="@reboot sudo mkdir /var/log/apache2"
+        (# add cron job fro apache2
+          crontab -l 2>/dev/null
+          echo "${CRON_JOB:?}"
+        ) | crontab -
+        printf '%b' "[${G1:?}Ok${N0:?}] (sudo) Crontab installing!\n"
+      else
+        printf '%b' "[${G1:?}Ok${N0:?}] (sudo) Crontab installed!\n"
+      fi
+    }
+
+    # look for data to ram setup
     if grep "tmpfs /tmp tmpfs defaults,noatime,nosuid,size=" /etc/fstab &>/dev/null; then
-      printf '%b' "[${G1:?}Ok${N0:?}] This has already been setup!\n"
+      check_crontab
+      printf '%b' "[${G1:?}Ok${N0:?}] (sudo) Data to RAM installed!\n"
     else
 
       read -r -p "[YN] Setup data to RAM? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
+        check_crontab
         printf '%b' "Enter tmp size ${GR:?}Enter for default${N0:?}
 ${G1:?}>${N0:?} "
         read -r RAM_SIZE
