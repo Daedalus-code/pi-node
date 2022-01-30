@@ -17,7 +17,7 @@ cat "${LOG_DIR:?}"/node_data/stats/uptime 2>/dev/null | egrep -o "[0-9]+.[0-9]+,
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
-  LOG_DATE=$(date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1)
+  LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
 fi
 
 # waiting values

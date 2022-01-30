@@ -77,7 +77,7 @@ CLOCK=$(date "+%H:%M:%S" 2>&1)
 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
-  LOG_DATE=$(date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1)
+  LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
 fi
 # date check
 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
