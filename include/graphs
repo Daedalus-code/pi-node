@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223001
-# 0.4.2.9
+# 0.4.4.4
 
 source /usr/local/bin/include/pitrump.conf
 
@@ -173,11 +173,11 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   GPRINT:watchlist:AVERAGE:%.0lf\ Watchlist\ AVG \
   LINE1:watchlist#65AABB:"Watchlist"
 
-# market (24hour)
-rrdtool graph /var/www/html/market_graph.png \
-  -w 630 -h 150 -a PNG \
+# market price (24hour)
+rrdtool graph /var/www/html/market_price_graph.png \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
-  --vertical-label "Market(s)" \
+  --vertical-label "Market Price" \
   --alt-autoscale-max --lower-limit=1 \
   --color BACK#565875 \
   --color FONT#FFFFFF \
@@ -188,16 +188,31 @@ rrdtool graph /var/www/html/market_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:price_cg=/home/"$(whoami)"/stats/coingecko.rrd:price_cg:MAX \
-  DEF:volume_cg=/home/"$(whoami)"/stats/coingecko.rrd:volume_cg:MAX \
   DEF:price_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:price_cmc:MAX \
-  DEF:volume_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:volume_cmc:MAX \
   GPRINT:price_cg:LAST:%.2lf\ CoinGecko\ Price \
-  GPRINT:volume_cg:LAST:%.2lf\ CG\ Vol \
   GPRINT:price_cmc:LAST:%.2lf\ CoinMarketCap\ Price \
-  GPRINT:volume_cmc:LAST:%.2lf\ CMC\ Vol \
   LINE1:price_cg#91E7AC \
+  LINE1:price_cmc#92B7E8
+
+# market volume (24hour)
+rrdtool graph /var/www/html/market_volume_graph.png \
+  -w 400 -h 160 -a PNG \
+  --slope-mode \
+  --vertical-label "Market Volume" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-"${GRAPH_TIME:?}" \
+  DEF:volume_cg=/home/"$(whoami)"/stats/coingecko.rrd:volume_cg:MAX \
+  DEF:volume_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:volume_cmc:MAX \
+  GPRINT:volume_cg:LAST:%.2lf\ CoinGecko\ Volume \
+  GPRINT:volume_cmc:LAST:%.2lf\ CoinMarketCap\ Volume \
   LINE1:volume_cg#7AC291 \
-  LINE1:price_cmc#92B7E8 \
   LINE1:volume_cmc#7A99C2
 
 # network (24hour)
@@ -286,7 +301,7 @@ rrdtool graph /var/www/html/temp_graph.png \
 function difficulty_auto() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 630 -h 150 -a PNG \
+    -w 400 -h 160 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
@@ -367,7 +382,7 @@ function avgconfirmation_auto_two() {
 function difficulty_normal() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 630 -h 150 -a PNG \
+    -w 400 -h 160 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \

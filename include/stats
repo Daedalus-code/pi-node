@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223001
-# 0.5.1.2
+# 0.5.1.3
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -481,7 +481,8 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<img src='total_tx_graph.png' alt='Total TX' />";
   echo "<img src='watchlist_graph.png' alt='Watchlist' />";
   echo "<img src='difficulty_graph.png' alt='Difficulty' />";
-  echo "<img src='market_graph.png' alt='Market' />";
+  echo "<img src='market_price_graph.png' alt='Market Price' />";
+  echo "<img src='market_volume_graph.png' alt='Market Volume' />";
 
 EOF
 
