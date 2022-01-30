@@ -569,7 +569,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printline "Load" "${LOAD:?}" "SystemUptime" "${SYS_UPTIME:?}" "WalletUptime" "${UPTIME:?}"
       echo
       printline "FreeTotalMemory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "UsedTotalSwap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "UsedHDD" "${USED_HDD:?} ${USED_HDD_P:?}"
-      printline "UserSpace" "$(du -sh /home/* 2>/dev/null | xargs 2>&1)" "CPUTemp" "${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F (${CPUS:?})" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))"
+      printline "UserSpace" "$(du -sh /home/* 2>/dev/null | xargs 2>&1)" "CPUTemp" "${CPU_CTEMP:?} C ${CPU_FTEMP:?} F (${CPUS:?})" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))"
       printline "Daemon" "${PID_DAEMON:?} (trumpcoind)" "Head/Block" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Network" "${WALLET_CHAIN:?} ${INTERFACE:?}"
       printline "Address" "${IP_ADDRESS_N:?}" "Download" "${DOWNLOAD:?}" "Upload" "${UPLOAD:?}"
       echo
