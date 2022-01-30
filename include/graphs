@@ -175,7 +175,7 @@ rrdtool graph /var/www/html/watchlist_graph.png \
 
 # market (24hour)
 rrdtool graph /var/www/html/market_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 600 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Market(s)" \
   --alt-autoscale-max --lower-limit=1 \
@@ -192,9 +192,9 @@ rrdtool graph /var/www/html/market_graph.png \
   DEF:price_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:price_cmc:MAX \
   DEF:volume_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:volume_cmc:MAX \
   GPRINT:price_cg:LAST:%.0lf\ CoinGecko\ Price \
-  GPRINT:volume_cg:LAST:%.0lf\ CoinGecko\ Price \
+  GPRINT:volume_cg:LAST:%.0lf\ CG\ Volume \
   GPRINT:price_cmc:LAST:%.0lf\ CoinMarketCap\ Price \
-  GPRINT:volume_cmc:LAST:%.0lf\ CoinMarketCap\ Price \
+  GPRINT:volume_cmc:LAST:%.0lf\ CMC\ Volume \
   LINE1:price_cg#65AABB:"Price (CG)" \
   LINE1:volume_cg#65AABB:"Volume (CG)" \
   LINE1:price_cmc#65AABB:"Price (CMC)" \
@@ -286,7 +286,7 @@ rrdtool graph /var/www/html/temp_graph.png \
 function difficulty_auto() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 600 -h 138 -a PNG \
+    -w 600 -h 160 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
