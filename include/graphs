@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222901
-# 0.4.0.5
+# V20223001
+# 0.4.2.9
 
 source /usr/local/bin/include/pitrump.conf
 
@@ -25,7 +25,7 @@ fi
 
 # loadavg 1,5,15m (24hour)
 rrdtool graph /var/www/html/load_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "System Load" \
   --color BACK#565875 \
@@ -48,7 +48,7 @@ rrdtool graph /var/www/html/load_graph.png \
 
 # inputs (24hour)
 rrdtool graph /var/www/html/inputs_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Wallet Inputs" \
   --alt-autoscale-max --lower-limit=1 \
@@ -68,7 +68,7 @@ rrdtool graph /var/www/html/inputs_graph.png \
 
 # peers (24hour)
 rrdtool graph /var/www/html/peers_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Peers (P2P)" \
   --alt-autoscale-max --lower-limit=1 \
@@ -93,7 +93,7 @@ rrdtool graph /var/www/html/peers_graph.png \
 
 # stakes (24hour)
 rrdtool graph /var/www/html/stakes_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Wallet Stakes" \
   --alt-autoscale-max --lower-limit=1 \
@@ -114,7 +114,7 @@ rrdtool graph /var/www/html/stakes_graph.png \
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Wallet Balance" \
   --alt-autoscale-max --lower-limit=1 \
@@ -128,17 +128,14 @@ rrdtool graph /var/www/html/balance_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:balance=/home/"$(whoami)"/stats/balance.rrd:balance:MAX \
   DEF:value=/home/"$(whoami)"/stats/value.rrd:value:MAX \
-  DEF:volume=/home/"$(whoami)"/stats/volume.rrd:volume:MAX \
   GPRINT:balance:LAST:%.2lf\ Trump \
   GPRINT:value:LAST:%.2lf\ USD \
-  GPRINT:volume:LAST:%.0lf\ Vol \
   AREA:balance#85bb65:"Balance" \
-  LINE2:value#668163:"USD" \
-  LINE2:volume#6798DE
+  LINE2:value#668163:"USD"
 
 # rank (24hour)
 rrdtool graph /var/www/html/rank_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "CoinMarketCap Rank" \
   --alt-autoscale-max --lower-limit=1 \
@@ -158,7 +155,7 @@ rrdtool graph /var/www/html/rank_graph.png \
 
 # watchlist (24hour)
 rrdtool graph /var/www/html/watchlist_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "CoinMarketCap Watchlist" \
   --alt-autoscale-max --lower-limit=1 \
@@ -176,9 +173,36 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   GPRINT:watchlist:AVERAGE:%.0lf\ Watchlist\ AVG \
   LINE1:watchlist#65AABB:"Watchlist"
 
+# market (24hour)
+rrdtool graph /var/www/html/market_graph.png \
+  -w 400 -h 160 -a PNG \
+  --slope-mode \
+  --vertical-label "Market(s)" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-"${GRAPH_TIME:?}" \
+  DEF:price_cg=/home/"$(whoami)"/stats/coingecko.rrd:price_cg:MAX \
+  DEF:volume_cg=/home/"$(whoami)"/stats/coingecko.rrd:volume_cg:MAX \
+  DEF:price_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:price_cmc:MAX \
+  DEF:volume_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:volume_cmc:MAX \
+  GPRINT:price_cg:LAST:%.0lf\ CoinGecko\ Price \
+  GPRINT:volume_cg:LAST:%.0lf\ CoinGecko\ Price \
+  GPRINT:price_cmc:LAST:%.0lf\ CoinMarketCap\ Price \
+  GPRINT:volume_cmc:LAST:%.0lf\ CoinMarketCap\ Price \
+  LINE1:price_cg#65AABB:"Price (CG)" \
+  LINE1:volume_cg#65AABB:"Volume (CG)" \
+  LINE1:price_cmc#65AABB:"Price (CMC)" \
+  LINE1:volume_cmc#65AABB:"Volume (CMC)"
+
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Network" \
   --color BACK#565875 \
@@ -200,7 +224,7 @@ rrdtool graph /var/www/html/network_graph.png \
 
 # total hdd, used (24hour)
 rrdtool graph /var/www/html/hdd_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "System Drive" \
   --alt-autoscale-max --lower-limit=1 \
@@ -221,7 +245,7 @@ rrdtool graph /var/www/html/hdd_graph.png \
 
 # memory (24hour)
 rrdtool graph /var/www/html/memory_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Memory (MB)" \
   --color BACK#565875 \
@@ -241,7 +265,7 @@ rrdtool graph /var/www/html/memory_graph.png \
 
 # cpu temperature (24hour)
 rrdtool graph /var/www/html/temp_graph.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "CPU Temp (°C)" \
   --color BACK#565875 \
@@ -262,7 +286,7 @@ rrdtool graph /var/www/html/temp_graph.png \
 function difficulty_auto() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 1394 -h 138 -a PNG \
+    -w 600 -h 138 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
@@ -288,7 +312,7 @@ function difficulty_auto() {
 function avgconfirmation_auto_one() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 164 -a PNG \
+    -w 400 -h 160 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
@@ -314,7 +338,7 @@ function avgconfirmation_auto_one() {
 function avgconfirmation_auto_two() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 164 -a PNG \
+    -w 400 -h 160 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
@@ -343,7 +367,7 @@ function avgconfirmation_auto_two() {
 function difficulty_normal() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 1394 -h 138 -a PNG \
+    -w 600 -h 138 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
@@ -366,7 +390,7 @@ function difficulty_normal() {
 function avgconfirmation_normal() {
   # total avg confirmations (24hour)
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 164 -a PNG \
+    -w 400 -h 160 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
