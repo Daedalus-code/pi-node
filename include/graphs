@@ -189,8 +189,8 @@ rrdtool graph /var/www/html/market_price_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:price_cg=/home/"$(whoami)"/stats/coingecko.rrd:price_cg:MAX \
   DEF:price_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:price_cmc:MAX \
-  GPRINT:price_cg:LAST:%.2lf\ CoinGecko\ Price \
-  GPRINT:price_cmc:LAST:%.2lf\ CoinMarketCap\ Price \
+  GPRINT:price_cg:LAST:%.4lf\ CoinGecko\ Price \
+  GPRINT:price_cmc:LAST:%.4lf\ CoinMarketCap\ Price \
   LINE1:price_cg#91E7AC \
   LINE1:price_cmc#92B7E8
 
@@ -320,8 +320,8 @@ function difficulty_auto() {
     GPRINT:difficulty:AVERAGE:%.0lf\ AVG \
     GPRINT:difficulty:MAX:%.0lf\ Max \
     GPRINT:difficulty:MIN:%.0lf\ Min \
-    AREA:difficulty#C99999:"Network Difficulty" \
-    LINE1:set_auto_pos#FFFFFF:"Auto PoS Config"
+    AREA:difficulty#C99999 \
+    LINE1:set_auto_pos#FFFFFF
 }
 
 function avgconfirmation_auto_one() {
