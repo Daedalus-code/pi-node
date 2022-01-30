@@ -175,7 +175,7 @@ rrdtool graph /var/www/html/watchlist_graph.png \
 
 # market (24hour)
 rrdtool graph /var/www/html/market_graph.png \
-  -w 600 -h 160 -a PNG \
+  -w 620 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Market(s)" \
   --alt-autoscale-max --lower-limit=1 \
@@ -286,7 +286,7 @@ rrdtool graph /var/www/html/temp_graph.png \
 function difficulty_auto() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 600 -h 160 -a PNG \
+    -w 620 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
@@ -367,7 +367,7 @@ function avgconfirmation_auto_two() {
 function difficulty_normal() {
   # difficulty (24hour)
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 600 -h 138 -a PNG \
+    -w 620 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
