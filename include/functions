@@ -7,7 +7,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.7.8"
+VERSION="v1.5.0.6"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
