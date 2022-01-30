@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222901
-# 0.2.7.6
+# V20223001
+# 0.2.7.7
 
 # shellcheck disable=SC2154
 
@@ -23,6 +23,7 @@ WAIT_TIME=$(head -1 "${WALLET_DIR:?}"/wait 2>&1)
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
   WAIT_TIME="360"
+  echo "${WAIT_TIME:?}" >"${WALLET_DIR:?}"/wait
 fi
 
 RANDOM_WAIT=$((((RANDOM % 2) + 1)))

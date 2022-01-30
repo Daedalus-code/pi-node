@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222901
-# 0.4.9.6
+# V20223001
+# 0.4.9.7
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -21,6 +21,7 @@ WAIT_TIME=$(head -1 "${WALLET_DIR:?}"/wait 2>&1)
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
   WAIT_TIME="360"
+  echo "${WAIT_TIME:?}" >"${WALLET_DIR:?}"/wait
 fi
 
 ### install needed packages ####################################################
