@@ -103,7 +103,7 @@ cat >"${LOG_DIR:?}"/add_cg <<'EOF'
 #!/bin/bash
 
 # By Rainman
-# V20222901
+# V20223101
 # 0.0.3.5
 
 source /usr/local/bin/include/pitrump.conf
@@ -125,7 +125,7 @@ for (( ; ; )); do # loop until success
 
   torify curl -o "${LOG_DIR:?}"/node_data/stats/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'$COIN_API'/market_chart?vs_currency='$CURRENCY_API'&days='$days'' -H 'accept: application/json' &>/dev/null
 
-  sleep 1
+  sleep 2
   echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
 
   if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
@@ -147,7 +147,7 @@ cat >"${LOG_DIR:?}"/add_cmc <<'EOF'
 #!/bin/bash
 
 # By Rainman
-# V20222901
+# V20223101
 # 0.0.3.3
 
 source /usr/local/bin/include/pitrump.conf
@@ -167,7 +167,7 @@ for (( ; ; )); do # loop until success
   URL="https://coinmarketcap.com/currencies/trumpcoin/"
   curl -s -L "$URL" 2>&1 | html2text >"${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1
 
-  sleep 1
+  sleep 2
   echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
 
   if grep "trump" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
