@@ -576,7 +576,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printline "Ban(s)" "${WALLET_PEERS_BANNED:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Add_Peers/Addnodes" "$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)"
       printline "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "WalletBalance" "${WALLET_BALANCE:?}" "StakingStatus" "${NODE_PROOF:?}"
       printline "CoinSupply" "${NODE_COIN_SUPPLY:?}" "WalletInstalled" "${WALLET_VERSION:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
-      printline "WalletDatSize" "$(du -sh "${WALLET_DIR:?}"/wallet.dat)" "BackupsSize" "$(du -sh "${WALLET_DIR:?}"/backups)" "WalletSize" "$(du -sh "${WALLET_DIR:?}")"
+      printline "WalletDatSize" "$(du -sh "${WALLET_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "BackupsSize" "$(du -sh "${WALLET_DIR:?}"/backups 2>&1 | awk '{ print $1 }' 2>&1)" "WalletSize" "$(du -sh "${WALLET_DIR:?}" | awk '{ print $1 }' 2>&1)"
     )
     display_result "System Information"
     clear
