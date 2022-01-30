@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223001
-# 0.5.1.3
+# 0.5.3.1
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -278,6 +278,22 @@ if [ ! -f "/home/$(whoami)/stats/coinmarketcap.rrd" ] &>/dev/null; then
     DS:volume_cmc:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
+# price avg
+if [ ! -f "/home/$(whoami)/stats/price_avg.rrd" ] &>/dev/null; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating price_avg.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  rrdtool create /home/"$(whoami)"/stats/price_avg.rrd \
+    --step=60 \
+    DS:price_avg:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
+fi
+# volume avg
+if [ ! -f "/home/$(whoami)/stats/volume_avg.rrd" ] &>/dev/null; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating volume_avg.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  rrdtool create /home/"$(whoami)"/stats/volume_avg.rrd \
+    --step=60 \
+    DS:volume_avg:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
+fi
 
 ### update rrdtool databases ###################################################
 
@@ -304,6 +320,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/coingecko.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price.cg 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/stats/volume.cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/coinmarketcap.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/price_avg.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/volume 2>/dev/null)" 2>/dev/null
 
   ### auto pos grinding #################################################### ###
 

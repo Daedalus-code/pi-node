@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223001
-# 0.4.4.4
+# 0.4.4.8
 
 source /usr/local/bin/include/pitrump.conf
 
@@ -189,10 +189,12 @@ rrdtool graph /var/www/html/market_price_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:price_cg=/home/"$(whoami)"/stats/coingecko.rrd:price_cg:MAX \
   DEF:price_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:price_cmc:MAX \
+  DEF:price_avg=/home/"$(whoami)"/stats/price_avg.rrd:price_avg:MAX \
   GPRINT:price_cg:LAST:%.4lf\ CoinGecko\ Price \
   GPRINT:price_cmc:LAST:%.4lf\ CoinMarketCap\ Price \
   LINE1:price_cg#91E7AC \
-  LINE1:price_cmc#92B7E8
+  LINE1:price_cmc#92B7E8 \
+  LINE1:price_avg#588B68
 
 # market volume (24hour)
 rrdtool graph /var/www/html/market_volume_graph.png \
@@ -210,10 +212,12 @@ rrdtool graph /var/www/html/market_volume_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:volume_cg=/home/"$(whoami)"/stats/coingecko.rrd:volume_cg:MAX \
   DEF:volume_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:volume_cmc:MAX \
+  DEF:volume_avg=/home/"$(whoami)"/stats/volume_avg.rrd:volume_avg:MAX \
   GPRINT:volume_cg:LAST:%.2lf\ CoinGecko\ Volume \
   GPRINT:volume_cmc:LAST:%.2lf\ CoinMarketCap\ Volume \
   LINE1:volume_cg#7AC291 \
-  LINE1:volume_cmc#7A99C2
+  LINE1:volume_cmc#7A99C2 \
+  LINE1:volume_avg#546985
 
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
