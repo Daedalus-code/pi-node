@@ -1006,10 +1006,10 @@ Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
         echo "already_doing_it" >"${LOG_DIR:?}"/node_data/graph.lock 2>&1
         printf '%b' "[${G1:?}Ok${N0:?}] Updating graphs!\n"
         echo
-        read -r -p "[Ok] Press Enter to continue" </dev/tty
-        clear
         bash /usr/local/bin/include/graphs
         echo
+        read -r -p "[Ok] Press Enter to continue" </dev/tty
+        clear
         rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
       fi
     fi
