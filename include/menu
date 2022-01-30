@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223001
-# 1.5.7.6
+# 1.5.7.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -568,7 +568,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printline "OS" "$(uname -o 2>&1) $(uname -p 2>&1)" "Kernel" "$(uname -r 2>&1)" "NodeName" "$(uname -n 2>&1)"
       printline "Load" "${LOAD:?}" "SystemUptime" "${SYS_UPTIME:?}" "WalletUptime" "${UPTIME:?}"
       echo
-      printline "FreeTotalMemory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "UsedTotalSwap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "UsedHDD" "${USED_HDD:?} ${USED_HDD_P:?}"
+      printline "Free/TotalMemory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "Used/TotalSwap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "UsedHDD" "${USED_HDD:?} ${USED_HDD_P:?}"
       printline "UserSpace" "$(du -sh /home/* 2>/dev/null | xargs 2>&1)" "CPUTemp" "${CPU_CTEMP:?} C ${CPU_FTEMP:?} F (${CPUS:?})" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))"
       printline "Daemon" "${PID_DAEMON:?} (trumpcoind)" "Head/Block" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Network" "${WALLET_CHAIN:?} ${INTERFACE:?}"
       printline "Address" "${IP_ADDRESS_N:?}" "Download" "${DOWNLOAD:?}" "Upload" "${UPLOAD:?}"
@@ -576,6 +576,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printline "Ban(s)" "${WALLET_PEERS_BANNED:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Add_Peers/Addnodes" "$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)"
       printline "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "WalletBalance" "${WALLET_BALANCE:?}" "StakingStatus" "${NODE_PROOF:?}"
       printline "CoinSupply" "${NODE_COIN_SUPPLY:?}" "WalletInstalled" "${WALLET_VERSION:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
+      printline "WalletDatSize" "$(du -sh "${WALLET_DIR:?}"/wallet.dat)" "BackupsSize" "$(du -sh "${WALLET_DIR:?}"/backups)" "WalletSize" "$(du -sh "${WALLET_DIR:?}")"
     )
     display_result "System Information"
     clear
