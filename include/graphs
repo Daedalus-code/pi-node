@@ -155,7 +155,7 @@ rrdtool graph /var/www/html/rank_graph.png \
 
 # watchlist (24hour)
 rrdtool graph /var/www/html/watchlist_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "CoinMarketCap Watchlist" \
   --alt-autoscale-max --lower-limit=1 \
@@ -175,7 +175,7 @@ rrdtool graph /var/www/html/watchlist_graph.png \
 
 # market price (24hour)
 rrdtool graph /var/www/html/market_price_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Market Price" \
   --alt-autoscale-max --lower-limit=1 \
@@ -196,7 +196,7 @@ rrdtool graph /var/www/html/market_price_graph.png \
 
 # market volume (24hour)
 rrdtool graph /var/www/html/market_volume_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Market Volume" \
   --alt-autoscale-max --lower-limit=1 \
