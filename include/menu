@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223001
-# 1.5.7.8
+# 1.5.7.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -540,45 +540,43 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
     LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y')
 
+    # Thank you! -> https://stackoverflow.com/questions/59862020
+
+    dot_field() {
+      # todo: Change implementation when field can be 2 words with a space in between
+      printf "%-18.18s" "$1" | tr ' ' '.'
+      # The : must be printed in a second statement when you don't want cyan dots.
+      printf ':'
+    }
+    # todo: Change implementation when field can be 2 words with a space in between
+    space_number() {
+      printf "%-19.19s" "$1"
+    }
+    # todo: add logic when only 4 parameters are given
+    printline() {
+      echo "   $(dot_field "$1") $(space_number "$2")$(dot_field "$3") $(space_number "$4")$(dot_field "$5") $(space_number "$6")"
+    }
+
     display_result() {
       dialog --title "$1" \
         --no-collapse \
         --msgbox "$RESULT" 0 0
     }
 
-    RESULT=$(echo "
-OS.................: $(uname -o 2>&1) $(uname -p 2>&1)
-Kernel.............: $(uname -r 2>&1)
-NodeName...........: $(uname -n 2>&1)
-Load...............: ${LOAD:?}
-SystemUptime.......: ${SYS_UPTIME:?}
-WalletUptime.......: ${UPTIME:?}
-
-FreeTotalMemory....: ${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M
-UsedTotalSwap......: ${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M
-UsedHDD............: ${USED_HDD:?} ${USED_HDD_P:?}
-UserSpace..........: $(du -sh /home/* 2>/dev/null | xargs 2>&1)
-CPUTemp............: ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F (${CPUS:?})
-Users..............: ${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))
-
-Daemon.............: ${PID_DAEMON:?} (trumpcoind)
-Head/Block.........: ${WALLET_HEADS:?}/${WALLET_BLOCK:?}
-Network............: ${WALLET_CHAIN:?} ${INTERFACE:?}
-Address............: ${IP_ADDRESS_N:?}
-Download...........: ${DOWNLOAD:?}
-Upload.............: ${UPLOAD:?}
-
-Ban(s).............: ${WALLET_PEERS_BANNED:?}
-Connections........: ${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}
-Add_Peers/Addnodes.: $(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)
-Failed/Success.....: $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)
-WalletBalance......: ${WALLET_BALANCE:?}
-StakingStatus......: ${NODE_PROOF:?}
-CoinSupply.........: ${NODE_COIN_SUPPLY:?}
-
-WalletInstalled....: ${WALLET_VERSION:?}
-Repository.........: ${LATEST_HEAD:?} - ${LATEST_DATE:?}
-          ")
+    RESULT=$(
+      echo
+      printline "OS" "$(uname -o 2>&1) $(uname -p 2>&1)" "Kernel" "$(uname -r 2>&1)" "NodeName" "$(uname -n 2>&1)"
+      printline "Load" "${LOAD:?}" "SystemUptime" "${SYS_UPTIME:?}" "WalletUptime" "${UPTIME:?}"
+      echo
+      printline "FreeTotalMemory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "UsedTotalSwap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "UsedHDD" "${USED_HDD:?} ${USED_HDD_P:?}"
+      printline "UserSpace" "$(du -sh /home/* 2>/dev/null | xargs 2>&1)" "CPUTemp" "${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F (${CPUS:?})" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))"
+      printline "Daemon" "${PID_DAEMON:?} (trumpcoind)" "Head/Block" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Network" "${WALLET_CHAIN:?} ${INTERFACE:?}"
+      printline "Address" "${IP_ADDRESS_N:?}" "Download" "${DOWNLOAD:?}" "Upload" "${UPLOAD:?}"
+      echo
+      printline "Ban(s)" "${WALLET_PEERS_BANNED:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Add_Peers/Addnodes" "$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)"
+      printline "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "WalletBalance" "${WALLET_BALANCE:?}" "StakingStatus" "${NODE_PROOF:?}"
+      printline "CoinSupply" "${NODE_COIN_SUPPLY:?}" "WalletInstalled" "${WALLET_VERSION:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
+    )
     display_result "System Information"
     clear
   else
