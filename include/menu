@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223001
-# 1.5.7.8
+# 1.6.2.5
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -566,18 +566,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     RESULT=$(
       echo
-      printline "OS" "$(uname -o 2>&1) $(uname -p 2>&1)" "Kernel" "$(uname -r 2>&1)" "NodeName" "$(uname -n 2>&1)"
-      printline "Load" "${LOAD:?}" "SystemUptime" "${SYS_UPTIME:?}" "WalletUptime" "${UPTIME:?}"
+      printline "OS" "$(uname -o 2>&1) $(uname -p 2>&1)" "Kernel" "$(uname -r 2>&1)" "Node Name" "$(uname -n 2>&1)"
+      printline "Load" "${LOAD:?}" "System Uptime" "${SYS_UPTIME:?}" "Wallet Uptime" "${UPTIME:?}"
       echo
-      printline "Free/TotalMemory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "Used/TotalSwap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "UsedHDD" "${USED_HDD:?} ${USED_HDD_P:?}"
-      printline "UserSpace" "$(du -sh /home/* 2>/dev/null | xargs 2>&1)" "CPUTemp" "${CPU_CTEMP:?} C ${CPU_FTEMP:?} F (${CPUS:?})" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))"
-      printline "Daemon" "${PID_DAEMON:?} (trumpcoind)" "Head/Block" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Network" "${WALLET_CHAIN:?} ${INTERFACE:?}"
+      printline "Free/TotalMemory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "Used/Total Swap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "Used HDD" "${USED_HDD:?} ${USED_HDD_P:?}"
+      printline "User Space" "$(du -sh /home/* 2>/dev/null | xargs 2>&1)" "CPU temperature" "${CPU_CTEMP:?} C ${CPU_FTEMP:?} F (${CPUS:?})" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))"
+      printline "Daemon PID" "${PID_DAEMON:?} (trumpcoind)" "Headers/Blocks" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Network" "${WALLET_CHAIN:?} ${INTERFACE:?}"
       printline "Address" "${IP_ADDRESS_N:?}" "Download" "${DOWNLOAD:?}" "Upload" "${UPLOAD:?}"
       echo
       printline "Ban(s)" "${WALLET_PEERS_BANNED:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Add_Peers/Addnodes" "$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)"
-      printline "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "WalletBalance" "${WALLET_BALANCE:?}" "StakingStatus" "${NODE_PROOF:?}"
-      printline "CoinSupply" "${NODE_COIN_SUPPLY:?}" "WalletInstalled" "${WALLET_VERSION:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
-      printline "WalletDatSize" "$(du -sh "${WALLET_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "BackupsSize" "$(du -sh "${WALLET_DIR:?}"/backups 2>&1 | awk '{ print $1 }' 2>&1)" "WalletSize" "$(du -sh "${WALLET_DIR:?}" | awk '{ print $1 }' 2>&1)"
+      printline "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "Wallet Balance" "${WALLET_BALANCE:?}" "Staking Status" "${NODE_PROOF:?}"
+      printline "Coin Supply" "${NODE_COIN_SUPPLY:?}" "Wallet Installed" "${WALLET_VERSION:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
+      printline "Wallet.dat Size" "$(du -sh "${WALLET_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "Backups Size" "$(du -sh "${WALLET_DIR:?}"/backups 2>&1 | awk '{ print $1 }' 2>&1)" "Wallet Size" "$(du -sh "${WALLET_DIR:?}" | awk '{ print $1 }' 2>&1)"
     )
     display_result "System Information"
     clear
@@ -960,7 +960,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     6 "Crontab          Job scheduler"
     7 "Crontab (root)   Admin job scheduler"
     8 "Filesystem       /etc/fstab"
-    9 "Reset Graphs     Reset/Remove graphs"
+    9 "Graphs           rrdtool options"
     10 "Reset            Reset config(s)")
 
   CHOICE=$(dialog --clear \
@@ -998,21 +998,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
     nano /usr/local/bin/include/pitrump.conf
-    if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
-      read -r -p "[YN] Update graphs? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        # update graphs manually
-        echo "already_doing_it" >"${LOG_DIR:?}"/node_data/graph.lock 2>&1
-        printf '%b' "[${G1:?}Ok${N0:?}] Updating graphs!\n"
-        echo
-        bash /usr/local/bin/include/graphs
-        echo
-        read -r -p "[Ok] Press Enter to continue" </dev/tty
-        clear
-        rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
-      fi
-    fi
 
     ;;
 
@@ -1065,19 +1050,81 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     ;;
 
-    # remove rrdtool graphs
+    # rrdtool options
 
   "9")
 
-    echo "[IN] Databases has room for 3 year of data"
-    read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      rm -r /home/"$(whoami)"/stats/* &>/dev/null
+    HEIGHT=10
+    WIDTH=27
+    CHOICE_HEIGHT=3
+    BACKTITLE="Graphs"
+    TITLE="rrdtool (graphs) options"
+    MENU="Choose one option:"
+
+    OPTIONS=(1 "Update graphs"
+      2 "Database info"
+      3 "Reset databases")
+
+    CHOICE=$(dialog --clear \
+      --backtitle "$BACKTITLE" \
+      --title "$TITLE" \
+      --menu "$MENU" \
+      $HEIGHT $WIDTH $CHOICE_HEIGHT \
+      "${OPTIONS[@]}" \
+      2>&1 >/dev/tty)
+
+    clear
+    case $CHOICE in
+
+    "1")
+
+      if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
+        read -r -p "[YN] Update graphs? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          # update graphs manually
+          echo "already_doing_it" >"${LOG_DIR:?}"/node_data/graph.lock 2>&1
+          printf '%b' "[${G1:?}Ok${N0:?}] Updating graphs..\n"
+          echo
+          bash /usr/local/bin/include/graphs
+          echo
+          read -r -p "[Ok] Press Enter to continue" </dev/tty
+          clear
+          rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
+        fi
+      fi
+
+      ;;
+
+    "2")
+
+      display_result() {
+        dialog --title "$1" \
+          --no-collapse \
+          --msgbox "$RESULT" 0 0
+      }
+
+      RESULT=$(echo "$(dir -lh stats/ 2>&1)")
+      display_result "rrdtool Database info"
+
+      ;;
+
+    "3")
+
+      printf '%b' "[${R1:?}WARNING${N0:?}] Databases has room for 3 years of data!\n"
+      echo "[!!] Space is already set ($(du -sh stats/ 2>&1 | awk '{ print $1 }' 2>&1) -> $(du -k stats/ 2>&1 | awk '{ print $1 }' 2>&1)), are you sure?"
+      read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
       echo
-      read -r -p "[Ok] rrdtool graphs removed! Press Enter to continue" </dev/tty
-      echo
-    fi
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        rm -r /home/"$(whoami)"/stats/* &>/dev/null
+        echo
+        read -r -p "[Ok] rrdtool graphs removed! Press Enter to continue" </dev/tty
+        echo
+      fi
+
+      ;;
+
+    esac
 
     ;;
 
