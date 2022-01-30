@@ -265,8 +265,8 @@ if [ ! -f "/home/$(whoami)/stats/coingecko.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coingecko.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/coingecko.rrd \
     --step=60 \
-    DS:price.cg:GAUGE:300:U:U \
-    DS:volume.cg:GAUGE:300:U:U \
+    DS:price_cg:GAUGE:300:U:U \
+    DS:volume_cg:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
 # price and volume coinmarketcap
@@ -274,8 +274,8 @@ if [ ! -f "/home/$(whoami)/stats/coinmarketcap.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coinmarketcap.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/coinmarketcap.rrd \
     --step=60 \
-    DS:price.cmc:GAUGE:300:U:U \
-    DS:volume.cmc:GAUGE:300:U:U \
+    DS:price_cmc:GAUGE:300:U:U \
+    DS:volume_cmc:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
 
@@ -479,8 +479,8 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<img src='peers_graph.png' alt='Peers' />";
   echo "<img src='rank_graph.png' alt='Rank' />";
   echo "<img src='total_tx_graph.png' alt='Total TX' />";
-  echo "<img src='watchlist_graph.png' alt='Watchlist' />";
   echo "<img src='difficulty_graph.png' alt='Difficulty' />";
+  echo "<img src='watchlist_graph.png' alt='Watchlist' />";
   echo "<img src='market_price_graph.png' alt='Market Price' />";
   echo "<img src='market_volume_graph.png' alt='Market Volume' />";
 
