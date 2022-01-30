@@ -191,14 +191,14 @@ rrdtool graph /var/www/html/market_graph.png \
   DEF:volume_cg=/home/"$(whoami)"/stats/coingecko.rrd:volume_cg:MAX \
   DEF:price_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:price_cmc:MAX \
   DEF:volume_cmc=/home/"$(whoami)"/stats/coinmarketcap.rrd:volume_cmc:MAX \
-  GPRINT:price_cg:LAST:%.0lf\ CG\ Price \
-  GPRINT:volume_cg:LAST:%.0lf\ CG\ Volume \
-  GPRINT:price_cmc:LAST:%.0lf\ CMC\ Price \
-  GPRINT:volume_cmc:LAST:%.0lf\ CMC\ Volume \
-  LINE1:price_cg#65AABB:"CoinGecko Price" \
-  LINE1:volume_cg#65AABB \
-  LINE1:price_cmc#65AABB:"CoinMarketCap Price" \
-  LINE1:volume_cmc#65AABB
+  GPRINT:price_cg:LAST:%.2lf\ CoinGecko\ Price \
+  GPRINT:volume_cg:LAST:%.2lf\ CG\ Volume \
+  GPRINT:price_cmc:LAST:%.2lf\ CoinMarketCap\ Price \
+  GPRINT:volume_cmc:LAST:%.2lf\ CMC\ Volume \
+  LINE1:price_cg#91E7AC \
+  LINE1:volume_cg#7AC291 \
+  LINE1:price_cmc#92B7E8 \
+  LINE1:volume_cmc#7A99C2
 
 # network (24hour)
 rrdtool graph /var/www/html/network_graph.png \
