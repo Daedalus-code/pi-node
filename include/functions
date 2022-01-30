@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20223001
-# 1.5.1.0
+# V20223101
+# 1.5.1.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.1.0"
+VERSION="v1.5.1.6"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -76,9 +76,15 @@ CLOCK=$(date "+%H:%M:%S" 2>&1)
 # date for logs
 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
+if [[ -z "$LOG_DATE" ]] &>/dev/null; then
+  LOG_DATE=$(date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1)
+fi
 # date check
 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
 LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
+if [[ -z "$LOG_CHECK" ]] &>/dev/null; then
+  LOG_CHECK=$(date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1)
+fi
 
 # waiting values
 WAIT_TIME=$(head -1 "${WALLET_DIR:?}"/wait 2>&1)

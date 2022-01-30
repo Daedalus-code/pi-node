@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20223001
-# 1.6.2.5
+# V20223101
+# 1.6.2.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -37,6 +37,9 @@ LOAD=$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null)
 # date for logs
 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
+if [[ -z "$LOG_DATE" ]] &>/dev/null; then
+  LOG_DATE=$(date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1)
+fi
 
 HEIGHT=17
 WIDTH=54
