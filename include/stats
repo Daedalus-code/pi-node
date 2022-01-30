@@ -265,7 +265,7 @@ if [ ! -f "/home/$(whoami)/stats/coingecko.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coingecko.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/coingecko.rrd \
     --step=60 \
-    DS:price_cg:GAUGE:300:U:U \
+    DS:price.cg:GAUGE:300:U:U \
     DS:volume_cg:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
@@ -274,7 +274,7 @@ if [ ! -f "/home/$(whoami)/stats/coinmarketcap.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coinmarketcap.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/coinmarketcap.rrd \
     --step=60 \
-    DS:price_cmc:GAUGE:300:U:U \
+    DS:price.cmc:GAUGE:300:U:U \
     DS:volume_cmc:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
@@ -302,8 +302,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/banned_peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/bans 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/coingecko.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price_cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/stats/volume_cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/coinmarketcap.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price_cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/stats/volume_cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/coingecko.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price.cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/stats/volume_cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/coinmarketcap.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/stats/volume_cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
 
   ### auto pos grinding #################################################### ###
 
