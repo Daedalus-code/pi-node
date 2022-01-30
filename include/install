@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222901
-# 0.2.6.9
+# V20223001
+# 0.2.7.2
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   sudo rm -r /home/"$(whoami)"/Trump* &>/dev/null
@@ -228,8 +228,11 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
   printf '%b' "[${G1:?}Ok${N0:?}] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
 fi
 
+# create screen list
+screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+
 # look for screen session, if found, killall
-if screen -list 2>&1 | grep -q "add_peers" &>/dev/null; then
+if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then
   screen -X -S add_peers quit
 fi
 

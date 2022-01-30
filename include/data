@@ -178,6 +178,9 @@ EOF
 
 ### screen session(s) ##########################################################
 
+# create screen list
+screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+
 RANDOM_WAIT=$(cat "${LOG_DIR:?}"/node_data/waiting 2>/dev/null)
 if [[ -z "$RANDOM_WAIT" ]] &>/dev/null; then
   # non responsive
@@ -200,7 +203,7 @@ if [[ "$RANDOM_SCREEN" -eq "1" ]] &>/dev/null; then
   fi
   sleep "${RANDOM_WAIT:?}"
   # look for screen session, if not found, run this block
-  if ! screen -list 2>&1 | grep -q "add_cg" &>/dev/null; then
+  if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cg" &>/dev/null; then
     # create screen session
     screen -dmS add_cg 2>&1
     sleep 1
@@ -219,7 +222,7 @@ if [[ "$RANDOM_SCREEN" -eq "2" ]] &>/dev/null; then
   fi
   sleep "${RANDOM_WAIT:?}"
   # look for screen session, if not found, run this block
-  if ! screen -list 2>&1 | grep -q "add_cmc" &>/dev/null; then
+  if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cmc" &>/dev/null; then
     # create screen session
     screen -dmS add_cmc 2>&1
     sleep 1
