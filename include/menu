@@ -555,7 +555,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     }
     # todo: Change implementation when field can be 2 words with a space in between
     space_number() {
-      printf "%-16.18s" "$1"
+      printf "%-18.18s" "$1"
     }
     # todo: add logic when only 4 parameters are given
     printline() {
