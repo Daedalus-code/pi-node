@@ -1443,7 +1443,7 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/price.cg ]] &>/dev/null; then
     cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Price! (CG) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)${GR:?} :: ${N0:?}API price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1) Price! (CG) -${GR:?} :: ${N0:?}API price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -1457,7 +1457,7 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/volume.cg ] &>/dev/null; then
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/volume.cg ]] &>/dev/null; then
     cp "${WALLET_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API Volume! (CG) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${GR:?} :: ${N0:?}API volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1) Volume! (CG) -${GR:?} :: ${N0:?}API volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -1471,7 +1471,7 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/rank.cmc ]] &>/dev/null; then
     cp "${WALLET_DIR:?}"/rank.cmc "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1
-    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Rank! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${GR:?} :: ${N0:?}API rank data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1) Rank! (CMC) -${GR:?} :: ${N0:?}API rank data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -1485,7 +1485,7 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/price.cmc ] &>/dev/null; then
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/price.cmc ]] &>/dev/null; then
     cp "${WALLET_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1
-    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Price! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)${GR:?} :: ${N0:?}API price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1) Price! (CMC) -${GR:?} :: ${N0:?}API price data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -1499,7 +1499,7 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/volume.cmc ] &>/dev/null; then
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/volume.cmc ]] &>/dev/null; then
     cp "${WALLET_DIR:?}"/volume.cmc "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>&1
-    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Volume! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${GR:?} :: ${N0:?}API volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1) Volume! (CMC) -${GR:?} :: ${N0:?}API volume data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -1513,7 +1513,7 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/watchers.cmc ] &>/dev/null; then
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/watchers.cmc ]] &>/dev/null; then
     cp "${WALLET_DIR:?}"/watchers.cmc "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1
-    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API Watchlist! (CMC) - ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${GR:?} :: ${N0:?}API watchlist data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1) Watchlist! (CMC) -${GR:?} :: ${N0:?}API watchlist data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
