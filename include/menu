@@ -549,9 +549,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     dot_field() {
       # todo: Change implementation when field can be 2 words with a space in between
-      printf "%-18.18s" "$1" | tr ' ' '.'
+      printf "%-18.18s" "$1" | tr ' ' ' '
       # The : must be printed in a second statement when you don't want cyan dots.
-      printf ':'
+      printf ' '
     }
     # todo: Change implementation when field can be 2 words with a space in between
     space_number() {
