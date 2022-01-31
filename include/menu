@@ -570,7 +570,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     RESULT=$(
       echo
-      printline "System" "$(uname -o 2>&1)" "Kernel" "$(uname -r 2>&1)" "Hardware" "$(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)"
+      printline "System" "$(uname -o 2>&1)" "Kernel" "$(uname -r 2>&1)" "Hardware" "$(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1 | awk '{ print $1,$2 }' 2>&1)"
       printline "Load" "${LOAD:?}" "System Uptime" "${SYS_UPTIME:?}" "Wallet Uptime" "${UPTIME:?}"
       echo
       printline "Free/TotalMemory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "CPU Temperature" "${CPU_CTEMP:?} C ${CPU_FTEMP:?} F (${CPUS:?})" "Address" "${IP_ADDRESS_N:?}"
