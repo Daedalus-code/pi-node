@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20223101
-# 1.5.2.1
+# 1.5.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.2.1"
+VERSION="v1.5.2.4"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -47,6 +47,9 @@ function uptime_daemon() {
 }
 # create uptime
 echo "$(uptime_daemon 2>&1)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
+
+# get system uptime information
+uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/stats/uptime 2>&1
 
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then

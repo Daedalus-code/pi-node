@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223101
-# 0.3.0.8
+# 0.3.1.3
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -16,6 +16,11 @@ if [ ! -f "${LOG_DIR:?}"/node_data/stats/date ] &>/dev/null; then
   mkdir "${LOG_DIR:?}"/node_data/stats &>/dev/null
   mkdir "${LOG_DIR:?}"/node_data/client &>/dev/null
   mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
+fi
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/uptime ]] &>/dev/null; then
+  # get system uptime information
+  uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/stats/uptime 2>&1
 fi
 
 # date for logs
