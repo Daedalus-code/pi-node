@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20223101
-# 1.5.2.8
+# 1.5.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.2.8"
+VERSION="v1.5.3.1"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -1352,7 +1352,10 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE="${SYS_UPTIME:?}"
     # get model info
     elif [ "$RANDOM_TIMELINE" -eq "18" ] &>/dev/null; then
-      TIMELINE_MODEL=$(cat /proc/device-tree/model 2>/dev/null)
+      if [[ ! -f "${LOG_DIR:?}"/node_data/stats/model ]] &>/dev/null; then
+        cat /proc/device-tree/model 2>/dev/null | tr -d '\0' "${LOG_DIR:?}"/node_data/stats/model 2>&1
+      fi
+      TIMELINE_MODEL=$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)
       TIMELINE_MODEL="Model ${TIMELINE_MODEL:?}"
       if [[ -z "$TIMELINE_MODEL" ]] &>/dev/null; then
         TIMELINE_MODEL="${GR:?}Unknown${N0:?}"
