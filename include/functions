@@ -1353,7 +1353,7 @@ if grep "Sync has finished" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     # get model info
     elif [ "$RANDOM_TIMELINE" -eq "18" ] &>/dev/null; then
       if [[ ! -f "${LOG_DIR:?}"/node_data/stats/model ]] &>/dev/null; then
-        cat /proc/device-tree/model 2>/dev/null | tr -d '\0' "${LOG_DIR:?}"/node_data/stats/model 2>&1
+        cat /proc/device-tree/model 2>/dev/null | tr -d '\0' >"${LOG_DIR:?}"/node_data/stats/model 2>&1
       fi
       TIMELINE_MODEL=$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)
       TIMELINE_MODEL="Model ${TIMELINE_MODEL:?}"

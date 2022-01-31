@@ -61,7 +61,7 @@ if ! egrep "[0-9]+" "${WALLET_DIR:?}"/wait &>/dev/null; then
 
     # get device model
     if [[ ! -f "${LOG_DIR:?}"/node_data/stats/model ]] &>/dev/null; then
-      cat /proc/device-tree/model 2>/dev/null | tr -d '\0' "${LOG_DIR:?}"/node_data/stats/model 2>&1
+      cat /proc/device-tree/model 2>/dev/null | tr -d '\0' >"${LOG_DIR:?}"/node_data/stats/model 2>&1
     fi
 
     printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)\e[0m") [ ${G1:?}$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)MHz${N0:?} ] ${G1:?}${WAIT_TIME:?}${N0:?}/${G0:?}${WAIT_TIME_BLOCK:?}${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
