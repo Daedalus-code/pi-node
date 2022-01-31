@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223101
-# 1.6.2.9
+# 1.6.3.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -549,13 +549,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     dot_field() {
       # todo: Change implementation when field can be 2 words with a space in between
-      printf "%-18.18s" "$1" | tr ' ' ' '
+      printf "%-17.17s" "$1" | tr ' ' ' '
       # The : must be printed in a second statement when you don't want cyan dots.
       printf ' '
     }
     # todo: Change implementation when field can be 2 words with a space in between
     space_number() {
-      printf "%-19.19s" "$1"
+      printf "%-17.17s" "$1"
     }
     # todo: add logic when only 4 parameters are given
     printline() {
@@ -570,18 +570,20 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     RESULT=$(
       echo
-      printline "OS" "$(uname -o 2>&1) $(uname -p 2>&1)" "Kernel" "$(uname -r 2>&1)" "Node Name" "$(uname -n 2>&1)"
+      printline "System" "$(uname -o 2>&1)" "Kernel" "$(uname -r 2>&1)" "Hardware" "$(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)"
       printline "Load" "${LOAD:?}" "System Uptime" "${SYS_UPTIME:?}" "Wallet Uptime" "${UPTIME:?}"
       echo
-      printline "Free/TotalMemory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "Used/Total Swap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "Used HDD" "${USED_HDD:?} ${USED_HDD_P:?}"
-      printline "User Space" "$(du -sh /home/* 2>/dev/null | xargs 2>&1)" "CPU temperature" "${CPU_CTEMP:?} C ${CPU_FTEMP:?} F (${CPUS:?})" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))"
-      printline "Daemon PID" "${PID_DAEMON:?} (trumpcoind)" "Headers/Blocks" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Network" "${WALLET_CHAIN:?} ${INTERFACE:?}"
-      printline "Address" "${IP_ADDRESS_N:?}" "Download" "${DOWNLOAD:?}" "Upload" "${UPLOAD:?}"
+      printline "Free/TotalMemory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "CPU Temperature" "${CPU_CTEMP:?} C ${CPU_FTEMP:?} F (${CPUS:?})" "Address" "${IP_ADDRESS_N:?}"
+      printline "Used/Total Swap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "CPU Speed" "$(cat "$LOG_DIR"/node_data/stats/cpuspeed 2>/dev/null) MHz" "Network" "${WALLET_CHAIN:?} ${INTERFACE:?}"
+      printline "User Space" "$(du -sh /home/* 2>/dev/null | xargs 2>&1)" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))" "Upload" "${UPLOAD:?}"
+      printline "Used HDD" "${USED_HDD:?} ${USED_HDD_P:?}" "" "" "Download" "${DOWNLOAD:?}"
       echo
-      printline "Ban(s)" "${WALLET_PEERS_BANNED:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Add_Peers/Addnodes" "$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)"
-      printline "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "Wallet Balance" "${WALLET_BALANCE:?}" "Staking Status" "${NODE_PROOF:?}"
-      printline "Coin Supply" "${NODE_COIN_SUPPLY:?}" "Wallet Installed" "${WALLET_VERSION:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
-      printline "Wallet.dat Size" "$(du -sh "${WALLET_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "Backups Size" "$(du -sh "${WALLET_DIR:?}"/backups 2>&1 | awk '{ print $1 }' 2>&1)" "Wallet Size" "$(du -sh "${WALLET_DIR:?}" | awk '{ print $1 }' 2>&1)"
+      printline "PID" "${PID_DAEMON:?} (trumpcoin)" "Headers/Blocks" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
+      printline "Wallet" "${WALLET_VERSION:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Staking Status" "${NODE_PROOF:?}"
+      printline "Backups Size" "$(du -sh "${WALLET_DIR:?}"/backups 2>&1 | awk '{ print $1 }' 2>&1)" "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "Coin Supply" "${NODE_COIN_SUPPLY:?}"
+      printline "Wallet Size" "$(du -sh "${WALLET_DIR:?}" | awk '{ print $1 }' 2>&1)" "Add/Saved" "$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" "Wallet Balance" "${WALLET_BALANCE:?}"
+      printline "Wallet.dat Size" "$(du -sh "${WALLET_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "Ban(s)" "${WALLET_PEERS_BANNED:?}"
+      echo
     )
     display_result "System Information"
     clear
