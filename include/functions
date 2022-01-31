@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20223101
-# 1.5.3.1
+# 1.5.3.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.3.1"
+VERSION="v1.5.3.9"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -557,8 +557,16 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   VOLUME_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
   # calculate average price and volume
-  echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/price.avg)/${TICKER_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price 2>&1
-  echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/volume.avg)/${VOLUME_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
+  echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1)/${TICKER_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price 2>&1
+  echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1)/${VOLUME_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume 2>&1
+
+  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1 | awk '{ print $1 }' 2>&1)" -gt "60" ]] &>/dev/null; then
+    # keep last n of ticker price and volume
+    echo "$(tail -14 "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price.avg.tmp 2>&1
+    mv "${LOG_DIR:?}"/node_data/stats/price.avg.tmp "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1
+    echo "$(tail -14 "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume.avg.tmp 2>&1
+    mv "${LOG_DIR:?}"/node_data/stats/volume.avg.tmp "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1
+  fi
 
   # get wallet value
   WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)

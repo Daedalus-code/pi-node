@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223101
-# 0.2.7.8
+# 0.2.7.0
 
 # shellcheck disable=SC2154
 
@@ -266,13 +266,5 @@ if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
     API_VOLUME_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi
 fi
-
-### price, volume average ######################################################
-
-# keep last n of ticker price and volume
-echo "$(tail -14 "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/price.avg.tmp 2>&1
-mv "${LOG_DIR:?}"/node_data/stats/price.avg.tmp "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1
-echo "$(tail -14 "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1)" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/volume.avg.tmp 2>&1
-mv "${LOG_DIR:?}"/node_data/stats/volume.avg.tmp "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1
 
 # END
