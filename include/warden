@@ -270,9 +270,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
   if [[ ! -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
 
-    # create time lock file
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/func.lock 2>&1 # save lock time
-
     # time.dashbord exist, continue
     if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
@@ -280,10 +277,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
       if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
 
+        # create time lock file
+        echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/func.lock 2>&1 # save lock time
+
         # no double trouble when overlapping pitrump <> warden
         if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
 
-          DETACH="${CY:?}<<${N0:?} [ ${CY:?}Swap pitrump${N0:?} ]"
+          DETACH="${CY:?}<<${N0:?} [ ${GR:?}warden${N0:?} > ${G1:?}pitrump${N0:?} ]"
 
           run_functions
         fi
@@ -307,7 +307,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
         run_functions
       else
-        DETACH="${CY:?}<<${N0:?} [ ${CY:?}Swap warden${N0:?} ]"
+        DETACH="${CY:?}<<${N0:?} [ ${GR:?}pitrump${N0:?} > ${G0:?}warden${N0:?} ]"
       fi
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
