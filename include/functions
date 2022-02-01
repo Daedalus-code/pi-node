@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220102
-# 1.5.5.1
+# 1.5.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.5.1"
+VERSION="v1.5.6.2"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -1011,8 +1011,8 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 #!/bin/bash
 
 # By Rainman
-# V20222901
-# 0.0.2.8
+# V20220102
+# 0.0.3.9
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -1021,6 +1021,7 @@ source /usr/local/bin/include/color
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | tail -1 2>&1)
+P2P_OLD=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | tail -1 2>&1)
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! +$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1) P2P ${P2P:?} ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
@@ -1031,7 +1032,17 @@ done <"${LOG_DIR:?}"/node_data/add_peers 2>&1 | shuf 2>&1 | grep -vf "${LOG_DIR:
 
 P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | tail -1 2>&1)
 FAILED=$(grep " to $(cat "${LOG_DIR:?}"/node_data/add_peers.check 2>/dev/null) failed" "$WALLET_LOG_DIR"/debug.log 2>&1 | egrep -o " to .*. failed" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
-printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}-$FAILED${N0:?} P2P ${P2P:?} ${GR:?}<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+P2P_NEW=$(grep "Stopping adding nodes" "${LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | egrep -o "P2P [0-9]+" 2>&1 | awk '{ print $2 }' 2>&1)
+P2P_CHANGE=$(echo "$P2P_NEW-$P2P_OLD" 2>&1 | bc -l 2>&1)
+
+if [[ "$P2P_CHANGE" -gt "0" ]]; then
+  P2PC="${G1:?}+"
+else
+  P2PC="${R1:?}"
+fi
+
+printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}-$FAILED${N0:?} P2P ${P2P:?} ${GR:?}<${N0:?} ${P2PC:?}${P2P_CHANGE:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 screen -X -S add_peers quit
 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
