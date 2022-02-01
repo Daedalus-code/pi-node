@@ -82,6 +82,83 @@ if [[ -z "$WAIT_TIME_BLOCK" ]] &>/dev/null; then
   echo "${WAIT_TIME_BLOCK:?}" >>"${WALLET_DIR:?}"/wait
 fi
 
+### run with or without a display ##############################################
+
+function run_functions() {
+  if [[ -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
+    FUN_LIMIT="1/3"
+    # no double trouble when overlapping pitrump <> warden
+    if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
+      FUN_LIMIT="2/3"
+      # time.dashbord exist, don't continue
+      if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+        FUN_LIMIT="3/3"
+        # where are we now?
+        PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
+        # get data from functions
+        cd || exit && bash /usr/local/bin/include/functions
+      fi
+    fi
+  fi
+}
+
+# delete old time lock
+if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/func.lock 2>&1)" -lt "$(date +%s 2>&1)" ]] &>/dev/null; then
+  rm "${LOG_DIR:?}"/node_data/func.lock &>/dev/null
+fi
+
+# greater than n seconds, continue
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+
+  if [[ ! -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
+
+    # create time lock file
+    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/func.lock 2>&1 # save lock time
+
+    # time.dashbord exist, continue
+    if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
+
+      DETACH="${G1:?}<${N0:?} [ ${G1:?}pitrump${N0:?} ]"
+
+      if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
+
+        # no double trouble when overlapping pitrump <> warden
+        if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
+
+          DETACH="${CY:?}<<${N0:?} [ ${CY:?}Swap pitrump${N0:?} ]"
+
+          run_functions
+        fi
+        # remove old file
+        rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
+        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord ${FUN_LIMIT:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      fi
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
+
+      # remove lock file
+      rm "${LOG_DIR:?}"/node_data/func.lock &>/dev/null
+
+    else # time.dashbord don't exist, continue with warden
+
+      # no double trouble when overlapping pitrump <> warden
+      if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
+
+        DETACH="${G0:?}<${N0:?} [ ${G0:?}warden${N0:?} ]"
+
+        run_functions
+      else
+        DETACH="${CY:?}<<${N0:?} [ ${CY:?}Swap warden${N0:?} ]"
+      fi
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+      # remove lock file
+      rm "${LOG_DIR:?}"/node_data/func.lock &>/dev/null
+    fi
+  fi
+fi
+
 # wallet daemon uptime in seconds
 function uptime_daemon() {
   PID="$(pidof trumpcoind 2>&1)"
@@ -237,83 +314,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     yes "" | "${WALLET_DIR:?}"/trumpcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-fi
-
-### run with or without a display ##############################################
-
-function run_functions() {
-  if [[ -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
-    FUN_LIMIT="1/3"
-    # no double trouble when overlapping pitrump <> warden
-    if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
-      FUN_LIMIT="2/3"
-      # time.dashbord exist, don't continue
-      if [[ ! -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-        FUN_LIMIT="3/3"
-        # where are we now?
-        PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/functions
-        # get data from functions
-        cd || exit && bash /usr/local/bin/include/functions
-      fi
-    fi
-  fi
-}
-
-# delete old time lock
-if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/func.lock 2>&1)" -lt "$(date +%s 2>&1)" ]] &>/dev/null; then
-  rm "${LOG_DIR:?}"/node_data/func.lock &>/dev/null
-fi
-
-# greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
-
-  if [[ ! -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
-
-    # time.dashbord exist, continue
-    if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
-
-      DETACH="${G1:?}<${N0:?} [ ${G1:?}pitrump${N0:?} ]"
-
-      if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
-
-        # create time lock file
-        echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/func.lock 2>&1 # save lock time
-
-        # no double trouble when overlapping pitrump <> warden
-        if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
-
-          DETACH="${CY:?}<<${N0:?} [ ${GR:?}warden${N0:?} > ${G1:?}pitrump${N0:?} ]"
-
-          run_functions
-        fi
-        # remove old file
-        rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
-        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord ${FUN_LIMIT:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
-      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
-
-      # remove lock file
-      rm "${LOG_DIR:?}"/node_data/func.lock &>/dev/null
-
-    else # time.dashbord don't exist, continue with warden
-
-      # no double trouble when overlapping pitrump <> warden
-      if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
-
-        DETACH="${G0:?}<${N0:?} [ ${G0:?}warden${N0:?} ]"
-
-        run_functions
-      else
-        DETACH="${CY:?}<<${N0:?} [ ${GR:?}pitrump${N0:?} > ${G0:?}warden${N0:?} ]"
-      fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
-      # remove lock file
-      rm "${LOG_DIR:?}"/node_data/func.lock &>/dev/null
-    fi
   fi
 fi
 
