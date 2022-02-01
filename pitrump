@@ -2,14 +2,17 @@
 
 # By Rainman
 # V20220102
-# 0.0.4.2
+# 0.0.4.5
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
 sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz &>/dev/null
 
+source /usr/local/bin/include/pitrump.conf
+
 for (( ; ; )); do # loop dashbord
 
-  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # save dashbord time
+  # save dashbord time
+  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1
 
   source /usr/local/bin/include/color
   source /usr/local/bin/include/functions

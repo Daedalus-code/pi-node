@@ -2,9 +2,8 @@
 
 # By Rainman
 # V20220102
-# 0.3.1.8
+# 0.3.1.7
 
-# pitrump configuration
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
 
