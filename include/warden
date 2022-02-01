@@ -285,7 +285,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
         # no double trouble when overlapping pitrump <> warden
         if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
 
-          DETACH="${CY:?}<<${N0:?} [ ${CY:?}Swap${N0:?} ]"
+          DETACH="${CY:?}<<${N0:?} [ ${CY:?}Swap${N0:?} ] ${GR:?}$(cat "${LOG_DIR:?}"/node_data/func.lock 2>/dev/null)${N0:?}"
 
           run_functions
         fi
@@ -311,7 +311,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
         run_functions
       else
         run_functions
-        DETACH="${CY:?}<<${N0:?} [ ${CY:?}Swap${N0:?} ]"
+        DETACH="${CY:?}<<${N0:?} [ ${CY:?}Swap${N0:?} ] ${GR:?}$(cat "${LOG_DIR:?}"/node_data/func.lock 2>/dev/null)${N0:?}"
       fi
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
