@@ -552,7 +552,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     COM=$(awk '{ print $3 }' "${LOG_DIR:?}"/node_data/com 2>/dev/null)
 
     if [[ -z "$COM" ]] &>/dev/null; then
-      COM="data swap"
+      COM="Swap"
     fi
 
     # Thank you! -> https://stackoverflow.com/questions/59862020
