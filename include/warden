@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220102
-# 0.3.1.8
+# 0.3.2.3
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -27,6 +27,13 @@ fi
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
   LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
+fi
+
+# save warden time
+echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1
+if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
+  # remove old file
+  rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
 fi
 
 ### wait time based on cpu speed ###############################################
@@ -288,8 +295,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
         rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
         printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
-
-      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
