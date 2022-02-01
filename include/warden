@@ -283,7 +283,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
       DETACH="${G1:?}<${N0:?} [ ${G1:?}pitrump${N0:?} ]"
       # communication port pitrump
-      echo "COM > pitrump" >"${LOG_DIR:?}"/node_data/com
+      echo "COM > pitrump" >"${LOG_DIR:?}"/node_data/com 2>&1
 
       if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
 
@@ -307,7 +307,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
         DETACH="${G0:?}<${N0:?} [ ${G0:?}warden${N0:?} ]"
         # communication port warden
-        echo "COM > warden" >"${LOG_DIR:?}"/node_data/com
+        echo "COM > warden" >"${LOG_DIR:?}"/node_data/com 2>&1
         run_functions
       else
         run_functions

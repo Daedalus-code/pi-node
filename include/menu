@@ -549,7 +549,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
 
     # communication port
-    COM=$(awk '{ print $3 }' "${LOG_DIR:?}"/node_data/com 2>&1)
+    COM=$(awk '{ print $3 }' "${LOG_DIR:?}"/node_data/com 2>/dev/null)
 
     if [[ -z "$COM" ]] &>/dev/null; then
       COM="data swap"
