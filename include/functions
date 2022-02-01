@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220102
-# 1.5.4.5
+# 1.5.5.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.4.5"
+VERSION="v1.5.5.1"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -902,8 +902,14 @@ fi
 # create screen list
 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
+# kill when too many screens (all of them)
+if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "add_peers")" -gt "1" ]] &>/dev/null; then
+  killall screen &>/dev/null
+fi
+
 # kill dead screens
 if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep "dead" &>/dev/null; then
+
   if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then
     screen -wipe &>/dev/null
     screen -X -S add_peers quit

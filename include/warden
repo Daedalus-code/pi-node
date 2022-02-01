@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220102
-# 0.3.2.4
+# 0.3.1.9
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
@@ -98,11 +98,6 @@ echo "$(uptime_daemon 2>&1)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
 
 # create screen list
 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
-
-# kill too many screens (all of them)
-if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "add_peers")" -gt "1" ]] &>/dev/null; then
-  killall screen &>/dev/null
-fi
 
 # screen indicator (is add_cg running)
 if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cg" &>/dev/null; then
