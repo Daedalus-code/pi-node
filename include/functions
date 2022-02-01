@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220102
-# 1.5.3.9
+# 1.5.4.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.3.9"
+VERSION="v1.5.4.0"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -74,6 +74,7 @@ fi
 
 # time - date, trim extra spaces with xargs
 CLOCK=$(date "+%H:%M:%S" 2>&1)
+
 # date for logs
 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 
