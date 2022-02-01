@@ -1,13 +1,15 @@
 #!/bin/bash
 
 # By Rainman
-# V20222601
+# V20220102
 # 0.0.4.2
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
 sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz &>/dev/null
 
 for (( ; ; )); do # loop dashbord
+
+  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # save dashbord time
 
   source /usr/local/bin/include/color
   source /usr/local/bin/include/functions
@@ -34,9 +36,7 @@ ${TX:?} ${WALLET_TXLAST:?}${N0:?}
 ${LAST_LOG:?}
 "
 
-  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1 # save dashbord time
   sleep "${TIME:?}"
-
 done
 
 # END

@@ -2,11 +2,13 @@
 
 # By Rainman
 # V20220102
-# 0.3.1.9
+# 0.3.1.8
 
 # pitrump configuration
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
+
+echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
 if [ ! -f "${LOG_DIR:?}"/node_data/stats/date ] &>/dev/null; then
 
@@ -288,9 +290,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
         rm "${LOG_DIR:?}"/node_data/stats/time.dashbord &>/dev/null
         printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
-
-      echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
-
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
       # remove lock file
