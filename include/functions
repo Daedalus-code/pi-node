@@ -875,7 +875,7 @@ function failed_peers() {
   awk '!a[$0]++' "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
   mv "${LOG_DIR:?}"/node_data/peers/failed.clean "${LOG_DIR:?}"/node_data/peers/failed 2>&1
   ONION_FAILS=$(egrep "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
-  IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | wc -l 2>&1)
+  IPV4_FAILS=$(egrep "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -v ".onion" 2>&1 | wc -l 2>&1)
   DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -v ".onion" 2>&1 | wc -l 2>&1)
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
