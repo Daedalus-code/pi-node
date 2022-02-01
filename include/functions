@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220102
-# 1.5.4.0
+# 1.5.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.4.0"
+VERSION="v1.5.4.4"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -541,13 +541,17 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   # save wallet value
   echo "${WALLET_BALANCE:?}" >"${LOG_DIR:?}"/node_data/stats/total_balance 2>&1
 
-  # add direct price, volume (coingecko), disregard zeros, empty lines (no data)
-  cat "${LOG_DIR:?}"/node_data/stats/price.cg 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.4f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/price.avg
-  cat "${LOG_DIR:?}"/node_data/stats/volume.cg 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/volume.avg
+  # don't run while swap
+  if [[ ! -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
 
-  # add direct price, volume (coinmarketcap), disregard zeros, empty lines (no data)
-  cat "${LOG_DIR:?}"/node_data/stats/price.cmc 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.4f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/price.avg
-  cat "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/volume.avg
+    # add direct price, volume (coingecko), disregard zeros, empty lines (no data)
+    cat "${LOG_DIR:?}"/node_data/stats/price.cg 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.4f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/price.avg
+    cat "${LOG_DIR:?}"/node_data/stats/volume.cg 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/volume.avg
+
+    # add direct price, volume (coinmarketcap), disregard zeros, empty lines (no data)
+    cat "${LOG_DIR:?}"/node_data/stats/price.cmc 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.4f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/price.avg
+    cat "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/volume.avg
+  fi
 
   # create average ticker price and volume, disregard zeros, empty lines (no data)
   cat "${LOG_DIR:?}"/node_data/stats/price* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/price.avg
