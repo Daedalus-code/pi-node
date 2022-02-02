@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220202
-# 0.3.2.6
+# 0.3.2.8
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -118,10 +118,11 @@ else
     SCREEN_VALUE_CG="${SCREEN_CALC_CG:?}"
   fi
 
-  # kill old session
-  if [[ "$SCREEN_CALC_CG" -gt "7" ]] &>/dev/null; then
+  # kill old session, try another
+  if [[ "$SCREEN_CALC_CG" -gt "2" ]] &>/dev/null; then
     screen -X -S add_cg quit
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cg script. (old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cg script. (old) Trying another API.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    bash "${LOG_DIR:?}"/add_cmc
     SCREEN_IND_CG="${GR:?}*${N0:?}"
     SCREEN_VALUE_CG="${GR:?}0${GR:?}"
   fi
@@ -148,10 +149,11 @@ else
     SCREEN_VALUE_CMC="${SCREEN_CALC_CMC:?}"
   fi
 
-  # kill old session
-  if [[ "$SCREEN_CALC_CMC" -gt "7" ]] &>/dev/null; then
+  # kill old session, try another
+  if [[ "$SCREEN_CALC_CMC" -gt "2" ]] &>/dev/null; then
     screen -X -S add_cmc quit
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cmc script. (old)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cmc script. (old) Trying another API.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    bash "${LOG_DIR:?}"/add_cg
     SCREEN_IND_CMC="${GR:?}*${N0:?}"
     SCREEN_VALUE_CMC="${GR:?}0${GR:?}"
   fi
