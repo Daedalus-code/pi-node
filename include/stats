@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20223101
-# 0.5.3.4
+# V20220202
+# 0.5.4.0
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -306,11 +306,15 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   rrdtool update /home/"$(whoami)"/stats/load.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/load5.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/load15.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null | tr -d ',' 2>&1 | awk '{ print $3 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
+
   rrdtool update /home/"$(whoami)"/stats/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
+
   rrdtool update /home/"$(whoami)"/stats/memory_total.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/memtotal 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/memory_free.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/memfree 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
+
   rrdtool update /home/"$(whoami)"/stats/hdd.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/hdd_total.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $2 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
+
   rrdtool update /home/"$(whoami)"/stats/network.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/rxbytes 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/stats/txbytes 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/balance.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/rank.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
@@ -321,10 +325,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/banned_peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/bans 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
+
   rrdtool update /home/"$(whoami)"/stats/coingecko.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price.cg 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/stats/volume.cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/coinmarketcap.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/price_avg.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/price* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/volume* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
+
+  rrdtool update /home/"$(whoami)"/stats/price_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/price.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/stats/price.avg 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/stats/volume.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/stats/volume.avg 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l)" 2>/dev/null
 
   ### auto pos grinding #################################################### ###
 
