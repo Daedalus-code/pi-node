@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220102
+# V20220302
 # 1.6.4.1
 
 # dialog, ncurses no utf8 acs
@@ -1071,15 +1071,15 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "9")
 
     HEIGHT=10
-    WIDTH=27
+    WIDTH=45
     CHOICE_HEIGHT=3
     BACKTITLE="Graphs"
     TITLE="rrdtool (graphs) options"
     MENU="Choose one option:"
 
-    OPTIONS=(1 "Update graphs"
-      2 "Database info"
-      3 "Reset databases")
+    OPTIONS=(1 "Update           Update web graphs"
+      2 "Databases        Data information"
+      3 "Reset            Delete databases")
 
     CHOICE=$(dialog --clear \
       --backtitle "$BACKTITLE" \
@@ -1147,16 +1147,16 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "10")
 
     HEIGHT=11
-    WIDTH=31
+    WIDTH=51
     CHOICE_HEIGHT=4
     BACKTITLE="Reset configuration(s)"
     TITLE="Reset a specific config"
     MENU="Choose one option:"
 
-    OPTIONS=(1 "Reset trumpcoin.conf"
-      2 "Reset pitrump.conf"
-      3 "Reset config.txt"
-      4 "Reset torrc")
+    OPTIONS=(1 "trumpcoin.conf   Reset wallet config"
+      2 "pitrump.conf     Reset trump-node config"
+      3 "config.txt       Reset boot/config.txt"
+      4 "torrc            Reset Tor config")
 
     CHOICE=$(dialog --clear \
       --backtitle "$BACKTITLE" \
@@ -1379,16 +1379,16 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
   # swap menu, after the fact
 
   HEIGHT=11
-  WIDTH=23
+  WIDTH=45
   CHOICE_HEIGHT=4
   BACKTITLE="Swap options"
   TITLE="Setup Swap space"
   MENU="Choose one option:"
 
-  OPTIONS=(1 "Create Swap"
-    2 "Delete Swap"
-    3 "Swap status"
-    4 "Data to RAM")
+  OPTIONS=(1 "Create           Create swapfile"
+    2 "Delete           Delete swapfile"
+    3 "Status           Swap information"
+    4 "DTR              Data to RAM")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1561,15 +1561,15 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 "9")
 
   HEIGHT=10
-  WIDTH=34
+  WIDTH=47
   CHOICE_HEIGHT=3
   BACKTITLE="Tor menu"
   TITLE="Proxy options (tor)"
   MENU="Choose one option:"
 
-  OPTIONS=(1 "Stop tor     (service)"
-    2 "Restart tor  (service)"
-    3 "Nyx          (Monitor)")
+  OPTIONS=(1 "Stop             Stop tor service"
+    2 "Restart          Restart tor service"
+    3 "Monitor          Tor monitor")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1615,11 +1615,11 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
         read -r -p "[Ok] nyx installed! Press Enter to continue" </dev/tty
         echo
         # run nyx
-        sudo nyx
+        nyx
       fi
     else
       # run nyx
-      sudo nyx
+      nyx
     fi
 
     ;;
