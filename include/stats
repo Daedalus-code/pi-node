@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220202
-# 0.5.4.0
+# V20220402
+# 0.5.4.1
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -529,8 +529,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
   else
     if tail -4 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Saving data" &>/dev/null; then
+      # data feed overlapping (happens when pitrump takes over the data feed, too close to warden data feed)
       SAVING_DATA="${CY:?}Saving data.${N0:?}"
-    else
+    else # normal data feed, no overlapping
       SAVING_DATA="${N0:?}Saving data.${N0:?}"
     fi
     printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() ${SAVING_DATA:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1

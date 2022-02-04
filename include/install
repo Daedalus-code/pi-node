@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # By Rainman
-# V20220302
+# V20220402
 # 0.2.6.1
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   printf '%b' "${GR:?}No support for Microsoft.${N0:?}\n"
-  printf '%b' "${R1:?}DELETE this from system!${N0:?}"
+  printf '%b' "${R1:?}DELETE this from system!${N0:?}\n"
   exit
 fi
 
