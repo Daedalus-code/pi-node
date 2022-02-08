@@ -160,7 +160,7 @@ for (( ; ; )); do # loop until success
 
   clear
   URL="https://coinmarketcap.com/currencies/trumpcoin/"
-  curl -s -L "$URL" 2>&1 | html2text >"${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1
+  torify curl -s -L "$URL" 2>&1 | html2text >"${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1
 
   sleep 2
   echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
