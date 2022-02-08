@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220302
-# 1.5.6.5
+# V20220802
+# 1.5.6.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.6.5"
+VERSION="v1.5.6.9"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -320,6 +320,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   screen -X -S add_cmc quit
+  killall curl &>/dev/null
   rm "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null
 fi
 
@@ -342,6 +343,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   screen -X -S add_cg quit
+  killall curl &>/dev/null
   rm "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null
 fi
 
@@ -916,11 +918,13 @@ if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep "dead" &>/dev/n
   if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cmc" &>/dev/null; then
     screen -wipe &>/dev/null
     screen -X -S add_cmc quit
+    killall curl &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cmc) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cg" &>/dev/null; then
     screen -wipe &>/dev/null
     screen -X -S add_cg quit
+    killall curl &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cg) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
