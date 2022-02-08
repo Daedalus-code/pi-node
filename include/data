@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220802
-# 0.2.7.1
+# 0.2.7.2
 
 # shellcheck disable=SC2154
 
@@ -166,7 +166,7 @@ for (( ; ; )); do # loop until success
   sleep 2
   echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
 
-  if grep "trump" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
+  if grep "freed" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
     echo "success" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cmc 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     killall curl &>/dev/null
