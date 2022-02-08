@@ -1469,14 +1469,13 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/n
   RC_LOADING="${GR:?}        Loading${N0:?}"
 fi
 
-### backup values ##############################################################
+### backup values coingecko ####################################################
 
 # remove empty files, try to restore
 if [ ! -s "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/stats/price.cg &>/dev/null
   printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Removing empty API Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
@@ -1507,12 +1506,13 @@ else # restore it
   fi
 fi
 
+### backup values coinmarketcap ################################################
+
 # remove empty files, try to restore
 if [ ! -s "${LOG_DIR:?}"/node_data/stats/price.cmc ] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/stats/price.cmc &>/dev/null
   printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Removing empty API Price! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   cp "${WALLET_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1
-  printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${N0:?} Rank! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
