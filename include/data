@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220202
+# V20220802
 # 0.2.7.0
 
 # shellcheck disable=SC2154
@@ -98,7 +98,7 @@ cat >"${LOG_DIR:?}"/add_cg <<'EOF'
 #!/bin/bash
 
 # By Rainman
-# V20223101
+# V20220802
 # 0.0.3.5
 
 source /usr/local/bin/include/pitrump.conf
@@ -115,7 +115,7 @@ truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cg
 for (( ; ; )); do # loop until success
 
   clear
-  COIN_API="trumpcoin"
+  COIN_API="freedom-coin"
   CURRENCY_API="usd"
 
   torify curl -o "${LOG_DIR:?}"/node_data/stats/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'$COIN_API'/market_chart?vs_currency='$CURRENCY_API'&days='$days'' -H 'accept: application/json' &>/dev/null
