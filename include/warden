@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221102
-# 0.3.3.9
+# 0.3.3.8
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -56,9 +56,8 @@ if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
   cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' 2>&1 | awk -F, '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
 fi
 
-# something went wrong with wait
-if ! egrep "-" "${WALLET_DIR:?}"/wait &>/dev/null; then
-  # use default
+if egrep "-" "${WALLET_DIR:?}"/wait &>/dev/null; then
+  # something went wrong with wait, use default
   echo "360" >"${WALLET_DIR:?}"/wait
   echo "420" >>"${WALLET_DIR:?}"/wait
 fi
