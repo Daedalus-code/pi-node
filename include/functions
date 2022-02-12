@@ -645,7 +645,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
 
   if ! grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     # look for 'sync has finished' line, save it there and then
-    grep -o "progress=1" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
+    grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/synced 2>&1
   fi
 fi
 
