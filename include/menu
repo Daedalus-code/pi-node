@@ -523,7 +523,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     # get interface
-    IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
+    IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[aA0-zZ9]+|eth[aA0-zZ9]+" 2>&1)
     # get ip address from interface
     IP_ADDRESS=$(echo "${IFCONFIG:?}" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
     # get ip address (no color)
