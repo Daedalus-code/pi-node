@@ -1471,7 +1471,7 @@ fi
 
 ### backup values coingecko ####################################################
 
-if grep "Removing empty API" "${LOG_DIR:?}"/debug.log &>/dev/null; then
+if tail -21 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing empty API" &>/dev/null; then
   # get some api data
   source /usr/local/bin/include/data
   printf '%b' "${LOG_DATE:?} Status() PreFetch.API() Looking for API data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
