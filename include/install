@@ -42,7 +42,7 @@ if [ ! -d "${LOG_DIR:?}"/node_data/stats ] &>/dev/null; then
 fi
 
 # date for logs
-LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
+LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>&1)
 
 # dependencies
 

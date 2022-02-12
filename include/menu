@@ -29,11 +29,11 @@ else # get input count
 fi
 
 # date for logs
-date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
+LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
-  LOG_DATE=$(date '+%Y-%m-%dT%TZ' 2>&1)
+  LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>&1)
 fi
 
 HEIGHT=17
