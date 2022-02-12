@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220402
+# V20221102
 # 0.2.6.1
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
@@ -214,7 +214,7 @@ maxconnections=${MAX_P2P:?}
 # can be commented out if you use the service script
 daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
   mv "${WALLET_DIR:?}"/trumpcoin.conf.tmp "${WALLET_DIR:?}"/trumpcoin.conf 2>&1
-  printf '%b' "[${G1:?}Ok${N0:?}] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf"
+  printf '%b' "[${G1:?}Ok${N0:?}] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf\n"
 fi
 
 # create screen list
