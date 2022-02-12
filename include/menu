@@ -1287,14 +1287,14 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
           fi
           echo "RunAsDaemon 1
 
-    ControlPort 9051
-    CookieAuthentication 1
-    CookieAuthFileGroupReadable 1
+ControlPort 9051
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
 
-    HiddenServiceDir /var/lib/tor/trumpcoin-service/
-    HiddenServicePort 15110 127.0.0.1:15110
-    ${HIDDEN_SERVICE:?}
-    " >"${LOG_DIR:?}"/torrc 2>&1
+HiddenServiceDir /var/lib/tor/trumpcoin-service/
+HiddenServicePort 15110 127.0.0.1:15110
+${HIDDEN_SERVICE:?}
+" >"${LOG_DIR:?}"/torrc 2>&1
           cat "${LOG_DIR:?}"/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
           # remove old files
           rm "${LOG_DIR:?}"/torrc &>/dev/null
