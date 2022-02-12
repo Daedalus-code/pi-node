@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220402
-# 0.3.2.8
+# V20221102
+# 0.3.3.2
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -17,6 +17,10 @@ if [ ! -f "${LOG_DIR:?}"/node_data/stats/date ] &>/dev/null; then
   mkdir "${LOG_DIR:?}"/node_data/stats &>/dev/null
   mkdir "${LOG_DIR:?}"/node_data/client &>/dev/null
   mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
+fi
+
+if [ ! -f "${LOG_DIR:?}"/debug.log ] &>/dev/null; then
+  touch "${LOG_DIR:?}"/debug.log &>/dev/null
 fi
 
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/uptime ]] &>/dev/null; then
