@@ -210,14 +210,14 @@ UPLOAD=$(egrep "TX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/stats/
 DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
 UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
 
-# interface icon (top right)
-INTERFACE=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[0-9]+|eth[0-9]+" 2>&1)
 # if non responsive
 IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
+# interface icon (top right)
+INTERFACE=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[0-9]+|eth[0-9]+" 2>&1)
 # get interface
 IFCONFIG="${INTERFACE:?}"
 # get ip address from interface
-IP_ADDRESS=$(echo "${IFCONFIG:?}" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)
+IP_ADDRESS=$(cat "${LOG_DIR:?}"/node_data/stats/ifconfig 2>/dev/null | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)
 # get ip address (no color)
 IP_ADDRESS_N="${IP_ADDRESS:?}"
 # save ip address value
