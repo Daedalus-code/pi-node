@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220402
-# 0.5.4.1
+# V20221102
+# 0.5.4.7
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -401,6 +401,12 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
           # ruled by input size + average difficulty (disregard configuration)
           echo "$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos 2>/dev/null)/${DIFF_AVG:?}" | bc -l >"${LOG_DIR:?}"/node_data/stats/ind_pos.tmp
           # do
+
+          if ! grep "address" "${LOG_DIR:?}"/node_data/client/listunspent &>/dev/null; then
+            # no inputs found
+            echo "1" >"${LOG_DIR:?}"/node_data/stats/ind_pos.tmp 2>&1
+          fi
+
           echo "1/$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos.tmp 2>/dev/null)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/stats/lim_pos.tmp
           # some
           echo "$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos.tmp 2>/dev/null)*${POS_LIMIT:?}" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/stats/lim_pos
