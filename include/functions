@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221102
+# V20221302
 # 1.5.9.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -210,10 +210,12 @@ UPLOAD=$(egrep "TX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/stats/
 DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
 UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
 
+# interface icon (top right)
+INTERFACE=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[aA0-zZ9]+|eth[aA0-zZ9]+" 2>&1)
 # if non responsive
 IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 # get interface
-IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
+IFCONFIG="${INTERFACE:?}"
 # get ip address from interface
 IP_ADDRESS=$(echo "${IFCONFIG:?}" 2>&1 | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)
 # get ip address (no color)
@@ -222,8 +224,6 @@ IP_ADDRESS_N="${IP_ADDRESS:?}"
 echo "${IP_ADDRESS_N:?}" >"${LOG_DIR:?}"/node_data/stats/ip_address 2>&1
 # get ip address (color)
 IP_ADDRESS="${C1:?}${IP_ADDRESS:?}${N0:?}"
-# interface icon (top right)
-INTERFACE=$(echo "${IFCONFIG:?}" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
 
 ### wan address ################################################################
 

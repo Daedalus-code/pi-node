@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221102
-# 1.6.4.1
+# V20221302
+# 1.6.3.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -522,8 +522,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       ifconfig 2>&1 | egrep -A8 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1
     fi
 
-    # get interface
-    IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[aA0-zZ9]+|eth[aA0-zZ9]+" 2>&1)
     # get ip address from interface
     IP_ADDRESS=$(cat "${LOG_DIR:?}"/node_data/stats/ifconfig 2>/dev/null | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
     # get ip address (no color)
@@ -534,10 +532,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # get wallet balance
     WALLET_BALANCE=$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
-    # get interface
-    IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
     # interface icon (top right)
-    INTERFACE=$(echo "${IFCONFIG:?}" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
+    INTERFACE=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[aA0-zZ9]+|eth[aA0-zZ9]+" 2>&1)
 
     # unique connections
     UNIQP2P=$(egrep "addr:|addrlocal:" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "getaddr" 2>&1 | awk '{ print $2 }' 2>&1 | sed -r '/^.{,10}$/d' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
