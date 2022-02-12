@@ -46,7 +46,7 @@ function uptime_daemon() {
   echo $(("${UPTIME_CMD%.*}" - "$STARTTIME" / "$HZ"))
 }
 # create uptime
-echo "$(uptime_daemon 2>&1)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
+echo "$(uptime_daemon 2>&1)" 2>&1 | tr -d '-' >"${LOG_DIR:?}"/node_data/uptime 2>&1
 
 # get system uptime information
 uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/stats/uptime 2>&1
