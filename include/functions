@@ -644,7 +644,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 
   if ! grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-    # look for 'sync has finished' line, save it there and then
+    # look for 'progress=1' line, save it there and then
     grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/synced 2>&1
   fi
 fi
