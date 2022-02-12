@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221302
-# 1.5.9.1
+# 1.5.8.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.9.1"
+VERSION="v1.5.8.9"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -211,7 +211,7 @@ DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>&1)
 UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>&1)
 
 # interface icon (top right)
-INTERFACE=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[aA0-zZ9]+|eth[aA0-zZ9]+" 2>&1)
+INTERFACE=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[0-9]+|eth[0-9]+" 2>&1)
 # if non responsive
 IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 # get interface
@@ -1376,10 +1376,8 @@ if grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       TIMELINE_PERC_NOACTIVE="${TIMELINE_PERC_NOACTIVE:?}%"
       TIMELINE="${N0:?}Alive ${TIMELINE_PERC_ACTIVE:?} Dead ${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
     elif [ "$RANDOM_TIMELINE" -eq "15" ] &>/dev/null; then
-      # get interface
-      IFCONFIG=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1)
       # interface icon (top right)
-      INTERFACE=$(echo "${IFCONFIG:?}" 2>&1 | egrep "wlan*|eth*" 2>&1 | awk '{ print $1 }' 2>&1 | awk -F: '{ print $1 }' 2>&1 | head -1 2>&1)
+      INTERFACE=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[0-9]+|eth[0-9]+" 2>&1)
       # interface w speed
       TIMELINE="$(sudo ethtool "${INTERFACE:?}" 2>&1 | grep Speed 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
       TIMELINE="Network ${INTERFACE:?} ${TIMELINE:?}"
