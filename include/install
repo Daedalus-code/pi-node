@@ -218,7 +218,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 fi
 
 # create screen list
-screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
 # look for screen session add_peers, if found quit it
 if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then

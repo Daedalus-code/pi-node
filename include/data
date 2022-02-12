@@ -179,7 +179,7 @@ EOF
 ### screen session(s) ##########################################################
 
 # create screen list
-screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
 RANDOM_WAIT=$(cat "${LOG_DIR:?}"/node_data/waiting 2>/dev/null)
 if [[ -z "$RANDOM_WAIT" ]] &>/dev/null; then
@@ -210,7 +210,7 @@ if [[ "$RANDOM_SCREEN" -eq "1" ]] &>/dev/null; then
     screen -S add_cg -X -p 0 stuff $'torify bash '"${LOG_DIR:?}"'/add_cg\n'
   fi
   # create screen list
-  screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+  LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 fi
 
 # run with cmc
@@ -229,7 +229,7 @@ if [[ "$RANDOM_SCREEN" -eq "2" ]] &>/dev/null; then
     screen -S add_cmc -X -p 0 stuff $'torify bash '"${LOG_DIR:?}"'/add_cmc\n'
   fi
   # create screen list
-  screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+  LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 fi
 
 ### screen session(s) done #####################################################

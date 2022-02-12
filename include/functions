@@ -900,7 +900,7 @@ fi
 ### add_peers screen script ####################################################
 
 # create screen list
-screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
 # kill when too many screens appears (all of them)
 if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "add_peers")" -gt "1" ]] &>/dev/null; then
@@ -1026,7 +1026,7 @@ P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+
 P2P_OLD=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | tail -1 2>&1)
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! +$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1) P2P ${P2P:?} ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
 while IFS= read -r ADDS; do
   "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
@@ -1050,7 +1050,7 @@ fi
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}-$FAILED${N0:?} P2P ${P2P:?} ${GR:?}<${N0:?} ${P2PC:?}${P2P_CHANGE:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 screen -X -S add_peers quit
-screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 exit
 EOF
     fi

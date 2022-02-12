@@ -108,7 +108,7 @@ if [[ -z "$WAIT_TIME_BLOCK" ]] &>/dev/null; then
 fi
 
 # create screen list
-screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
 # screen indicator (is add_cg running)
 if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cg" &>/dev/null; then
