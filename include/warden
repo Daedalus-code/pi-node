@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221102
-# 0.3.3.2
+# 0.3.3.9
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -53,7 +53,14 @@ echo "$(uptime_daemon 2>&1)" >"${LOG_DIR:?}"/node_data/uptime 2>&1
 # do this once (cpu speed, wait time)
 if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
   lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu 2>&1
-  cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
+  cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' 2>&1 | awk -F, '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
+fi
+
+# something went wrong with wait
+if ! egrep "-" "${WALLET_DIR:?}"/wait &>/dev/null; then
+  # use default
+  echo "360" >"${WALLET_DIR:?}"/wait
+  echo "420" >>"${WALLET_DIR:?}"/wait
 fi
 
 if ! egrep "[0-9]+" "${WALLET_DIR:?}"/wait &>/dev/null; then
@@ -83,7 +90,7 @@ if ! egrep "[0-9]+" "${WALLET_DIR:?}"/wait &>/dev/null; then
       cat /proc/device-tree/model 2>/dev/null | tr -d '\0' >"${LOG_DIR:?}"/node_data/stats/model 2>&1
     fi
 
-    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)\e[0m") [ ${G1:?}$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null)MHz${N0:?} ] ${G1:?}${WAIT_TIME:?}${N0:?}/${G0:?}${WAIT_TIME_BLOCK:?}${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)\e[0m") [ ${G1:?}$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null | awk -F, '{ print $1 }' 2>&1)MHz${N0:?} ] ${G1:?}${WAIT_TIME:?}${N0:?}/${G0:?}${WAIT_TIME_BLOCK:?}${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
