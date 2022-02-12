@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220802
-# 1.5.8.5
+# V20221102
+# 1.5.9.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.8.5"
+VERSION="v1.5.9.1"
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -1470,6 +1470,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/n
 fi
 
 ### backup values coingecko ####################################################
+
+if grep "Removing empty API" "${LOG_DIR:?}"/debug.log &>/dev/null; then
+  # get some api data
+  source /usr/local/bin/include/data
+  printf '%b' "${LOG_DATE:?} Status() PreFetch.API() Looking for API data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
 
 # remove empty files, try to restore
 if [ ! -s "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
