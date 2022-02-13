@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221302
-# 0.5.5.2
+# 0.5.5.3
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -448,6 +448,7 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
       CON_DIFF="0"
       DIFF_AVG="0"
       TOTAL_CONF_BELOW="0"
+      save_auto_pos_values
     fi
   fi
 
