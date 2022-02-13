@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221102
+# V20221302
 # 0.4.4.8
 
 source /usr/local/bin/include/pitrump.conf
@@ -350,7 +350,7 @@ function avgconfirmation_auto_one() {
     GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
     GPRINT:total_tx:MAX:%.0lf\ Max \
     GPRINT:total_tx:MIN:%.0lf\ Min \
-    AREA:total_tx#3C79A9:"AVG Confirmations" \
+    AREA:total_tx#3C79A9 \
     LINE1:set_auto_con#FFFFFF
 }
 
@@ -426,7 +426,7 @@ function avgconfirmation_normal() {
     GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
     GPRINT:total_tx:MAX:%.0lf\ Max \
     GPRINT:total_tx:MIN:%.0lf\ Min \
-    AREA:total_tx#3C79A9:"AVG Confirmations"
+    AREA:total_tx#3C79A9
 }
 
 # auto proof-of-stake config
