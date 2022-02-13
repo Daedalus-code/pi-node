@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221302
-# 0.5.4.3
+# 0.5.4.4
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -345,6 +345,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "600" ]] &>/dev/null; then
 
+    echo "${POS_LIMIT:?}" >"${LOG_DIR:?}"/node_data/client/pos_limit 2>&1
+
     if [[ "${AUTO_POS:?}" -gt "0" ]] &>/dev/null; then
 
       # get total average confirmations
@@ -381,7 +383,6 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
         TOTAL_CONF_BELOW="0"
       fi
 
-      echo "${POS_LIMIT:?}" >"${LOG_DIR:?}"/node_data/client/pos_limit 2>&1
       # continue if lock is missing
       if [ ! -f "${WALLET_DIR:?}"/diff.lock ] &>/dev/null; then
 
