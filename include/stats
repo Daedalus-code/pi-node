@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221302
-# 0.5.4.6
+# 0.5.4.8
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -411,6 +411,8 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
           # get new pos limit that works better for the small solo input
           # will be higher than 1440 (1day) if average difficulty is bigger than the input itself
           POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
+          # remove old files
+          rm "${LOG_DIR:?}"/node_data/stats/*.tmp &>/dev/null
         fi
 
         # total average confirmations greater than limit set, continue
@@ -451,7 +453,7 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
 
   if [[ "$AUTO_POS" -eq "2" ]] &>/dev/null; then
 
-    if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
+    if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
       POS_LIMIT="$(cat "${LOG_DIR:?}"/node_data/client/pos_limit 2>/dev/null | awk -F. '{ print $1 }' 2>&1)"
     else
       POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
@@ -471,7 +473,7 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
 
   if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
 
-    if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
+    if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/stats/difficulty_avg 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
       POS_LIMIT="$(cat "${LOG_DIR:?}"/node_data/client/pos_limit 2>/dev/null)"
     else
       POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
