@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221302
-# 0.5.4.8
+# 0.5.4.6
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -411,8 +411,6 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
           # get new pos limit that works better for the small solo input
           # will be higher than 1440 (1day) if average difficulty is bigger than the input itself
           POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
-          # remove old files
-          rm "${LOG_DIR:?}"/node_data/stats/*.tmp &>/dev/null
         fi
 
         # total average confirmations greater than limit set, continue
