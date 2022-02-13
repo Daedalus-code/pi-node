@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221302
-# 0.5.4.9
+# 0.5.5.3
 
 source /usr/local/bin/include/pitrump.conf
 source /usr/local/bin/include/color
@@ -477,6 +477,10 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
       POS_LIMIT="$(cat "${LOG_DIR:?}"/node_data/client/pos_limit 2>/dev/null)"
     else
       POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
+    fi
+
+    if [[ -z "$CON_DIFF" ]] &>/dev/null; then
+      CON_DIFF="${DIFF_AVG:?}"
     fi
 
     # get total confirmations from inputs that are below the con_diff var (without not_post_input var)
