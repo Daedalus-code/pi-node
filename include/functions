@@ -34,7 +34,7 @@ until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   # date check
   LC_ALL=de_US.utf8 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
   # get load
-  uptime 2>&1 | xargs 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' >"${LOG_DIR:?}"/node_data/stats/load 2>&1
+  uptime 2>&1 | xargs 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/stats/load 2>&1
 done
 
 # wallet daemon uptime in seconds
@@ -107,18 +107,18 @@ fi
 ### system information, load, user, cpu temp ###################################
 
 # get load
-uptime 2>&1 | xargs 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' >"${LOG_DIR:?}"/node_data/stats/load 2>&1
+uptime 2>&1 | xargs 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/stats/load 2>&1
 LOAD=$(cat "${LOG_DIR:?}"/node_data/stats/load 2>/dev/null)
 
 # remove empty files, load
 if [ ! -s "${LOG_DIR:?}"/node_data/stats/load ] &>/dev/null; then
   # try again
-  uptime 2>&1 | xargs 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' >"${LOG_DIR:?}"/node_data/stats/load 2>&1
+  uptime 2>&1 | xargs 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/stats/load 2>&1
 fi
 
 if [[ -z "$LOAD" ]] &>/dev/null; then
   # non responsive
-  LOAD=$(uptime 2>&1 | xargs 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | tr -d ',' 2>&1)
+  LOAD=$(uptime 2>&1 | xargs 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1)
 fi
 
 # do this once (lscpu values)
