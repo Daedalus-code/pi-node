@@ -390,7 +390,7 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
         # calculate an indicater for var pos_limit
         echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)/${DIFF_AVG:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/ind_pos 2>&1
 
-        if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
+        if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
           # got inputs (high enough to make several)
           # get new pos limit (apl)
           # ruled by configuration (default 1440)
