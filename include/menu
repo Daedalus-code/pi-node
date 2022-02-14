@@ -116,7 +116,7 @@ case $CHOICE in
       # wait on node (daemon) to stop
       until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
         clear
-        printf '%b' "[${R1:?}!!${N0:?}] Waiting on node (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
         printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
         sleep 15
         kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
@@ -833,7 +833,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           # wait on node (daemon) to stop
           until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
             clear
-            printf '%b' "[${R1:?}!!${N0:?}] Waiting on node (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+            printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
             sleep 1
           done
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
@@ -941,7 +941,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       # wait on node (daemon) to stop
       until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
         clear
-        printf '%b' "[${R1:?}!!${N0:?}] Waiting on node (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
         sleep 1
       done
       printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
@@ -1535,7 +1535,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
           # wait on node (daemon) to stop
           until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
             clear
-            printf '%b' "[${R1:?}!!${N0:?}] Waiting on node (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+            printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
             printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
             sleep 5
           done

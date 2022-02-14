@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221402
-# 1.6.0.2
+# 1.5.9.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.0.2"
+VERSION="v1.5.9.8"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -25,7 +25,7 @@ mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
 until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   RANDOM_PID=$((((RANDOM % 9999) + 1)))
   clear
-  printf '%b' "Waiting on node (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
+  printf '%b' "waiting on wallet (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
   sleep 2
   # create debug.log
   touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
@@ -670,7 +670,7 @@ fi
 TX="${G1:?}"
 # less than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "360" ]] &>/dev/null; then
-  RC_LOADING="${GR:?}        Loading${N0:?}"
+  WALLET_TXLAST="${GR:?}        Loading${N0:?}"
 else
   SYNC_PROGRESS_BAR="${GR:?}0.00%${N0:?}"
   SYNC_PROGRESS_BAR="${N0:?}"
@@ -684,10 +684,8 @@ if ! grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     SYNC_PROGRESS_BAR="${N0:?}"
   else
     WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
-    RC_LOADING="${N0:?}"
   fi
 else
-  RC_LOADING="${N0:?}"
   TX="${GR:?}"
 fi
 
@@ -1473,16 +1471,14 @@ else
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
   fi
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/null; then
-    RC_LOADING="${CY:?}        Loading${N0:?}"
-  else
-    RC_LOADING="${CY:?}        Syncing${N0:?}"
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
+    WALLET_TXLAST="${CY:?}        Loading${N0:?}"
   fi
 fi
 
 # less than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/null; then
-  RC_LOADING="${CY:?}        Loading${N0:?}"
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
+  WALLET_TXLAST="${CY:?}        Loading${N0:?}"
 fi
 
 ### backup values coingecko ####################################################
