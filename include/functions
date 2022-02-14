@@ -678,7 +678,7 @@ if ! grep -o "099" "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null; then
     WALLET_TXLAST="${N0:?}"
     WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
   else
-    if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+    if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
       # non responsive
       WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
     fi
