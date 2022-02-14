@@ -22,12 +22,12 @@ for (( ; ; )); do # loop dashbord
   # dashbord
   printf '%b' "
 ${RC:?}                       ${RC:?} PiNode ${N0:?}${VERSION:?} ${GR:?}pinode${N0:?}           ${CLOCK:?}
-${CB:?}        ##   ##        ${N0:?} ${WALLET_DAEMON:0:9} Fullnode             ${TH:?} ${POS_STATUS:?} ${TOR_ICON:?} ${CY:?}${INTERFACE:0:4}${N0:?}
+${CB:?}        ##   ##        ${N0:?} ${WALLET_DAEMON:0:10} Fullnode            ${TH:?} ${POS_STATUS:?} ${TOR_ICON:?} ${CY:?}${INTERFACE:0:4}${N0:?}
 ${CB:?}        ##.  ##        ${RC:?} -----------------------------------------${N0:?}
 ${CB:?}    ##############     ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
 ${CB:?}      ###      ####    ${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?} (${USED_HDD_P:?})
 ${CB:?}      ###.    ,###     ${N0:?} ${USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
-${CB:?}      ###########      ${N0:?} Wallet ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
+${CB:?}      ###########      ${N0:?} ${WALLET_DAEMON:0:11} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
 ${CB:?}      ###       ###    ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_LATEST:?} ${WALLET_PEERS_OTHER:?}
 ${CB:?}      ###.     ,###    ${N0:?}
 ${CB:?}    ##############     ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes ${G0:?}${WALLET_STAKES:?}${N0:?} Inputs ${G0:?}${WALLET_INPUTS:?}${N0:?}
