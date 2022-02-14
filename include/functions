@@ -189,7 +189,7 @@ FREE_MEM="${G1:?}$FREE_MEM${N0:?}"
 # get used space, disregard boot
 USED_HDD=$(df -k 2>&1 | sort -n 2>&1 | grep -v "boot" 2>&1 | head -1 2>&1 | awk '{ print $3 }' 2>&1)
 # calculate --block-size=1k
-USED_HDD=$(echo "$USED_HDD*1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)
+USED_HDD=$(echo "$USED_HDD*1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 # human-readable format
 USED_HDD=$(numfmt --to iec --format "%8.3f" "$USED_HDD" 2>&1 | xargs 2>&1)
 # get used hdd percentage
