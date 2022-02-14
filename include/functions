@@ -461,7 +461,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME_BLOC
   # wallet sync (no color)
   WALLET_SYNC_N="$WALLET_SYNC"
   # wallet sync (color+symbol)
-  WALLET_SYNC="${G1:?}${WALLET_SYNC:?}${N0:?}"
+  WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
 
 else
   WALLET_SYNC="${GR:?}0.00%${N0:?}"
