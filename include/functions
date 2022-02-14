@@ -457,11 +457,6 @@ if [[ -f "${LOG_DIR:?}"/node_data/client/tmp/proc ]] &>/dev/null; then
   fi
 fi
 
-# wallet sync (no color)
-WALLET_SYNC_N="$WALLET_SYNC"
-# wallet sync (color+symbol)
-WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
-
 if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
   WALLET_SYNC="${GR:?}0.00%${N0:?}"
 fi
@@ -471,6 +466,11 @@ fi
 if [[ -z "$WALLET_BLOCK" ]] &>/dev/null; then
   WALLET_BLOCK="${GR:?}0${N0:?}"
 fi
+
+# wallet sync (no color)
+WALLET_SYNC_N="$WALLET_SYNC"
+# wallet sync (color+symbol)
+WALLET_SYNC="${G1:?}${WALLET_SYNC:?}%${N0:?}"
 
 # wallet_nodes function (color)
 function wallet_nodes() {
