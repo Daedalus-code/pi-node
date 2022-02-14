@@ -672,7 +672,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
 
   if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     # look for 'progress=1' line, save it there and then
-    grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/synced 2>&1
+    grep "progress=1.0" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/synced 2>&1
   fi
 fi
 
@@ -702,9 +702,9 @@ if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 fi
 
 # if synced is still empty
-if ! grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # look for sync line, save it there and then
-  grep -o "progress=1" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
+  grep -o "progress=1.0" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
 fi
 
 # greater than n seconds, continue
@@ -1248,7 +1248,7 @@ fi
 
 ### timeline ###################################################################
 
-if grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+if grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
   # if rpc in warm-up, loading block index, wait
   if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
