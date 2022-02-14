@@ -175,8 +175,8 @@ TOTAL_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)
 FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $4 }' 2>&1)
 FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)
 # calculate
-TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1)
-FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
+TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 # total and free memory (rrdtool, no color)
 TOTAL_MEM_RR="$TOTAL_MEM"
 FREE_MEM_RR="$FREE_MEM"
@@ -189,7 +189,7 @@ FREE_MEM="${G1:?}$FREE_MEM${N0:?}"
 # get used space, disregard boot
 USED_HDD=$(df -k 2>&1 | sort -n 2>&1 | grep -v "boot" 2>&1 | head -1 2>&1 | awk '{ print $3 }' 2>&1)
 # calculate --block-size=1k
-USED_HDD=$(echo "$USED_HDD*1024" 2>&1 | bc -l 2>&1)
+USED_HDD=$(echo "$USED_HDD*1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)
 # human-readable format
 USED_HDD=$(numfmt --to iec --format "%8.3f" "$USED_HDD" 2>&1 | xargs 2>&1)
 # get used hdd percentage
@@ -843,7 +843,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_IPv4 $(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_IPv6 $(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_DNS+ $(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script | ${G1:?}$(echo "$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1) Total ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script | ${G1:?}$(echo "$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1) Total ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   # truncate/remove file(s), now old
   truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
@@ -1042,7 +1042,7 @@ P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+
 FAILED=$(grep " to $(cat "${LOG_DIR:?}"/node_data/add_peers.check 2>/dev/null) failed" "$WALLET_LOG_DIR"/debug.log 2>&1 | egrep -o " to .*. failed" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
 
 P2P_NEW=$(grep "Stopping adding nodes" "${LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | egrep -o "P2P [0-9]+" 2>&1 | awk '{ print $2 }' 2>&1)
-P2P_CHANGE=$(echo "$P2P_NEW-$P2P_OLD" 2>&1 | bc -l 2>&1)
+P2P_CHANGE=$(echo "$P2P_NEW-$P2P_OLD" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
 if [[ "$P2P_CHANGE" -gt "0" ]] &>/dev/null; then
   P2PC="${G1:?}+"
@@ -1364,7 +1364,7 @@ if grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # wallet (daemon) uptime
     elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
       TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
-      TIMELINE_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
+      TIMELINE_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       TIMELINE="Wallet (${TIMELINE_DAYS:?}d) ${GR:?}$TIMELINE${N0:?}"
     elif [ "$RANDOM_TIMELINE" -eq "13" ] &>/dev/null; then
       # highest peer count
