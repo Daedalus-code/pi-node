@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # By Rainman
-# V20221302
+# V20221402
 # 0.5.4.8
 
-source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
 
 # date for logs
@@ -66,7 +66,7 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
 </IfModule>" >"${LOG_DIR:?}"/ports.conf.tmp
     sudo mv "${LOG_DIR:?}"/ports.conf.tmp /etc/apache2/sites-enabled/ports.conf 2>&1
     # make sure ufw opens up port 8080
-    sudo ufw allow 8080 comment "TrumpCoin Graphs"
+    sudo ufw allow 8080 comment "FreedomCoin Graphs"
     sudo ufw status
     printf '%b' "[${G1:?}OK${N0:?}] Restarting Apache\n"
     sudo systemctl restart apache2 2>&1
@@ -536,7 +536,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
   else
     if tail -4 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Saving data" &>/dev/null; then
-      # data feed overlapping (happens when pitrump takes over the data feed, too close to warden data feed)
+      # data feed overlapping (happens when pinode takes over the data feed, too close to warden data feed)
       SAVING_DATA="${CY:?}Saving data.${N0:?}"
     else # normal data feed, no overlapping
       SAVING_DATA="${N0:?}Saving data.${N0:?}"

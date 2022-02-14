@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # By Rainman
-# V20221102
+# V20221402
 # 0.3.4.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 ########## config ##############################################################
 
-source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/pinode.conf
 
 ########## sync_progress_bar ###################################################
 

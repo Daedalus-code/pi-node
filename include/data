@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # By Rainman
-# V20221102
+# V20221402
 # 0.2.7.2
 
 # shellcheck disable=SC2154
 
-source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
 
 # date for logs
@@ -101,7 +101,7 @@ cat >"${LOG_DIR:?}"/add_cg <<'EOF'
 # V20220802
 # 0.0.3.6
 
-source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
 
 # date for logs
@@ -146,7 +146,7 @@ cat >"${LOG_DIR:?}"/add_cmc <<'EOF'
 # V20220802
 # 0.0.3.4
 
-source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
 
 # date for logs

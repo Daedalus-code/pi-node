@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221302
+# V20221402
 # 1.6.3.9
 
 # dialog, ncurses no utf8 acs
@@ -9,7 +9,7 @@ export NCURSES_NO_UTF8_ACS=1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
-source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
 
 # make sure dialog exist
@@ -39,13 +39,13 @@ fi
 HEIGHT=17
 WIDTH=54
 CHOICE_HEIGHT=10
-BACKTITLE="Trump-Node"
+BACKTITLE="Pi-Node"
 TITLE="Node Options"
 MENU="Choose one option:"
 
 OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   2 "Keys Menu        Dump/Import keys PoS (${POS_COUNT:?})"
-  3 "Information      Trump node status"
+  3 "Information      Pi node status"
   4 "System Space     Disk space utilized"
   5 "Download Menu    Download & Install"
   6 "Configuration    Node configuration(s)"
@@ -71,7 +71,7 @@ case $CHOICE in
   HEIGHT=9
   WIDTH=55
   CHOICE_HEIGHT=2
-  BACKTITLE="Trump-Node"
+  BACKTITLE="Pi-Node"
   TITLE="Wallet Menu"
   MENU="Choose one option:"
 
@@ -93,7 +93,7 @@ case $CHOICE in
 
   "1")
 
-    # turn of trumpcoin daemon
+    # turn of wallet daemon
     read -r -p "[YN] Stop node, are you sure? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -116,7 +116,7 @@ case $CHOICE in
       # wait on node (daemon) to stop
       until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
         clear
-        printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        printf '%b' "[${R1:?}!!${N0:?}] Waiting on node (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
         printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
         sleep 15
         kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
@@ -174,7 +174,7 @@ case $CHOICE in
   HEIGHT=9
   WIDTH=52
   CHOICE_HEIGHT=2
-  BACKTITLE="Trump-Node"
+  BACKTITLE="Pi-Node"
   TITLE="Key Menu"
   MENU="Choose one option:"
 
@@ -250,7 +250,7 @@ Then the importprivkey can be used with this output
   HEIGHT=14
   WIDTH=46
   CHOICE_HEIGHT=7
-  BACKTITLE="Trump-Node"
+  BACKTITLE="Pi-Node"
   TITLE="Uncomplicated firewall Menu"
   MENU="Choose one option:"
 
@@ -389,8 +389,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # set default ufw rules
     echo "[Ok] Set allow rules 15110, 80, 22"
-    sudo ufw allow 15110 comment "TrumpCoin mainnet"
-    sudo ufw allow 80 comment "TrumpCoin Graphs"
+    sudo ufw allow 15110 comment "FreedomCoin mainnet"
+    sudo ufw allow 80 comment "FreedomCoin Graphs"
     sudo ufw allow 22 comment "SSH"
     sudo ufw status
     echo
@@ -538,8 +538,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # unique connections
     UNIQP2P=$(egrep "addr:|addrlocal:" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "getaddr" 2>&1 | awk '{ print $2 }' 2>&1 | sed -r '/^.{,10}$/d' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
     # get latest repository and date
-    LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
-    LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y')
+    LATEST_HEAD=$(cd /home/"$(whoami)"/pi-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+    LATEST_DATE=$(cd /home/"$(whoami)"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y')
 
     # get wallet value
     WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/stats/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
@@ -624,7 +624,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   WIDTH=68
   CHOICE_HEIGHT=3
   BACKTITLE="Download & Install"
-  TITLE="Download trumpcoin tools"
+  TITLE="Download freedomcoin, tools"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Download         Download a specific wallet manually"
@@ -833,7 +833,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           # wait on node (daemon) to stop
           until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
             clear
-            printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+            printf '%b' "[${R1:?}!!${N0:?}] Waiting on node (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
             sleep 1
           done
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
@@ -941,7 +941,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       # wait on node (daemon) to stop
       until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
         clear
-        printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        printf '%b' "[${R1:?}!!${N0:?}] Waiting on node (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
         sleep 1
       done
       printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
@@ -967,8 +967,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   MENU="Choose one option:"
 
   OPTIONS=(1 "TrumpCoin        trumpcoin.conf"
-    2 "PatriotNode      patriotnode.conf"
-    3 "PiTrump.conf     pitrump.conf"
+    2 "Patriot Node     patriotnode.conf"
+    3 "Pi Node          pinode.conf"
     4 "Config.txt       boot/config.txt"
     5 "Torrc            Tor configuration"
     6 "Crontab          Job scheduler"
@@ -1011,7 +1011,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
-    nano /usr/local/bin/include/pitrump.conf
+    nano /usr/local/bin/include/pinode.conf
 
     ;;
 
@@ -1152,7 +1152,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     MENU="Choose one option:"
 
     OPTIONS=(1 "trumpcoin.conf   Reset wallet config"
-      2 "pitrump.conf     Reset trump-node config"
+      2 "pinode.conf     Reset pi-node config"
       3 "config.txt       Reset boot/config.txt"
       4 "torrc            Reset Tor config")
 
@@ -1180,7 +1180,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
         # get proxy (tor) hostname with root
-        EXTERNALIP=$(sudo cat /var/lib/tor/trumpcoin-service/hostname 2>/dev/null)
+        EXTERNALIP=$(sudo cat /var/lib/tor/freedomcoin-service/hostname 2>/dev/null)
 
         if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
           # non responsive
@@ -1192,7 +1192,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo "## trumpcoin.conf configuration file.
 # Network-related settings:
 
-# Run on the test network instead of the real trumpcoin network.
+# Run on the test network instead of the real freedomcoin network.
 #testnet=1
 
 # RPC credentials
@@ -1233,12 +1233,12 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
 
     "2")
 
-      read -r -p "[YN] Hard reset of pitrump.conf? y/n " -n 1 -r
+      read -r -p "[YN] Hard reset of pinode.conf? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-        echo "Reset pitrump.conf!"
-        cp /home/"$(whoami)"/trump-node/pitrump.conf /home/"$(whoami)"/
+        echo "Reset pinode.conf!"
+        cp /home/"$(whoami)"/pi-node/pinode.conf /home/"$(whoami)"/
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
@@ -1266,7 +1266,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
       read -r -p "[YN] Hard reset of tor? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        sudo rm -R /var/lib/tor/trumpcoin-service/ &>/dev/null
+        sudo rm -R /var/lib/tor/freedomcoin-service/ &>/dev/null
         sudo rm -R "${WALLET_DIR:?}"/onion* &>/dev/null
 
         # tor group, user configuration
@@ -1274,7 +1274,7 @@ daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
         sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>/dev/null
 
         # if data missing, add values
-        if ! grep "trumpcoin" /etc/tor/torrc &>/dev/null; then
+        if ! grep "freedomcoin" /etc/tor/torrc &>/dev/null; then
 
           read -r -p "[YN] Public .onion web server? y/n " -n 1 -r
           echo
@@ -1289,7 +1289,7 @@ ControlPort 9051
 CookieAuthentication 1
 CookieAuthFileGroupReadable 1
 
-HiddenServiceDir /var/lib/tor/trumpcoin-service/
+HiddenServiceDir /var/lib/tor/freedomcoin-service/
 HiddenServicePort 15110 127.0.0.1:15110
 ${HIDDEN_SERVICE:?}
 " >"${LOG_DIR:?}"/torrc 2>&1
@@ -1300,7 +1300,7 @@ ${HIDDEN_SERVICE:?}
 
         # restart tor after configuration
         sudo service tor restart 2>&1
-        printf '%b' "[${Y1:?}!!${N0:?}] Please reset trumpcoin.conf!\n"
+        printf '%b' "[${Y1:?}!!${N0:?}] Please reset wallet configuration!\n"
         echo
         read -r -p "[Ok] Hard reset of tor done! Press Enter to continue" </dev/tty
         echo
@@ -1535,7 +1535,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
           # wait on node (daemon) to stop
           until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
             clear
-            printf '%b' "[${R1:?}!!${N0:?}] Waiting on trumpcoin (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+            printf '%b' "[${R1:?}!!${N0:?}] Waiting on node (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
             printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
             sleep 5
           done

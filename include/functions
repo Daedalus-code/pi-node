@@ -2,14 +2,14 @@
 
 # By Rainman
 # V20221302
-# 1.5.8.9
+# 1.5.8.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.8.9"
+VERSION="v1.5.8.4"
 
-source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
 
 ### folders, daemon uptime, logs ###############################################
@@ -25,7 +25,7 @@ mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
 until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   RANDOM_PID=$((((RANDOM % 9999) + 1)))
   clear
-  printf '%b' "Waiting on trumpcoin (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
+  printf '%b' "Waiting on node (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
   sleep 2
   # create debug.log
   touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
@@ -1016,7 +1016,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 # V20220102
 # 0.0.4.2
 
-source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
 
 # date for logs
@@ -1105,7 +1105,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
     # update repository, ruled by configuration
     if [[ "$UPDATE_REPO" -eq "1" ]] &>/dev/null; then
       # update repo, if set
-      cd /home/"$(whoami)"/trump-node || exit &&
+      cd /home/"$(whoami)"/pi-node || exit &&
         git pull -q && bash include/install 2>&1
     fi
 
@@ -1115,11 +1115,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
     echo "$(tail -"${RANDOM_FAILED:?}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -v "${DIS_LOCAL:?}" 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
 
     # repository latest head
-    LATEST_HEAD=$(cd /home/"$(whoami)"/trump-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+    LATEST_HEAD=$(cd /home/"$(whoami)"/pi-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
     # repository latest date
-    LATEST_DATE=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d')
+    LATEST_DATE=$(cd /home/"$(whoami)"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d')
     # repository latest time
-    LATEST_TIME=$(cd /home/"$(whoami)"/trump-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%H:%M:%S')
+    LATEST_TIME=$(cd /home/"$(whoami)"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%H:%M:%S')
 
     # count all new outbound peers inside debug.log
     P2P_SUCCESS=$(grep -c "New outbound peer" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
@@ -1430,7 +1430,7 @@ if grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
   fi
 else
-  # wait on wallet (--donald john trump quotes - art of the deal)
+  # wait on wallet w random quotes
   # random start number
   RANDOM_TIMELINE=$((((RANDOM % 10) + 1)))
   # quotes - art of the deal
@@ -1577,13 +1577,8 @@ fi
 
 ### theme ######################################################################
 
-if [[ "$DARKMODE" -eq "1" ]] &>/dev/null; then
-  # darkmode (grey)
-  RC="${GR:?}"
-  TH="${RC:?}D${N0:?}"
-else # trumpmode (yellow)
-  RC="${Y1:?}"
-  TH="${RC:?}T${N0:?}"
-fi
+# darkmode (grey)
+RC="${GR:?}"
+TH="${RC:?}D${N0:?}"
 
 # END

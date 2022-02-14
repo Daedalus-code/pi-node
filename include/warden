@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # By Rainman
-# V20221102
+# V20221402
 # 0.3.3.8
 
-source /usr/local/bin/include/pitrump.conf
+source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
 
 echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
@@ -295,9 +295,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
     # time.dashbord exist, continue
     if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then
 
-      DETACH="${G1:?}<${N0:?} [ ${G1:?}Pitrump${N0:?} ]"
-      # communication port pitrump
-      echo "COM > Pitrump" >"${LOG_DIR:?}"/node_data/com 2>&1
+      DETACH="${G1:?}<${N0:?} [ ${G1:?}Pinode${N0:?} ]"
+      # communication port pinode
+      echo "COM > PiNode" >"${LOG_DIR:?}"/node_data/com 2>&1
 
       if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/stats/time.warden 2>&1)" ]] &>/dev/null; then
 
@@ -316,7 +316,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
     else # time.dashbord don't exist, continue with warden
 
-      # no double trouble when overlapping pitrump <> warden
+      # no double trouble when overlapping pinode <> warden
       if ! tail -5 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
 
         DETACH="${G0:?}<${N0:?} [ ${G0:?}Warden${N0:?} ]"
