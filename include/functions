@@ -704,7 +704,7 @@ fi
 # if synced is still empty
 if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # look for sync line, save it there and then
-  grep -o "progress=1.0" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
+  grep "progress=1.0" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
 fi
 
 # greater than n seconds, continue
