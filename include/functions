@@ -447,7 +447,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME_BLOC
     if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null; then
       WALLET_SYNC=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | sed 's/^0*//' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     else # non responsive (loading) color white
-      WALLET_SYNC="0.00%"
+      WALLET_SYNC="%"
     fi
   else
     # calculate blockchain sync
