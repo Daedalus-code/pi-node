@@ -674,15 +674,15 @@ if ! grep -o "099" "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null; then
   if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
     # no progress bar while loading
     WALLET_TXLAST="${N0:?}"
-    SYNC_PROGRESS_BAR="${N0:?}"
-  else
     WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
+  else
+    WALLET_TXLAST="${WALLET_TXLAST:?}"
   fi
 else
   TX="${GR:?}"
 fi
 
-if [[ "$SYNC_PROGRESS_BAR" -eq "100" ]] &>/dev/null; then
+if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
   # non responsive
   WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
 fi
