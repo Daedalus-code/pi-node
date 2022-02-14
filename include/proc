@@ -46,7 +46,7 @@ if wc -l "${LOG_DIR:?}"/node_data/synced 2>&1 | awk '{ print $1 }' &>/dev/null; 
       else
         # is less than 99
         if [ "$SYNCING_REPLACE_TX" -lt "1000000" ] &>/dev/null; then
-          echo -ne "\\r"
+          echo -ne "     ··················································· 0%\\r"
         fi
         # is equal to
         if [ "$SYNCING_REPLACE_TX" -eq "1000000" ] &>/dev/null; then
