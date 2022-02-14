@@ -22,17 +22,17 @@ for (( ; ; )); do # loop dashbord
   # dashbord
   printf '%b' "
 ${RC:?}                       ${RC:?} PiNode ${N0:?}${VERSION:?} ${GR:?}pinode${N0:?}           ${CLOCK:?}
-${RC:?}        ##   ##        ${N0:?} Raspberry Fullnode             ${TH:?} ${POS_STATUS:?} ${TOR_ICON:?} ${CY:?}${INTERFACE:0:4}${N0:?}
-${RC:?}        ##.  ##        ${RC:?} -----------------------------------------${N0:?}
-${RC:?}    ##############     ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
-${RC:?}      ###      ####    ${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?} (${USED_HDD_P:?})
-${RC:?}      ###.    ,###     ${N0:?} ${USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
-${RC:?}      ###########      ${N0:?} Wallet ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
-${RC:?}      ###       ###    ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_LATEST:?} ${WALLET_PEERS_OTHER:?}
-${RC:?}      ###.     ,###    ${N0:?}
-${RC:?}    ##############     ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes ${G0:?}${WALLET_STAKES:?}${N0:?} Inputs ${G0:?}${WALLET_INPUTS:?}${N0:?}
-${RC:?}        ##   ##        ${N0:?} TxCount ${N0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
-${RC:?}        ##   ##        ${N0:?} ${TIMELINE:?}
+${CB:?}        ##   ##        ${N0:?} Raspberry Fullnode             ${TH:?} ${POS_STATUS:?} ${TOR_ICON:?} ${CY:?}${INTERFACE:0:4}${N0:?}
+${CB:?}        ##.  ##        ${RC:?} -----------------------------------------${N0:?}
+${CB:?}    ##############     ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
+${CB:?}      ###      ####    ${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?} (${USED_HDD_P:?})
+${CB:?}      ###.    ,###     ${N0:?} ${USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
+${CB:?}      ###########      ${N0:?} Wallet ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
+${CB:?}      ###       ###    ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_LATEST:?} ${WALLET_PEERS_OTHER:?}
+${CB:?}      ###.     ,###    ${N0:?}
+${CB:?}    ##############     ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes ${G0:?}${WALLET_STAKES:?}${N0:?} Inputs ${G0:?}${WALLET_INPUTS:?}${N0:?}
+${CB:?}        ##   ##        ${N0:?} TxCount ${N0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
+${CB:?}        ##   ##        ${N0:?} ${TIMELINE:?}
 
 ${TX:?} ${WALLET_TXLAST:?}${N0:?}
 
