@@ -327,7 +327,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
   screen -X -S add_cmc quit
   killall curl &>/dev/null
-  rm "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null
+  rm "${LOG_DIR:?}"/node_data/requests* &>/dev/null
 fi
 
 ### coingecko data #############################################################
@@ -362,7 +362,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
 
   screen -X -S add_cg quit
   killall curl &>/dev/null
-  rm "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null
+  rm "${LOG_DIR:?}"/node_data/requests* &>/dev/null
 fi
 
 ### wallet information #########################################################
