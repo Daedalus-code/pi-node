@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221402
-# 1.6.1.9
+# 1.6.1.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.1.9"
+VERSION="v1.6.1.8"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -687,6 +687,7 @@ fi
 if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   source /usr/local/bin/include/proc
 
+  TX="${G1:?}"
   WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
 
   if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
@@ -1610,10 +1611,8 @@ TH="${RC:?}D${N0:?}"
 if tail -256 "${LOG_DIR:?}"/debug.log 2>&1 | grep "BitcoinMiner" &>/dev/null; then
   # green
   CB="${G1:?}"
-  TX="${G1:?}"
 else # default (theme based)
   CB="${RC:?}"
-  TX="${RC:?}"
 fi
 
 # END
