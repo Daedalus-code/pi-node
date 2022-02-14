@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221402
-# 1.6.1.4
+# 1.6.1.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.1.4"
+VERSION="v1.6.1.3"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -1413,12 +1413,11 @@ if grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       if [[ -z "$TIMELINE_MODEL" ]] &>/dev/null; then
         TIMELINE_MODEL="${GR:?}Unknown${N0:?}"
       fi
-
-      if [[ -z "$TIMELINE" ]] &>/dev/null; then
-        # non responsive (think)
-        TIMELINE="${GR:?}Think${N0:?}"
-      fi
     fi
+  fi
+  if [[ -z "$TIMELINE" ]] &>/dev/null; then
+    # non responsive (think)
+    TIMELINE="${GR:?}Think${N0:?}"
   fi
 fi
 
