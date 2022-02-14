@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221402
-# 1.6.1.0
+# 1.6.1.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.1.0"
+VERSION="v1.6.1.4"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -1420,8 +1420,12 @@ if grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       fi
     fi
   fi
+fi
 
-  ### collect data for rrdtool (round robin databases) #########################
+### collect data for rrdtool (round robin databases) ###########################
+
+# greater than n seconds, continue
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
 
