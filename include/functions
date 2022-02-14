@@ -1474,15 +1474,15 @@ else
     TIMELINE="${GR}Have fun${N0:?}"
   fi
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/null; then
-    RC_LOADING="${GR:?}        Loading${N0:?}"
+    RC_LOADING="${CY:?}        Loading${N0:?}"
   else
-    RC_LOADING="${GR:?}        Syncing${N0:?}"
+    RC_LOADING="${CY:?}        Syncing${N0:?}"
   fi
 fi
 
 # less than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/null; then
-  RC_LOADING="${GR:?}        Loading${N0:?}"
+  RC_LOADING="${CY:?}        Loading${N0:?}"
 fi
 
 ### backup values coingecko ####################################################
