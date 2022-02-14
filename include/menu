@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221402
-# 1.6.3.9
+# 1.6.4.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -11,6 +11,11 @@ export NCURSES_NO_UTF8_ACS=1
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
+
+# wallet daemon & client variables #############################################
+
+WALLET_DAEMON="trumpcoind"
+WALLET_CLIENT="trumpcoin-cli"
 
 # make sure dialog exist
 if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
@@ -76,7 +81,7 @@ case $CHOICE in
   MENU="Choose one option:"
 
   OPTIONS=(1 "Shutdown         Stop daemon, reboot system"
-    2 "Re/Start         Re/Start daemon ($(pidof trumpcoind 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1))")
+    2 "Re/Start         Re/Start daemon ($(pidof "${WALLET_DAEMON:?}" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1))")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -107,19 +112,19 @@ case $CHOICE in
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           # hard shutdown
-          kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null && sleep 1
+          kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null && sleep 1
         fi
       fi
       # normal shutdown
       printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
       # wait on node (daemon) to stop
-      until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+      until ! pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
         clear
-        printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
         printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
         sleep 15
-        kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
       done
 
       read -r -p "[YN] Reboot? y/n " -n 1 -r
@@ -142,10 +147,10 @@ case $CHOICE in
     read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop &>/dev/null
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop &>/dev/null
       sleep 5
       sudo service cron stop 2>&1
-      killall trumpcoind &>/dev/null
+      killall "${WALLET_DAEMON:?}" &>/dev/null
       echo "[Ok] Re/Starting node!"
       # make sure debug.log exist
       touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -156,7 +161,7 @@ case $CHOICE in
       truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
       # start node (daemon)
       sleep 1
-      "${WALLET_DIR:?}"/trumpcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
+      "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
@@ -210,7 +215,7 @@ may report that the imported key exists but related transactions are still missi
       exit
     fi
     printf '%b' "[${R1:?}!!${GR:?}?${N0:?}] Please wait..! This call can take minutes to complete.\n"
-    "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf importprivkey "${IMPORT_KEY:?}"
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf importprivkey "${IMPORT_KEY:?}"
     clear
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -233,7 +238,7 @@ Then the importprivkey can be used with this output
       exit
     fi
     echo "[!?] Please copy this!"
-    "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf dumpprivkey "${DUMP_ADDRESS:?}"
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf dumpprivkey "${DUMP_ADDRESS:?}"
     clear
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -421,7 +426,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     SYS_UPTIME="${SYS_UPTIME_DAYS:?}d ${SYS_UPTIME:?}"
 
     # pidof daemon
-    PID_DAEMON=$(pidof trumpcoind 2>&1)
+    PID_DAEMON=$(pidof "${WALLET_DAEMON:?}" 2>&1)
 
     # coin supply
     NODE_COIN_SUPPLY=$(grep "moneysupply" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1 | rev 2>&1 | sed "s#[[:digit:]]\{3\}#&,#g" 2>&1 | rev 2>&1 | sed 's/^,//g' 2>&1)
@@ -829,11 +834,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           printf '%b' "[${R1:?}!!${N0:?}] "
-          "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
           # wait on node (daemon) to stop
-          until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
+          until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
             clear
-            printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+            printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
             sleep 1
           done
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
@@ -937,11 +942,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
       # wait on node (daemon) to stop
-      until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
+      until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
         clear
-        printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+        printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
         sleep 1
       done
       printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
@@ -1531,15 +1536,15 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           printf '%b' "[${R1:?}!!${N0:?}] "
-          "${WALLET_DIR:?}"/trumpcoin-cli -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
           # wait on node (daemon) to stop
-          until ! pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+          until ! pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
             clear
-            printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof trumpcoind 2>&1)${N0:?}) daemon to shutdown..\n"
+            printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
             printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
             sleep 5
           done
-          kill -9 "$(pidof trumpcoind 2>&1)" &>/dev/null
+          kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
           sudo reboot
         fi
       fi
