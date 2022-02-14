@@ -670,7 +670,7 @@ fi
 TX="${G1:?}"
 # less than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "360" ]] &>/dev/null; then
-  WALLET_TXLAST="${GR:?}        Loading${N0:?}"
+  WALLET_TXLAST="${GR:?}       Loading${N0:?}"
 else
   SYNC_PROGRESS_BAR="${GR:?}0.00%${N0:?}"
   SYNC_PROGRESS_BAR="${N0:?}"
@@ -1472,13 +1472,13 @@ else
     TIMELINE="${GR}Have fun${N0:?}"
   fi
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-    WALLET_TXLAST="${CY:?}        Loading${N0:?}"
+    WALLET_TXLAST="${CY:?}       Loading${N0:?}"
   fi
 fi
 
 # less than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-  WALLET_TXLAST="${CY:?}        Loading${N0:?}"
+  WALLET_TXLAST="${CY:?}       Loading${N0:?}"
 fi
 
 ### backup values coingecko ####################################################
