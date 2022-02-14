@@ -115,7 +115,7 @@ truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cg
 for (( ; ; )); do # loop until success
 
   clear
-  COIN_API="trumpcoin"
+  COIN_API="freedomcoin"
   CURRENCY_API="usd"
 
   torify curl -o "${LOG_DIR:?}"/node_data/stats/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'$COIN_API'/market_chart?vs_currency='$CURRENCY_API'&days='$days'' -H 'accept: application/json' &>/dev/null
