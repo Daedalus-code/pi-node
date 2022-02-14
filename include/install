@@ -223,7 +223,7 @@ LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
 # look for screen session add_peers, if found quit it
 if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then
-  screen -X -S add_peers quit
+  screen -X -S add_peers quit &>/dev/null
 fi
 
 sudo cp -R /home/"$(whoami)"/pi-node/include/* /usr/local/bin/include/ 2>&1

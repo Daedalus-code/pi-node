@@ -130,7 +130,7 @@ else
 
   # kill old session, try another
   if [[ "$SCREEN_CALC_CG" -gt "2" ]] &>/dev/null; then
-    screen -X -S add_cg quit
+    screen -X -S add_cg quit &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cg script. (old) Trying another API.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     bash "${LOG_DIR:?}"/add_cmc
     SCREEN_IND_CG="${GR:?}*${N0:?}"
@@ -161,7 +161,7 @@ else
 
   # kill old session, try another
   if [[ "$SCREEN_CALC_CMC" -gt "2" ]] &>/dev/null; then
-    screen -X -S add_cmc quit
+    screen -X -S add_cmc quit &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_cmc script. (old) Trying another API.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     bash "${LOG_DIR:?}"/add_cg
     SCREEN_IND_CMC="${GR:?}*${N0:?}"
@@ -194,7 +194,7 @@ else
 
   # kill time jump
   if [[ "$SCREEN_CALC_P2P" -gt "42" ]] &>/dev/null; then
-    screen -X -S add_peers quit
+    screen -X -S add_peers quit &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script. (time jump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND_P2P="${GR:?}*${N0:?}"
     SCREEN_VALUE_P2P="${GR:?}0${GR:?}"
@@ -202,7 +202,7 @@ else
 
   # kill screen session being to long (max 30 seconds on average for each connection attempt)
   if [[ "$SCREEN_CALC_P2P" -gt "$(echo "${ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-    screen -X -S add_peers quit
+    screen -X -S add_peers quit &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     SCREEN_IND_P2P="${GR:?}*${N0:?}"
     SCREEN_VALUE_P2P="${GR:?}0${GR:?}"

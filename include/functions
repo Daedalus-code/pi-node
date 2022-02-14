@@ -325,7 +325,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
   fi
 
-  screen -X -S add_cmc quit
+  screen -X -S add_cmc quit &>/dev/null
   killall curl &>/dev/null
   rm "${LOG_DIR:?}"/node_data/requests* &>/dev/null
 fi
@@ -360,7 +360,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
 
   fi
 
-  screen -X -S add_cg quit
+  screen -X -S add_cg quit &>/dev/null
   killall curl &>/dev/null
   rm "${LOG_DIR:?}"/node_data/requests* &>/dev/null
 fi
@@ -928,18 +928,18 @@ if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep "dead" &>/dev/n
 
   if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then
     screen -wipe &>/dev/null
-    screen -X -S add_peers quit
+    screen -X -S add_peers quit &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_peers) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cmc" &>/dev/null; then
     screen -wipe &>/dev/null
-    screen -X -S add_cmc quit
+    screen -X -S add_cmc quit &>/dev/null
     killall curl &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cmc) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cg" &>/dev/null; then
     screen -wipe &>/dev/null
-    screen -X -S add_cg quit
+    screen -X -S add_cg quit &>/dev/null
     killall curl &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cg) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
@@ -1029,7 +1029,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 #!/bin/bash
 
 # By Rainman
-# V20220102
+# V20221402
 # 0.0.4.2
 
 source /usr/local/bin/include/pinode.conf
@@ -1065,7 +1065,7 @@ fi
 
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?}-$FAILED${N0:?} P2P ${P2P:?} ${GR:?}<${N0:?} ${P2PC:?}${P2P_CHANGE:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-screen -X -S add_peers quit
+screen -X -S add_peers quit &>/dev/null
 LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 exit
 EOF
@@ -1078,7 +1078,7 @@ EOF
       # start adding nodes, inside screen session (timeout n seconds)
       timeout 1800 screen -S add_peers -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
     else
-      screen -X -S add_peers quit
+      screen -X -S add_peers quit &>/dev/null
       printf '%b' "${LOG_DATE:?} Status() Addnode.Script skipping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
