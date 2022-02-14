@@ -3,6 +3,8 @@ FreedomCoin Node - RaspberryPi with LCD monitoring
 
 *Build your own FreedomCoin Node/StakeBox on a Raspberry Pi with a nice Display.*  
 
+![alt text](https://i.ibb.co/k1ShzhK/pinode.jpg)  
+
 ##### All parts together cost around 90-100 USD.
 
 * Raspberry Pi 3 Model B+ - [raspberrypi.org](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/)
