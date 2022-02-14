@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221402
-# 1.6.0.6
+# 1.6.0.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.0.6"
+VERSION="v1.6.0.9"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -23,6 +23,7 @@ mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
 
 # wait on node (daemon) to start
 until pidof trumpcoind 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+
   RANDOM_PID=$((((RANDOM % 9999) + 1)))
   clear
   printf '%b' "waiting on wallet (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
@@ -79,6 +80,7 @@ CLOCK=$(LC_ALL=de_US.utf8 date '+%H:%M:%S' 2>&1)
 LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
 
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
+
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
   LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>&1)
 fi
@@ -86,6 +88,7 @@ fi
 # date check
 LC_ALL=de_US.utf8 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
 LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
+
 if [[ -z "$LOG_CHECK" ]] &>/dev/null; then
   LOG_CHECK=$(LC_ALL=de_US.utf8 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1)
 fi
@@ -660,7 +663,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 fi
 
-TX="${G1:?}"
 # less than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "360" ]] &>/dev/null; then
   WALLET_TXLAST="${GR:?}       Loading${N0:?}"
@@ -676,15 +678,14 @@ if ! grep -o "099" "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null; then
     WALLET_TXLAST="${N0:?}"
     WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
   else
+    if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+      # non responsive
+      WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
+    fi
     WALLET_TXLAST="${WALLET_TXLAST:?}"
   fi
 else
   TX="${GR:?}"
-fi
-
-if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-  # non responsive
-  WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
 fi
 
 # if synced is still empty
@@ -1599,8 +1600,10 @@ TH="${RC:?}D${N0:?}"
 if tail -256 "${LOG_DIR:?}"/debug.log 2>&1 | grep "BitcoinMiner" &>/dev/null; then
   # green
   CB="${G1:?}"
+  TX="${G1:?}"
 else # default (theme based)
   CB="${RC:?}"
+  TX="${RC:?}"
 fi
 
 # END
