@@ -1,9 +1,7 @@
-# Trump-node
-Trump Node - RaspberryPi with LCD monitoring
+# Pi-node
+FreedomCoin Node - LCD monitoring
 
-*Build your own TrumpCoin Node/StakeBox on a Raspberry Pi with a nice Display.*
-
-![alt text](https://i.imgur.com/5Wg4jR7.jpg)  
+*Build your own FreedomCoin Node/StakeBox on a Raspberry Pi with a nice Display.*  
 
 ##### All parts together cost around 90-100 USD.
 
@@ -11,21 +9,17 @@ Trump Node - RaspberryPi with LCD monitoring
 * HyperPixel 4.0" IPS Display for Pi - [amazon](https://www.amazon.co.uk/dp/B07HJ59NP3/)
 * SD card (16GB, Class 10) - [amazon](https://www.amazon.co.uk/SanDisk-Ultra-Memory-Class-Black/dp/B0143RTB1E)
 
-### Setup wallet
-Download latest TrumpCoin wallet  
-https://github.com/trumpcoinsupport/TrumpCoin/releases  
-
 ### Setup script
 ``sudo apt-get install git -y``  
-``cd && git clone https://github.com/Daedalus-code/trump-node.git``  
-``bash trump-node/include/install``  
+``cd && git clone https://github.com/Daedalus-code/pi-node.git``  
+``bash pi-node/include/install``  
 
 ### Setup rc.local
 
 edit rc.local  
 ``sudo nano /etc/rc.local``  
 Put this before exit, not after!  
-``sleep 10 && sudo -u pi bash /usr/local/bin/pitrump &``  
+``sleep 10 && sudo -u pi bash /usr/local/bin/pinode &``  
 Save with ctrl+o  
 
 ### Setup Crontab
