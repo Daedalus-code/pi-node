@@ -88,7 +88,7 @@ fi
 
 # remove duplicates and create peers.tmp
 # disregard invalid pattern address (cidr - classless inter-domain routing)
-grepcidr -f "${LOG_DIR:?}"/node_data/nodes.all "${LOG_DIR:?}"/node_data/nodes.all | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers.tmp 2>"${LOG_DIR:?}"/node_data/peers.cidr
+grepcidr -f "${LOG_DIR:?}"/node_data/nodes.all "${LOG_DIR:?}"/node_data/nodes.all 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers.tmp 2>"${LOG_DIR:?}"/node_data/peers.cidr
 TOTAL_NODES=$(echo "$API_NEW+$ARP_NEW" 2>&1 | bc 2>&1)
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script Total ${G1:?}${TOTAL_NODES:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
