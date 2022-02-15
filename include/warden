@@ -233,11 +233,11 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
 
   # look for bootstrap while syncing, use if found
   if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip)" ]] &>/dev/null; then
+    printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # stop wallet daemon
     "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
     # unzip bootstrap
-    unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}"
-    printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    yes "y" | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}"
   fi
 
 else
