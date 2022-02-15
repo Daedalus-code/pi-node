@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221402
-# 0.2.7.2
+# V20221502
+# 0.2.6.9
 
 # shellcheck disable=SC2154
 
@@ -98,8 +98,8 @@ cat >"${LOG_DIR:?}"/add_cg <<'EOF'
 #!/bin/bash
 
 # By Rainman
-# V20220802
-# 0.0.3.6
+# V20221502
+# 0.0.3.3
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -115,10 +115,7 @@ truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cg
 for (( ; ; )); do # loop until success
 
   clear
-  COIN_API="freedomcoin"
-  CURRENCY_API="usd"
-
-  torify curl -o "${LOG_DIR:?}"/node_data/stats/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'$COIN_API'/market_chart?vs_currency='$CURRENCY_API'&days='$days'' -H 'accept: application/json' &>/dev/null
+  torify curl -o "${LOG_DIR:?}"/node_data/stats/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'${COING_API:?}'/market_chart?vs_currency='${CUR_API:?}'&days='$days'' -H 'accept: application/json' &>/dev/null
 
   sleep 2
   echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
@@ -143,7 +140,7 @@ cat >"${LOG_DIR:?}"/add_cmc <<'EOF'
 #!/bin/bash
 
 # By Rainman
-# V20220802
+# V20221502
 # 0.0.3.4
 
 source /usr/local/bin/include/pinode.conf
@@ -160,7 +157,7 @@ truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cmc
 for (( ; ; )); do # loop until success
 
   clear
-  URL="https://coinmarketcap.com/currencies/trumpcoin/"
+  URL="https://coinmarketcap.com/currencies/${COINM_API:?}/"
   torify curl -s -L "$URL" 2>&1 | html2text >"${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1
 
   sleep 2
