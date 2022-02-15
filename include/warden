@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221502
-# 0.3.8.1
+# 0.3.8.2
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -234,20 +234,6 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
   fi
   printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-  if [[ ! "$(grep "Found bootstrap.zip" "${LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-    echo "$(date)" >"${WALLET_DIR:?}"/boot.lock 2>&1
-
-    # look for bootstrap while syncing, use if found
-    if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
-      printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      # stop wallet daemon
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
-      # unzip bootstrap
-      yes "y" | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}"
-      printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      rm "${WALLET_DIR:?}"/boot.lock &>/dev/null
-    fi
-  fi
 else
   # if progress equals 1, then 100% synced
   if [[ $(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1) ]] &>/dev/null; then
@@ -289,8 +275,23 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
       # remove old files
       rm "${WALLET_DIR:?}"/onion &>/dev/null
       truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
-      if [[ ! -f "${WALLET_DIR:?}"/boot.lock ]] &>/dev/null; then
 
+      if [[ ! "$(grep "Found bootstrap.zip" "${LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+        echo "$(date)" >"${WALLET_DIR:?}"/boot.lock 2>&1
+
+        # look for bootstrap while syncing, use if found
+        if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
+          printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          # stop wallet daemon
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+          # unzip bootstrap
+          yes "y" | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}"
+          printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          rm "${WALLET_DIR:?}"/boot.lock &>/dev/null
+        fi
+      fi
+
+      if [[ ! -f "${WALLET_DIR:?}"/boot.lock ]] &>/dev/null; then
         truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
         # report hardware model at start of log
         printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log
