@@ -234,7 +234,7 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
   fi
   printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-  if [[ ! "$(tail -100 /tmp/debug.log 2>&1 | grep "Found bootstrap.zip" 2>&1)" ]] &>/dev/null; then
+  if [[ ! "$(grep "Found bootstrap.zip" "${LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
 
     # look for bootstrap while syncing, use if found
     if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip)" ]] &>/dev/null; then
