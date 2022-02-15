@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221502
-# 1.6.1.6
+# 1.6.0.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.1.6"
+VERSION="v1.6.0.6"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -662,14 +662,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     # look for 'progress=1' line, save it there and then
     grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/synced 2>&1
   fi
-fi
-
-# less than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "360" ]] &>/dev/null; then
-  WALLET_TXLAST="${GR:?}       Loading${N0:?}"
-else
-  SYNC_PROGRESS_BAR="${GR:?}0.00%${N0:?}"
-  SYNC_PROGRESS_BAR="${N0:?}"
 fi
 
 TX="${GR:?}"
@@ -1444,10 +1436,8 @@ if [[ -z "$TIMELINE" ]] &>/dev/null; then
   elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
   fi
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-    WALLET_TXLAST="${CY:?}       Loading${N0:?}"
-  fi
 fi
+
 # less than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
   WALLET_TXLAST="${CY:?}       Loading${N0:?}"
