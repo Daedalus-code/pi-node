@@ -1,7 +1,7 @@
 # Pi-node
 RaspberryPi Node - RaspberryPi with LCD monitoring  
 
-*Build your own Crypto Node/StakeBox on a Raspberry Pi with a nice Display.*  
+*Build your own crypto Node/StakeBox on a Raspberry Pi with a nice Display.*  
 
 ![alt text](https://i.ibb.co/k1ShzhK/pinode.jpg)  
 
