@@ -45,7 +45,7 @@ if wc -l "${LOG_DIR:?}"/node_data/synced 2>&1 | awk '{ print $1 }' &>/dev/null; 
         echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%\\r"
       else
         # is less than 99
-        if [ -z "$SYNCING_REPLACE_TX" ] &>/dev/null; then
+        if [[ -z "$SYNCING_REPLACE_TX" ]] &>/dev/null; then
           echo -ne "     Loading············································ %\\r"
         fi
         # is less than 99
