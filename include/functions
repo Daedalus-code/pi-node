@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221502
-# 1.6.1.0
+# 1.6.1.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.1.0"
+VERSION="v1.6.1.4"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -188,8 +188,8 @@ FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)
 TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 # total and free memory (rrdtool, no color)
-TOTAL_MEM_RR="$TOTAL_MEM"
-FREE_MEM_RR="$FREE_MEM"
+TOTAL_MEM_N="$TOTAL_MEM"
+FREE_MEM_N="$FREE_MEM"
 # total and free (color)
 TOTAL_MEM="${G0:?}$TOTAL_MEM${N0:?}"
 FREE_MEM="${G1:?}$FREE_MEM${N0:?}"
@@ -1448,6 +1448,10 @@ if [[ -z "$TIMELINE" ]] &>/dev/null; then
     WALLET_TXLAST="${CY:?}       Loading${N0:?}"
   fi
 fi
+# less than n seconds, continue
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
+  WALLET_TXLAST="${CY:?}       Loading${N0:?}"
+fi
 
 ### collect data for rrdtool (round robin databases) ###########################
 
@@ -1461,14 +1465,19 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
       # create data, peers, tmp directory, ruled by configuration
       mkdir "${DIR_NAME:?}" &>/dev/null
     fi
+
     # echo values into files (no color)
-    echo "$TOTAL_MEM_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats/memtotal 2>&1
-    echo "$FREE_MEM_RR" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats/memfree 2>&1
-    egrep "TX|Bytes" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/stats/txbytes 2>&1
-    egrep "RX|Bytes" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $5 }' 2>&1 | head -1 >"${LOG_DIR:?}"/node_data/stats/rxbytes 2>&1
+    echo "$TOTAL_MEM_N" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats/memtotal 2>&1
+    echo "$FREE_MEM_N" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats/memfree 2>&1
+
+    cat "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | egrep "TX packets" 2>&1 | awk '{ print $3 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1
+    cat "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | egrep "RX packets" 2>&1 | awk '{ print $3 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1
+
     # setup graphs
     bash /usr/local/bin/include/stats
   fi
+
+  ### hide dashbord balance(s) #################################################
 
   if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
     # hide balance and inputs
@@ -1477,11 +1486,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
     WALLET_STAKES="${GR:?}****${N0:?}"
     WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
   fi
-fi
-
-# less than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-  WALLET_TXLAST="${CY:?}       Loading${N0:?}"
 fi
 
 ### backup values coingecko ####################################################
