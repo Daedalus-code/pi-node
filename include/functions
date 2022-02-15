@@ -461,7 +461,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/client/tmp/proc ]] &>/dev/null; then
     if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null; then
       WALLET_SYNC=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     else # non responsive (loading) color white
-      WALLET_SYNC="%"
+      WALLET_SYNC="0"
     fi
   else
     # calculate blockchain sync
