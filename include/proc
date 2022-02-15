@@ -41,12 +41,12 @@ if wc -l "${LOG_DIR:?}"/node_data/synced 2>&1 | awk '{ print $1 }' &>/dev/null; 
 
     # syncing blockchain with progress bar
     SYNC_PROGRESS_BAR=$(
-      if [ "$SYNCING_REPLACE_TX" -gt "990000" ] &>/dev/null; then
+      if [ "$SYNCING_REPLACE_TX" -eq "999999" ] &>/dev/null; then
         echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%\\r"
       else
-        # is less than 99
+        # something went wrong
         if [[ -z "$SYNCING_REPLACE_TX" ]] &>/dev/null; then
-          echo -ne "     Loading············································ %\\r"
+          echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r"
         fi
         # is less than 99
         if [ "$SYNCING_REPLACE_TX" -lt "10000" ] &>/dev/null; then
