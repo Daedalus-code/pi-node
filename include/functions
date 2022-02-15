@@ -456,7 +456,7 @@ fi
 
 if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # get blockchain sync
-  WALLET_SYNC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>/dev/null | sed 's/^0*//' 2>&1 | tr -d '.' 2>&1)
+  WALLET_SYNC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>/dev/null | sed 's/^0*//' 2>&1 | tr -d '.' 2>&1 | sed 's/^0*//' 2>&1)
   WALLET_SYNC="${WALLET_SYNC:0:2}"
 else
   # if progress equals 1, then 100% synced
