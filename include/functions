@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221502
-# 1.6.2.2
+# 1.6.1.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.2.2"
+VERSION="v1.6.1.4"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -455,18 +455,10 @@ else
   WALLET_BLOCK="${GR:?}0${N0:?}"
 fi
 
-if [[ -f "${LOG_DIR:?}"/node_data/client/tmp/proc ]] &>/dev/null; then
-  if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-    # output progress value several times
-    if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null; then
-      WALLET_SYNC=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    else # non responsive (loading) color white
-      WALLET_SYNC="0"
-    fi
-  else
-    # calculate blockchain sync
-    WALLET_SYNC=$(echo "100/$WALLET_HEADS*$WALLET_BLOCK" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  fi
+if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+  # calculate blockchain sync
+  WALLET_SYNC=$(echo "100/$WALLET_HEADS*$WALLET_BLOCK" 2>&1 | bc -l 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)
+else
   # if progress equals 1, then 100% synced
   if [[ $(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1) ]] &>/dev/null; then
     WALLET_SYNC="100" # wallet blockchain is synced 100%
