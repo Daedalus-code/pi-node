@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221402
+# V20221502
 # 0.3.5.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -33,317 +33,317 @@ if wc -l "${LOG_DIR:?}"/node_data/synced 2>&1 | awk '{ print $1 }' &>/dev/null; 
       SYNCING_REPLACE_TX="0"
     fi
 
-    # 24852    = 0.024852 %
-
-    # 10000    = 0.010000 %
-    # 1000000  = 1.000000 %
-    # 10000000 = 100.0000 %
+    # 1000     = 0.100000 %
+    # 10000    = 1.000000 %
+    # 24852    = 2.485200 %
+    # 558213   = 55.82130 %
+    # 1000000  = 100.0000 %
 
     # syncing blockchain with progress bar
     SYNC_PROGRESS_BAR=$(
-      if [ "$SYNCING_REPLACE_TX" -eq "10000000" ] &>/dev/null; then
+      if [ "$SYNCING_REPLACE_TX" -eq "1000000" ] &>/dev/null; then
         echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%\\r"
       else
         # is less than 99
-        if [ "$SYNCING_REPLACE_TX" -lt "1000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -lt "100000" ] &>/dev/null; then
           echo -ne "     ··················································· 0%\\r"
         fi
         # is equal to
-        if [ "$SYNCING_REPLACE_TX" -eq "1000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "100000" ] &>/dev/null; then
           echo -ne "     ▓·················································· 1%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "2000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "200000" ] &>/dev/null; then
           echo -ne "     ▓▓················································· 2%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "3000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓················································ 3%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "4000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓··············································· 4%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "5000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓·············································· 5%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "6000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓············································· 6%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "7000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓············································ 7%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "8000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓··········································· 8%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "9000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓·········································· 9%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "10000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1000000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· 10%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "11000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1100000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· 11%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "12000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1200000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 12%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "13000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 13%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "14000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 14%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "15000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· 15%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "16000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· 16%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "17000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 17%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "18000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 18%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "19000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "1900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 19%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "20000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2000000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· 20%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "21000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2100000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· 21%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "22000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2200000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 22%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "23000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 23%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "24000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 24%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "25000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· 25%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "26000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· 26%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "27000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 27%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "28000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 28%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "29000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "2900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 29%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "30000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3000000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· 30%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "31000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3100000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· 31%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "32000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3200000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 32%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "33000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 33%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "34000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 34%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "35000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· 35%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "36000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· 36%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "37000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 37%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "38000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 38%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "39000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "3900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 39%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "40000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4000000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· 40%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "41000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4100000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· 41%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "42000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4200000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 42%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "43000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 43%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "44000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 44%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "45000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· 45%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "46000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· 46%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "47000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 47%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "48000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 48%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "49000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "4900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 49%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "50000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5000000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· 50%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "51000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5100000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· 51%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "52000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5200000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 52%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "53000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 53%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "54000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 54%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "55000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· 55%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "56000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· 56%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "57000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 57%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "58000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 58%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "59000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "5900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 59%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "60000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6000000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· 60%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "61000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6100000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· 61%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "62000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6200000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 62%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "63000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 63%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "64000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 64%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "65000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· 65%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "66000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· 66%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "67000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 67%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "68000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 68%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "69000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "6900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 69%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "70000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7000000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· 70%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "71000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7100000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· 71%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "72000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7200000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 72%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "73000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 73%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "74000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 74%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "75000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· 75%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "76000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· 76%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "77000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 77%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "78000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 78%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "79000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "7900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 79%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "80000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8000000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· 80%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "81000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8100000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· 81%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "82000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8200000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 82%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "83000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 83%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "84000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 84%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "85000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· 85%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "86000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· 86%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "87000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 87%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "88000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 88%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "89000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "8900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 89%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "90000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9000000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········· 90%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "91000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9100000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········ 91%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "92000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9200000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······· 92%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "93000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9300000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······ 93%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "94000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9400000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····· 94%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "95000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9500000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···· 95%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "96000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9600000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··· 96%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "97000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9700000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·· 97%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "98000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9800000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓· 98%\\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -eq "99000000" ] &>/dev/null; then
+        if [ "$SYNCING_REPLACE_TX" -eq "9900000" ] &>/dev/null; then
           echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 99%\\r"
         fi
         WALLET_TXLAST="$SYNCING_REPLACE_TX"
