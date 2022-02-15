@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221502
-# 1.6.1.0
+# 1.6.1.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.1.0"
+VERSION="v1.6.1.1"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -666,8 +666,9 @@ fi
 
 TX="${GR:?}"
 
+# wallet sync
 if [[ "$(tail -100 "${LOG_DIR:?}"/debug.log 2>&1 | grep "skipped on sync" 2>&1)" ]] &>/dev/null; then
-  # sycning
+  # remove old synced value
   rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
 fi
 
