@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221502
-# 1.6.3.9
+# 1.6.3.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -102,7 +102,7 @@ case $CHOICE in
       if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
         cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
       fi # only ask if wallet is not synced
-      if ! grep -o "progress=1" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+      if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
         read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -111,14 +111,13 @@ case $CHOICE in
         fi
       fi
       # normal shutdown
-      printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5)\n"
       # wait on node (daemon) to stop
       until ! pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
         clear
         printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
-        printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
-        sleep 15
+        printf '%b' "[${N0:?}!!${N0:?}] ${GR:?}CTRL+C to exit${N0:?}\n"
+        sleep 10
         kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
       done
 
