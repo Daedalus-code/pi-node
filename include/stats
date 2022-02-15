@@ -1,15 +1,11 @@
 #!/bin/bash
 
 # By Rainman
-# V20221402
-# 0.5.5.5
+# V20221502
+# 0.5.5.1
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
-
-# wallet client variables ######################################################
-
-WALLET_CLIENT="trumpcoin-cli"
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)

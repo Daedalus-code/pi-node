@@ -2,20 +2,15 @@
 
 # By Rainman
 # V20221502
-# 1.6.1.5
+# 1.6.1.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.1.5"
+VERSION="v1.6.1.0"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
-
-# wallet daemon & client variables #############################################
-
-WALLET_DAEMON="trumpcoind"
-WALLET_CLIENT="trumpcoin-cli"
 
 ### folders, daemon uptime, logs ###############################################
 

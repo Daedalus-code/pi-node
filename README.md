@@ -1,7 +1,7 @@
 # Pi-node
-FreedomCoin Node - RaspberryPi with LCD monitoring
+RaspberryPi Node - RaspberryPi with LCD monitoring  
 
-*Build your own FreedomCoin Node/StakeBox on a Raspberry Pi with a nice Display.*  
+*Build your own Crypto Node/StakeBox on a Raspberry Pi with a nice Display.*  
 
 ![alt text](https://i.ibb.co/k1ShzhK/pinode.jpg)  
 
