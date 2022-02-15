@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221502
-# 1.6.0.7
+# 1.6.0.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.0.7"
+VERSION="v1.6.0.1"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -1450,12 +1450,6 @@ fi
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
-
-    DIR_NAME="${LOG_DIR:?}"/node_data/stats
-    if [ ! -d "${DIR_NAME:?}" ] &>/dev/null; then
-      # create data, peers, tmp directory, ruled by configuration
-      mkdir "${DIR_NAME:?}" &>/dev/null
-    fi
 
     # echo values into files (no color)
     echo "$TOTAL_MEM_N" 2>&1 | egrep -v "syntax|-" >"${LOG_DIR:?}"/node_data/stats/memtotal 2>&1
