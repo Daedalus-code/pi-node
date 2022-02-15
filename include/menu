@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221502
-# 1.6.3.7
+# 1.6.3.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -148,6 +148,7 @@ case $CHOICE in
       # make sure debug.log exist
       touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove old files
+      rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
       rm "${WALLET_DIR:?}"/onion &>/dev/null
       rm "${WALLET_DIR:?}"/getwan &>/dev/null
 
