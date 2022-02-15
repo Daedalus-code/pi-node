@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221502
-# 1.6.1.4
+# 1.6.1.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.1.4"
+VERSION="v1.6.1.5"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -457,7 +457,8 @@ fi
 
 if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # calculate blockchain sync
-  WALLET_SYNC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | tr -d '.' 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)
+  WALLET_SYNC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | tr -d '.' 2>&1)
+  WALLET_SYNC="${WALLET_SYNC:0:2}"
 else
   # if progress equals 1, then 100% synced
   if [[ $(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1) ]] &>/dev/null; then
