@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221502
-# 1.6.3.8
+# 1.6.3.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -141,11 +141,10 @@ case $CHOICE in
     read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop &>/dev/null
-      sleep 5
+      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5)\n"
       sudo service cron stop 2>&1
       killall "${WALLET_DAEMON:?}" &>/dev/null
-      echo "[Ok] Re/Starting node!"
+      printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
       # make sure debug.log exist
       touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove old files
@@ -154,8 +153,7 @@ case $CHOICE in
 
       truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
       # start node (daemon)
-      sleep 1
-      "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
+      printf '%b' "[${G1:?}Ok${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon && sleep 1)\n"
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
