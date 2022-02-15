@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221402
+# V20221502
 # 1.6.2.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -456,7 +456,7 @@ else
 fi
 
 if [[ -f "${LOG_DIR:?}"/node_data/client/tmp/proc ]] &>/dev/null; then
-  if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+  if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     # output progress value several times
     if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null; then
       WALLET_SYNC=$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
@@ -468,7 +468,7 @@ if [[ -f "${LOG_DIR:?}"/node_data/client/tmp/proc ]] &>/dev/null; then
     WALLET_SYNC=$(echo "100/$WALLET_HEADS*$WALLET_BLOCK" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi
   # if progress equals 1, then 100% synced
-  if [[ $(grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced 2>&1) ]] &>/dev/null; then
+  if [[ $(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1) ]] &>/dev/null; then
     WALLET_SYNC="100" # wallet blockchain is synced 100%
   fi
 fi
@@ -670,9 +670,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   # get last wallet txid with help of last_tx var
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 
-  if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+  if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     # look for 'progress=1' line, save it there and then
-    grep "progress=1.0" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/synced 2>&1
+    grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/synced 2>&1
   fi
 fi
 
@@ -686,7 +686,7 @@ fi
 
 TX="${GR:?}"
 
-if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
   # get blockchain sync progress
   source /usr/local/bin/include/proc
@@ -702,9 +702,9 @@ if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 fi
 
 # if synced is still empty
-if ! grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # look for sync line, save it there and then
-  grep "progress=1.0" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
+  grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
 fi
 
 # greater than n seconds, continue
@@ -1248,7 +1248,7 @@ fi
 
 ### timeline ###################################################################
 
-if grep -o "progress=1.0" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+if grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
   # if rpc in warm-up, loading block index, wait
   if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
