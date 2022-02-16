@@ -471,8 +471,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     TOTAL_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)
     TOTAL_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)
     # get free Memory
-    FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $4 }' 2>&1)
-    FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)
+    FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $7 }' 2>&1)
+    FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $7 }' 2>&1)
     # calculate
     TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1)
     FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
