@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221602
-# 1.6.3.2
+# 1.6.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.3.2"
+VERSION="v1.6.3.1"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -28,9 +28,8 @@ until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   clear
   printf '%b' "waiting on wallet (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..${GR:?}
 
-  S I X M I L L I O N H O N K S
-
-
+  Honk Honk  . .. . .,
+   __________________ll___
   | *FUCK TRUDEAU ||l ''|'\__,_
   |_______________|||___|__|__|]
   (@)@)*************(@)(@)**(@)${N0:?}\n"
