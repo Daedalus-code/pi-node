@@ -555,7 +555,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       rm "${LOG_DIR:?}"/success &>/dev/null
     fi
     # unique connections
-    UNIQP2P=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $2 }' 2>&1)
+    UNIQP2P=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     # get blockchain sync
     WALLET_SYNC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>/dev/null | sed 's/^0*//' 2>&1 | tr -d '.' 2>&1)
