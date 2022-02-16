@@ -948,7 +948,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         sleep 1
       done
       printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
-      unzip /home/"$(whoami)"/TrumpCoin.bootstrap.zip -d "${WALLET_DIR:?}"
+      yes "A" | unzip /home/"$(whoami)"/TrumpCoin.bootstrap.zip -d "${WALLET_DIR:?}"
       echo
       read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
       echo
