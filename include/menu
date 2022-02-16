@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 1.6.4.5
+# 1.6.4.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -124,9 +124,10 @@ case $CHOICE in
       read -r -p "[YN] Reboot? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        sleep 5
+        sleep 1
+        rm "${WALLET_DIR:?}"/blocked &>/dev/null
         sudo reboot
-      else # turn crontab back on if no reboot
+      else
         rm "${WALLET_DIR:?}"/blocked &>/dev/null
       fi
     fi
