@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 0.3.9.9
+# 0.3.9.7
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -302,8 +302,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
           # create bootstrap check
           echo "Bootstrap installed $(date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
           printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          # remove lock file
-          rm "${WALLET_DIR:?}"/boot &>/dev/null
         fi
       fi
 
