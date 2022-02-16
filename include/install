@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221402
+# V20221602
 # 0.2.6.2
 
 if [[ ! -f /usr/local/bin/include/color ]] &>/dev/null; then
@@ -157,13 +157,13 @@ if ! [ -x "$(command -v ufw)" ] &>/dev/null; then
   echo
 fi
 
-if ! grep "configuration" "${WALLET_DIR:?}"/trumpcoin.conf &>/dev/null; then
+if ! grep "configuration" "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" &>/dev/null; then
   # wrong config
-  rm "${WALLET_DIR:?}"/trumpcoin.conf &>/dev/null
+  rm "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" &>/dev/null
 fi
 
 # install wallet configuration, do this once
-if [[ ! -f "${WALLET_DIR:?}"/trumpcoin.conf ]] &>/dev/null; then
+if [[ ! -f "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" ]] &>/dev/null; then
 
   mkdir "${WALLET_DIR:?}" &>/dev/null
 
@@ -213,9 +213,9 @@ discover=1
 maxconnections=${MAX_P2P:?}
 
 # can be commented out if you use the service script
-daemon=1" >"${WALLET_DIR:?}"/trumpcoin.conf.tmp 2>&1
-  mv "${WALLET_DIR:?}"/trumpcoin.conf.tmp "${WALLET_DIR:?}"/trumpcoin.conf 2>&1
-  printf '%b' "[${G1:?}Ok${N0:?}] Installed new wallet configuration! -> ${WALLET_DIR:?}/trumpcoin.conf\n"
+daemon=1" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
+  mv "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" 2>&1
+  printf '%b' "[${G1:?}Ok${N0:?}] Installed new wallet configuration! -> ${WALLET_DIR:?}/${WALLET_CONFIG:?}\n"
 fi
 
 # create screen list

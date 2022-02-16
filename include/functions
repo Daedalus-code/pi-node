@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221602
-# 1.6.4.9
+# 1.6.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.4.9"
+VERSION="v1.6.4.6"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -388,14 +388,14 @@ fi
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # collect wallet info, on every minute (loop) from client
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getblockchaininfo 2>&1
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getinfo 2>&1
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getpatriotnodecount 2>&1
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf getwalletinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getwalletinfo 2>&1
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/listunspent 2>&1
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf getpeerinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getpeerinfo 2>&1
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf listbanned 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/listbanned 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getblockchaininfo 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getinfo 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getpatriotnodecount 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getwalletinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getwalletinfo 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/listunspent 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpeerinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getpeerinfo 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" listbanned 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/listbanned 2>&1
   # make sure data exist
   if grep -o "error: couldn't connect to server" "${LOG_DIR:?}"/node_data/client/tmp/getinfo &>/dev/null; then
     rm -R "${LOG_DIR:?}"/node_data/client/tmp/* &>/dev/null
@@ -421,7 +421,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
 
   # get wallet version, do this once
   if ! grep "v" "${LOG_DIR:?}"/node_data/client/version &>/dev/null; then
-    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/client/version 2>&1
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/client/version 2>&1
   fi
   WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
 fi
@@ -1060,14 +1060,11 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 #!/bin/bash
 
 # By Rainman
-# V20221402
-# 0.0.4.5
+# V20221602
+# 0.0.4.2
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
-
-WALLET_DAEMON="trumpcoind"
-WALLET_CLIENT="trumpcoin-cli"
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
@@ -1079,7 +1076,7 @@ printf '%b' "${LOG_DATE:?} Status() Addnode.Script Starting adding nodes! +$(wc 
 LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
 while IFS= read -r ADDS; do
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf addnode "$ADDS" onetry 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" addnode "$ADDS" onetry 2>&1
 done <"${LOG_DIR:?}"/node_data/add_peers 2>&1 | shuf 2>&1 | grep -vf "${LOG_DIR:?}"/node_data/peers/success 2>&1
 
 P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | tail -1 2>&1)
