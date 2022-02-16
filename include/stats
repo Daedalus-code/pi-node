@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221502
-# 0.5.6.2
+# V20221602
+# 0.5.6.7
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -458,6 +458,11 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
       TOTAL_CONF_BELOW="0"
       save_auto_pos_values
     fi
+  fi
+
+  if [[ -z "$CON_DIFF" ]] &>/dev/null; then
+    # non responsive
+    CON_DIFF="0"
   fi
 
   ### auto pos config 2 #################################################### ###
