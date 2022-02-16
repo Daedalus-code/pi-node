@@ -946,7 +946,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
         printf '%b' "[${G1:?}Ok${N0:?}] aarch64 System\n"
         if [[ ! -f /home/"$(whoami)"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip ]] &>/dev/null; then
-          # download "${WALLET_NAME:?}".aarch64-linux-gnu.zip
+          # download $wallet_name.aarch64-linux-gnu.zip
           cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip
           bootstrap # install bootstrap
         fi
@@ -956,7 +956,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
         printf '%b' "[${G1:?}Ok${N0:?}] x86_64 System\n"
         if [[ ! -f /home/"$(whoami)"/"${WALLET_NAME:?}".Linux.zip ]] &>/dev/null; then
-          # download "${WALLET_NAME:?}".linux.zip
+          # download $wallet_name.linux.zip
           cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".Linux.zip
           bootstrap # install bootstrap
         fi
