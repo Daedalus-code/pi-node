@@ -1018,7 +1018,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   TITLE="Edit configuration"
   MENU="Choose one option:"
 
-  OPTIONS=(1 "TrumpCoin        trumpcoin.conf"
+  OPTIONS=(1 "Wallet           ${WALLET_CONFIG:?}"
     2 "PatriotNode      patriotnode.conf"
     3 "PiNode           pinode.conf"
     4 "Config.txt       boot/config.txt"
@@ -1203,7 +1203,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     TITLE="Reset a specific config"
     MENU="Choose one option:"
 
-    OPTIONS=(1 "trumpcoin.conf   Reset wallet config"
+    OPTIONS=(1 "${WALLET_CONFIG:?}   Reset wallet config"
       2 "pinode.conf      Reset pi-node config"
       3 "config.txt       Reset boot/config.txt"
       4 "torrc            Reset Tor config")
@@ -1221,7 +1221,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "1")
 
-      read -r -p "[YN] Hard reset of trumpcoin.conf? y/n " -n 1 -r
+      read -r -p "[YN] Hard reset of ${WALLET_CONFIG:?}? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
@@ -1241,7 +1241,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           EXTERNALIP="externalip=${EXTERNALIP:?}"
         fi
 
-        echo "## trumpcoin.conf configuration file.
+        echo "## ${WALLET_CONFIG:?} configuration file.
 # Network-related settings:
 
 # Run on the test network instead of the real freedomcoin network.
