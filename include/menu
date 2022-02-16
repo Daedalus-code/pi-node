@@ -886,7 +886,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       # armv7l
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] armv7l & aarch64 System\n"
+        printf '%b' "[${G1:?}Ok${N0:?}] armv7l System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
           # download arm-linux-gnueabihf.zip
           cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
