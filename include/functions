@@ -817,7 +817,7 @@ ADD_P2P_CHECK="[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" # **:30:** | **:00:** !
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${ADDNODES_CHECK:?}" 2>&1)" ]] &>/dev/null; then
   # add addnodes backup if backup is greater
   if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-    cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers.tmp
+    cp "${WALLET_DIR:?}"/addnodes "${LOG_DIR:?}"/node_data/peers.tmp 2>&1
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # clear out failed connections (old peers, different ports)
     grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/addnodes 2>&1 | awk -F: '{ print $1 }' 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
