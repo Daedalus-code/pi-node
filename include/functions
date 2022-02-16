@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221602
-# 1.6.2.7
+# 1.6.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.2.7"
+VERSION="v1.6.3.1"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -688,10 +688,14 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
   WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
 fi
 
+if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+  # non responsive
+  SYNC_PROGRESS_BAR="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
+fi
+
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   # non responsive
   WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
-  SYNC_PROGRESS_BAR="$WALLET_TXLAST"
 fi
 
 # if synced is still empty
