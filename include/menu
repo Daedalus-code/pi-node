@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 1.6.4.7
+# 1.6.4.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -839,7 +839,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
             clear
             printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
-            sleep 1
+            sleep 10
+            kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
           done
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
           yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
@@ -950,7 +951,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
         clear
         printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
-        sleep 1
+        sleep 10
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
       done
       printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
       yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
@@ -1545,9 +1547,9 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
             clear
             printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
             printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
-            sleep 5
+            sleep 10
+            kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
           done
-          kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
           sudo reboot
         fi
       fi
