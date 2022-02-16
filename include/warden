@@ -277,7 +277,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # rebuild index
 
-    if [[ ! -f "${WALLET_LOG_DIR:?}"/blocked ]] &>/dev/null; then
+    if [[ ! -f "${WALLET_DIR:?}"/blocked ]] &>/dev/null; then
 
       if [[ "$(grep "Do you want to rebuild the block database now?" "${LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
         yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -reindex -daemon
@@ -285,7 +285,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
       fi
     fi
 
-    if [[ ! -f "${WALLET_LOG_DIR:?}"/blocked ]] &>/dev/null; then
+    if [[ ! -f "${WALLET_DIR:?}"/blocked ]] &>/dev/null; then
 
       # remove old files
       rm "${WALLET_DIR:?}"/onion &>/dev/null
