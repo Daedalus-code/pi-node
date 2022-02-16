@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 1.6.3.9
+# 1.6.4.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -838,6 +838,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           done
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
           unzip /home/"$(whoami)"/TrumpCoin.bootstrap.zip -d "${WALLET_DIR:?}"
+          echo "Bootstrap installed $(date 2>&1)" >"${WALLET_DIR:?}"/bootstrap 2>&1
           read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
           echo
           if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
