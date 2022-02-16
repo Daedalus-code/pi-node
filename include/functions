@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221602
-# 1.6.3.6
+# 1.6.4.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.3.6"
+VERSION="v1.6.4.2"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -891,7 +891,13 @@ fi
 
 # failed_peers function
 function failed_peers() {
-  egrep -o " to .* failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sort -n 2>&1 | grep -v "addnode" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  egrep -o " to ([0-9]{1,3}\.){3}[0-9]{1,3} failed" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/peers/failed.ipv4 2>&1
+  egrep -o " to ([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4} failed" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/peers/failed.ipv6 2>&1
+  grep -oiE " to ([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,} failed" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/peers/failed.dns 2>&1
+  cat "${LOG_DIR:?}"/node_data/peers/failed.* 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sort -n 2>&1 | grep -v "addnode" >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  # remove old file
+  rm "${LOG_DIR:?}"/node_data/peers/failed.* &>/dev/null
+
   # add system ip address
   echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   awk '!a[$0]++' "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
