@@ -841,7 +841,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
             sleep 1
           done
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
-          unzip /home/"$(whoami)"/TrumpCoin.bootstrap.zip -d "${WALLET_DIR:?}"
+          yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
           echo "Bootstrap installed $(date 2>&1)" >"${WALLET_DIR:?}"/bootstrap 2>&1
           rm "${WALLET_DIR:?}"/blocked &>/dev/null
           read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
@@ -951,7 +951,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         sleep 1
       done
       printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
-      yes "A" 2>&1 | unzip /home/"$(whoami)"/*.bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
+      yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
       echo
       read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
       echo
