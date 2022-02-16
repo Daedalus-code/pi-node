@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 0.5.6.7
+# 0.5.7.4
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -421,9 +421,16 @@ $(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
           printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${R1:?}High!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
           printf '%b' "${LOG_DATE:?} Status() Staking.Script New Input count with new config -> ${G1:?}$(cat "${LOG_DIR:?}"/node_data/stats/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
           sleep 1
-          # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold true "${DIFF_AVG:?}" 2>&1
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold "$(echo "${DIFF_AVG:?}-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
+
+          # set when synced 100%
+          if grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+
+            # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
+            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold true "${DIFF_AVG:?}" 2>&1
+            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold "$(echo "${DIFF_AVG:?}-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
+
+          fi
+
           sleep 1
           printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold -> ${G1:?}${DIFF_AVG:?} ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
           printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold -> ${G1:?}$(echo "$DIFF_AVG-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
