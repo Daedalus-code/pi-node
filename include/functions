@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221502
-# 1.6.2.5
+# V20221602
+# 1.6.3.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.2.5"
+VERSION="v1.6.3.2"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -26,7 +26,14 @@ until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
 
   RANDOM_PID=$((((RANDOM % 9999) + 1)))
   clear
-  printf '%b' "waiting on wallet (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..\n"
+  printf '%b' "waiting on wallet (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..${GR:?}
+
+  S I X M I L L I O N H O N K S
+
+
+  | *FUCK TRUDEAU ||l ''|'\__,_
+  |_______________|||___|__|__|]
+  (@)@)*************(@)(@)**(@)${N0:?}\n"
   sleep 2
   # create debug.log
   touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
