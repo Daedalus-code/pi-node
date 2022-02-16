@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 0.3.6.0
+# 0.3.6.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -33,6 +33,13 @@ if wc -l "${LOG_DIR:?}"/node_data/synced 2>&1 | awk '{ print $1 }' &>/dev/null; 
     fi
 
     SYNCING_REPLACE_TX=$(echo "100/999990*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1 | tr -d '.' 2>&1)
+
+    # less than 10%, continue
+    if [[ "$SYNCING_REPLACE_TX" -lt "100" ]] &>/dev/null; then
+      # remove bootstrap lock
+      rm "${WALLET_DIR:?}"/boot &>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Progress.Bar() Reinstall bootstrap${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
 
     # syncing blockchain with progress bar
     SYNC_PROGRESS_BAR=$(
