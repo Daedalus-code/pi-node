@@ -98,7 +98,7 @@ case $CHOICE in
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       # turn off cron
-      sudo service cron stop 2>&1
+      sudo systemctl stop cron 2>&1
       if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
         cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
       fi # only ask if wallet is not synced
@@ -127,7 +127,7 @@ case $CHOICE in
         sleep 5
         sudo reboot
       else # turn crontab back on if no reboot
-        sudo service cron start 2>&1
+        sudo systemctl start cron 2>&1
       fi
     fi
     clear
@@ -142,7 +142,7 @@ case $CHOICE in
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5)\n"
-      sudo service cron stop 2>&1
+      sudo systemctl stop cron 2>&1
       killall "${WALLET_DAEMON:?}" &>/dev/null
       printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
       # make sure debug.log exist
@@ -160,7 +160,7 @@ case $CHOICE in
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
-      sudo service cron start 2>&1
+      sudo systemctl start cron 2>&1
     fi
 
     ;;
@@ -828,7 +828,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         read -r -p "[YN] Unzip bootstrap.zip? -> (${WALLET_DIR:?}) y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          sudo service cron stop 2>&1
+          sudo systemctl stop cron 2>&1
           printf '%b' "[${R1:?}!!${N0:?}] "
           "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
           # wait on node (daemon) to stop
@@ -840,7 +840,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
           unzip /home/"$(whoami)"/TrumpCoin.bootstrap.zip -d "${WALLET_DIR:?}"
           echo "Bootstrap installed $(date 2>&1)" >"${WALLET_DIR:?}"/bootstrap 2>&1
-          sudo service cron restart 2>&1
+          sudo systemctl start cron 2>&1
           read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
           echo
           if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -917,13 +917,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
 
       setup
-      sudo service cron stop 2>&1
+      sudo systemctl stop cron 2>&1
       setup_zip
 
       echo
       read -r -p "[Ok] Wallet installed! Press Enter to continue" </dev/tty
       echo
-      sudo service cron start 2>&1
+      sudo systemctl start cron 2>&1
     fi
 
     ;;
