@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 0.3.7.9
+# 0.3.9.6
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -286,6 +286,23 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     fi
 
     if [[ ! -f "${WALLET_DIR:?}"/blocked ]] &>/dev/null; then
+
+      # look for bootstrap before starting/syncing, use if found
+      if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
+        # create lock file
+        echo "$(date)" >"${WALLET_DIR:?}"/blocked
+
+        printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        # stop wallet daemon
+        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
+        # unzip bootstrap
+        yes "y" | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}"
+        # create bootstrap check
+        echo "Bootstrap installed $(date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
+        printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        # remove lock file
+        rm "${WALLET_DIR:?}"/blocked &>/dev/null
+      fi
 
       # remove old files
       rm "${WALLET_DIR:?}"/onion &>/dev/null
