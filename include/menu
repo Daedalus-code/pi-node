@@ -706,7 +706,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     }
 
     HEIGHT=16
-    WIDTH=45
+    WIDTH=42
     CHOICE_HEIGHT=9
     BACKTITLE="Download manually"
     TITLE="Download Menu"
@@ -749,8 +749,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       echo "Downloading Wallet.aarch64-linux-gnu.zip"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.aarch64-linux-gnu.zip
-      UNAME_SYSTEM="TrumpCoin.aarch64-linux-gnu.zip"
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip
+      UNAME_SYSTEM="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
       setup_zip
 
       ;;
@@ -759,8 +759,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       echo "Downloading Wallet.arm-linux-gnueabihf.zip"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.arm-linux-gnueabihf.zip
-      UNAME_SYSTEM="TrumpCoin.arm-linux-gnueabihf.zip"
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".arm-linux-gnueabihf.zip
+      UNAME_SYSTEM="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
       setup_zip
 
       ;;
@@ -769,8 +769,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       echo "Downloading Wallet.Linux.zip"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.Linux.zip
-      UNAME_SYSTEM="TrumpCoin.Linux.zip"
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Linux.zip
+      UNAME_SYSTEM="${WALLET_NAME:?}.Linux.zip"
       setup_zip
 
       ;;
@@ -779,8 +779,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       echo "Downloading Wallet.Mac.dmg"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.Mac.dmg
-      UNAME_SYSTEM="TrumpCoin.Mac.dmg"
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Mac.dmg
+      UNAME_SYSTEM="${WALLET_NAME:?}.Mac.dmg"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
       echo
@@ -791,8 +791,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       echo "Downloading Wallet.Mac.zip"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.Mac.zip
-      UNAME_SYSTEM="TrumpCoin.Mac.zip"
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Mac.zip
+      UNAME_SYSTEM="${WALLET_NAME:?}.Mac.zip"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
       echo
@@ -803,8 +803,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       echo "Downloading Wallet.Ubuntu16.zip"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/TrumpCoin.Ubuntu16.zip
-      UNAME_SYSTEM="TrumpCoin.Ubuntu16.zip"
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Ubuntu16.zip
+      UNAME_SYSTEM="${WALLET_NAME:?}.Ubuntu16.zip"
       setup_zip
 
       ;;
@@ -868,7 +868,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
         # get latest release
         LATEST_VERSION=$(curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-        cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.bootstrap.zip
+        cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".bootstrap.zip
         read -r -p "[YN] Unzip bootstrap.zip? -> (${WALLET_DIR:?}) y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -900,15 +900,15 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       function setup() {
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
           UNAME_SYSTEM="armv7l"
-          UNAME_FILE="TrumpCoin.arm-linux-gnueabihf.zip"
+          UNAME_FILE="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
         fi
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
           UNAME_SYSTEM="aarch64"
-          UNAME_FILE="TrumpCoin.aarch64-linux-gnu.zip"
+          UNAME_FILE="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
         fi
         if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
           UNAME_SYSTEM="x86_64"
-          UNAME_FILE="TrumpCoin.Linux.zip"
+          UNAME_FILE="${WALLET_NAME:?}.Linux.zip"
         fi
 
       }
@@ -935,9 +935,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       # armv7l
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
         printf '%b' "[${G1:?}Ok${N0:?}] armv7l System\n"
-        if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
+        if [[ ! -f /home/"$(whoami)"/"${WALLET_NAME:?}".arm-linux-gnueabihf.zip ]] &>/dev/null; then
           # download arm-linux-gnueabihf.zip
-          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
+          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".arm-linux-gnueabihf.zip
           bootstrap # install bootstrap
         fi
       fi
@@ -945,9 +945,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       # aarch64
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
         printf '%b' "[${G1:?}Ok${N0:?}] aarch64 System\n"
-        if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
-          # download trumpcoin.aarch64-linux-gnu.zip
-          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
+        if [[ ! -f /home/"$(whoami)"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip ]] &>/dev/null; then
+          # download "${WALLET_NAME:?}".aarch64-linux-gnu.zip
+          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip
           bootstrap # install bootstrap
         fi
       fi
@@ -955,9 +955,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       # x86_64
       if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
         printf '%b' "[${G1:?}Ok${N0:?}] x86_64 System\n"
-        if [[ ! -f /home/"$(whoami)"/TrumpCoin.Linux.zip ]] &>/dev/null; then
-          # download trumpcoin.linux.zip
-          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.Linux.zip
+        if [[ ! -f /home/"$(whoami)"/"${WALLET_NAME:?}".Linux.zip ]] &>/dev/null; then
+          # download "${WALLET_NAME:?}".linux.zip
+          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".Linux.zip
           bootstrap # install bootstrap
         fi
       fi
@@ -981,7 +981,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
     # get latest release
     LATEST_VERSION=$(curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-    cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.bootstrap.zip
+    cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".bootstrap.zip
     read -r -p "[YN] Unzip bootstrap? -> (${WALLET_DIR:?}) y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
