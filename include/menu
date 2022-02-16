@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 1.6.6.0
+# 1.6.8.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -540,8 +540,29 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # interface icon (top right)
     INTERFACE=$(egrep "wlan*|eth*" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -B1 "inet" 2>&1 | egrep -o "wlan[0-9]+|eth[0-9]+" 2>&1)
 
+    # create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
+    # note: only use addr, no port
+    if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
+      # get clean ipv4 address, disregard non ipv4
+      egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/success 2>&1
+      # get clean ipv6 address, disregard non ipv6 and lines shorter than n
+      egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/success 2>&1
+      # get clean dns address, disregard non dns
+      grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >>"${LOG_DIR:?}"/success 2>&1
+      # remove duplicates, sort, disregard 127 address
+      cat "${LOG_DIR:?}"/success 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | grep -v "127." >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+      # remove old file
+      rm "${LOG_DIR:?}"/success &>/dev/null
+    fi
     # unique connections
-    UNIQP2P=$(egrep "addr:|addrlocal:" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "getaddr" 2>&1 | awk '{ print $2 }' 2>&1 | sed -r '/^.{,10}$/d' 2>&1 | awk -F: '{ print $1 }' 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
+    UNIQP2P=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $2 }' 2>&1)
+
+    WALLET_SYNC=$(echo "100/999990*${WALLET_SYNC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    # if progress equals 1, then 100% synced
+    if [[ $(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1) ]] &>/dev/null; then
+      WALLET_SYNC="Ok" # wallet blockchain is synced 100%
+    fi
+
     # get latest repository and date
     LATEST_HEAD=$(cd /home/"$(whoami)"/pi-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
     LATEST_DATE=$(cd /home/"$(whoami)"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y')
@@ -593,7 +614,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo
       printline "Wallet" "${WALLET_VERSION:?}" "Headers/Blocks" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
       printline "PID" "${PID_DAEMON:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Staking Status" "${NODE_PROOF:?}"
-      printline "Wallet Size" "$(du -sh "${WALLET_DIR:?}" | awk '{ print $1 }' 2>&1)" "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "Coin Supply" "${NODE_COIN_SUPPLY:?}"
+      printline "Wallet Size" "$(du -sh "${WALLET_DIR:?}" | awk '{ print $1 }' 2>&1) ${WALLET_SYNC:?}" "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "Coin Supply" "${NODE_COIN_SUPPLY:?}"
       printline "Backups Size" "$(du -sh "${WALLET_DIR:?}"/backups 2>&1 | awk '{ print $1 }' 2>&1)" "Add/Saved" "$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" "Wallet Balance" "${WALLET_BALANCE:?} (${WALLET_INPUTS:?})"
       printline "wallet.dat" "$(du -sh "${WALLET_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "Ban(s)" "${WALLET_PEERS_BANNED:?}" "Wallet Value" "${WALLET_VALUE:?} USD"
       echo
@@ -1173,7 +1194,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     MENU="Choose one option:"
 
     OPTIONS=(1 "trumpcoin.conf   Reset wallet config"
-      2 "pinode.conf     Reset pi-node config"
+      2 "pinode.conf      Reset pi-node config"
       3 "config.txt       Reset boot/config.txt"
       4 "torrc            Reset Tor config")
 
