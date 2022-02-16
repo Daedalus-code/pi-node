@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 0.3.6.6
+# 0.3.7.2
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -232,7 +232,10 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
   if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
     WALLET_SYNC="0"
   fi
-  printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+    printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 
 else
   # if progress equals 1, then 100% synced
@@ -241,7 +244,10 @@ else
     if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
       WALLET_SYNC="0"
     fi
-    printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+    if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+      printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
 fi
 
