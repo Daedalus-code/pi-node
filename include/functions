@@ -32,7 +32,7 @@ until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
    __________________ll___
   | *FUCK TRUDEAU ||l ''|'\__,_
   |_______________|||___|__|__|]
-  (@)@)*************(@)(@)**(@)${N0:?}\n"
+  (@)@)*************(@)(@)**(@)${N0:?}"
   sleep 2
   # create debug.log
   touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
