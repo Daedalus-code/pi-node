@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 1.6.4.2
+# 1.6.4.5
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -141,10 +141,12 @@ case $CHOICE in
     read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5)\n"
+
       echo "$(date)" >"${WALLET_DIR:?}"/blocked
+      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5)\n"
       killall "${WALLET_DAEMON:?}" &>/dev/null
       printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
+
       # make sure debug.log exist
       touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove old files
@@ -160,6 +162,7 @@ case $CHOICE in
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
+
       rm "${WALLET_DIR:?}"/blocked &>/dev/null
     fi
 
