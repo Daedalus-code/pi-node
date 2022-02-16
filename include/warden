@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221502
-# 0.3.9.1
+# V20221602
+# 0.3.6.6
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -277,36 +277,11 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
       # remove old files
       rm "${WALLET_DIR:?}"/onion &>/dev/null
       truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
-
-      if [[ ! "$(grep "Found bootstrap.zip" "${LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-        # create lock file
-        echo "$(date)" >"${WALLET_DIR:?}"/boot.lock 2>&1
-
-        # bootstrap check
-        if [[ ! -f "${WALLET_DIR:?}"/bootstrap ]] &>/dev/null; then
-          # look for bootstrap before starting/syncing, use if found
-          if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
-            printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-            # stop wallet daemon
-            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5
-            # unzip bootstrap
-            yes "y" | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}"
-            # create bootstrap check
-            echo "Bootstrap installed $(date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
-            printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-            # remove lock file
-            rm "${WALLET_DIR:?}"/boot.lock &>/dev/null
-          fi
-        fi
-      fi
-
-      if [[ ! -f "${WALLET_DIR:?}"/boot.lock ]] &>/dev/null; then
-        truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        # report hardware model at start of log
-        printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log
-        yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
-        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      fi
+      truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      # report hardware model at start of log
+      printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log
+      yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf -debug=tor -proxy="${PROXY:?}" -daemon
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 fi
