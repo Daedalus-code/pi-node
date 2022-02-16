@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221602
-# 0.4.0.3
+# 0.4.0.9
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -266,6 +266,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: ${GR:?}::${N0:?} [${R1:?}XX${N0:?}] ${GR:?}::${N0:?} Rebooting system now!${N0:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     sudo reboot 2>&1
   fi
+fi
+
+if [[ "$(grep -c "AcceptBlock FAILED" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" -gt "50" ]] &>/dev/null; then
+  # stop wallet daemon
+  printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/trumpcoin.conf stop && sleep 5)\n"
+  killall "${WALLET_DAEMON:?}" &>/dev/null
 fi
 
 ### start wallet daemon ########################################################
