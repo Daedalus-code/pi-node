@@ -336,7 +336,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   API_WATCH_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
   # greater than n seconds, continue
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "420" ]] &>/dev/null; then
 
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_PRICE_CMC:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -373,7 +373,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   fi
 
   # greater than n seconds, continue
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "420" ]] &>/dev/null; then
 
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Found ${G1:?}${API_PRICE_CG:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
