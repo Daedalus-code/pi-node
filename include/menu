@@ -617,7 +617,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo
       printline "Free/Memory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "CPU Temperature" "${CPU_CTEMP:?} C ${CPU_FTEMP:?} F (${CPUS:?})" "Address" "${IP_ADDRESS_N:?}"
       printline "Used/Swap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "CPU Speed" "$(cat "$LOG_DIR"/node_data/stats/cpuspeed 2>/dev/null) MHz" "Network" "${WALLET_CHAIN:?} ${INTERFACE:?}"
-      printline "User Space" "$(du -sh /home/* 2>/dev/null | xargs 2>&1 | awk '{ print $1 }' 2>&1)" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))" "Upload" "${UPLOAD:?}"
+      printline "User Space" "$(du -sh /home/* 2>/dev/null | xargs 2>&1 | awk '{ print $1,$2 }' 2>&1)" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))" "Upload" "${UPLOAD:?}"
       printline "Used HDD" "${USED_HDD:?} ${USED_HDD_P:?}" "COM" "$COM" "Download" "${DOWNLOAD:?}"
       echo
       printline "Wallet" "${WALLET_VERSION:?}" "Headers/Blocks" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
@@ -681,7 +681,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "1")
 
     # get latest release
-    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+    LATEST_VERSION=$(curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
 
     function setup_zip() {
       read -r -p "[YN] Install new wallet? y/n " -n 1 -r
@@ -734,7 +734,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     "1")
 
       echo "Downloading libs.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/libs.zip
       UNAME_SYSTEM="libs.zip"
       echo
@@ -746,7 +746,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     "2")
 
       echo "Downloading TrumpCoin.aarch64-linux-gnu.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/TrumpCoin.aarch64-linux-gnu.zip
       UNAME_SYSTEM="TrumpCoin.aarch64-linux-gnu.zip"
       setup_zip
@@ -756,7 +756,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     "3")
 
       echo "Downloading TrumpCoin.arm-linux-gnueabihf.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/TrumpCoin.arm-linux-gnueabihf.zip
       UNAME_SYSTEM="TrumpCoin.arm-linux-gnueabihf.zip"
       setup_zip
@@ -766,7 +766,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     "4")
 
       echo "Downloading TrumpCoin.Linux.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/TrumpCoin.Linux.zip
       UNAME_SYSTEM="TrumpCoin.Linux.zip"
       setup_zip
@@ -776,7 +776,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     "5")
 
       echo "Downloading TrumpCoin.Mac.dmg"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/TrumpCoin.Mac.dmg
       UNAME_SYSTEM="TrumpCoin.Mac.dmg"
       echo
@@ -788,7 +788,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     "6")
 
       echo "Downloading TrumpCoin.Mac.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/TrumpCoin.Mac.zip
       UNAME_SYSTEM="TrumpCoin.Mac.zip"
       echo
@@ -800,7 +800,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     "7")
 
       echo "Downloading TrumpCoin.Ubuntu16.zip"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/TrumpCoin.Ubuntu16.zip
       UNAME_SYSTEM="TrumpCoin.Ubuntu16.zip"
       setup_zip
@@ -810,7 +810,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     "8")
 
       echo "Downloading Source code (zip)"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
       UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
       echo
@@ -822,7 +822,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     "9")
 
       echo "Downloading Source code (tar.gz)"
-      URL="https://github.com/trumpcoinsupport/TrumpCoin/releases/download/${LATEST_VERSION:?}"
+      URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".tar.gz
       UNAME_SYSTEM="${LATEST_VERSION:?}"
       echo
@@ -840,7 +840,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "2")
 
     # get latest release
-    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+    LATEST_VERSION=$(curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
     # get wallet version
     WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
 
@@ -865,8 +865,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       function bootstrap() {
         printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
         # get latest release
-        LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-        cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.bootstrap.zip
+        LATEST_VERSION=$(curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+        cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.bootstrap.zip
         read -r -p "[YN] Unzip bootstrap.zip? -> (${WALLET_DIR:?}) y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -935,7 +935,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         printf '%b' "[${G1:?}Ok${N0:?}] armv7l System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.arm-linux-gnueabihf.zip ]] &>/dev/null; then
           # download arm-linux-gnueabihf.zip
-          cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
+          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.arm-linux-gnueabihf.zip
           bootstrap # install bootstrap
         fi
       fi
@@ -945,7 +945,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         printf '%b' "[${G1:?}Ok${N0:?}] aarch64 System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.aarch64-linux-gnu.zip ]] &>/dev/null; then
           # download trumpcoin.aarch64-linux-gnu.zip
-          cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
+          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.aarch64-linux-gnu.zip
           bootstrap # install bootstrap
         fi
       fi
@@ -955,7 +955,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         printf '%b' "[${G1:?}Ok${N0:?}] x86_64 System\n"
         if [[ ! -f /home/"$(whoami)"/TrumpCoin.Linux.zip ]] &>/dev/null; then
           # download trumpcoin.linux.zip
-          cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.Linux.zip
+          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.Linux.zip
           bootstrap # install bootstrap
         fi
       fi
@@ -978,8 +978,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
     # get latest release
-    LATEST_VERSION=$(curl -s https://github.com/trumpcoinsupport/TrumpCoin/releases/latest 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-    cd || exit && wget -c https://github.com/trumpcoinsupport/TrumpCoin/releases/download/"${LATEST_VERSION:?}"/TrumpCoin.bootstrap.zip
+    LATEST_VERSION=$(curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+    cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/TrumpCoin.bootstrap.zip
     read -r -p "[YN] Unzip bootstrap? -> (${WALLET_DIR:?}) y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
