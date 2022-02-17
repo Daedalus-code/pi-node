@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 0.3.6.8
+# 0.3.6.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -43,7 +43,6 @@ if ! grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
 
     # syncing blockchain with progress bar
     SYNC_PROGRESS_BAR=$(
-      echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r"
       if [ "$SYNCING_REPLACE_TX" -ge "995" ] &>/dev/null; then
         echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%\\r"
       else
