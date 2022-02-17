@@ -1501,7 +1501,7 @@ if [[ -z "$TIMELINE" ]] &>/dev/null; then
 fi
 
 # less than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "60" ]] &>/dev/null; then
   WALLET_TXLAST="${CY:?}       Loading${N0:?}"
 fi
 
