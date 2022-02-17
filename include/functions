@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221702
-# 1.6.4.6
+# 1.6.3.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.4.6"
+VERSION="v1.6.3.0"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -482,22 +482,6 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
   TX="${G1:?}" # sync bar color (green)
   # replace wallet_txlast with sync_progress_bar
   WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
-
-  # get blockchain sync
-  WALLET_SYNC_PROC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>/dev/null | sed 's/^0*//' 2>&1 | tr -d '.' 2>&1)
-
-  if [[ -z "$WALLET_SYNC_PROC" ]] &>/dev/null; then
-    WALLET_SYNC_PROC="1"
-  fi
-
-  WALLET_SYNC_PROC=$(echo "100/999990*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tr -d '.' 2>&1)
-
-  # less than 10%, continue
-  if [[ "$WALLET_SYNC_PROC" -lt "100" ]] &>/dev/null; then
-    # remove bootstrap lock
-    rm "${WALLET_DIR:?}"/boot &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Progress.Bar() Reinstall bootstrap${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
 
 else
 
