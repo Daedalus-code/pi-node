@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221702
-# 1.6.5.7
+# 1.6.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.5.7"
+VERSION="v1.6.6.2"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -104,6 +104,11 @@ LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
 
 if [[ -z "$LOG_CHECK" ]] &>/dev/null; then
   LOG_CHECK=$(LC_ALL=de_US.utf8 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1)
+fi
+
+if [[ "$(grep "bc" "${WALLET_DIR:?}"/wait 2>&1)" ]] &>/dev/null; then
+  # removed broken file
+  rm "${WALLET_DIR:?}"/wait &>/dev/null
 fi
 
 # waiting values
