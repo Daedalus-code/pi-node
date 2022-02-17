@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220801
+# V20221702
 # 0.0.2.4
 
 TIME="60" # loop every n second
@@ -9,7 +9,7 @@ TIME="60" # loop every n second
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # after the fact (script), remove leading zero
-TIME_SECONDS=$(date +"%S" 2>&1 | sed 's/^0*//g; s/\.0*/./g' 2>&1)
+TIME_SECONDS=$(LC_ALL=de_US.utf8 date +"%S" 2>&1 | sed 's/^0*//g; s/\.0*/./g' 2>&1)
 if [ -z "$TIME_SECONDS" ] &>/dev/null; then
   # too many zeros, create fiction
   TIME_SECONDS="1"

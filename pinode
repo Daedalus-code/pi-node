@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221402
+# V20221702
 # 0.0.4.5
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
@@ -12,7 +12,7 @@ source /usr/local/bin/include/pinode.conf
 for (( ; ; )); do # loop dashbord
 
   # save dashbord time
-  echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1
+  echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1
 
   source /usr/local/bin/include/color
   source /usr/local/bin/include/functions

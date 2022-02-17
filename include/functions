@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221602
-# 1.6.4.6
+# V20221702
+# 1.6.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.4.6"
+VERSION="v1.6.4.4"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -1454,32 +1454,30 @@ if grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       fi
     fi
   fi
-fi
-
-if [[ -z "$TIMELINE" ]] &>/dev/null; then
+else
   # wait on wallet w random quotes
   # random start number
-  RANDOM_TIMELINE=$((((RANDOM % 10) + 1)))
+  RANDOM_QUOTES=$((((RANDOM % 10) + 1)))
   # quotes - art of the deal
-  if [ "$RANDOM_TIMELINE" -eq "1" ] &>/dev/null; then
+  if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
     TIMELINE="${GR}Think big${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "2" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" -eq "2" ] &>/dev/null; then
     TIMELINE="${GR}Maximize your options${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "3" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" -eq "3" ] &>/dev/null; then
     TIMELINE="${GR}Know your market${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "4" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" -eq "4" ] &>/dev/null; then
     TIMELINE="${GR}Use your leverage${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "5" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" -eq "5" ] &>/dev/null; then
     TIMELINE="${GR}Enhance your location${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "6" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" -eq "6" ] &>/dev/null; then
     TIMELINE="${GR}Get the word out${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "7" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" -eq "7" ] &>/dev/null; then
     TIMELINE="${GR}Fight back${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "8" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" -eq "8" ] &>/dev/null; then
     TIMELINE="${GR}Deliver the goods${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "9" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" -eq "9" ] &>/dev/null; then
     TIMELINE="${GR}Contain the costs${N0:?}"
-  elif [ "$RANDOM_TIMELINE" -eq "10" ] &>/dev/null; then
+  elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
   fi
 fi
