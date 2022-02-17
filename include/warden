@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 0.4.1.9
+# 0.4.2.3
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -278,19 +278,21 @@ fi
 
 if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
 
+  # create wget lock
   echo "$(date)" >"${WALLET_DIR:?}"/wget
-  # lock warden out
-  mv /usr/local/bin/include/warden /usr/local/bin/include/locked 2>&1
+
   printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Downloading bootstrap.zip!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # get latest release
   LATEST_VERSION=$(curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" 2>&1)
   cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".bootstrap.zip 2>&1
+  # remove wget lock
   rm "${WALLET_DIR:?}"/wget &>/dev/null
-  # enable warden
-  mv /usr/local/bin/include/locked /usr/local/bin/include/warden 2>&1
 
   # look for bootstrap before starting/syncing, use if found
   if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
+
+    # lock warden out
+    mv /usr/local/bin/include/warden /usr/local/bin/include/locked 2>&1
     # create lock file
     echo "$(date)" >"${WALLET_DIR:?}"/boot
 
@@ -303,6 +305,8 @@ if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
     # create bootstrap check
     echo "Bootstrap installed $(date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
     printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # enable warden
+    mv /usr/local/bin/include/locked /usr/local/bin/include/warden 2>&1
   fi
 fi
 
