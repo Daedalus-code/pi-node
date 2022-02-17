@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221702
-# 1.6.3.9
+# 1.6.4.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.3.9"
+VERSION="v1.6.4.1"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -486,6 +486,8 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
 else
 
   TX="${GR:?}" # default tx color (grey)
+  # use wallet_txlast
+  WALLET_TXLAST="${WALLET_TXLAST:?}"
 
   # get last confirmation (smallest one)
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
