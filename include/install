@@ -2,13 +2,14 @@
 
 # By Rainman
 # V20221702
-# 0.2.6.2
+# 0.2.6.4
 
 if [[ ! -f /usr/local/bin/include/color ]] &>/dev/null; then
   cp /home/"$(whoami)"/pi-node/include/color /tmp/color.tmp 2>/dev/null
   sudo mv /tmp/color.tmp /usr/local/bin/include/color 2>/dev/null
+else
+  source /usr/local/bin/include/color 2>&1
 fi
-source /usr/local/bin/include/color 2>&1
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   printf '%b' "${GR:?}No support for Microsoft.${N0:?}\n"
@@ -31,8 +32,9 @@ if [[ ! -f /usr/local/bin/include/pinode.conf ]] &>/dev/null; then
   echo
   read -r -p "[Ok] Press Enter to continue" </dev/tty
   echo
+else
+  source /usr/local/bin/include/pinode.conf
 fi
-source /usr/local/bin/include/pinode.conf
 
 if [ ! -d "${LOG_DIR:?}"/node_data ] &>/dev/null; then
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
