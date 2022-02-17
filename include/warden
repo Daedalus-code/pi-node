@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 0.4.2.3
+# 0.4.2.4
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -278,6 +278,9 @@ fi
 
 if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
 
+  # lock warden out
+  mv /usr/local/bin/include/warden /usr/local/bin/include/locked 2>&1
+
   # create wget lock
   echo "$(date)" >"${WALLET_DIR:?}"/wget
 
@@ -291,8 +294,6 @@ if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
   # look for bootstrap before starting/syncing, use if found
   if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
 
-    # lock warden out
-    mv /usr/local/bin/include/warden /usr/local/bin/include/locked 2>&1
     # create lock file
     echo "$(date)" >"${WALLET_DIR:?}"/boot
 
