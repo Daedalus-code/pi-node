@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221702
-# 1.6.4.4
+# 1.6.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.4.4"
+VERSION="v1.6.4.6"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -908,10 +908,12 @@ function failed_peers() {
   echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   awk '!a[$0]++' "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
   mv "${LOG_DIR:?}"/node_data/peers/failed.clean "${LOG_DIR:?}"/node_data/peers/failed 2>&1
+
   ONION_FAILS=$(egrep -c "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)
   IPV4_FAILS=$(egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | egrep -c -v ".onion|:" 2>&1)
   IPV6_FAILS=$(egrep -o "([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -c -v ".onion" 2>&1)
   DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | egrep -c -v ":|.onion" 2>&1)
+
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1) ${G1:?}${IPV4_FAILS:?}${N0:?}/${C1:?}$IPV6_FAILS${N0:?}/${CY:?}${DNS_FAILS:?}${N0:?}/${P0:?}${ONION_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -929,6 +931,7 @@ fi
 # create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
 # note: only use addr, no port
 if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
+
   # get clean ipv4 address, disregard non ipv4
   egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/success 2>&1
   # get clean ipv6 address, disregard non ipv6 and lines shorter than n
@@ -979,6 +982,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
   cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
   # make sure addnodes is clean of successfully peers, as above as below
   grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
+
   if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
   fi
@@ -997,13 +1001,10 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
     # generate random ip address (ipv6)
     RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
-    # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
-    echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/peers.ipv6.r 2>&1
-    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/peers.ipv4.r 2>&1
 
-    # move random address to add_peers (ipv4/ipv6)
-    cat "${LOG_DIR:?}"/node_data/peers.ipv4.r 2>/dev/null | tail -1 >>"${LOG_DIR:?}"/node_data/add_peers
-    cat "${LOG_DIR:?}"/node_data/peers.ipv6.r 2>/dev/null | tail -1 >>"${LOG_DIR:?}"/node_data/add_peers
+    # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
+    echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
     ### remove failed, connected peers and invalid pattern address ######### ###
 
@@ -1026,6 +1027,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     mv "${LOG_DIR:?}"/node_data/peers.cidr.tmp "${LOG_DIR:?}"/node_data/peers.cidr 2>&1
     # count all invalid patterns
     INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/peers.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
+
     if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
       cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
     fi
