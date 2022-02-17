@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 0.2.7.1
+# 0.2.8.0
 
 # create directories, ruled by configuration
 if [ ! -d /usr/local/bin/include ] &>/dev/null; then
@@ -71,6 +71,15 @@ if ! [ -x "$(command -v ethtool)" ] &>/dev/null; then
   sudo apt-get install ethtool -y
   echo
   read -r -p "[Ok] ethtool installed! Press Enter to continue" </dev/tty
+  echo
+fi
+
+# make sure bc is installed
+if ! [ -x "$(command -v bc)" ] &>/dev/null; then
+  echo "Installing bc"
+  sudo apt-get install bc -y
+  echo
+  read -r -p "[Ok] bc installed! Press Enter to continue" </dev/tty
   echo
 fi
 
