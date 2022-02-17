@@ -695,10 +695,9 @@ if [[ "$(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1)" ]] &
       SYNC_PROGRESS_BAR="$(echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r" 2>&1)"
     else
       TX="${G1:?}" # sync bar color (green)
+      # replace wallet_txlast with sync_progress_bar
+      WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
     fi
-
-    # replace wallet_txlast with sync_progress_bar
-    WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
   fi
 
 else
