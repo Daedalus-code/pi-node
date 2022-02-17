@@ -7,16 +7,16 @@
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
 sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz &>/dev/null
 
-source /usr/local/bin/include/pinode.conf
+source /usr/local/bin/include/pinode.conf 2>&1
 
 for (( ; ; )); do # loop dashbord
 
   # save dashbord time
   echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1
 
-  source /usr/local/bin/include/color
-  source /usr/local/bin/include/functions
-  source /usr/local/bin/include/time_fix
+  source /usr/local/bin/include/color 2>&1
+  source /usr/local/bin/include/functions 2>&1
+  source /usr/local/bin/include/time_fix 2>&1
 
   clear
   # dashbord

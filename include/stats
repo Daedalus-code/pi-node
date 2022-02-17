@@ -4,8 +4,8 @@
 # V20221702
 # 0.5.7.4
 
-source /usr/local/bin/include/pinode.conf
-source /usr/local/bin/include/color
+source /usr/local/bin/include/pinode.conf 2>&1
+source /usr/local/bin/include/color 2>&1
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)

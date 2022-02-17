@@ -8,7 +8,7 @@
 
 ########## config ##############################################################
 
-source /usr/local/bin/include/pinode.conf
+source /usr/local/bin/include/pinode.conf 2>&1
 
 ########## sync_progress_bar ###################################################
 

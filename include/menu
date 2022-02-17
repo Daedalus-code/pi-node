@@ -9,8 +9,8 @@ export NCURSES_NO_UTF8_ACS=1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
-source /usr/local/bin/include/pinode.conf
-source /usr/local/bin/include/color
+source /usr/local/bin/include/pinode.conf 2>&1
+source /usr/local/bin/include/color 2>&1
 
 # make sure dialog exist
 if ! [ -x "$(command -v dialog)" ] &>/dev/null; then

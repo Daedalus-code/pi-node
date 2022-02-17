@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221502
+# V20221702
 # 0.2.6.9
 
 # shellcheck disable=SC2154
 
-source /usr/local/bin/include/pinode.conf
-source /usr/local/bin/include/color
+source /usr/local/bin/include/pinode.conf 2>&1
+source /usr/local/bin/include/color 2>&1
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)

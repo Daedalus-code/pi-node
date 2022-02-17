@@ -9,8 +9,8 @@
 # script version for dashbord
 VERSION="v1.6.4.6"
 
-source /usr/local/bin/include/pinode.conf
-source /usr/local/bin/include/color
+source /usr/local/bin/include/pinode.conf 2>&1
+source /usr/local/bin/include/color 2>&1
 
 ### folders, daemon uptime, logs ###############################################
 
@@ -316,7 +316,7 @@ fi
 if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
   # get token price
-  grep "Freedomcoin Price" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1 | tr -d '$|,' 2>&1 | xargs 2>&1 | egrep -o "Price [0-9]+.[0-9]+" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1
+  grep "${COING_API:?} Price" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1 | tr -d '$|,' 2>&1 | xargs 2>&1 | egrep -o "Price [0-9]+.[0-9]+" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1
   # get token volume
   grep "Trading Volume24h" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$|,' >"${LOG_DIR:?}"/node_data/stats/volume.cmc 2>&1
   # get token rank
@@ -688,7 +688,7 @@ if [[ "$(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1)" ]] &
   if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
     # get blockchain sync progress
-    source /usr/local/bin/include/proc
+    source /usr/local/bin/include/proc 2>&1
 
     TX="${G1:?}" # sync bar color
     # replace wallet_txlast with sync_progress_bar
@@ -880,7 +880,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   # run data with intervals, every n minutes, update api, arp and ticker
   if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/null; then
     # run data
-    source /usr/local/bin/include/data
+    source /usr/local/bin/include/data 2>&1
   fi
 fi
 
@@ -1060,11 +1060,11 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 #!/bin/bash
 
 # By Rainman
-# V20221602
+# V20221702
 # 0.0.4.2
 
-source /usr/local/bin/include/pinode.conf
-source /usr/local/bin/include/color
+source /usr/local/bin/include/pinode.conf 2>&1
+source /usr/local/bin/include/color 2>&1
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
@@ -1522,7 +1522,7 @@ fi
 
 if tail -21 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Removing empty API" &>/dev/null; then
   # get some api data
-  source /usr/local/bin/include/data
+  source /usr/local/bin/include/data 2>&1
   printf '%b' "${LOG_DATE:?} Status() PreFetch.API() Looking for API data.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 

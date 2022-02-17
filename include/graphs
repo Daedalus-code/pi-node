@@ -4,7 +4,7 @@
 # V20221702
 # 0.4.4.6
 
-source /usr/local/bin/include/pinode.conf
+source /usr/local/bin/include/pinode.conf 2>&1
 
 ### auto graphs w time #########################################################
 

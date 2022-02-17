@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # By Rainman
-# V20221602
+# V20221702
 # 0.2.6.2
 
 if [[ ! -f /usr/local/bin/include/color ]] &>/dev/null; then
   cp /home/"$(whoami)"/pi-node/include/color /tmp/color.tmp 2>/dev/null
   sudo mv /tmp/color.tmp /usr/local/bin/include/color 2>/dev/null
 fi
-source /usr/local/bin/include/color
+source /usr/local/bin/include/color 2>&1
 
 if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   printf '%b' "${GR:?}No support for Microsoft.${N0:?}\n"
