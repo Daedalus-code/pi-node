@@ -1017,7 +1017,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     TITLE="HyperPixel4 Menu"
     MENU="Choose one option:"
 
-    OPTIONS=(1 "Install display drivers"
+    OPTIONS=(1 "Install drivers"
       2 "Rotate display right"
       3 "Rotate display left"
       4 "Rotate display normal"
