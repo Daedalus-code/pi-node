@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221702
-# 1.6.3.2
+# 1.6.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.3.2"
+VERSION="v1.6.4.6"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -330,6 +330,19 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   API_RANK_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
   API_WATCH_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
+  if [[ -z "$API_PRICE_CMC" ]] &>/dev/null; then
+    API_PRICE_CMC="0"
+  fi
+  if [[ -z "$API_VOLUME_CMC" ]] &>/dev/null; then
+    API_VOLUME_CMC="0"
+  fi
+  if [[ -z "$API_RANK_CMC" ]] &>/dev/null; then
+    API_RANK_CMC="0"
+  fi
+  if [[ -z "$API_WATCH_CMC" ]] &>/dev/null; then
+    API_WATCH_CMC="0"
+  fi
+
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "420" ]] &>/dev/null; then
 
@@ -360,6 +373,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   # coingecko api values
   API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/stats/price.cg 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
   API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/stats/volume.cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
+
   if [[ -z "$API_PRICE_CG" ]] &>/dev/null; then
     API_PRICE_CG="0"
   fi
