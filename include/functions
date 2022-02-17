@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221702
-# 1.6.4.7
+# 1.6.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.4.7"
+VERSION="v1.6.2.4"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -457,6 +457,19 @@ else
 fi
 
 if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+
+  # get blockchain sync progress
+  source /usr/local/bin/include/proc
+
+  TX="${G1:?}" # sync bar color (green)
+  # replace wallet_txlast with sync_progress_bar
+  WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
+
+  if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+    TX="${GR:?}" # sync bar color (grey)
+    SYNC_PROGRESS_BAR="$(echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r" 2>&1)"
+  fi
+
   # get blockchain sync
   WALLET_SYNC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>/dev/null | sed 's/^0*//' 2>&1 | tr -d '.' 2>&1)
 
@@ -466,6 +479,16 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
 
   WALLET_SYNC=$(echo "100/999990*${WALLET_SYNC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 else
+
+  TX="${GR:?}" # default tx color (grey)
+  if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+    # non responsive
+    WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
+  fi
+
+  # look for sync line, save it there and then
+  grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
+
   # if progress equals 1, then 100% synced
   if [[ $(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1) ]] &>/dev/null; then
     WALLET_SYNC="100" # wallet blockchain is synced 100%
@@ -668,52 +691,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # get last wallet txid with help of last_tx var
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-
-  if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-    # look for 'progress=1' line, save it there and then
-    grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/synced 2>&1
-  fi
-fi
-
-TX="${GR:?}"
-
-# wallet sync
-if [[ "$(tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "skipped on sync" 2>&1)" ]] &>/dev/null; then
-  # remove old synced value
-  rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
-fi
-
-if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-
-  # get blockchain sync progress
-  source /usr/local/bin/include/proc
-
-  if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-    TX="${GR:?}" # sync bar color (grey)
-    SYNC_PROGRESS_BAR="$(echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r" 2>&1)"
-  else
-    TX="${G1:?}" # sync bar color (green)
-    # replace wallet_txlast with sync_progress_bar
-    WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
-  fi
-else
-  SYNC_PROGRESS_BAR="${GR:?}       Loading${N0:?}"
-fi
-
-if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-  # non responsive
-  SYNC_PROGRESS_BAR="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
-fi
-
-if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
-  # non responsive
-  WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
-fi
-
-# if synced is still empty
-if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-  # look for sync line, save it there and then
-  grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
 fi
 
 # greater than n seconds, continue
