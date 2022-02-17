@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 0.2.6.2
+# 0.2.7.1
 
 # create directories, ruled by configuration
 if [ ! -d /usr/local/bin/include ] &>/dev/null; then
@@ -53,6 +53,15 @@ if ! [ -x "$(command -v screen)" ] &>/dev/null; then
   sudo /etc/init.d/screen-cleanup start
   echo
   read -r -p "[Ok] screen installed! Press Enter to continue" </dev/tty
+  echo
+fi
+
+# make sure xinput is installed
+if ! [ -x "$(command -v xinput)" ] &>/dev/null; then
+  echo "Installing xinput"
+  sudo apt-get install xinput -y
+  echo
+  read -r -p "[Ok] xinput installed! Press Enter to continue" </dev/tty
   echo
 fi
 
