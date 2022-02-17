@@ -704,6 +704,11 @@ if [[ "$(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1)" ]] &
     # get blockchain sync progress
     source /usr/local/bin/include/proc 2>&1
 
+    if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+      # non responsive
+      SYNC_PROGRESS_BAR="${N0:?}       Loading${N0:?}"
+    fi
+
     TX="${G1:?}" # sync bar color
     # replace wallet_txlast with sync_progress_bar
     WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
@@ -711,11 +716,6 @@ if [[ "$(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1)" ]] &
 
 else
   SYNC_PROGRESS_BAR="${GR:?}       Loading${N0:?}"
-fi
-
-if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-  # non responsive
-  SYNC_PROGRESS_BAR="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
 fi
 
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
