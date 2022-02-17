@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 1.7.0.7
+# 1.7.6.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -657,14 +657,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   HEIGHT=11
   WIDTH=68
   CHOICE_HEIGHT=4
-  BACKTITLE="Download & Install"
-  TITLE="Download freedomcoin, tools"
+  BACKTITLE="Download, Install, Drivers"
+  TITLE="Download wallets, bootstrap, display drivers"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Download         Download a specific wallet manually"
     2 "Download         Download wallet, bootstrap automatically"
     3 "Bootstrap        Download and Install bootstrap"
-    4 "HyperPixel4      Setup hyperpixel4 drivers")
+    4 "Display          Setup display drivers")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1006,18 +1006,73 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     ;;
 
-    # setup hyperpixel4
+    # setup display (hyperpixel4)
 
   "4")
 
-    read -r -p "[YN] Install HyperPixel4? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      cd || exit && curl -sSL https://get.pimoroni.com/hyperpixel4 2>&1 | bash
+    HEIGHT=10
+    WIDTH=35
+    CHOICE_HEIGHT=3
+    BACKTITLE="Setup display"
+    TITLE="HyperPixel4 Menu"
+    MENU="Choose one option:"
+
+    OPTIONS=(1 "Install display drivers"
+      2 "Rotate display right"
+      3 "Rotate display left")
+
+    CHOICE=$(dialog --clear \
+      --backtitle "$BACKTITLE" \
+      --title "$TITLE" \
+      --menu "$MENU" \
+      $HEIGHT $WIDTH $CHOICE_HEIGHT \
+      "${OPTIONS[@]}" \
+      2>&1 >/dev/tty)
+
+    clear
+    case $CHOICE in
+
+    # install display
+
+    "1")
+
+      # https://github.com/pimoroni/hyperpixel4
+      read -r -p "[YN] Install HyperPixel4? y/n " -n 1 -r
       echo
-      read -r -p "[Ok] HyperPixel4 installed! Press Enter to continue" </dev/tty
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        cd || exit && curl -sSL https://get.pimoroni.com/hyperpixel4 2>&1 | bash
+        echo
+        read -r -p "[Ok] HyperPixel4 installed! Press Enter to continue" </dev/tty
+        echo
+      fi
+
+      ;;
+
+      # rotate display right
+
+    "2")
+
+      echo "Rotating display to the right!"
+      hyperpixel4-rotate right
       echo
-    fi
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+
+      ;;
+
+      # rotate display left
+
+    "3")
+
+      echo "Rotating display to the left!"
+      hyperpixel4-rotate left
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+
+      ;;
+
+    esac
 
     ;;
 
