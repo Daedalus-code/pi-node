@@ -941,7 +941,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           # setup wallet daemon
           cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip
-          unzip -j /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/Wallet/
+          yes "A" 2>&1 | unzip -j /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/Wallet/
         fi
       }
 
