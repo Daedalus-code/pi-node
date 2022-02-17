@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221702
-# 1.6.4.6
+# 1.6.5.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.4.6"
+VERSION="v1.6.5.1"
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -690,7 +690,12 @@ if [[ "$(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1)" ]] &
     # get blockchain sync progress
     source /usr/local/bin/include/proc
 
-    TX="${G1:?}" # sync bar color
+    if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+      TX="${GR:?}" # sync bar color (grey)
+      SYNC_PROGRESS_BAR="$(echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r" 2>&1)"
+    fi
+
+    TX="${G1:?}" # sync bar color (green)
     # replace wallet_txlast with sync_progress_bar
     WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
   fi
