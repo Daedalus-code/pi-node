@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 1.7.9.1
+# 1.7.9.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1476,24 +1476,25 @@ ${HIDDEN_SERVICE:?}
     echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)" 2>&1 | bc >"${WALLET_DIR:?}"/swapinfo 2>&1
   fi
 
-  # if physical memory greater than n megabytes, don't install
-  if [[ "$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
-    # system has enough memory
-    printf '%b' "[${G1:?}Ok${N0:?}] System has enough sufficient memory ${G1:?}$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)MB${N0:?}\n"
-    # output memory, swap info
-    echo
-    sudo free -h
-    echo
-    sudo swapon --show
-    echo
-    read -r -p "[Ok] No need for swap! Press Enter to continue" </dev/tty
-    echo
-  else
-    read -r -p "[YN] Automatically setup new swap? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+  if [[ ! -f /swapfile ]] &>/dev/null; then
 
-      if [[ ! -f /swapfile ]] &>/dev/null; then
+    # if physical memory greater than n megabytes, don't install
+    if [[ "$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
+      # system has enough memory
+      printf '%b' "[${G1:?}Ok${N0:?}] System has enough sufficient memory ${G1:?}$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)MB${N0:?}\n"
+      # output memory, swap info
+      echo
+      sudo free -h
+      echo
+      sudo swapon --show
+      echo
+      read -r -p "[Ok] No need for swap! Press Enter to continue" </dev/tty
+      echo
+    else
+      read -r -p "[YN] Automatically setup new swap? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
         # fallocate a file that will be used for swap
         sudo fallocate -l 1G /swapfile
 
@@ -1508,22 +1509,22 @@ ${HIDDEN_SERVICE:?}
           sudo swapon /swapfile
         fi
 
-      else
-        echo "[Ok] Already created!"
-      fi
-
-      if ! grep "swap" /etc/fstab &>/dev/null; then
-        # no swap installed, continue
-        echo "[Ok] No Swap installed"
-        # make change permanent
-        echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp
-        cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a "${LOG_DIR:?}"/fstab 2>&1
-        # remove old file
-        rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
-      else
-        echo "[Ok] Swap already installed! -> /etc/fstab"
+        if ! grep "swap" /etc/fstab &>/dev/null; then
+          # no swap installed, continue
+          echo "[Ok] No Swap installed"
+          # make change permanent
+          echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp
+          cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a "${LOG_DIR:?}"/fstab 2>&1
+          # remove old file
+          rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
+        else
+          echo "[Ok] Swap already installed! -> /etc/fstab"
+        fi
       fi
     fi
+  else
+    echo "[Ok] Swap already installed!"
+    sleep 1
   fi
 
   # swap menu, after the fact
