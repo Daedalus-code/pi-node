@@ -357,22 +357,17 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
       # get autocombine threshold (apc)
       CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }')
 
-      if [[ -z "$CON_DIFF" ]] &>/dev/null; then
-        # non responsive
-        CON_DIFF="0"
-      fi
-
       # get total confirmations from inputs that are below the con_diff var (with not_post_input var)
       TOTAL_CONF_BELOW=$(egrep "amount.*" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk -F: '{if($2<'"${CON_DIFF:?}"')print$2}' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
 
       function save_auto_pos_values() {
         # save auto proof-of-stake values
-        echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)
+        echo "$(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)
 Auto PoS Configuration
 ConfirmationsAVG.: $CONF_AVG
 ConfigThreshold..: $CON_DIFF
 DifficultyAVG....: $DIFF_AVG
-$(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
+$(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
       }
 
       if [[ ! -f "${WALLET_DIR:?}"/auto_pos ]] &>/dev/null; then
@@ -450,12 +445,12 @@ $(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)"
 
     function save_auto_pos_values() {
       # save auto proof-of-stake values
-      echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)
+      echo "$(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)
 Auto PoS Configuration
 ConfirmationsAVG.: $CONF_AVG
 ConfigThreshold..: $CON_DIFF
 DifficultyAVG....: $DIFF_AVG
-$(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
+$(date +%s 2>&1)$(date +%s 2>&1 | rev 2>&1)" >"${WALLET_DIR:?}"/auto_pos 2>&1
     }
 
     if [[ -f "${WALLET_DIR:?}"/auto_pos ]] &>/dev/null; then
@@ -470,6 +465,11 @@ $(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)"
       TOTAL_CONF_BELOW="0"
       save_auto_pos_values
     fi
+  fi
+
+  if [[ -z "$CON_DIFF" ]] &>/dev/null; then
+    # non responsive
+    CON_DIFF="0"
   fi
 
   ### auto pos config 2 #################################################### ###
