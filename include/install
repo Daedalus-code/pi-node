@@ -2,25 +2,18 @@
 
 # By Rainman
 # V20221702
-# 0.2.6.4
-
-if [[ ! -f /usr/local/bin/include/color ]] &>/dev/null; then
-  cp /home/"$(whoami)"/pi-node/include/color /tmp/color.tmp 2>/dev/null
-  sudo mv /tmp/color.tmp /usr/local/bin/include/color 2>/dev/null
-else
-  source /usr/local/bin/include/color 2>&1
-fi
-
-if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
-  printf '%b' "${GR:?}No support for Microsoft.${N0:?}\n"
-  printf '%b' "${R1:?}DELETE this from system!${N0:?}\n"
-  exit
-fi
+# 0.2.6.2
 
 # create directories, ruled by configuration
 if [ ! -d /usr/local/bin/include ] &>/dev/null; then
   sudo mkdir /usr/local/bin/include &>/dev/null
 fi
+
+if [[ ! -f /usr/local/bin/include/color ]] &>/dev/null; then
+  cp /home/"$(whoami)"/pi-node/include/color /tmp/color.tmp 2>/dev/null
+  sudo mv /tmp/color.tmp /usr/local/bin/include/color 2>/dev/null
+fi
+source /usr/local/bin/include/color 2>&1
 
 if [[ ! -f /usr/local/bin/include/pinode.conf ]] &>/dev/null; then
   cp /home/"$(whoami)"/pi-node/pinode.conf /tmp/pinode.conf.tmp 2>/dev/null
@@ -32,8 +25,13 @@ if [[ ! -f /usr/local/bin/include/pinode.conf ]] &>/dev/null; then
   echo
   read -r -p "[Ok] Press Enter to continue" </dev/tty
   echo
-else
-  source /usr/local/bin/include/pinode.conf
+fi
+source /usr/local/bin/include/pinode.conf
+
+if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
+  printf '%b' "${GR:?}No support for Microsoft.${N0:?}\n"
+  printf '%b' "${R1:?}DELETE this from system!${N0:?}\n"
+  exit
 fi
 
 if [ ! -d "${LOG_DIR:?}"/node_data ] &>/dev/null; then
