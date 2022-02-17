@@ -724,8 +724,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       5 "Wallet.Mac.dmg"
       6 "Wallet.Mac.zip"
       7 "Wallet.Ubuntu16.zip"
-      8 "Source code (zip)"
-      9 "Source code (tar.gz)")
+      8 "Wallet Source code (zip)"
+      9 "Wallet Source code (tar.gz)")
 
     CHOICE=$(dialog --clear \
       --backtitle "$BACKTITLE" \
