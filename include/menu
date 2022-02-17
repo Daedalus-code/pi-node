@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 1.7.8.9
+# 1.8.0.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -698,6 +698,20 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           UNAME_FILE="${UNAME_SYSTEM:?}"
+        else
+
+          if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
+            UNAME_SYSTEM="armv7l"
+            UNAME_FILE="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
+          fi
+          if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
+            UNAME_SYSTEM="aarch64"
+            UNAME_FILE="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
+          fi
+          if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
+            UNAME_SYSTEM="x86_64"
+            UNAME_FILE="${WALLET_NAME:?}.Linux.zip"
+          fi
         fi
 
         # setup node wallet
@@ -911,7 +925,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           UNAME_SYSTEM="x86_64"
           UNAME_FILE="${WALLET_NAME:?}.Linux.zip"
         fi
-
       }
 
       if [[ -z "$UNAME_FILE" ]] &>/dev/null; then
