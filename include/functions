@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221702
-# 1.6.6.0
+# 1.6.5.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.6.0"
+VERSION="v1.6.5.6"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -689,8 +689,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 fi
 
-TX="${GR:?}"
-
 # wallet sync
 if [[ "$(tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "skipped on sync" 2>&1)" ]] &>/dev/null; then
   # remove old synced value
@@ -699,32 +697,30 @@ fi
 
 if [[ "$(grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced 2>&1)" ]] &>/dev/null; then
 
-  if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-
-    # get blockchain sync progress
-    source /usr/local/bin/include/proc 2>&1
-
-    if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-      # non responsive
-      SYNC_PROGRESS_BAR="${N0:?}       Loading${N0:?}"
-    fi
-    TX="${G1:?}" # sync bar color
-    # replace wallet_txlast with sync_progress_bar
-    WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
+  if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+    TX="${GR:?}"
+    # non responsive
+    WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
   fi
+
 else
-  SYNC_PROGRESS_BAR="${GR:?}       Loading${N0:?}"
+
+  # get blockchain sync progress
+  source /usr/local/bin/include/proc 2>&1
+
+  if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
+    # non responsive
+    SYNC_PROGRESS_BAR="${N0:?}       Loading${N0:?}"
+  fi
+  TX="${G1:?}" # sync bar color
+  # replace wallet_txlast with sync_progress_bar
+  WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
 fi
 
 # if synced is still empty
 if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # look for sync line, save it there and then
   grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/synced 2>&1
-fi
-
-if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
-  # non responsive
-  WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
 fi
 
 ### staking - proof-of-stake ###################################################
