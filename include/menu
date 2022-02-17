@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 1.6.9.1
+# 1.7.0.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -97,8 +97,9 @@ case $CHOICE in
     read -r -p "[YN] Stop node, are you sure? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      # turn off cron
-      echo "Blocked daemon start $(LC_ALL=de_US.utf8 date 2>&1)" >"${WALLET_DIR:?}"/blocked 2>&1
+      # lock warden out
+      mv /usr/local/bin/include/warden /usr/local/bin/include/locked 2>&1
+
       if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
         cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
       fi # only ask if wallet is not synced
@@ -124,11 +125,13 @@ case $CHOICE in
       read -r -p "[YN] Reboot? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        sleep 1
-        rm "${WALLET_DIR:?}"/blocked &>/dev/null
+        # enable warden
+        mv /usr/local/bin/include/locked /usr/local/bin/include/warden 2>&1
+        # reboot system
         sudo reboot
       else
-        rm "${WALLET_DIR:?}"/blocked &>/dev/null
+        # enable warden
+        mv /usr/local/bin/include/locked /usr/local/bin/include/warden 2>&1
       fi
     fi
     clear
@@ -142,8 +145,9 @@ case $CHOICE in
     read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      # lock warden out
+      mv /usr/local/bin/include/warden /usr/local/bin/include/locked 2>&1
 
-      echo "Blocked daemon start $(LC_ALL=de_US.utf8 date 2>&1)" >"${WALLET_DIR:?}"/blocked 2>&1
       # stop wallet daemon
       printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
       killall "${WALLET_DAEMON:?}" &>/dev/null
@@ -165,7 +169,8 @@ case $CHOICE in
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
 
-      rm "${WALLET_DIR:?}"/blocked &>/dev/null
+      # enable warden
+      mv /usr/local/bin/include/locked /usr/local/bin/include/warden 2>&1
     fi
 
     ;;
@@ -872,7 +877,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         read -r -p "[YN] Unzip bootstrap.zip? -> (${WALLET_DIR:?}) y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          echo "Blocked daemon start $(LC_ALL=de_US.utf8 date 2>&1)" >"${WALLET_DIR:?}"/blocked 2>&1
+          # lock warden out
+          mv /usr/local/bin/include/warden /usr/local/bin/include/locked 2>&1
+
           printf '%b' "[${R1:?}!!${N0:?}] "
           "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
           # wait on node (daemon) to stop
@@ -884,7 +891,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           done
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
           yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
-          rm "${WALLET_DIR:?}"/blocked &>/dev/null
+
+          # enable warden
+          mv /usr/local/bin/include/locked /usr/local/bin/include/warden 2>&1
           # create lock file
           echo "Bootstrap installed $(LC_ALL=de_US.utf8 date 2>&1)" >"${WALLET_DIR:?}"/boot
           read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
@@ -963,13 +972,15 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
 
       setup
-      echo "Blocked daemon start $(LC_ALL=de_US.utf8 date 2>&1)" >"${WALLET_DIR:?}"/blocked 2>&1
+      # lock warden out
+      mv /usr/local/bin/include/warden /usr/local/bin/include/locked 2>&1
       setup_zip
 
       echo
       read -r -p "[Ok] Wallet installed! Press Enter to continue" </dev/tty
       echo
-      rm "${WALLET_DIR:?}"/blocked &>/dev/null
+      # enable warden
+      mv /usr/local/bin/include/locked /usr/local/bin/include/warden 2>&1
     fi
 
     ;;
@@ -985,7 +996,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     read -r -p "[YN] Unzip bootstrap? -> (${WALLET_DIR:?}) y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "Blocked daemon start $(LC_ALL=de_US.utf8 date 2>&1)" >"${WALLET_DIR:?}"/blocked 2>&1
+      # lock warden out
+      mv /usr/local/bin/include/warden /usr/local/bin/include/locked 2>&1
+
       printf '%b' "[${R1:?}!!${N0:?}] "
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
       # wait on node (daemon) to stop
@@ -997,7 +1010,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       done
       printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
       yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
-      rm "${WALLET_DIR:?}"/blocked &>/dev/null
+
+      # enable warden
+      mv /usr/local/bin/include/locked /usr/local/bin/include/warden 2>&1
       echo
       read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
       echo
