@@ -1011,7 +1011,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "4")
 
     HEIGHT=12
-    WIDTH=36
+    WIDTH=35
     CHOICE_HEIGHT=5
     BACKTITLE="Setup display"
     TITLE="HyperPixel4 Menu"
