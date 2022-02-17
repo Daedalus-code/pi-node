@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 1.7.9.0
+# 1.7.9.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1496,19 +1496,20 @@ ${HIDDEN_SERVICE:?}
       if [[ ! -f /swapfile ]] &>/dev/null; then
         # fallocate a file that will be used for swap
         sudo fallocate -l 1G /swapfile
+
+        read -r -p "[YN] chmod, mkswap, swapon? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          # root user should be able to write and read the swap file
+          sudo chmod 600 /swapfile
+          # mkswap utility to set up the file as Linux swap area
+          sudo mkswap /swapfile
+          # enable the swap
+          sudo swapon /swapfile
+        fi
+
       else
         echo "[Ok] Already created!"
-      fi
-
-      read -r -p "[YN] chmod, mkswap, swapon? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        # root user should be able to write and read the swap file
-        sudo chmod 600 /swapfile
-        # mkswap utility to set up the file as Linux swap area
-        sudo mkswap /swapfile
-        # enable the swap
-        sudo swapon /swapfile
       fi
 
       if ! grep "swap" /etc/fstab &>/dev/null; then
