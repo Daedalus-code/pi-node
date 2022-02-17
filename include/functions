@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221702
-# 1.6.6.0
+# 1.6.5.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.6.0"
+VERSION="v1.6.5.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1573,7 +1573,6 @@ fi
 # remove empty files, try to restore
 if [ ! -s "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/stats/price.cg &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Removing empty API Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
 fi
 
@@ -1638,7 +1637,6 @@ fi
 # remove empty files, try to restore
 if [ ! -s "${LOG_DIR:?}"/node_data/stats/price.cmc ] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/stats/price.cmc &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Removing empty API Price! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   cp "${WALLET_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1
 fi
 
