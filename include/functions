@@ -107,7 +107,7 @@ if [[ -z "$LOG_CHECK" ]] &>/dev/null; then
 fi
 
 if [[ "$(grep "bc" "${WALLET_DIR:?}"/wait 2>&1)" ]] &>/dev/null; then
-  # removed broken file
+  # remove broken file
   rm "${WALLET_DIR:?}"/wait &>/dev/null
 fi
 
