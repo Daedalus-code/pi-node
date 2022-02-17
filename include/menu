@@ -664,7 +664,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   OPTIONS=(1 "Download         Download a specific wallet manually"
     2 "Download         Download wallet, bootstrap automatically"
     3 "Bootstrap        Download and Install bootstrap"
-    4 "hyperpixel4      Setup HyperPixel4 display")
+    4 "HyperPixel4      Setup hyperpixel4 drivers")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
