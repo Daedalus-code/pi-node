@@ -477,7 +477,7 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
 
   if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
     TX="${GR:?}" # sync bar color (grey)
-    SYNC_PROGRESS_BAR="$(echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r" 2>&1)"
+    WALLET_TXLAST="$(echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r" 2>&1)"
   else
     TX="${G1:?}" # sync bar color (green)
     # replace wallet_txlast with sync_progress_bar
