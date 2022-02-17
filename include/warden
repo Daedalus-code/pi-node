@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221702
-# 0.4.2.4
+# 0.4.3.3
 
 source /usr/local/bin/include/pinode.conf
 source /usr/local/bin/include/color
@@ -249,6 +249,15 @@ else
       printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
+fi
+
+if [[ "$(grep "Database corrupted" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+  # remove bootstrap lock
+  rm "${WALLET_DIR:?}"/boot &>/dev/null
+  # stop wallet daemon
+  printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+  killall "${WALLET_DAEMON:?}" &>/dev/null
+  printf '%b' "${LOG_DATE:?} Status() Progress.Bar() Reinstall bootstrap${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
