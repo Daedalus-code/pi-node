@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221802
-# 1.6.7.8
+# 1.6.8.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.7.8"
+VERSION="v1.6.8.3"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -717,6 +717,11 @@ TX="${GR:?}"
 if [[ "$(tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "skipped on sync" 2>&1)" ]] &>/dev/null; then
   # remove old synced value
   rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
+fi
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/client/tmp/proc ]] &>/dev/null; then
+  # make sure proc exist
+  bash /usr/local/bin/include/proc 2>&1
 fi
 
 if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
