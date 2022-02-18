@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221802
-# 1.6.6.0
+# 1.6.6.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.6.0"
+VERSION="v1.6.6.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -846,7 +846,8 @@ ADD_P2P_CHECK="[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" # **:30:** | **:00:** !
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${ADDNODES_CHECK:?}" 2>&1)" ]] &>/dev/null; then
   # add addnodes backup if backup is greater
   if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-    cp "${WALLET_DIR:?}"/addnodes "${LOG_DIR:?}"/node_data/peers.tmp 2>&1
+    # note: don't overwrite this (peers.tmp) created by data
+    cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/peers.tmp 2>&1
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
