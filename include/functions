@@ -1489,9 +1489,9 @@ if grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
         cat /proc/device-tree/model 2>/dev/null | tr -d '\0' >"${LOG_DIR:?}"/node_data/stats/model 2>&1
       fi
       TIMELINE_MODEL=$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)
-      TIMELINE_MODEL="Model ${TIMELINE_MODEL:?}"
+      TIMELINE="Model ${TIMELINE_MODEL:?}"
       if [[ -z "$TIMELINE_MODEL" ]] &>/dev/null; then
-        TIMELINE_MODEL="${GR:?}Unknown${N0:?}"
+        TIMELINE="${GR:?}Unknown${N0:?}"
       fi
     fi
   fi
