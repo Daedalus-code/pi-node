@@ -14,7 +14,7 @@ source /usr/local/bin/include/color 2>&1
 
 # dated configuration ##########################################################
 
-CONFIG_DATE="1645201204" # configuration date (date '+%s')
+CONFIG_DATE="1645220338" # configuration date (date '+%s')
 
 if [[ "$(grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode.conf 2>&1)" ]] &>/dev/null; then
   echo "Configuration ${G1:?}Ok${N0:?}" >"${LOG_DIR:?}"/node_data/config 2>&1
@@ -720,7 +720,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   # get average confirmations
   WALLET_AVG_CONFIRM=$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ SUM += $2} END { print SUM }' 2>&1)/$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # calculate staking percentage
-  WALLET_PROOF=$(echo "100/480*${WALLET_AVG_CONFIRM:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+  WALLET_PROOF=$(echo "100/${WALLET_ACTIVE:?}*${WALLET_AVG_CONFIRM:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
   if [[ -z "$WALLET_PROOF" ]] &>/dev/null; then
     WALLET_PROOF="1"
