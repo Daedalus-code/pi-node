@@ -480,10 +480,10 @@ fi
 PERCC="${GR:?}"   # sync color
 PSYMBOL="${N0:?}" # sync symbol
 
-if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+# get blockchain sync
+WALLET_SYNC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>/dev/null | sed 's/^0*//' 2>&1 | tr -d '.' 2>&1)
 
-  # get blockchain sync
-  WALLET_SYNC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>/dev/null | sed 's/^0*//' 2>&1 | tr -d '.' 2>&1)
+if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
   if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
     WALLET_SYNC="1"
