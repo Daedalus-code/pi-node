@@ -727,7 +727,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 
   # look for balance greater than n
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/client/getinfo 2>/dev/null | grep "balance" 2>&1 | awk '{ print $2 }' 2>&1)" -gt "1" ]] &>/dev/null; then
+  if [[ "$(grep "balance" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk -F. '{ print $2 }' 2>&1)" -gt "1" ]] &>/dev/null; then
 
     if [[ "$WALLET_PROOF" -gt "99" ]] &>/dev/null; then
       PROOF="${G1:?} Ok${N0:?}"
