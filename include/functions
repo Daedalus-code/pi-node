@@ -175,7 +175,7 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
   MODEL=$(grep "Model name:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
   SPEED=$(echo "$(grep "CPU max MHz:" "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | awk '{ print $4 }' 2>&1)/1000" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   # create cpu information
-  echo "CPUs ($CPUS) ${GR:?}$THREADS/$CORES${N0:?} - $VENDORID ${GR:?}$MODEL${N0:?} ${SPEED:?}GHz" >"${LOG_DIR:?}"/node_data/stats/cpuinfo 2>&1
+  echo "CPU ($CPUS) ${GR:?}$THREADS/$CORES${N0:?} - $VENDORID ${GR:?}$MODEL${N0:?} ${SPEED:?}GHz" >"${LOG_DIR:?}"/node_data/stats/cpuinfo 2>&1
 fi
 
 # get system uptime
