@@ -720,7 +720,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   # get average confirmations
   WALLET_AVG_CONFIRM=$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ SUM += $2} END { print SUM }' 2>&1)/$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # calculate staking percentage
-  WALLET_PROOF=$(echo "100/480*${WALLET_AVG_CONFIRM:?}" 2>&1 | bc -l 2>&1 | awk '{ SUM += $2} END { print SUM }' 2>&1)
+  WALLET_PROOF=$(echo "100/480*${WALLET_AVG_CONFIRM:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1)
   if [[ -z "$WALLET_PROOF" ]] &>/dev/null; then
     WALLET_PROOF="1"
   fi
