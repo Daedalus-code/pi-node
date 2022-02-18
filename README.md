@@ -1,9 +1,9 @@
 # Pi-node
-RaspberryPi Node - RaspberryPi with LCD monitoring  
+Crypto RaspberryPi Node - RaspberryPi with LCD monitoring  
 
 *Build your own crypto Node/StakeBox on a Raspberry Pi with a nice Display.*  
 
-![alt text](https://i.ibb.co/k1ShzhK/pinode.jpg)  
+![alt text](https://i.ibb.co/jfpFz7z/pinode.jpg)  
 
 ##### All parts together cost around 90-100 USD.
 
