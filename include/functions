@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221802
-# 1.7.3.1
+# 1.7.3.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.3.1"
+VERSION="v1.7.3.5"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -751,6 +751,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     # look for 'progress=1' line, save it there and then
     grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/synced 2>&1
   fi
+fi
+
+if [[ -z "$PROOF" ]] &>/dev/null; then
+  PROOF="${N0:?}   "
 fi
 
 TX="${GR:?}"
