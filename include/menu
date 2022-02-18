@@ -1165,7 +1165,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Wallet           ${WALLET_CONFIG:?}"
-    2 "MasterNode       masternode.conf"
+    2 "MasterNode       ${WALLET_MASTER:?}"
     3 "PiNode           pinode.conf"
     4 "Config.txt       boot/config.txt"
     5 "Torrc            Tor configuration"
@@ -1200,7 +1200,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
-    nano "${WALLET_DIR:?}"/patriotnode.conf
+    nano "${WALLET_DIR:?}"/"${WALLET_MASTER:?}"
 
     ;;
 
