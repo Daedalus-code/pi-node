@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221802
-# 1.6.7.2
+# 1.6.7.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.7.2"
+VERSION="v1.6.7.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -477,7 +477,8 @@ else
   WALLET_BLOCK="${GR:?}0${N0:?}"
 fi
 
-PERCC="${GR:?}" # sync color
+PERCC="${GR:?}"   # sync color
+PSYMBOL="${N0:?}" # sync symbol
 
 if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
@@ -488,6 +489,7 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
     WALLET_SYNC="1"
   fi
 
+  PSYMBOL="%" # sync symbol
   WALLET_SYNC=$(echo "100/999990*${WALLET_SYNC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 else
   WALLET_SYNC_DASH=$(echo "100/999990*${WALLET_SYNC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1 | tr -d '.' 2>&1)
@@ -497,25 +499,29 @@ fi
 if [ "$WALLET_SYNC_DASH" -ge "995" ] &>/dev/null; then
   WALLET_SYNC="100" # wallet blockchain is synced 100%
   PERCC="${G1:?}"   # sync color
+  PSYMBOL="%"       # sync symbol
 fi
 
 if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
   WALLET_SYNC="${GR:?}Load${N0:?}"
   PERCC="${Y1:?}" # sync color
+  PSYMBOL=".."    # sync symbol
 fi
 if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
   WALLET_HEADS="${GR:?}0${N0:?}"
   PERCC="${GR:?}" # sync color
+  PSYMBOL="."     # sync symbol
 fi
 if [[ -z "$WALLET_BLOCK" ]] &>/dev/null; then
   WALLET_BLOCK="${GR:?}0${N0:?}"
   PERCC="${GR:?}" # sync color
+  PSYMBOL="."     # sync symbol
 fi
 
 # wallet sync (no color)
 WALLET_SYNC_N="$WALLET_SYNC"
 # wallet sync (color+symbol)
-WALLET_SYNC="${PERCC:?}${WALLET_SYNC:?}%${N0:?}"
+WALLET_SYNC="${PERCC:?}${WALLET_SYNC:?}${PSYMBOL:?}${N0:?}"
 
 # wallet_nodes function (color)
 function wallet_nodes() {
