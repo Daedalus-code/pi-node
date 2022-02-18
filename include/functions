@@ -17,9 +17,9 @@ source /usr/local/bin/include/color 2>&1
 CONFIG_DATE="1645201204" # configuration date (date '+%s')
 
 if [[ "$(grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode.conf 2>&1)" ]] &>/dev/null; then
-  echo "Configuration: ${G1:?}Ok${N0:?}" >"${LOG_DIR:?}"/node_data/config 2>&1
+  echo "Configuration ${G1:?}Ok${N0:?}" >"${LOG_DIR:?}"/node_data/config 2>&1
 else
-  echo "Configuration: ${GR:?}Old${N0:?}" >"${LOG_DIR:?}"/node_data/config 2>&1
+  echo "Configuration ${GR:?}Old${N0:?}" >"${LOG_DIR:?}"/node_data/config 2>&1
   until grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode.conf 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
     clear
     printf '%b' "${GR:?}Configuration is old!${N0:?}\n"
