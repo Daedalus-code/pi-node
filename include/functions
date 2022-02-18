@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221802
-# 1.7.1.9
+# 1.7.2.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.1.9"
+VERSION="v1.7.2.7"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -721,13 +721,21 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   WALLET_AVG_CONFIRM=$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ SUM += $2} END { print SUM }' 2>&1)/$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # calculate staking percentage
   WALLET_PROOF=$(echo "100/480*${WALLET_AVG_CONFIRM:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+
   if [[ -z "$WALLET_PROOF" ]] &>/dev/null; then
-    WALLET_PROOF="1"
+    WALLET_PROOF="${N0:?}"
   fi
-  if [[ "$WALLET_PROOF" -gt "99" ]] &>/dev/null; then
-    PROOF="${G1:?}Ok ${N0:?}"
+
+  # look for balance greater than n
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/client/getinfo 2>/dev/null | grep "balance" 2>&1)" -gt "1" ]] &>/dev/null; then
+
+    if [[ "$WALLET_PROOF" -gt "99" ]] &>/dev/null; then
+      PROOF="${G1:?} Ok${N0:?}"
+    else
+      PROOF="${GR:?} ${WALLET_PROOF:?}%${N0:?}"
+    fi
   else
-    PROOF="${WALLET_PROOF:?}%"
+    PROOF="${N0:?}"
   fi
 
   # get last confirmation (smallest one)
