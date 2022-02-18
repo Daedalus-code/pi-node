@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221802
-# 1.8.4.6
+# 1.8.5.3
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1554,6 +1554,9 @@ ${HIDDEN_SERVICE:?}
           sudo mkswap /swapfile
           # enable the swap
           sudo swapon /swapfile
+          echo
+          read -r -p "[Ok] Press Enter to continue" </dev/tty
+          echo
         fi
 
         if [[ ! "$(grep "swap swap" /etc/fstab 2>&1)" ]] &>/dev/null; then
@@ -1561,7 +1564,7 @@ ${HIDDEN_SERVICE:?}
           echo "[Ok] No Swap installed"
           # make change permanent
           echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp
-          cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a "${LOG_DIR:?}"/fstab 2>&1
+          cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a /etc/fstab 2>&1
           # remove old file
           rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
         else
@@ -1611,9 +1614,13 @@ ${HIDDEN_SERVICE:?}
       exit
     fi
 
+    # fallocate a file that will be used for swap
     sudo fallocate -l "${SWAPG:?}"G /swapfile
+    # root user should be able to write and read the swap file
     sudo chmod 600 /swapfile
+    # mkswap utility to set up the file as Linux swap area
     sudo mkswap /swapfile
+    # enable the swap
     sudo swapon /swapfile
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -1624,7 +1631,7 @@ ${HIDDEN_SERVICE:?}
       echo "[Ok] No Swap installed"
       #To make the change permanent open the /etc/fstab file and append the following line:
       echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp 2>&1
-      cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a "${LOG_DIR:?}"/fstab 2>&1
+      cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a /etc/fstab 2>&1
       # remove old file
       rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
     fi
