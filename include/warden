@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221802
-# 0.4.0.5
+# 0.4.1.2
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -225,6 +225,13 @@ if [[ -z "$SCREEN_VALUE_P2P" ]] &>/dev/null; then
   SCREEN_VALUE_P2P="${GR:?}0${GR:?}"
 fi
 
+if [[ -f "${LOG_DIR:?}"/node_data/client/getinfo ]] &>/dev/null; then
+  P2P_NOW="$(cat "${LOG_DIR:?}"/node_data/client/getinfo | grep "connections" | awk '{ print $2 }')"
+  P2P_NOW="${G1:?}$P2P_NOW${N0:?}"
+else
+  P2P_NOW="${GR:?}0${N0:?}"
+fi
+
 if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   # get blockchain sync
   WALLET_SYNC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>/dev/null | sed 's/^0*//' 2>&1 | tr -d '.' 2>&1)
@@ -234,7 +241,7 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
   fi
 
   if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
-    printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?} $(cat "${LOG_DIR:?}"/node_data/config 2>/dev/null)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?} $(cat "${LOG_DIR:?}"/node_data/config 2>/dev/null)${N0:?} Connections ${P2P_NOW:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
 else
@@ -246,7 +253,7 @@ else
     fi
 
     if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
-      printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?} $(cat "${LOG_DIR:?}"/node_data/config 2>/dev/null)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Sync ${G1:?}${WALLET_SYNC:?}%${N0:?} $(cat "${LOG_DIR:?}"/node_data/config 2>/dev/null)${N0:?} Connections ${P2P_NOW:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 fi
