@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221702
+# V20221802
 # 0.0.4.5
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
@@ -22,7 +22,7 @@ for (( ; ; )); do # loop dashbord
   # dashbord
   printf '%b' "
 ${RC:?}                       ${RC:?} PiNode ${N0:?}${VERSION:?} ${GR:?}pinode${N0:?}           ${CLOCK:?}
-${CB:?}        ##   ##        ${N0:?} ${WALLET_DAEMON:0:10} Fullnode            ${TH:?} ${POS_STATUS:?} ${TOR_ICON:?} ${CY:?}${INTERFACE:0:4}${N0:?}
+${CB:?}        ##   ##        ${N0:?} ${WALLET_DAEMON:0:10} Fullnode        ${PROOF:?} ${TH:?} ${POS_STATUS:?} ${TOR_ICON:?} ${CY:?}${INTERFACE:0:4}${N0:?}
 ${CB:?}        ##.  ##        ${RC:?} -----------------------------------------${N0:?}
 ${CB:?}    ##############     ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
 ${CB:?}      ###      ####    ${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?} (${USED_HDD_P:?})
