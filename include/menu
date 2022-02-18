@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221802
-# 1.8.2.0
+# 1.8.2.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1622,6 +1622,7 @@ ${HIDDEN_SERVICE:?}
     read -r -p "[YN] Remove Swap? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      sudo swapoff /swapfile 2>&1
       sudo rm /swapfile &>/dev/null
       echo "Remove line -> '/swapfile swap swap defaults 0 0' in /etc/fstab"
       read -r -p "[Ok] Press Enter to continue" </dev/tty
