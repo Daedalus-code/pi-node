@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221802
-# 1.7.2.7
+# 1.7.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.2.7"
+VERSION="v1.7.3.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -732,10 +732,14 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     if [[ "$WALLET_PROOF" -gt "99" ]] &>/dev/null; then
       PROOF="${G1:?} Ok${N0:?}"
     else
-      PROOF="${GR:?} ${WALLET_PROOF:?}%${N0:?}"
+      if [[ "$WALLET_PROOF" -gt "9" ]] &>/dev/null; then
+        PROOF="${GR:?}${WALLET_PROOF:?}%${N0:?}"
+      else
+        PROOF="${GR:?} ${WALLET_PROOF:?}%${N0:?}"
+      fi
     fi
   else
-    PROOF="${N0:?}"
+    PROOF="${N0:?}   "
   fi
 
   # get last confirmation (smallest one)
