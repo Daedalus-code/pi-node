@@ -1140,7 +1140,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Wallet           ${WALLET_CONFIG:?}"
-    2 "PatriotNode      patriotnode.conf"
+    2 "MasterNode       masternode.conf"
     3 "PiNode           pinode.conf"
     4 "Config.txt       boot/config.txt"
     5 "Torrc            Tor configuration"
