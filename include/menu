@@ -1589,7 +1589,7 @@ ${HIDDEN_SERVICE:?}
     sudo chmod 600 /swapfile
     sudo mkswap /swapfile
     sudo swapon /swapfile
-    if ! grep "swap" /etc/fstab &>/dev/null; then
+    if ! grep "swap swap" /etc/fstab &>/dev/null; then
       # no swap installed, continue
       echo "[Ok] No Swap installed"
       #To make the change permanent open the /etc/fstab file and append the following line:
