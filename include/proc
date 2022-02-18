@@ -361,7 +361,7 @@ if ! grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
     )
     if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
       # non responsive
-      SYNC_PROGRESS_BAR="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
+      SYNC_PROGRESS_BAR="${N0:?}       Loading${N0:?}"
     fi
 
     ### sync should be done ####################################################
