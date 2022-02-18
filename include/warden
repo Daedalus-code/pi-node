@@ -7,7 +7,7 @@
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
 
-echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
+echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.warden 2>&1 # save warden time
 
 if [ ! -f "${LOG_DIR:?}"/node_data/stats/date ] &>/dev/null; then
 
@@ -117,7 +117,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cg" &
 else
 
   # screen add_cg
-  NOW_TIME_CG=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  NOW_TIME_CG=$(LC_ALL=de_US.utf8 date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
   SCREEN_TIME_CG=$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep "add_cg" 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1 | tail -1 2>&1)
   SCREEN_CALC_CG=$(echo "$NOW_TIME_CG-$SCREEN_TIME_CG" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
@@ -148,7 +148,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cmc" 
 else
 
   # screen add_cg
-  NOW_TIME_CMC=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  NOW_TIME_CMC=$(LC_ALL=de_US.utf8 date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
   SCREEN_TIME_CMC=$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep "add_cmc" 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1 | tail -1 2>&1)
   SCREEN_CALC_CMC=$(echo "$NOW_TIME_CMC-$SCREEN_TIME_CMC" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
@@ -179,7 +179,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 else
 
   # screen add_peers
-  NOW_TIME_P2P=$(date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  NOW_TIME_P2P=$(LC_ALL=de_US.utf8 date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
   SCREEN_TIME_P2P=$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep "add_peers" 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1 | tail -1 2>&1)
   SCREEN_CALC_P2P=$(echo "$NOW_TIME_P2P-$SCREEN_TIME_P2P" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
@@ -297,7 +297,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
       # look for bootstrap before starting/syncing, use if found
       if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
         # create lock file
-        echo "$(date)" >"${WALLET_DIR:?}"/boot
+        echo "$(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/boot
 
         if [[ ! -f "${WALLET_DIR:?}"/bootstrap ]] &>/dev/null; then
 
@@ -308,7 +308,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
           # unzip bootstrap
           yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
           # create bootstrap check
-          echo "Bootstrap installed $(date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
+          echo "Bootstrap installed $(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
           printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
         fi
       fi
@@ -347,7 +347,7 @@ function run_functions() {
 }
 
 # delete old time lock
-if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/func.lock 2>&1)" -lt "$(date +%s 2>&1)" ]] &>/dev/null; then
+if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/func.lock 2>&1)" -lt "$(LC_ALL=de_US.utf8 date +%s 2>&1)" ]] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/func.lock &>/dev/null
 fi
 
@@ -357,7 +357,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   if [[ ! -f "${LOG_DIR:?}"/node_data/func.lock ]] &>/dev/null; then
 
     # create time lock file
-    echo "$(date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/func.lock 2>&1 # save lock time
+    echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/func.lock 2>&1 # save lock time
 
     # time.dashbord exist, continue
     if [[ -f "${LOG_DIR:?}"/node_data/stats/time.dashbord ]] &>/dev/null; then

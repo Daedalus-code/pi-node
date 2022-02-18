@@ -894,7 +894,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
 
           # create lock file
-          echo "Bootstrap installed $(date 2>&1)" >"${WALLET_DIR:?}"/boot
+          echo "Bootstrap installed $(LC_ALL=de_US.utf8 date 2>&1)" >"${WALLET_DIR:?}"/boot
           read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
           echo
           if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
