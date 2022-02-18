@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221802
-# 1.8.1.4
+# 1.8.2.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1585,19 +1585,25 @@ ${HIDDEN_SERVICE:?}
       echo "empty!"
       exit
     fi
+
     sudo fallocate -l "${SWAPG:?}"G /swapfile
     sudo chmod 600 /swapfile
     sudo mkswap /swapfile
     sudo swapon /swapfile
-    if ! grep "swap swap" /etc/fstab &>/dev/null; then
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+
+    if [[ ! "$(grep "swap swap" /etc/fstab 2>&1)" ]] &>/dev/null; then
       # no swap installed, continue
       echo "[Ok] No Swap installed"
       #To make the change permanent open the /etc/fstab file and append the following line:
-      echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp
+      echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp 2>&1
       cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a "${LOG_DIR:?}"/fstab 2>&1
       # remove old file
       rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
     fi
+
     # output memory, swap info
     echo
     sudo free -h
