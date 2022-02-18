@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221802
-# 1.8.2.1
+# 1.8.4.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1049,6 +1049,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo
         read -r -p "[Ok] HyperPixel4 installed! Press Enter to continue" </dev/tty
         echo
+        read -r -p "[YN] Reboot system? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          sudo reboot
+        fi
       fi
 
       ;;
@@ -1062,6 +1067,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
+      read -r -p "[YN] Reboot system? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        sudo reboot
+      fi
 
       ;;
 
@@ -1074,6 +1084,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
+      read -r -p "[YN] Reboot system? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        sudo reboot
+      fi
 
       ;;
 
@@ -1086,6 +1101,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
+      read -r -p "[YN] Reboot system? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        sudo reboot
+      fi
 
       ;;
 
@@ -1098,6 +1118,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
+      read -r -p "[YN] Reboot system? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        sudo reboot
+      fi
 
       ;;
 
@@ -1531,7 +1556,7 @@ ${HIDDEN_SERVICE:?}
           sudo swapon /swapfile
         fi
 
-        if ! grep "swap" /etc/fstab &>/dev/null; then
+        if [[ ! "$(grep "swap swap" /etc/fstab 2>&1)" ]] &>/dev/null; then
           # no swap installed, continue
           echo "[Ok] No Swap installed"
           # make change permanent
