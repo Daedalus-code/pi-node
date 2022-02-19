@@ -1270,7 +1270,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     if [[ "$UPDATE_REPO" -eq "1" ]] &>/dev/null; then
       # update repo, if set
       cd /home/"$(whoami)"/pi-node || exit &&
-        git pull -q && bash include/install 2>&1
+        torify git pull -q && bash include/install 2>&1
     fi
 
     DIS_LOCAL=$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/ip_address 2>/dev/null)" 2>&1 | egrep -o "[0-9]+" 2>&1 | head -1 2>&1)
