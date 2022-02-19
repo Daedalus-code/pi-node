@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221902
-# 1.7.3.5
+# 1.7.4.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.3.5"
+VERSION="v1.7.4.3"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -460,6 +460,14 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
     "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/client/version 2>&1
   fi
   WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/client/version 2>/dev/null)
+fi
+
+# wallet version number, for peers variables
+WALLET_VERSION_N=$(echo "${WALLET_VERSION:?}" 2>&1 | tr -d 'v' 2>&1)
+
+if [[ -z "$WALLET_VERSION_N" ]] &>/dev/null; then
+  # wallet version number, waiting on daemon data
+  WALLET_VERSION_N="${N0:?}"
 fi
 
 if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
