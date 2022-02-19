@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221902
-# 1.7.4.7
+# 1.7.5.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.4.7"
+VERSION="v1.7.5.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -955,17 +955,21 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   # get clean ipv6 address, disregard non ipv6 and lines shorter than n
   egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' /home/"$(whoami)"/addnodes 2>&1 | sed -r '/^.{,8}$/d' >"${LOG_DIR:?}"/addnodes.ipv6 2>&1
   # get clean dns address, disregard non dns
-  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/addnodes.dns 2>&1
+  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' /home/"$(whoami)"/addnodes | grep 2>&1 -v ".onion" >"${LOG_DIR:?}"/addnodes.dns 2>&1
+  # get clean onion address
+  egrep -o "[a0-z9]+.onion" /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/addnodes.onion 2>&1
 
   # add extra(s), disregard invalid pattern address (cidr - classless inter-domain routing)
   grepcidr -f "${LOG_DIR:?}"/addnodes.ipv4 "${LOG_DIR:?}"/addnodes.ipv4 >"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
   grepcidr -f "${LOG_DIR:?}"/addnodes.ipv6 "${LOG_DIR:?}"/addnodes.ipv6 >>"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
   # add extra(s) domain names
   cat "${LOG_DIR:?}"/addnodes.dns >>"${LOG_DIR:?}"/node_data/peers.x 2>/dev/null
+  cat "${LOG_DIR:?}"/addnodes.onion >>"${LOG_DIR:?}"/node_data/peers.x 2>/dev/null
 
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_IPv4 $(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_IPv6 $(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_Tor+ $(wc -l "${LOG_DIR:?}"/addnodes.onion 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_DNS+ $(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script | ${G1:?}$(echo "$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1) Total ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
