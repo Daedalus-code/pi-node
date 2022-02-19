@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221902
-# 1.7.5.7
+# 1.7.6.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.5.7"
+VERSION="v1.7.6.0"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -595,6 +595,9 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
 
   if [[ ! -f "${LOG_DIR:?}"/node_data/client/latest ]] &>/dev/null; then
+    curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" >"${LOG_DIR:?}"/node_data/client/latest 2>&1
+  fi
+  if [[ -z "$WALLET_RELEASE" ]] &>/dev/null; then
     curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" >"${LOG_DIR:?}"/node_data/client/latest 2>&1
   fi
   # get latest release *.*.*.*
