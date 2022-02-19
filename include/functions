@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221902
-# 1.7.4.3
+# 1.7.4.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.4.3"
+VERSION="v1.7.4.7"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -74,8 +74,14 @@ echo "$(uptime_daemon 2>&1)" 2>&1 | tr -d '-' >"${LOG_DIR:?}"/node_data/uptime 2
 # get system uptime information
 uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/stats/uptime 2>&1
 
+DAEMON_UPTIME="$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)"
+if [[ -z "$DAEMON_UPTIME" ]] &>/dev/null; then
+  # non responsive
+  DAEMON_UPTIME="1"
+fi
+
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "1" ]] &>/dev/null; then
 
   # tail last line in debug.log
   LAST_LOG=$(tail -n 1 "${WALLET_LOG_DIR:?}"/debug.log 2>&1)
@@ -179,9 +185,10 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
 fi
 
 # get system uptime
+SYSTEM_UPTIME="$(cat "${LOG_DIR:?}"/node_data/stats/system.uptime 2>/dev/null)"
 awk -F. ' {print $1 }' /proc/uptime >"${LOG_DIR:?}"/node_data/stats/system.uptime 2>&1
-SYS_UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/stats/system.uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/stats/system.uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/stats/system.uptime 2>/dev/null)%60")))
-SYS_UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/system.uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
+SYS_UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(echo "${SYSTEM_UPTIME:?}" 2>&1)/3600")) $(("$(echo "${SYSTEM_UPTIME:?}" 2>&1)%3600/60")) $(("$(echo "${SYSTEM_UPTIME:?}" 2>&1)%60")))
+SYS_UPTIME_DAYS=$(echo "$(echo "${SYSTEM_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>&1)
 SYS_UPTIME="System (${SYS_UPTIME_DAYS:?}d) ${GR:?}${SYS_UPTIME:?}${N0:?}"
 
 # create uname -a
@@ -267,7 +274,7 @@ IP_ADDRESS="${C1:?}${IP_ADDRESS:?}${N0:?}"
 ### wan address ################################################################
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # get wan address, if missing
   if [ ! -f "${WALLET_DIR:?}"/getwan ] &>/dev/null; then
@@ -366,7 +373,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   fi
 
   # greater than n seconds, continue
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "420" ]] &>/dev/null; then
+  if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "420" ]] &>/dev/null; then
 
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_PRICE_CMC:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -404,7 +411,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   fi
 
   # greater than n seconds, continue
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "420" ]] &>/dev/null; then
+  if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "420" ]] &>/dev/null; then
 
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Found ${G1:?}${API_PRICE_CG:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -421,7 +428,7 @@ fi
 ### wallet information #########################################################
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # collect wallet info, on every minute (loop) from client
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getblockchaininfo 2>&1
@@ -453,7 +460,7 @@ if [ ! -s "${LOG_DIR:?}"/node_data/stats/connections ] &>/dev/null; then
 fi
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # get wallet version, do this once
   if ! grep "v" "${LOG_DIR:?}"/node_data/client/version &>/dev/null; then
@@ -485,7 +492,7 @@ else # testnet
 fi
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "300" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "300" ]] &>/dev/null; then
 
   # nonet
   WALLET_CHAIN="${CY:?}nonet${N0:?}"
@@ -560,7 +567,7 @@ function wallet_nodes() {
 }
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # get wallet masternodes total
   WALLET_NODES_TOTAL=$(grep "total" "${LOG_DIR:?}"/node_data/client/getpatriotnodecount 2>&1 |
@@ -596,7 +603,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
 
   # get wallet connections latest (using wallet version)
-  WALLET_PEERS_LATEST=$(grep "subver" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | egrep -o "$(echo "$WALLET_VERSION" 2>&1 | tr -d 'v' 2>&1)" 2>&1 | wc -l 2>&1)
+  WALLET_PEERS_LATEST=$(grep "subver" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | egrep -o "$(echo "$WALLET_VERSION_N" 2>&1 | tr -d 'v' 2>&1)" 2>&1 | wc -l 2>&1)
   # get wallet connections other (not latest, probably older wallets)
   WALLET_PEERS_OTHER=$(grep "subver" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tr -d 'v' 2>&1 | grep -v "$(echo "$WALLET_VERSION" | tr -d 'v' 2>&1)" 2>&1 | wc -l 2>&1)
 
@@ -617,7 +624,7 @@ else # non responsive
 fi
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # get wallet balance
   WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
@@ -691,7 +698,7 @@ function wallet_balances() {
 }
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # get api price
   WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/stats/price 2>/dev/null | tail -1 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)
@@ -714,7 +721,7 @@ if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
 fi
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "1" ]] &>/dev/null; then
 
   if [ ! -f "${LOG_DIR:?}"/node_data/client/listunspent ] &>/dev/null; then
     # make sure listunspent exist
@@ -808,7 +815,7 @@ fi
 ### staking - proof-of-stake ###################################################
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # save wallet stakes (addtowallet), remove duplicates
 
@@ -905,7 +912,7 @@ if [ ! -f "${LOG_DIR:?}"/node_data/peers.tmp ] &>/dev/null; then
 fi
 
 # always run if uptime is less than n seconds
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "3600" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "3600" ]] &>/dev/null; then
   FAILED_CHECK=$(echo "${LOG_CHECK:?}" 2>&1)
 else
   FAILED_CHECK="[0-9]+:[0-9]+0:[0-9]+" # **:*0:**
@@ -970,7 +977,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
 fi
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # run data with intervals, every n minutes, update api, arp and ticker
   if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/null; then
@@ -1008,7 +1015,7 @@ function failed_peers() {
   IPV6_FAILS=$(egrep -o "([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -c -v ".onion" 2>&1)
   DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | egrep -c -v ":|.onion" 2>&1)
   # greater than n seconds, continue
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+  if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! $(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1) ${G1:?}${IPV4_FAILS:?}${N0:?}/${C1:?}$IPV6_FAILS${N0:?}/${CY:?}${DNS_FAILS:?}${N0:?}/${P0:?}${ONION_FAILS:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 }
@@ -1079,7 +1086,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
   fi
 
   # greater than n seconds, continue
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+  if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
     if [ ! -f "${LOG_DIR:?}"/node_data/peers/success ] &>/dev/null; then
       # make sure success exist
@@ -1092,13 +1099,10 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
     # generate random ip address (ipv6)
     RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
-    # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
-    echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/peers.ipv6.r 2>&1
-    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/peers.ipv4.r 2>&1
 
-    # move random address to add_peers (ipv4/ipv6)
-    cat "${LOG_DIR:?}"/node_data/peers.ipv4.r 2>/dev/null | tail -1 >>"${LOG_DIR:?}"/node_data/add_peers
-    cat "${LOG_DIR:?}"/node_data/peers.ipv6.r 2>/dev/null | tail -1 >>"${LOG_DIR:?}"/node_data/add_peers
+    # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
+    echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
     ### remove failed, connected peers and invalid pattern address ######### ###
 
@@ -1219,7 +1223,7 @@ fi
 ### restore proof-of-stake data ################################################
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # save proof-of-stake data from debug.log
   # count saved vs wallet stakes
@@ -1237,7 +1241,7 @@ fi
 ### backup, clean up lists, logs (truncate) keep proof-of-stake data ###########
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # note: heavy reading, do interval reading with date:time
   if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
@@ -1346,7 +1350,7 @@ if [ ! -f "${WALLET_DIR:?}"/failed ] &>/dev/null; then
 fi
 
 # do this once
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
   if ! grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
     if [ ! -s "${WALLET_DIR:?}"/failed ] &>/dev/null; then
       printf '%b' "${LOG_DATE:?} Status() Clean.Backup() Removing empty failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -1505,8 +1509,8 @@ if grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       fi
       # wallet (daemon) uptime
     elif [ "$RANDOM_TIMELINE" -eq "12" ] &>/dev/null; then
-      TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
-      TIMELINE_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      TIMELINE=$(printf '%dh:%dm:%ds\n' $(("$(echo "${DAEMON_UPTIME:?}" 2>&1)/3600")) $(("$(echo "${DAEMON_UPTIME:?}" 2>&1)%3600/60")) $(("$(echo "${DAEMON_UPTIME:?}" 2>&1)%60")))
+      TIMELINE_DAYS=$(echo "$(echo "${DAEMON_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       TIMELINE="Wallet (${TIMELINE_DAYS:?}d) ${GR:?}$TIMELINE${N0:?}"
     elif [ "$RANDOM_TIMELINE" -eq "13" ] &>/dev/null; then
       # highest peer count
@@ -1584,14 +1588,14 @@ else
 fi
 
 # less than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -lt "60" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "60" ]] &>/dev/null; then
   WALLET_TXLAST="${CY:?}       Loading${N0:?}"
 fi
 
 ### collect data for rrdtool (round robin databases) ###########################
 
 # greater than n seconds, continue
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
 
