@@ -8,7 +8,7 @@ if [[ ! -f /tmp/installing ]] &>/dev/null; then
   touch /tmp/updating &>/dev/null
   clear
   if [[ -f /usr/local/bin/include/install ]] &>/dev/null; then
-    sudo cp include/install /usr/local/bin/include/install
+    sudo cp /home/"$(whoami)"/pi-node/include/install /usr/local/bin/include/install
     sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/include/install 2>&1
   else
     echo "installing" >/tmp/installing 2>&1
