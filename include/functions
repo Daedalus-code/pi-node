@@ -879,8 +879,8 @@ function wallet_dashbord() {
   WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
 }
 
-MASTER_INPUTS="${N0:?} "
-MNS="${N0:?}"
+MASTER_INPUTS="${N0:?}"
+MNS="${N0:?} "
 
 # get masternode status
 if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
@@ -892,7 +892,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" 
   MASTER_INPUTS="$(grep -c "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)"
   MNS="M" # masternode status
 else
-  MASTER_INPUTS="${N0:?} "
+  MASTER_INPUTS="${N0:?}"
   MNS="${N0:?}"
 fi
 
