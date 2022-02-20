@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222002
-# 0.0.2.2
+# 0.0.2.3
 
 if [[ ! -f /tmp/installing ]] &>/dev/null; then
   touch /tmp/updating &>/dev/null
@@ -16,7 +16,8 @@ if [[ ! -f /tmp/installing ]] &>/dev/null; then
   fi
 else
   # update repo
-  cd /home/"$(whoami)"/pi-node 2>/dev/null || exit && git pull -q 2>/dev/null && bash include/install 2>/dev/null
+  cd /home/"$(whoami)"/pi-node &>/dev/null || exit && git pull -q &>/dev/null && bash include/install 2>/dev/null
 fi
+rm /tmp/installing &>/dev/null
 
 # END
