@@ -128,7 +128,7 @@ if [[ -z "$LOG_CHECK" ]] &>/dev/null; then
   LOG_CHECK=$(LC_ALL=de_US.utf8 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1)
 fi
 
-if [[ "$(grep "bc" "${WALLET_DIR:?}"/wait 2>&1)" ]] &>/dev/null; then
+if [[ "$(egrep "bc|-" "${WALLET_DIR:?}"/wait 2>&1)" ]] &>/dev/null; then
   # remove broken file
   rm "${WALLET_DIR:?}"/wait &>/dev/null
 fi
