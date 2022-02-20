@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222002
-# 1.8.0.9
+# V20222102
+# 1.8.1.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.0.9"
+VERSION="v1.8.1.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1388,6 +1388,15 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
     # truncate old log (debug.log)
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+
+    if [[ ! $(grep "successfully started" "${LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
+      # make sure masternode runs
+      cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
+      printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      cat "${WALLET_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+      printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
+
     # report hardware model at start of log
     printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate Cleaning logs, lists, Internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
