@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222002
-# 1.8.0.7
+# 1.8.0.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.0.7"
+VERSION="v1.8.0.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1028,6 +1028,8 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
   # run data with intervals, every n minutes, update api, arp and ticker
   if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/null; then
+    # keep masternode status updated
+    cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1
     # run data
     source /usr/local/bin/include/data 2>&1
   fi
