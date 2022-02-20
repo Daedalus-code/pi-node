@@ -885,6 +885,7 @@ MNS="${N0:?} "
 # get masternode status
 if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status
+  cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1
 fi
 
 if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
@@ -1016,6 +1017,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
 
   # truncate/remove files, now old
   truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
+  rm "${LOG_DIR:?}"/addnodes.onion &>/dev/null
   rm "${LOG_DIR:?}"/addnodes.ipv4 &>/dev/null
   rm "${LOG_DIR:?}"/addnodes.ipv6 &>/dev/null
   rm "${LOG_DIR:?}"/addnodes.dns &>/dev/null
@@ -1068,9 +1070,6 @@ function failed_peers() {
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev/null; then
   # failed_peers function
   failed_peers
-  # disregard random ip address (ipv4)
-  grep -vf "${LOG_DIR:?}"/node_data/peers.ipv4.r "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/peers/failed.tmp 2>&1
-  mv "${LOG_DIR:?}"/node_data/peers/failed.tmp "${LOG_DIR:?}"/node_data/peers/failed 2>&1
 fi
 
 # create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
@@ -1371,14 +1370,15 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       cat "${WALLET_LOG_DIR:?}"/debug.log >>"${WALLET_DIR:?}"/debug.log 2>/dev/null
     fi
 
+    # keep masternode status updated
+    cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1
+
     # remove lock file (auto pos config)
     rm "${WALLET_DIR:?}"/diff.lock &>/dev/null
 
     # reset old files
     truncate -s 0 "${WALLET_DIR:?}"/getwan &>/dev/null
     truncate -s 0 "${WALLET_DIR:?}"/staking &>/dev/null
-    truncate -s 0 "${LOG_DIR:?}"/node_data/peers.ipv4.r &>/dev/null
-    truncate -s 0 "${LOG_DIR:?}"/node_data/peers.ipv6.r &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/stats/total.cidr &>/dev/null
 
     # remove old file
