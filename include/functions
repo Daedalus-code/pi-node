@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222002
-# 1.7.9.5
+# 1.8.0.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.9.5"
+VERSION="v1.8.0.7"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1387,7 +1387,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     # truncate old log (debug.log)
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
     # report hardware model at start of log
-    printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log
+    printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Clean.truncate Cleaning logs, lists, Internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
@@ -1713,6 +1713,12 @@ if [ ! -s "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
   cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
 fi
 
+# remove empty files, try to restore
+if [ ! -s "${WALLET_DIR:?}"/price.cg ] &>/dev/null; then
+  rm "${WALLET_DIR:?}"/price.cg &>/dev/null
+  cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg 2>&1
+fi
+
 ### backup values coinmarketcap ################################################
 
 if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
@@ -1775,6 +1781,12 @@ fi
 if [ ! -s "${LOG_DIR:?}"/node_data/stats/price.cmc ] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/stats/price.cmc &>/dev/null
   cp "${WALLET_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1
+fi
+
+# remove empty files, try to restore
+if [ ! -s "${WALLET_DIR:?}"/price.cmc ] &>/dev/null; then
+  rm "${WALLET_DIR:?}"/price.cmc &>/dev/null
+  cp "${LOG_DIR:?}"/node_data/stats/price.cmc "${WALLET_DIR:?}"/price.cmc 2>&1
 fi
 
 ### theme ######################################################################
