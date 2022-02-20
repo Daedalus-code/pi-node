@@ -1251,7 +1251,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "1")
 
-      if [[ "$(grep "Successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+      if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
         # already setup and running
         echo
         read -r -p "[!!] Already setup and running!" </dev/tty
