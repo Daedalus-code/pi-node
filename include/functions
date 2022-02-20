@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221902
-# 1.7.6.2
+# V20222002
+# 1.7.7.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.6.2"
+VERSION="v1.7.7.3"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -308,20 +308,31 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
     if grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $9 }' &>/dev/null; then
       grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $9 }' 2>&1 | tail -1 >"${WALLET_DIR:?}"/onion 2>&1
 
-      printf '%b' "${LOG_DATE:?} Status() GetOnionData() Found Onion Address! (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      # greater than n seconds, continue
+      if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+        printf '%b' "${LOG_DATE:?} Status() GetOnionData() Found Onion Address! (${P1:?}$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)${N0:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      fi
     fi
 
     # get onion address
     PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
+    if [[ ! -f "${WALLET_DIR:?}"/onion ]]; then
+      ONION_C="${GR:?}"
+    else
+      ONION_C="${P1:?}"
+    fi
     # output onion address (short version)
-    PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+    PUBLIC_IP="${ONION_C:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
     # get onion address from debug.log
     if ! grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $9 }' &>/dev/null; then
       # not working, use urandom
       tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev >"${WALLET_DIR:?}"/onion 2>&1
 
-      printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! Using random ($(cat "${WALLET_DIR:?}"/onion 2>/dev/null))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      # greater than n seconds, continue
+      if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+        printf '%b' "${LOG_DATE:?} Status() GetOnionData() No Onion Address found! Using random ($(cat "${WALLET_DIR:?}"/onion 2>/dev/null))${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      fi
     fi
   fi
 
@@ -442,7 +453,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   # make sure data exist
   if grep -o "error: couldn't connect to server" "${LOG_DIR:?}"/node_data/client/tmp/getinfo &>/dev/null; then
     rm -R "${LOG_DIR:?}"/node_data/client/tmp/* &>/dev/null
-  else # use existing data without any error(s)
+  else # use existing data without any errors
     cp "${LOG_DIR:?}"/node_data/client/tmp/getblockchaininfo "${LOG_DIR:?}"/node_data/client/getblockchaininfo 2>&1
     cp "${LOG_DIR:?}"/node_data/client/tmp/getinfo "${LOG_DIR:?}"/node_data/client/getinfo 2>&1
     cp "${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>&1
@@ -528,18 +539,18 @@ fi
 
 if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
   WALLET_SYNC="${GR:?}Load${N0:?}"
-  PERCC="${Y1:?}" # sync color
-  PSYMBOL=".."    # sync symbol
+  PERCC="${Y1:?}"            # sync color
+  PSYMBOL="${GR:?}..${N0:?}" # sync symbol
 fi
 if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
   WALLET_HEADS="${GR:?}0${N0:?}"
-  PERCC="${GR:?}" # sync color
-  PSYMBOL="."     # sync symbol
+  PERCC="${GR:?}"           # sync color
+  PSYMBOL="${GR:?}.${N0:?}" # sync symbol
 fi
 if [[ -z "$WALLET_BLOCK" ]] &>/dev/null; then
   WALLET_BLOCK="${GR:?}0${N0:?}"
-  PERCC="${GR:?}" # sync color
-  PSYMBOL="."     # sync symbol
+  PERCC="${GR:?}"           # sync color
+  PSYMBOL="${GR:?}.${N0:?}" # sync symbol
 fi
 
 # wallet sync (no color)
@@ -967,10 +978,10 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   # get clean onion address
   egrep -o "[a0-z9]+.onion" /home/"$(whoami)"/addnodes >"${LOG_DIR:?}"/addnodes.onion 2>&1
 
-  # add extra(s), disregard invalid pattern address (cidr - classless inter-domain routing)
+  # add extras, disregard invalid pattern address (cidr - classless inter-domain routing)
   grepcidr -f "${LOG_DIR:?}"/addnodes.ipv4 "${LOG_DIR:?}"/addnodes.ipv4 >"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
   grepcidr -f "${LOG_DIR:?}"/addnodes.ipv6 "${LOG_DIR:?}"/addnodes.ipv6 >>"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
-  # add extra(s) domain names
+  # add extras domain names
   cat "${LOG_DIR:?}"/addnodes.dns >>"${LOG_DIR:?}"/node_data/peers.x 2>/dev/null
   cat "${LOG_DIR:?}"/addnodes.onion >>"${LOG_DIR:?}"/node_data/peers.x 2>/dev/null
 
@@ -981,7 +992,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_DNS+ $(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script | ${G1:?}$(echo "$(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.ipv6 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/addnodes.dns 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1) Total ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-  # truncate/remove file(s), now old
+  # truncate/remove files, now old
   truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
   rm "${LOG_DIR:?}"/addnodes.ipv4 &>/dev/null
   rm "${LOG_DIR:?}"/addnodes.ipv6 &>/dev/null
@@ -1355,7 +1366,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
     # report hardware model at start of log
     printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log
-    printf '%b' "${LOG_DATE:?} Status() Clean.truncate Cleaning log(s), list(s), Internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Clean.truncate Cleaning logs, lists, Internet data${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -1625,7 +1636,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     bash /usr/local/bin/include/stats
   fi
 
-  ### hide dashbord balance(s) #################################################
+  ### hide dashbord balances ###################################################
 
   if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
     # hide balance and inputs

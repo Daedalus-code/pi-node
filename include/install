@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221702
-# 0.2.8.0
+# V20222002
+# 0.2.9.1
 
 # create directories, ruled by configuration
 if [ ! -d /usr/local/bin/include ] &>/dev/null; then
@@ -110,6 +110,20 @@ if ! [ -x "$(command -v torsocks)" ] &>/dev/null; then
   echo
 fi
 
+# get wallet port, do this once
+if [[ ! -f "${WALLET_DIR:?}"/wallet_port ]] &>/dev/null; then
+  printf '%b' "[??] Enter wallet Port ${G1:?}> ${N0:?}"
+  read -r PORT
+  echo "${PORT:?}" >"${WALLET_DIR:?}"/wallet_port 2>&1
+  if [[ -z "$PORT" ]] &>/dev/null; then
+    # empty, exit
+    printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
+    exit
+  fi
+else
+  PORT="$(cat "${WALLET_DIR:?}"/wallet_port 2>/dev/null)"
+fi
+
 # make sure tor is installed
 if ! [ -x "$(command -v tor)" ] &>/dev/null; then
 
@@ -128,7 +142,7 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   fi
 
   # check torrc configuration for service
-  if ! grep "freedomcoin-service" /etc/tor/torrc &>/dev/null; then
+  if ! grep "${WALLET_NAME:?}-service" /etc/tor/torrc &>/dev/null; then
     echo "RunAsDaemon 1
 
 ControlPort 9051
@@ -136,7 +150,7 @@ CookieAuthentication 1
 CookieAuthFileGroupReadable 1
 
 HiddenServiceDir /var/lib/tor/freedomcoin-service/
-HiddenServicePort 15110 127.0.0.1:15110
+HiddenServicePort ${PORT:?} 127.0.0.1:${PORT:?}
 ${HIDDEN_SERVICE:?}
 " >/tmp/torrc 2>&1
     cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
@@ -162,9 +176,9 @@ fi
 # make sure uncomplicated firewall (ufw) is installed
 if ! [ -x "$(command -v ufw)" ] &>/dev/null; then
   echo "Installing uncomplicated firewall (ufw)"
-  # setup ufw with node ports 15110, 80, 22
+  # setup ufw with node ports ${port:?}, 80, 22
   sudo apt-get install ufw -y
-  sudo ufw allow 15110 comment "FreedomCoin mainnet"
+  sudo ufw allow "${PORT:?}" comment "FreedomCoin mainnet"
   sudo ufw allow 80 comment "FreedomCoin Graphs"
   sudo ufw allow 22 comment "SSH"
   sudo ufw status
@@ -199,7 +213,7 @@ if [[ ! -f "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" ]] &>/dev/null; then
     EXTERNALIP="externalip=${EXTERNALIP:?}"
   fi
 
-  echo "## freedomcoin.conf configuration file.
+  echo "## '${WALLET_NAME:?}' configuration file.
 # Network-related settings:
 
 # Run on the test network instead of the real freedomcoin network.
@@ -228,10 +242,7 @@ listen=1
 discover=1
 
 # Maximum number of inbound+outbound connections. (default: 125)
-maxconnections=${MAX_P2P:?}
-
-# can be commented out if you use the service script
-daemon=1" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
+maxconnections=${MAX_P2P:?}" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
   mv "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" 2>&1
   printf '%b' "[${G1:?}Ok${N0:?}] Installed new wallet configuration! -> ${WALLET_DIR:?}/${WALLET_CONFIG:?}\n"
 fi

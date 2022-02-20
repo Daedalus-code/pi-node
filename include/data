@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221702
+# V20222002
 # 0.2.6.9
 
 # shellcheck disable=SC2154
@@ -122,7 +122,7 @@ for (( ; ; )); do # loop until success
 
   if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
     echo "success" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cg 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cg 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} requests\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     killall curl &>/dev/null
     exit
   fi
@@ -165,7 +165,7 @@ for (( ; ; )); do # loop until success
 
   if grep "freed" "${LOG_DIR:?}"/node_data/stats/raw.coinmcap &>/dev/null; then
     echo "success" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
-    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cmc 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} request(s)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cmc 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} requests\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     killall curl &>/dev/null
     exit
   fi
@@ -173,7 +173,7 @@ for (( ; ; )); do # loop until success
 done
 EOF
 
-### screen session(s) ##########################################################
+### screen sessions ############################################################
 
 # create screen list
 LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
@@ -229,7 +229,7 @@ if [[ "$RANDOM_SCREEN" -eq "2" ]] &>/dev/null; then
   LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 fi
 
-### screen session(s) done #####################################################
+### screen sessions done #######################################################
 
 # if no success, continue
 if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then

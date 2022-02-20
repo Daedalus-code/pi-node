@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221902
-# 1.8.5.3
+# V20222002
+# 2.1.4.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -47,7 +47,7 @@ OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   2 "Keys Menu        Dump/Import keys PoS (${POS_COUNT:?})"
   3 "Information      Pi node status"
   4 "Download Menu    Wallet, bootstrap, display"
-  5 "Configuration    Node configuration(s)"
+  5 "Configuration    Node configurations"
   6 "System Space     Disk space utilized"
   7 "Swap Menu        Swap space options"
   8 "UFW Menu         Uncomplicated firewall"
@@ -372,9 +372,23 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "6")
 
+    # get wallet port, do this once
+    if [[ ! -f "${WALLET_DIR:?}"/wallet_port ]] &>/dev/null; then
+      printf '%b' "[??] Enter wallet Port ${G1:?}> ${N0:?}"
+      read -r PORT
+      echo "${PORT:?}" >"${WALLET_DIR:?}"/wallet_port 2>&1
+      if [[ -z "$PORT" ]] &>/dev/null; then
+        # empty, exit
+        printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
+        exit
+      fi
+    else
+      PORT="$(cat "${WALLET_DIR:?}"/wallet_port 2>/dev/null)"
+    fi
+
     # delete ufw rules
-    printf '%b' "[${R1:?}!!${N0:?}] Deleting allow rules 15110, 80, 22\n"
-    sudo ufw delete allow 15110
+    printf '%b' "[${R1:?}!!${N0:?}] Deleting allow rules ${PORT:?}, 80, 22\n"
+    sudo ufw delete allow "${PORT:?}"
     sudo ufw delete allow 80
     sudo ufw delete allow 22
     sudo ufw status
@@ -386,9 +400,23 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "7")
 
+    # get wallet port, do this once
+    if [[ ! -f "${WALLET_DIR:?}"/wallet_port ]] &>/dev/null; then
+      printf '%b' "[??] Enter wallet Port ${G1:?}> ${N0:?}"
+      read -r PORT
+      echo "${PORT:?}" >"${WALLET_DIR:?}"/wallet_port 2>&1
+      if [[ -z "$PORT" ]] &>/dev/null; then
+        # empty, exit
+        printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
+        exit
+      fi
+    else
+      PORT="$(cat "${WALLET_DIR:?}"/wallet_port 2>/dev/null)"
+    fi
+
     # set default ufw rules
-    echo "[Ok] Set allow rules 15110, 80, 22"
-    sudo ufw allow 15110 comment "FreedomCoin mainnet"
+    echo "[Ok] Set allow rules ${PORT:?}, 80, 22"
+    sudo ufw allow "${PORT:?}" comment "FreedomCoin mainnet"
     sudo ufw allow 80 comment "FreedomCoin Graphs"
     sudo ufw allow 22 comment "SSH"
     sudo ufw status
@@ -618,7 +646,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printline "PID" "${PID_DAEMON:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Staking Status" "${NODE_PROOF:?}"
       printline "Wallet Size" "$(du -sh "${WALLET_DIR:?}" | awk '{ print $1 }' 2>&1) ${WALLET_SYNC:?}" "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "Coin Supply" "${NODE_COIN_SUPPLY:?}"
       printline "Backups Size" "$(du -sh "${WALLET_DIR:?}"/backups 2>&1 | awk '{ print $1 }' 2>&1)" "Add/Saved" "$(wc -l "${LOG_DIR:?}"/node_data/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" "Wallet Balance" "${WALLET_BALANCE:?} (${WALLET_INPUTS:?})"
-      printline "wallet.dat" "$(du -sh "${WALLET_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "Ban(s)" "${WALLET_PEERS_BANNED:?}" "Wallet Value" "${WALLET_VALUE:?} USD"
+      printline "wallet.dat" "$(du -sh "${WALLET_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "Bans" "${WALLET_PEERS_BANNED:?}" "Wallet Value" "${WALLET_VALUE:?} USD"
       echo
     )
     display_result "System Information"
@@ -1160,20 +1188,20 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   HEIGHT=17
   WIDTH=48
   CHOICE_HEIGHT=10
-  BACKTITLE="Node configuration(s)"
+  BACKTITLE="Node configurations"
   TITLE="Edit configuration"
   MENU="Choose one option:"
 
-  OPTIONS=(1 "Wallet           ${WALLET_CONFIG:?}"
-    2 "MasterNode       ${WALLET_MASTER:?}"
-    3 "PiNode           pinode.conf"
-    4 "Config.txt       boot/config.txt"
-    5 "Torrc            Tor configuration"
-    6 "Crontab          Job scheduler"
-    7 "Crontab (root)   Admin job scheduler"
-    8 "Filesystem       /etc/fstab"
-    9 "Graphs           rrdtool options"
-    10 "Reset            Reset config(s)")
+  OPTIONS=(1 "Wallet           edit $(echo "${WALLET_CONFIG:?}" 2>&1 | awk -F. '{ print $1 }' 2>&1)"
+  2 "Masternode       Masternode menu"
+  3 "PiNode           pinode.conf"
+  4 "Config.txt       boot/config.txt"
+  5 "Torrc            Tor configuration"
+  6 "Crontab          Job scheduler"
+  7 "Crontab (root)   Admin job scheduler"
+  8 "Filesystem       /etc/fstab"
+  9 "Graphs           rrdtool options"
+  10 "Reset            Reset configs")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1189,7 +1217,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "1")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
     nano "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}"
 
@@ -1197,17 +1225,263 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "2")
 
-    printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    HEIGHT=10
+    WIDTH=50
+    CHOICE_HEIGHT=3
+    BACKTITLE="Masternode Menu"
+    TITLE="Masternode options"
+    MENU="Choose one option:"
+
+    OPTIONS=(1 "Install          Setup Masternode"
+      2 "Config           Edit $(echo "${WALLET_MASTER:?}" 2>&1 | awk -F. '{ print $1 }' 2>&1)"
+      3 "Status           Masternode information")
+
+    CHOICE=$(dialog --clear \
+      --backtitle "$BACKTITLE" \
+      --title "$TITLE" \
+      --menu "$MENU" \
+      $HEIGHT $WIDTH $CHOICE_HEIGHT \
+      "${OPTIONS[@]}" \
+      2>&1 >/dev/tty)
+
     clear
-    nano "${WALLET_DIR:?}"/"${WALLET_MASTER:?}"
+    case $CHOICE in
+
+    "1")
+
+      if [[ "$(cat "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | grep "autocombine_enabled" 2>&1 | grep -o "true" 2>&1)" ]] &>/dev/null; then
+        read -r -p "[YN] You should turn off auto combine & stake split !? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          # disable setautocombinethreshold & setstakesplitthreshold
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold false
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold 0
+        fi
+      fi
+
+      # get wallet port, do this once
+      if [[ ! -f "${WALLET_DIR:?}"/wallet_port ]] &>/dev/null; then
+        printf '%b' "[??] Enter wallet Port ${G1:?}> ${N0:?}"
+        read -r PORT
+        echo "${PORT:?}" >"${WALLET_DIR:?}"/wallet_port 2>&1
+        if [[ -z "$PORT" ]] &>/dev/null; then
+          # empty, exit
+          printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
+          exit
+        fi
+      else
+        PORT="$(cat "${WALLET_DIR:?}"/wallet_port 2>/dev/null)"
+      fi
+
+      printf '%b' "[${R1:?}!!${N0:?}] ${R1:?}Warning:${GR:?} This will use all available coins in wallet!${N0:?}\n"
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      clear
+
+      if [[ ! -f "${WALLET_DIR:?}"/masternode_collateral ]]; then
+        echo "Enter masternode collateral"
+        read -r MASTERNODECO
+        echo
+        echo "${MASTERNODECO:?}" >"${WALLET_DIR:?}"/masternode_collateral
+        if [[ -z "$MASTERNODECO" ]] &>/dev/null; then
+          echo "empty!"
+          exit
+        fi
+      fi
+      MASTERNODECO="$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" # masternode collateral
+
+      if [[ ! -f "${WALLET_DIR:?}"/masternode_address ]] &>/dev/null; then
+        read -r -p "[YN] Create new masternode address? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          # old guide - trumpcoin patriotnode -> https://github.com/trumpcoinsupport/TrumpCoin/wiki/Windows-Linux-Mac-Patriotnode-Setup-Guide
+          # in the console window enter getnewaddress MN and copy the result.
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getnewaddress MN >"${WALLET_DIR:?}"/masternode_address
+        fi
+      else
+        MASTERNODE_ADDRESS=$(cat "${WALLET_DIR:?}"/masternode_address 2>/dev/null)
+        printf '%b' "[${G1:?}Ok${N0:?}] ${CY:?}${MASTERNODE_ADDRESS:?}${N0:?} MN\n"
+      fi
+
+      # get wallet balance
+      WALLET_BALANCE=$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      # get masternode address balance
+      MASTER_BALANCE=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | grep -A4 "${MASTERNODE_ADDRESS:?}" | grep "amount" | awk -F. '{ print $1 }' | awk '{print $2 }')
+
+      if [[ ! "$MASTER_BALANCE" -eq "$MASTERNODECO" ]] &>/dev/null; then
+        if [[ "$WALLET_BALANCE" -gt "$MASTERNODECO" ]] &>/dev/null; then
+          if [[ -f "${WALLET_DIR:?}"/masternode_address ]] &>/dev/null; then
+            read -r -p "[YN] Send ${MASTERNODECO:?} coins to ${MASTERNODE_ADDRESS:?}? y/n " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+              # this is your PATRIOTNODE DEPOSIT ADDRESS, where you will deposit ${masternodeco:?} coins to create a patriotnode
+              "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" sendtoaddress "${MASTERNODE_ADDRESS:?}" "${MASTERNODECO:?}"
+            fi
+          fi
+        else
+          WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+          printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
+          read -r -p "[Ok] Press Enter to exit" </dev/tty
+          exit
+        fi
+      else
+        printf '%b' "[${G1:?}Ok${N0:?}] Masternode ${CY:?}address${N0:?} has enough coins.\n"
+      fi
+
+      if [[ ! -f "${WALLET_DIR:?}"/masternode_key ]] &>/dev/null; then
+        read -r -p "[YN] Create new masternode key? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          # in the fonsole debug window enter createpatriotnodekey - this is your PATRIOTNODE PRIVKEY.
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" createpatriotnodekey >"${WALLET_DIR:?}"/masternode_key
+        fi
+      else
+        printf '%b' "[${G1:?}Ok${N0:?}] ${CY:?}$(cat "${WALLET_DIR:?}"/masternode_key 2>/dev/null)${N0:?} Key\n"
+      fi
+
+      MASTERNODE_KEY="$(cat "${WALLET_DIR:?}"/masternode_key 2>/dev/null)"
+
+      # create tor_wan script
+      echo "curl -s https://api.myip.com >${WALLET_DIR:?}/tor_wan 2>&1" >"${LOG_DIR:?}"/wan_curl 2>&1
+      # get onion wan address (torify bash)
+      torify bash "${LOG_DIR:?}"/wan_curl && rm "${LOG_DIR:?}"/wan_curl 2>&1
+
+      read -r -p "[YN] Create new configuration (overwriting old)? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+        # create random rpcuser & rpcpassword
+        RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
+        RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
+
+        # wallet configuration file (overwriting old configuration)
+        echo "## ${WALLET_NAME:?} configuration file.
+# Network-related settings:
+
+# Run on the test network instead of the real freedomcoin network.
+#testnet=1
+
+# RPC credentials
+rpcuser=${RANDOM_RPCL:?}${RANDOM_RPCN:?}
+rpcpassword=${RANDOM_RPCN:?}${RANDOM_RPCL:?}
+rpcallowip=${RPC_IP:?}
+rpcbind=${RPC_IP:?}
+server=1
+
+# masternode
+patriotnode=1
+
+patriotnodeaddr=$(cat "${WALLET_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?}
+
+# masternode private key
+patriotnodeprivkey=${MASTERNODE_KEY:?}
+
+# external ip address
+externalip=$(cat "${WALLET_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1)
+
+# Connect via a SOCKS5 proxy (default: 127.0.0.1:9050)
+proxy=${PROXY:?}
+
+# Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: -proxy)
+onion=${PROXY:?}
+
+# Tor control port to use if onion listening enabled (default: 127.0.0.1:9051)
+torcontrol=${TOR_CONTROL:?}
+
+# Maximum number of inbound+outbound connections. (default: 125)
+
+maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
+
+        echo
+        cat "${LOG_DIR:?}"/wallet.conf.tmp 2>&1
+        echo
+        read -r -p "[YN] Save new configuration? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          mv "${LOG_DIR:?}"/wallet.conf.tmp "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" &>/dev/null
+        fi
+      fi
+
+      read -t 2 -r -p "[YN] Get masternode outputs? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        rm "${WALLET_DIR:?}"/masternode_outputs &>/dev/null
+      fi
+
+      if [[ ! -f "${WALLET_DIR:?}"/masternode_outputs ]] &>/dev/null; then
+        # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
+        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${WALLET_DIR:?}"/masternode_outputs
+      else
+        WALLET_TXHASH=$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
+        OUTPUT_IDX=$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
+        printf '%b' "[${G1:?}Ok${N0:?}] txhash ${CY:?}$WALLET_TXHASH${N0:?}\n"
+        printf '%b' "[${G1:?}Ok${N0:?}] outputidx ${CY:?}$OUTPUT_IDX${N0:?}\n"
+      fi
+
+      read -r -p "[YN] Create new patriotnode configuration? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        read -r -p "[YN] Save new configuration? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          # patriotnodename yourpublicip:${port:?} yourprivatekeygeneratedearlier txhash outputidx and replace patriotname, yourpublicip, yourprivatekeygeneratedearlier, txhash and outputidx.
+          echo "PN $(cat "${WALLET_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?} ${MASTERNODE_KEY:?} ${WALLET_TXHASH:?} ${OUTPUT_IDX:?}" >>"${WALLET_DIR:?}"/"${WALLET_MASTER:?}"
+        fi
+      fi
+
+      # restart wallet
+      read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+        # stop wallet daemon
+        printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+        killall "${WALLET_DAEMON:?}" &>/dev/null
+        printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
+
+        # make sure debug.log exist
+        touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        # remove old files
+        rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
+        rm "${WALLET_DIR:?}"/onion &>/dev/null
+        rm "${WALLET_DIR:?}"/getwan &>/dev/null
+
+        truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+        sleep 1
+        # start node (daemon)
+        printf '%b' "[${G1:?}Ok${N0:?}] "
+        "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
+        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        read -r -p "[Ok] Press Enter to continue" </dev/tty
+        echo
+      fi
+
+      ;;
+
+    "2")
+
+      printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
+      read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
+      clear
+      nano "${WALLET_DIR:?}"/"${WALLET_MASTER:?}"
+
+      ;;
+
+    "3")
+
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+
+      ;;
+
+    esac
 
     ;;
 
   "3")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
     nano /usr/local/bin/include/pinode.conf
 
@@ -1216,7 +1490,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "4")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
     sudo nano /boot/config.txt
 
@@ -1225,7 +1499,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "5")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
     sudo nano /etc/tor/torrc
 
@@ -1236,7 +1510,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "6")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
     crontab -e
 
@@ -1245,7 +1519,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "7")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
     sudo crontab -e
 
@@ -1256,7 +1530,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "8")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
     sudo nano /etc/fstab
 
@@ -1345,7 +1619,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     HEIGHT=11
     WIDTH=51
     CHOICE_HEIGHT=4
-    BACKTITLE="Reset configuration(s)"
+    BACKTITLE="Reset configurations"
     TITLE="Reset a specific config"
     MENU="Choose one option:"
 
@@ -1464,6 +1738,19 @@ daemon=1" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
       read -r -p "[YN] Hard reset of tor? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+        # get wallet port, do this once
+        if [[ ! -f "${WALLET_DIR:?}"/wallet_port ]] &>/dev/null; then
+          printf '%b' "[??] Enter wallet Port ${G1:?}> ${N0:?}"
+          read -r PORT
+          echo "${PORT:?}" >"${WALLET_DIR:?}"/wallet_port 2>&1
+          if [[ -z "$PORT" ]] &>/dev/null; then
+            # empty, exit
+            printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
+            exit
+          fi
+        fi
+
         sudo rm -R /var/lib/tor/freedomcoin-service/ &>/dev/null
         sudo rm -R "${WALLET_DIR:?}"/onion* &>/dev/null
 
@@ -1472,7 +1759,7 @@ daemon=1" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
         sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>/dev/null
 
         # if data missing, add values
-        if ! grep "freedomcoin" /etc/tor/torrc &>/dev/null; then
+        if ! grep "${WALLET_NAME:?}" /etc/tor/torrc &>/dev/null; then
 
           read -r -p "[YN] Public .onion web server? y/n " -n 1 -r
           echo
@@ -1481,16 +1768,18 @@ daemon=1" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
           else
             HIDDEN_SERVICE="#HiddenServicePort 80 127.0.0.1:80"
           fi
+
           echo "RunAsDaemon 1
 
 ControlPort 9051
 CookieAuthentication 1
 CookieAuthFileGroupReadable 1
 
-HiddenServiceDir /var/lib/tor/freedomcoin-service/
-HiddenServicePort 15110 127.0.0.1:15110
+HiddenServiceDir /var/lib/tor/${WALLET_NAME:?}-service/
+HiddenServicePort ${PORT:?} 127.0.0.1:${PORT:?}
 ${HIDDEN_SERVICE:?}
 " >"${LOG_DIR:?}"/torrc 2>&1
+
           cat "${LOG_DIR:?}"/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
           # remove old files
           rm "${LOG_DIR:?}"/torrc &>/dev/null
@@ -1607,7 +1896,7 @@ ${HIDDEN_SERVICE:?}
   "1")
 
     echo "Creating Swap manually!"
-    printf '%b' "Enter Gigabyte(s) ${G1:?}>${N0:?} "
+    printf '%b' "Enter Gigabytes ${G1:?}>${N0:?} "
     read -r SWAPG
     if [[ -z "$SWAPG" ]] &>/dev/null; then
       echo "empty!"

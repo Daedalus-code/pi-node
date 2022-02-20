@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221802
-# 0.4.1.2
+# V20222002
+# 0.4.1.6
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -331,6 +331,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
+
+## make sure masternode runs ###################################################
+
+"${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log
 
 ### run with or without a display ##############################################
 
