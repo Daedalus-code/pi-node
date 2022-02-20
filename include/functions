@@ -185,8 +185,8 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
 fi
 
 # get system uptime
-SYSTEM_UPTIME="$(cat "${LOG_DIR:?}"/node_data/stats/system.uptime 2>/dev/null)"
 awk -F. ' {print $1 }' /proc/uptime >"${LOG_DIR:?}"/node_data/stats/system.uptime 2>&1
+SYSTEM_UPTIME="$(cat "${LOG_DIR:?}"/node_data/stats/system.uptime 2>/dev/null)"
 SYS_UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(echo "${SYSTEM_UPTIME:?}" 2>&1)/3600")) $(("$(echo "${SYSTEM_UPTIME:?}" 2>&1)%3600/60")) $(("$(echo "${SYSTEM_UPTIME:?}" 2>&1)%60")))
 SYS_UPTIME_DAYS=$(echo "$(echo "${SYSTEM_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>&1)
 SYS_UPTIME="System (${SYS_UPTIME_DAYS:?}d) ${GR:?}${SYS_UPTIME:?}${N0:?}"
