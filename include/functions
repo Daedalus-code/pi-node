@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222002
-# 1.7.7.7
+# 1.7.9.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.7.7"
+VERSION="v1.7.9.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -817,6 +817,7 @@ if ! grep -o "progress=1.000000" "${LOG_DIR:?}"/node_data/synced &>/dev/null; th
     # non responsive
     SYNC_PROGRESS_BAR="${N0:?}       Loading${N0:?}"
   fi
+
   TX="${G1:?}" # sync bar color
   # replace wallet_txlast with sync_progress_bar
   WALLET_TXLAST="${SYNC_PROGRESS_BAR:?}"
@@ -877,6 +878,22 @@ function wallet_dashbord() {
   WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
   WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
 }
+
+MASTER_INPUTS="${N0:?}"
+MNS="${N0:?}"
+
+# get masternode status
+if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status
+  if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+    # count masternodes
+    MASTER_INPUTS="$(grep -c "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)"
+    MNS="M" # masternode status
+  else
+    MASTER_INPUTS="${N0:?}"
+    MNS="${N0:?}"
+  fi
+fi
 
 if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
   # wallet pos status
