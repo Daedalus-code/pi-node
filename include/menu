@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222002
-# 2.1.4.8
+# 2.1.5.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1304,10 +1304,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         printf '%b' "[${G1:?}Ok${N0:?}] ${CY:?}${MASTERNODE_ADDRESS:?}${N0:?} MN\n"
       fi
 
-      # get wallet balance
-      WALLET_BALANCE=$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      # keep masternode status updated
+      cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
+
+      # get useable wallet balance
+      WALLET_BALANCE=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # get masternode address balance
-      MASTER_BALANCE=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | grep -A4 "${MASTERNODE_ADDRESS:?}" | grep "amount" | awk -F. '{ print $1 }' | awk '{print $2 }')
+      MASTER_BALANCE=$(echo "$(grep -c "txhash" "${WALLET_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1)
 
       if [[ ! "$MASTER_BALANCE" -eq "$MASTERNODECO" ]] &>/dev/null; then
         if [[ "$WALLET_BALANCE" -gt "$MASTERNODECO" ]] &>/dev/null; then
@@ -1474,6 +1477,9 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
     "3")
 
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status
+      # keep masternode status updated
+      cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
+      # output masternode_status data
       cat "${WALLET_DIR:?}"/masternode_status 2>/dev/null
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
