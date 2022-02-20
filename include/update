@@ -2,24 +2,11 @@
 
 # By Rainman
 # V20222002
-# 0.0.2.5
+# 0.0.1.2
 
-if [[ -f /usr/local/bin/include/install ]] &>/dev/null; then
-  sudo cp /home/"$(whoami)"/pi-node/include/install /usr/local/bin/include/install
-  sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/include/install 2>&1
-else
-  echo "installing" >/tmp/installing 2>&1
-  torify bash /usr/local/bin/include/install
-fi
-
-if [[ ! -f /tmp/installing ]] &>/dev/null; then
-  touch /tmp/updating &>/dev/null
-  clear
-else
-  # update repo
-  cd /home/"$(whoami)"/pi-node &>/dev/null || exit && git pull -q &>/dev/null && bash include/install 2>/dev/null
-fi
-rm /tmp/installing &>/dev/null
-rm /tmp/updating &>/dev/null
+touch /tmp/updating &>/dev/null
+clear
+# update repo
+cd /home/"$(whoami)"/pi-node &>/dev/null || exit && git pull -q &>/dev/null && bash include/install 2>/dev/null
 
 # END
