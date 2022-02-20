@@ -893,7 +893,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" 
   MNS="M" # masternode status
 else
   MASTER_INPUTS="${N0:?}"
-  MNS="${N0:?}"
+  MNS="${N0:?} "
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
