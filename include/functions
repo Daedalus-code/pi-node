@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222002
-# 1.7.9.4
+# 1.7.9.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.9.4"
+VERSION="v1.7.9.5"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -879,20 +879,21 @@ function wallet_dashbord() {
   WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
 }
 
-MASTER_INPUTS="${N0:?}"
+MASTER_INPUTS="${N0:?} "
 MNS="${N0:?}"
 
 # get masternode status
 if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status
-  if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
-    # count masternodes
-    MASTER_INPUTS="$(grep -c "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)"
-    MNS="M" # masternode status
-  else
-    MASTER_INPUTS="${N0:?}"
-    MNS="${N0:?}"
-  fi
+fi
+
+if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+  # count masternodes
+  MASTER_INPUTS="$(grep -c "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)"
+  MNS="M" # masternode status
+else
+  MASTER_INPUTS="${N0:?} "
+  MNS="${N0:?}"
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
