@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222002
-# 0.4.1.6
+# 0.4.2.2
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -332,9 +332,15 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   fi
 fi
 
-## make sure masternode runs ###################################################
+## masternode status ###########################################################
 
-"${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log
+if [[ "$(cat "$WALLET_DIR"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1)" ]] &>/dev/null; then
+  if [[ ! $(grep "Successfully started" "${LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
+    # make sure masternode runs
+    echo "Masternode shuccessfully started" >"$WALLET_DIR"/masternode_started 2>&1
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log
+  fi
+fi
 
 ### run with or without a display ##############################################
 
