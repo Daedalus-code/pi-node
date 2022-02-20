@@ -7,6 +7,6 @@
 touch /tmp/updating &>/dev/null
 clear
 # update repo
-cd /home/"$(whoami)"/pi-node &>/dev/null || exit && git pull -q &>/dev/null && bash include/install 2>/dev/null
+cd /home/"$(whoami)"/pi-node 2>/dev/null || exit && git pull -q 2>/dev/null && bash include/install 2>/dev/null
 
 # END
