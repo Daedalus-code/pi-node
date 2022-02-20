@@ -539,18 +539,18 @@ fi
 
 if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
   WALLET_SYNC="${GR:?}Load${N0:?}"
-  PERCC="${Y1:?}"            # sync color
-  PSYMBOL="${GR:?}..${N0:?}" # sync symbol
+  PERCC="${Y1:?}"   # sync color
+  PSYMBOL="${N0:?}" # sync symbol
 fi
 if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
   WALLET_HEADS="${GR:?}0${N0:?}"
-  PERCC="${GR:?}"           # sync color
-  PSYMBOL="${GR:?}.${N0:?}" # sync symbol
+  PERCC="${GR:?}"   # sync color
+  PSYMBOL="${N0:?}" # sync symbol
 fi
 if [[ -z "$WALLET_BLOCK" ]] &>/dev/null; then
   WALLET_BLOCK="${GR:?}0${N0:?}"
-  PERCC="${GR:?}"           # sync color
-  PSYMBOL="${GR:?}.${N0:?}" # sync symbol
+  PERCC="${GR:?}"   # sync color
+  PSYMBOL="${N0:?}" # sync symbol
 fi
 
 # wallet sync (no color)
