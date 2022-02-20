@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # By Rainman
-# V20221802
-# 0.3.7.2
+# V20222002
+# 0.3.7.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 ########## config ##############################################################
 
 source /usr/local/bin/include/pinode.conf 2>&1
+source /usr/local/bin/include/color 2>&1
 
 ########## sync_progress_bar ###################################################
 
