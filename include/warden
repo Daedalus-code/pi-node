@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222002
-# 0.4.2.4
+# 0.4.2.5
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -336,7 +336,8 @@ fi
 ## masternode status ###########################################################
 
 if [[ "$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
-  if [[ ! $(grep "successfully started" "${LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
+  # note: use capital S 'Successfully started' for debug.log
+  if [[ ! $(grep "Successfully started" "${LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
     # make sure masternode runs
     echo "${LOG_DATE:?} Masternode shuccessfully started" >"${WALLET_DIR:?}"/masternode_started 2>&1
     cat "${WALLET_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
