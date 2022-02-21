@@ -1276,7 +1276,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
         CMAKE_USER="sudo"
       else
-        CMAKE_USER="${N0:?}"
+        CMAKE_USER=" "
       fi
 
       # start_timer, duration in seconds
