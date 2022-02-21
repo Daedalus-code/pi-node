@@ -64,8 +64,8 @@ fi
 HEIGHT=17
 WIDTH=55
 CHOICE_HEIGHT=10
-BACKTITLE="Pi-Node - ${OLD_HEAD:?} - $(LC_ALL=de_US.utf8 date 2>&1) - $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -v "127." 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -v "127." 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1) ${CPU_CTEMP:?}C ${CPU_FTEMP:?}F"
-TITLE="Node options"
+BACKTITLE="Pi-Node - ${OLD_HEAD:?} - $(LC_ALL=de_US.utf8 date 2>&1) - ${CPU_CTEMP:?}C ${CPU_FTEMP:?}F"
+TITLE="$(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -v "127." 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -v "127." 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1)"
 MENU="Choose one option:"
 
 OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
