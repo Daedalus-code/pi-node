@@ -1263,7 +1263,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
 
       cd /home/"$(whoami)"/build || exit
-      printf '%b' "${CY:?}!!${N0:?}] This could take some time, make some ${GR:?}coffee..${N0:?}\n"
+      printf '%b' "[${CY:?}!!${N0:?}] This could take some time, make some ${GR:?}coffee..${N0:?}\n"
 
       printf '%b' "[${Y1:?}!!${N0:?}] How many threads (CPU)? \n"
       read -r CPU_COMPILER
