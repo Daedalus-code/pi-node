@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.2.3.2
+# 2.2.3.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1341,73 +1341,73 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         printf '%b' "[${R1:?}!!${N0:?}] No masternode ${CY:?}address${N0:?} found!\n"
         sleep 1
         exit
-      fi
+      else
 
-      # keep masternode status updated
-      cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
+        # keep masternode status updated
+        cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
 
-      # get useable wallet balance
-      WALLET_BALANCE=$(grep "amount:" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
-      # get masternode address balance
-      MASTER_BALANCE=$(echo "$(grep -c "txhash" "${WALLET_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+        # get useable wallet balance
+        WALLET_BALANCE=$(grep "amount:" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+        # get masternode address balance
+        MASTER_BALANCE=$(echo "$(grep -c "txhash" "${WALLET_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
-      if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
-        # non responsive
-        WALLET_BALANCE="0"
-      fi
-      if [[ -z "$MASTER_BALANCE" ]] &>/dev/null; then
-        # non responsive
-        MASTER_BALANCE="0"
-      fi
+        if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
+          # non responsive
+          WALLET_BALANCE="0"
+        fi
+        if [[ -z "$MASTER_BALANCE" ]] &>/dev/null; then
+          # non responsive
+          MASTER_BALANCE="0"
+        fi
 
-      if [[ ! "$MASTER_BALANCE" -eq "$MASTERNODECO" ]] &>/dev/null; then
-        if [[ "$WALLET_BALANCE" -gt "$MASTERNODECO" ]] &>/dev/null; then
-          if [[ -f "${WALLET_DIR:?}"/masternode_address ]] &>/dev/null; then
-            read -r -p "[YN] Send ${MASTERNODECO:?} coins to ${MASTERNODE_ADDRESS:?}? y/n " -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-              # this is your PATRIOTNODE DEPOSIT ADDRESS, where you will deposit ${masternodeco:?} coins to create a patriotnode
-              "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" sendtoaddress "${MASTERNODE_ADDRESS:?}" "${MASTERNODECO:?}"
+        if [[ ! "$MASTER_BALANCE" -eq "$MASTERNODECO" ]] &>/dev/null; then
+          if [[ "$WALLET_BALANCE" -gt "$MASTERNODECO" ]] &>/dev/null; then
+            if [[ -f "${WALLET_DIR:?}"/masternode_address ]] &>/dev/null; then
+              read -r -p "[YN] Send ${MASTERNODECO:?} coins to ${MASTERNODE_ADDRESS:?}? y/n " -n 1 -r
+              echo
+              if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+                # this is your PATRIOTNODE DEPOSIT ADDRESS, where you will deposit ${masternodeco:?} coins to create a patriotnode
+                "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" sendtoaddress "${MASTERNODE_ADDRESS:?}" "${MASTERNODECO:?}"
+              fi
             fi
+          else
+            WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+            printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
+            read -r -p "[Ok] Press Enter to exit" </dev/tty
+            exit
           fi
         else
-          WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
-          printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
-          read -r -p "[Ok] Press Enter to exit" </dev/tty
-          exit
+          printf '%b' "[${G1:?}Ok${N0:?}] Masternode ${CY:?}address${N0:?} has enough coins.\n"
         fi
-      else
-        printf '%b' "[${G1:?}Ok${N0:?}] Masternode ${CY:?}address${N0:?} has enough coins.\n"
-      fi
 
-      if [[ ! -f "${WALLET_DIR:?}"/masternode_key ]] &>/dev/null; then
-        read -r -p "[YN] Create new masternode key? y/n " -n 1 -r
+        if [[ ! -f "${WALLET_DIR:?}"/masternode_key ]] &>/dev/null; then
+          read -r -p "[YN] Create new masternode key? y/n " -n 1 -r
+          echo
+          if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+            # in the fonsole debug window enter createpatriotnodekey - this is your PATRIOTNODE PRIVKEY.
+            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" createpatriotnodekey >"${WALLET_DIR:?}"/masternode_key
+          fi
+        else
+          printf '%b' "[${G1:?}Ok${N0:?}] ${CY:?}$(cat "${WALLET_DIR:?}"/masternode_key 2>/dev/null)${N0:?} Key\n"
+        fi
+
+        MASTERNODE_KEY="$(cat "${WALLET_DIR:?}"/masternode_key 2>/dev/null)"
+
+        # create tor_wan script
+        echo "curl -s https://api.myip.com >${WALLET_DIR:?}/tor_wan 2>&1" >"${LOG_DIR:?}"/wan_curl 2>&1
+        # get onion wan address (torify bash)
+        torify bash "${LOG_DIR:?}"/wan_curl && rm "${LOG_DIR:?}"/wan_curl 2>&1
+
+        read -r -p "[YN] Create new wallet configuration (overwriting)? y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          # in the fonsole debug window enter createpatriotnodekey - this is your PATRIOTNODE PRIVKEY.
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" createpatriotnodekey >"${WALLET_DIR:?}"/masternode_key
-        fi
-      else
-        printf '%b' "[${G1:?}Ok${N0:?}] ${CY:?}$(cat "${WALLET_DIR:?}"/masternode_key 2>/dev/null)${N0:?} Key\n"
-      fi
 
-      MASTERNODE_KEY="$(cat "${WALLET_DIR:?}"/masternode_key 2>/dev/null)"
+          # create random rpcuser & rpcpassword
+          RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
+          RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
-      # create tor_wan script
-      echo "curl -s https://api.myip.com >${WALLET_DIR:?}/tor_wan 2>&1" >"${LOG_DIR:?}"/wan_curl 2>&1
-      # get onion wan address (torify bash)
-      torify bash "${LOG_DIR:?}"/wan_curl && rm "${LOG_DIR:?}"/wan_curl 2>&1
-
-      read -r -p "[YN] Create new wallet configuration (overwriting)? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-        # create random rpcuser & rpcpassword
-        RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
-        RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
-
-        # wallet configuration file (overwriting old configuration)
-        echo "## ${WALLET_NAME:?} configuration file.
+          # wallet configuration file (overwriting old configuration)
+          echo "## ${WALLET_NAME:?} configuration file.
 # Network-related settings:
 
 # Run on the test network instead of the real freedomcoin network.
@@ -1447,72 +1447,73 @@ torcontrol=${TOR_CONTROL:?}
 
 maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
 
-        echo
-        # output config data
-        cat "${LOG_DIR:?}"/wallet.conf.tmp 2>&1
-        echo
-        read -r -p "[YN] Save new configuration? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          mv "${LOG_DIR:?}"/wallet.conf.tmp "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" &>/dev/null
-        fi
-      fi
-
-      read -t 2 -r -p "[YN] Get masternode outputs? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        rm "${WALLET_DIR:?}"/masternode_outputs &>/dev/null
-      fi
-
-      if [[ ! -f "${WALLET_DIR:?}"/masternode_outputs ]] &>/dev/null; then
-        # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
-        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${WALLET_DIR:?}"/masternode_outputs
-      else
-        WALLET_TXHASH=$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
-        OUTPUT_IDX=$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
-        printf '%b' "[${G1:?}Ok${N0:?}] txhash ${CY:?}$WALLET_TXHASH${N0:?}\n"
-        printf '%b' "[${G1:?}Ok${N0:?}] outputidx ${CY:?}$OUTPUT_IDX${N0:?}\n"
-      fi
-
-      if [[ ! -f "${WALLET_DIR:?}"/"${WALLET_MASTER:?}" ]] &>/dev/null; then
-        read -r -p "[YN] Create new patriotnode configuration (overwriting)? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          echo
+          # output config data
+          cat "${LOG_DIR:?}"/wallet.conf.tmp 2>&1
+          echo
           read -r -p "[YN] Save new configuration? y/n " -n 1 -r
           echo
           if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-            # patriotnodename yourpublicip:${port:?} yourprivatekeygeneratedearlier txhash outputidx and replace patriotname, yourpublicip, yourprivatekeygeneratedearlier, txhash and outputidx.
-            echo "MN $(cat "${WALLET_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?} ${MASTERNODE_KEY:?} ${WALLET_TXHASH:?} ${OUTPUT_IDX:?}" >>"${WALLET_DIR:?}"/"${WALLET_MASTER:?}"
+            mv "${LOG_DIR:?}"/wallet.conf.tmp "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" &>/dev/null
           fi
         fi
+
+        read -t 2 -r -p "[YN] Get masternode outputs? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          rm "${WALLET_DIR:?}"/masternode_outputs &>/dev/null
+        fi
+
+        if [[ ! -f "${WALLET_DIR:?}"/masternode_outputs ]] &>/dev/null; then
+          # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${WALLET_DIR:?}"/masternode_outputs
+        else
+          WALLET_TXHASH=$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
+          OUTPUT_IDX=$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
+          printf '%b' "[${G1:?}Ok${N0:?}] txhash ${CY:?}$WALLET_TXHASH${N0:?}\n"
+          printf '%b' "[${G1:?}Ok${N0:?}] outputidx ${CY:?}$OUTPUT_IDX${N0:?}\n"
+        fi
+
+        if [[ ! -f "${WALLET_DIR:?}"/"${WALLET_MASTER:?}" ]] &>/dev/null; then
+          read -r -p "[YN] Create new patriotnode configuration (overwriting)? y/n " -n 1 -r
+          echo
+          if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+            read -r -p "[YN] Save new configuration? y/n " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+              # patriotnodename yourpublicip:${port:?} yourprivatekeygeneratedearlier txhash outputidx and replace patriotname, yourpublicip, yourprivatekeygeneratedearlier, txhash and outputidx.
+              echo "MN $(cat "${WALLET_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?} ${MASTERNODE_KEY:?} ${WALLET_TXHASH:?} ${OUTPUT_IDX:?}" >>"${WALLET_DIR:?}"/"${WALLET_MASTER:?}"
+            fi
+          fi
+        fi
+
+        # restart wallet
+        read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+          # stop wallet daemon
+          printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+          killall "${WALLET_DAEMON:?}" &>/dev/null
+          printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
+
+          # make sure debug.log exist
+          touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          # remove old files
+          rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
+          rm "${WALLET_DIR:?}"/onion &>/dev/null
+          rm "${WALLET_DIR:?}"/getwan &>/dev/null
+
+          truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+          sleep 1
+          # start node (daemon)
+          printf '%b' "[${G1:?}Ok${N0:?}] "
+          "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
+          printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        fi
+        read -r -p "[Ok] Press Enter to continue" </dev/tty
+        echo
       fi
-
-      # restart wallet
-      read -r -p "[YN] Re/start node (daemon)? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-        # stop wallet daemon
-        printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
-        killall "${WALLET_DAEMON:?}" &>/dev/null
-        printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
-
-        # make sure debug.log exist
-        touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        # remove old files
-        rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
-        rm "${WALLET_DIR:?}"/onion &>/dev/null
-        rm "${WALLET_DIR:?}"/getwan &>/dev/null
-
-        truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
-        sleep 1
-        # start node (daemon)
-        printf '%b' "[${G1:?}Ok${N0:?}] "
-        "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
-        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      fi
-      read -r -p "[Ok] Press Enter to continue" </dev/tty
-      echo
 
       ;;
 
@@ -1547,7 +1548,8 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
 Message $(grep "message" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2,$3,$4 }' 2>&1)
 Net Address $(grep "netaddr" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }')
 Outputidx $(grep "outputidx" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)
-Status $(grep "status" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)"
+Status $(grep "status" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)
+Updated $(ls -l "${WALLET_DIR:?}"/masternode_status 2>&1 | awk '{ print $6,$7,$8 }' 2>&1)"
           )
           display_result "Masternode Status"
           clear
