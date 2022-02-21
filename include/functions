@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222102
-# 1.8.3.2
+# 1.8.3.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.3.2"
+VERSION="v1.8.3.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -306,6 +306,7 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
   if [ ! -f "${WALLET_DIR:?}"/onion ] &>/dev/null; then
 
     if grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $9 }' &>/dev/null; then
+      # save address
       grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $9 }' 2>&1 | tail -1 >"${WALLET_DIR:?}"/onion 2>&1
 
       # greater than n seconds, continue
@@ -316,11 +317,12 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
 
     # get onion address
     PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
-    if [[ ! -f "${WALLET_DIR:?}"/onion ]]; then
+    if [[ ! -f "${WALLET_DIR:?}"/onion ]] &>/dev/null; then
       ONION_C="${GR:?}"
     else
       ONION_C="${P1:?}"
     fi
+
     # output onion address (short version)
     PUBLIC_IP="${ONION_C:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
@@ -337,7 +339,12 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
   fi
 
   PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
-  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+    PIC="${GR:?}" # public ip color (grey)
+  else
+    PIC="${P1:?}" # public ip color (purple)
+  fi
+  PUBLIC_IP="${PIC:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
 else # tor icon (top right)
   TOR_ICON="${GR:?}P$N0"
