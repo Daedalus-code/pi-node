@@ -1,4 +1,4 @@
-# Pi-node
+# Pi-Node
 Crypto RaspberryPi Node - RaspberryPi with LCD monitoring  
 
 *Build your own crypto Node/StakeBox on a Raspberry Pi with a nice Display.*  
@@ -30,15 +30,6 @@ Put this at bottom
 ``*/1 * * * * bash /usr/local/bin/include/warden``  
 Save with ctrl+o  
 
-### Setup HyperPixel4
+### Setup display (HyperPixel4)
 
-* https://github.com/pimoroni/hyperpixel4
-
-Here's a list of active branches and which Pi/display combination they support:
-
-* [Pi3](https://github.com/pimoroni/hyperpixel4/tree/pi3) - Pi 3B+ and earlier, HyperPixel4 Rectangular
-* [Pi4](https://github.com/pimoroni/hyperpixel4/tree/pi4) - Pi 4 & Pi 400, HyperPixel4 Rectangular, use `hyperpixel4-rotate` to rotate once installed
-* [Square](https://github.com/pimoroni/hyperpixel4/tree/square) - Pi 3B+ and earlier, HyperPixel4 Square (for boards manufactured 2020 and earlier)
-* [Square-Pi4](https://github.com/pimoroni/hyperpixel4/tree/square-pi4)  - Pi 4 & Pi 400, HyperPixel4 Square (for boards manufactured 2020 and earlier)
-* [Square-2021](https://github.com/pimoroni/hyperpixel4/tree/square-2021) - Pi 3B+ and earlier, HyperPixel4 Square (for boards manufactured 2021 and later)
-* [Square-Pi4-2021](https://github.com/pimoroni/hyperpixel4/tree/square-pi4-2021)  - Pi 4 & Pi 400, HyperPixel4 Square (for boards manufactured 2021 and later)
+* https://github.com/pimoroni/hyperpixel4  
