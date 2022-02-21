@@ -306,7 +306,7 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
   if [ ! -f "${WALLET_DIR:?}"/onion ] &>/dev/null; then
 
     if grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $9 }' &>/dev/null; then
-      # save address
+      # save onion address
       grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $9 }' 2>&1 | tail -1 >"${WALLET_DIR:?}"/onion 2>&1
 
       # greater than n seconds, continue
@@ -340,20 +340,20 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/clie
 
   PUBLIC_IP=$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)
   if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-    PIC="${GR:?}" # public ip color (grey)
+    PIC="${GR:?}" # onion address color (grey)
   else
-    PIC="${P1:?}" # public ip color (purple)
+    PIC="${P1:?}" # onion address color (purple)
   fi
   PUBLIC_IP="${PIC:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
 else # tor icon (top right)
   TOR_ICON="${GR:?}P$N0"
-  # tor public ip while waiting on data
+  # localhost while waiting on data
   PUBLIC_IP="${GR:?}127.0.0.1$N0"
 fi
 
 if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
-  # hide wan address
+  # hide address
   PUBLIC_IP="${GR:?}127.0.0.1$N0"
 fi
 
