@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.2.5.3
+# 2.2.5.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1343,7 +1343,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [[ ! -f "${WALLET_DIR:?}"/masternode_address ]] &>/dev/null; then
         printf '%b' "[${R1:?}!!${N0:?}] No masternode ${CY:?}address${N0:?} found!\n"
         sleep 1
-        exit
       else
 
         # keep masternode status updated
