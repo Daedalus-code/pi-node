@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.1.7.5
+# 2.1.9.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -36,11 +36,30 @@ if [[ -z "$LOG_DATE" ]] &>/dev/null; then
   LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>&1)
 fi
 
+# create uname -a
+uname -a >"${LOG_DIR:?}"/node_data/uname
+
+# get system user
+USER=$(whoami 2>&1 | awk '{ print $1 }' 2>&1)
+
+if cat "${LOG_DIR:?}"/node_data/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
+  # get cpu temp, celcius, fahrenheit, (raspberry pi)
+  CPU_RAW_TEMP=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
+else
+  CPU_RAW_TEMP="0"
+fi
+# calculate celcius and fahrenheit
+CELCIUS=$(echo "$CPU_RAW_TEMP/100*0.1" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1)
+FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1)
+
+CPU_CTEMP="${CELCIUS:?}"
+CPU_FTEMP="${FAHRENHEIT:?}"
+
 HEIGHT=17
 WIDTH=55
 CHOICE_HEIGHT=10
-BACKTITLE="Pi-Node - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
-TITLE="Node Options"
+BACKTITLE="Pi-Node - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1)) ${CPU_CTEMP:?} ${CPU_FTEMP:?}"
+TITLE="Node options"
 MENU="Choose one option:"
 
 OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
@@ -71,7 +90,7 @@ case $CHOICE in
   HEIGHT=9
   WIDTH=55
   CHOICE_HEIGHT=2
-  BACKTITLE="Pi-Node - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+  BACKTITLE="Pi-Node"
   TITLE="Wallet Menu"
   MENU="Choose one option:"
 
@@ -175,7 +194,7 @@ case $CHOICE in
   HEIGHT=9
   WIDTH=52
   CHOICE_HEIGHT=2
-  BACKTITLE="Pi-Node - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+  BACKTITLE="Pi-Node"
   TITLE="Key Menu"
   MENU="Choose one option:"
 
@@ -251,7 +270,7 @@ Then the importprivkey can be used with this output
   HEIGHT=14
   WIDTH=46
   CHOICE_HEIGHT=7
-  BACKTITLE="Pi-Node - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+  BACKTITLE="Pi-Node"
   TITLE="Uncomplicated firewall Menu"
   MENU="Choose one option:"
 
@@ -681,7 +700,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   HEIGHT=11
   WIDTH=68
   CHOICE_HEIGHT=4
-  BACKTITLE="Download, Install - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+  BACKTITLE="Download & Install"
   TITLE="Download wallets, bootstrap, display drivers"
   MENU="Choose one option:"
 
@@ -749,7 +768,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     HEIGHT=16
     WIDTH=42
     CHOICE_HEIGHT=9
-    BACKTITLE="Download manually - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+    BACKTITLE="Download manually"
     TITLE="Download Menu"
     MENU="Choose one option:"
 
@@ -1044,7 +1063,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     HEIGHT=13
     WIDTH=51
     CHOICE_HEIGHT=6
-    BACKTITLE="Setup display - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+    BACKTITLE="Setup display"
     TITLE="HyperPixel4 Menu"
     MENU="Choose one option:"
 
@@ -1190,7 +1209,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   HEIGHT=17
   WIDTH=48
   CHOICE_HEIGHT=10
-  BACKTITLE="Node configuration - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+  BACKTITLE="Node configuration"
   TITLE="Edit configurations"
   MENU="Choose one option:"
 
@@ -1230,8 +1249,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     HEIGHT=10
     WIDTH=50
     CHOICE_HEIGHT=3
-    BACKTITLE="Masternode menu - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
-    TITLE="Masternode options"
+    BACKTITLE="Masternode menu"
+    TITLE="Masternode Options"
     MENU="Choose one option:"
 
     OPTIONS=(1 "Install          Setup Masternode"
@@ -1576,8 +1595,8 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
     HEIGHT=10
     WIDTH=45
     CHOICE_HEIGHT=3
-    BACKTITLE="Graphs - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
-    TITLE="rrdtool (graphs) options"
+    BACKTITLE="Graphs"
+    TITLE="rrdtool (graphs) Options"
     MENU="Choose one option:"
 
     OPTIONS=(1 "Update           Update web graphs"
@@ -1652,7 +1671,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
     HEIGHT=11
     WIDTH=51
     CHOICE_HEIGHT=4
-    BACKTITLE="Reset configurations - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+    BACKTITLE="Reset configurations"
     TITLE="Reset a specific config"
     MENU="Choose one option:"
 
@@ -1904,7 +1923,7 @@ ${HIDDEN_SERVICE:?}
   HEIGHT=11
   WIDTH=45
   CHOICE_HEIGHT=4
-  BACKTITLE="Swap options - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+  BACKTITLE="Swap options"
   TITLE="Setup Swap space"
   MENU="Choose one option:"
 
@@ -2097,7 +2116,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
   HEIGHT=10
   WIDTH=47
   CHOICE_HEIGHT=3
-  BACKTITLE="Tor menu - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1))"
+  BACKTITLE="Tor menu"
   TITLE="Proxy options (tor)"
   MENU="Choose one option:"
 
