@@ -2085,7 +2085,7 @@ ${HIDDEN_SERVICE:?}
     RESULT=$(
       free --total --mega
       echo
-      echo
+      ls -lSh /var/swap 2>/dev/null
       ls -lSh /swapfile 2>/dev/null
       swapon -V
     )
