@@ -1274,7 +1274,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       # start_timer, duration in seconds
       START_TIMER=$TIMER_SECONDS
       printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
-      /home/"$(whoami)"/build./autogen.sh
+      /home/"$(whoami)"/build/./autogen.sh
       # duration_timer
       DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
       COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
@@ -1283,7 +1283,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       # start_timer, duration in seconds
       START_TIMER=$TIMER_SECONDS
       printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
-      /home/"$(whoami)"/build./configure
+      /home/"$(whoami)"/build././configure
       # duration_timer
       DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
       COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
