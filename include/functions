@@ -22,7 +22,7 @@ else
   echo "Configuration ${GR:?}Old${N0:?}" >"${LOG_DIR:?}"/node_data/config 2>&1
   until grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode.conf 2>&1 | wc -w 2>&1 | grep "1" &>/dev/null; do
     clear
-    printf '%b' "[${Y1:?}!!${N0:?}]Configuration is old!${N0:?}\n"
+    printf '%b' "[${Y1:?}!!${N0:?}] Configuration is old! ${GR:?}$(grep "END" /usr/local/bin/include/pinode.conf 2>&1 | awk '{ print $3 }' 2>&1)${N0:?} -> ${G1:?}${CONFIG_DATE:?}${N0:?}\n"
     printf '%b' "[${G1:?}!!${N0:?}] ${GR:?}Menu > Configuration > PiNode!${N0:?}\n"
     sleep 5
   done
