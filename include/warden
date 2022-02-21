@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 0.4.5.6
+# 0.4.5.7
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -356,6 +356,7 @@ fi
 
 if [[ ! "$(egrep "Wallet.Warden: Locking addr with .*$(tail -1 "${WALLET_DIR:?}"/masternode_lock)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
 
+  # look for masternode collateral inputs, get txid
   grep -B6 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${WALLET_DIR:?}"/masternode_lock 2>&1
 
   if [[ -f "${WALLET_DIR:?}"/masternode_lock ]] &>/dev/null; then
