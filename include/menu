@@ -1257,7 +1257,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
       echo
 
-      cd "${LATEST_VERSION:?}" || exit
+      cd build_"${LATEST_VERSION:?}" || exit
       printf '%b' "${CY:?}!!${N0:?}] This could take some time, make some ${GR:?}coffee..${N0:?}\n"
 
       # start_timer, duration in seconds
