@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.2.5.2
+# 2.2.6.3
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -303,11 +303,15 @@ Then the importprivkey can be used with this output
 
   "1")
 
-    echo "Uncomplicated firewall Status"
-    sudo ufw status verbose
-    echo
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
+    display_result() {
+      dialog --title "UFW Status" \
+        --no-collapse \
+        --msgbox "$RESULT" 0 0
+    }
+
+    RESULT=$(sudo ufw status verbose 2>&1)
+    display_result "Uncomplicated firewall Status"
+    clear
 
     ;;
 
@@ -2067,19 +2071,26 @@ ${HIDDEN_SERVICE:?}
 
     ;;
 
-    # swap status
+    # swap status (megabytes)
 
   "3")
 
+    display_result() {
+      dialog --title "Memory Status - System memory $(free --total --mega 2>&1 | grep "Mem:" 2>&1 | awk '{ print $2 }' 2>&1)Mb" \
+        --no-collapse \
+        --msgbox "$RESULT" 0 0
+    }
+
     # output total memory, swap info
-    printf '%b' "[${G1:?}Ok${N0:?}] Total system memory ${G1:?}$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)MB${N0:?}\n"
-    echo
-    sudo free -h
-    echo
-    sudo swapon --show
-    echo
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
+    RESULT=$(
+      free --total --mega
+      echo
+      echo
+      ls -lSh /swapfile 2>/dev/null
+      swapon -V
+    )
+    display_result "System memory information"
+    clear
 
     ;;
 
