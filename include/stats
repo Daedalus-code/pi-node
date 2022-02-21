@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222002
+# V20222102
 # 0.5.7.4
 
 source /usr/local/bin/include/pinode.conf 2>&1
@@ -561,7 +561,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     fi
     rm "${LOG_DIR:?}"/node_data/graph.lock &>/dev/null
   else
-    if tail -4 "${LOG_DIR:?}"/debug.log 2>&1 | grep "Saving data" &>/dev/null; then
+    if tail -4 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Saving data" &>/dev/null; then
       # data feed overlapping (happens when pinode takes over the data feed, too close to warden data feed)
       SAVING_DATA="${CY:?}Saving data.${N0:?}"
     else # normal data feed, no overlapping
