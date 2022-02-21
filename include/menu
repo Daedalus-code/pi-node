@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222202
-# 2.3.7.2
+# 2.3.7.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1250,14 +1250,19 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       URL="${WALLET_SOURCE:?}/${LATEST_VERSION:?}"
       UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
 
-      cd /home/"$(whoami)"/build || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
+      if [[ ! -f /home/"$(whoami)"/build/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
+        cd /home/"$(whoami)"/build || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
+        read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+        echo
+      fi
 
-      yes "A" 2>&1 | unzip -j "${LATEST_VERSION:?}.zip" -d /home/"$(whoami)"/build 2>&1
-      echo
-      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
-      echo
+      if [[ ! -f /home/"$(whoami)"/build/COPYRIGHT ]] &>/dev/null; then
+        yes "A" 2>&1 | unzip -j "${LATEST_VERSION:?}.zip" -d /home/"$(whoami)"/build 2>&1
+        read -r -p "[Ok] ${UNAME_SYSTEM:?} unzipped! Press Enter to continue" </dev/tty
+        echo
+      fi
 
-      cd build || exit
+      cd /home/"$(whoami)"/build || exit
       printf '%b' "${CY:?}!!${N0:?}] This could take some time, make some ${GR:?}coffee..${N0:?}\n"
 
       # start_timer, duration in seconds
