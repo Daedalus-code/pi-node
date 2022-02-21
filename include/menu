@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.2.2.6
+# 2.2.3.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1527,33 +1527,38 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
 
     "3")
 
-      # greater than n seconds, continue
-      if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+      if [[ ! -s "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus ]] &>/dev/null; then
 
-        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
-        # keep masternode status updated
-        cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
+        # greater than n seconds, continue
+        if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
 
-        display_result() {
-          dialog --title " TXHash $(grep "txhash" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)" \
-            --no-collapse \
-            --msgbox "$RESULT" 0 0
-        }
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
+          # keep masternode status updated
+          cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
 
-        RESULT=$(
-          printf '%b' "Address $(grep "addr" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | grep -v "netaddr" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d ',|"' 2>&1)
+          display_result() {
+            dialog --title " TXHash $(grep "txhash" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)" \
+              --no-collapse \
+              --msgbox "$RESULT" 0 0
+          }
+
+          RESULT=$(
+            printf '%b' "Address $(grep "addr" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | grep -v "netaddr" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d ',|"' 2>&1)
 Message $(grep "message" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2,$3,$4 }' 2>&1)
 Net Address $(grep "netaddr" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }')
 Outputidx $(grep "outputidx" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)
 Status $(grep "status" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)"
-        )
-        display_result "Masternode Status"
-        clear
+          )
+          display_result "Masternode Status"
+          clear
+        else
+          printf '%b' "[${R1:?}!!${N0:?}] Daemon not running!\n"
+          echo
+          read -r -p "[Ok] Press Enter to continue" </dev/tty
+          echo
+        fi
       else
-        printf '%b' "[${R1:?}!!${N0:?}] Daemon not running!\n"
-        echo
-        read -r -p "[Ok] Press Enter to continue" </dev/tty
-        echo
+        printf '%b' "[${R1:?}!!${N0:?}] This is not a masternode!\n"
       fi
 
       ;;
