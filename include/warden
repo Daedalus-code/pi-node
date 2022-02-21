@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 0.4.2.8
+# 0.4.3.2
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -101,12 +101,16 @@ WAIT_TIME_BLOCK=$(tail -1 "${WALLET_DIR:?}"/wait 2>&1)
 
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
-  WAIT_TIME="360"
-  echo "${WAIT_TIME:?}" >"${WALLET_DIR:?}"/wait
+  echo "360" >"${WALLET_DIR:?}"/wait
+  echo "420" >>"${WALLET_DIR:?}"/wait
 fi
-if [[ -z "$WAIT_TIME_BLOCK" ]] &>/dev/null; then
-  WAIT_TIME_BLOCK="420"
-  echo "${WAIT_TIME_BLOCK:?}" >>"${WALLET_DIR:?}"/wait
+
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
+
+  if [[ ! -f "${WALLET_DIR:?}"/wait ]] &>/dev/null; then
+    echo "360" >"${WALLET_DIR:?}"/wait
+    echo "420" >>"${WALLET_DIR:?}"/wait
+  fi
 fi
 
 # create screen list
