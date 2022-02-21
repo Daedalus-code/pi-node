@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222102
-# 1.8.2.0
+# 1.8.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.2.0"
+VERSION="v1.8.4.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1732,6 +1732,20 @@ if [ ! -s "${WALLET_DIR:?}"/price.cg ] &>/dev/null; then
   cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg 2>&1
 fi
 
+# run data with intervals, every n minutes, update api, arp and ticker
+if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/null; then
+
+  # make sure backup is updated
+  if [[ "${LOG_DIR:?}"/node_data/stats/price.cg -eq "${WALLET_DIR:?}"/price.cg ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/price.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+  if [[ "${LOG_DIR:?}"/node_data/stats/volume.cg -eq "${WALLET_DIR:?}"/volume.cg ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/stats/volume.cg "${WALLET_DIR:?}"/volume.cg &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+fi
+
 ### backup values coinmarketcap ################################################
 
 if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
@@ -1790,16 +1804,26 @@ else # restore it
   fi
 fi
 
-# remove empty files, try to restore
-if [ ! -s "${LOG_DIR:?}"/node_data/stats/price.cmc ] &>/dev/null; then
-  rm "${LOG_DIR:?}"/node_data/stats/price.cmc &>/dev/null
-  cp "${WALLET_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1
-fi
+# run data with intervals, every n minutes, update api, arp and ticker
+if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/null; then
 
-# remove empty files, try to restore
-if [ ! -s "${WALLET_DIR:?}"/price.cmc ] &>/dev/null; then
-  rm "${WALLET_DIR:?}"/price.cmc &>/dev/null
-  cp "${LOG_DIR:?}"/node_data/stats/price.cmc "${WALLET_DIR:?}"/price.cmc 2>&1
+  # make sure backup is updated
+  if [[ "${LOG_DIR:?}"/node_data/stats/price.cmc -eq "${WALLET_DIR:?}"/price.cmc ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/stats/price.cmc "${WALLET_DIR:?}"/price.cmc &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/price.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+  if [[ "${LOG_DIR:?}"/node_data/stats/rank.cmc -eq "${WALLET_DIR:?}"/rank.cmc ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/stats/rank.cmc "${WALLET_DIR:?}"/rank.cmc &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/rank.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Rank! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+  if [[ "${LOG_DIR:?}"/node_data/stats/volume.cmc -eq "${WALLET_DIR:?}"/volume.cmc ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/stats/volume.cmc "${WALLET_DIR:?}"/volume.cmc &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+  if [[ "${LOG_DIR:?}"/node_data/stats/watchers.cmc -eq "${WALLET_DIR:?}"/watchers.cmc ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/stats/watchers.cmc "${WALLET_DIR:?}"/watchers.cmc &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/watchers.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Watchers! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 fi
 
 ### theme ######################################################################
