@@ -2,25 +2,26 @@
 
 # By Rainman
 # V20222102
-# 1.8.4.5
+# 1.8.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.4.5"
+VERSION="v1.8.4.6"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
 
 # dated configuration ##########################################################
 
+CONFIG_DATE="1645481912" # configuration date (date '+%s')
+
 if [[ "$(grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode.conf 2>&1)" ]] &>/dev/null; then
   echo "Configuration ${G1:?}Ok${N0:?}" >"${LOG_DIR:?}"/node_data/config 2>&1
 else
   echo "Configuration ${GR:?}Old${N0:?}" >"${LOG_DIR:?}"/node_data/config 2>&1
-  until grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode.conf 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
+  until grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode.conf 2>&1 | wc -w 2>&1 | grep "1" &>/dev/null; do
     clear
-    CONFIG_DATE="1645481912" # configuration date (date '+%s')
     printf '%b' "[${Y1:?}!!${N0:?}]Configuration is old!${N0:?}\n"
     printf '%b' "[${G1:?}!!${N0:?}] ${GR:?}Menu > Configuration > PiNode!${N0:?}\n"
     sleep 5
