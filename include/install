@@ -149,7 +149,7 @@ ControlPort 9051
 CookieAuthentication 1
 CookieAuthFileGroupReadable 1
 
-HiddenServiceDir /var/lib/tor/freedomcoin-service/
+HiddenServiceDir /var/lib/tor/${WALLET_NAME:?}-service/
 HiddenServicePort ${PORT:?} 127.0.0.1:${PORT:?}
 ${HIDDEN_SERVICE:?}
 " >/tmp/torrc 2>&1
@@ -178,8 +178,8 @@ if ! [ -x "$(command -v ufw)" ] &>/dev/null; then
   echo "Installing uncomplicated firewall (ufw)"
   # setup ufw with node ports ${port:?}, 80, 22
   sudo apt-get install ufw -y
-  sudo ufw allow "${PORT:?}" comment "FreedomCoin mainnet"
-  sudo ufw allow 80 comment "FreedomCoin Graphs"
+  sudo ufw allow "${PORT:?}" comment "${WALLET_NAME:?} mainnet"
+  sudo ufw allow 80 comment "${WALLET_NAME:?} Graphs"
   sudo ufw allow 22 comment "SSH"
   sudo ufw status
   echo "Using different ports?"
@@ -204,7 +204,7 @@ if [[ ! -f "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" ]] &>/dev/null; then
   RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
   # get proxy (tor) hostname with root
-  EXTERNALIP=$(sudo cat /var/lib/tor/freedomcoin-service/hostname 2>/dev/null)
+  EXTERNALIP=$(sudo cat /var/lib/tor/"${WALLET_NAME:?}"-service/hostname 2>/dev/null)
 
   if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
     # non responsive
@@ -216,7 +216,7 @@ if [[ ! -f "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" ]] &>/dev/null; then
   echo "## '${WALLET_NAME:?}' configuration file.
 # Network-related settings:
 
-# Run on the test network instead of the real freedomcoin network.
+# Run on the test network instead of the real ${WALLET_NAME:?} network.
 #testnet=1
 
 # RPC credentials

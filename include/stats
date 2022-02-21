@@ -66,7 +66,7 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
 </IfModule>" >"${LOG_DIR:?}"/ports.conf.tmp
     sudo mv "${LOG_DIR:?}"/ports.conf.tmp /etc/apache2/sites-enabled/ports.conf 2>&1
     # make sure ufw opens up port 8080
-    sudo ufw allow 8080 comment "FreedomCoin Graphs"
+    sudo ufw allow 8080 comment "${WALLET_NAME:?} Graphs"
     sudo ufw status
     printf '%b' "[${G1:?}OK${N0:?}] Restarting Apache\n"
     sudo systemctl restart apache2 2>&1

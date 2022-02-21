@@ -449,8 +449,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # set default ufw rules
     echo "[Ok] Set allow rules ${PORT:?}, 80, 22"
-    sudo ufw allow "${PORT:?}" comment "FreedomCoin mainnet"
-    sudo ufw allow 80 comment "FreedomCoin Graphs"
+    sudo ufw allow "${PORT:?}" comment "${WALLET_NAME:?} mainnet"
+    sudo ufw allow 80 comment "${WALLET_NAME:?} Graphs"
     sudo ufw allow 22 comment "SSH"
     sudo ufw status
     echo
@@ -1416,7 +1416,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           echo "## ${WALLET_NAME:?} configuration file.
 # Network-related settings:
 
-# Run on the test network instead of the real freedomcoin network.
+# Run on the test network instead of the real ${WALLET_NAME:?} network.
 #testnet=1
 
 # RPC credentials
@@ -1778,7 +1778,7 @@ Status $(grep "status" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1
         echo "## ${WALLET_CONFIG:?} configuration file.
 # Network-related settings:
 
-# Run on the test network instead of the real freedomcoin network.
+# Run on the test network instead of the real ${WALLET_NAME:?} network.
 #testnet=1
 
 # RPC credentials
