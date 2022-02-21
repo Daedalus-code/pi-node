@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.2.0.0
+# 2.2.0.5
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1338,11 +1338,16 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         printf '%b' "[${G1:?}Ok${N0:?}] ${CY:?}${MASTERNODE_ADDRESS:?}${N0:?} MN\n"
       fi
 
+      if [[ ! -f "${WALLET_DIR:?}"/masternode_address ]] &>/dev/null; then
+        printf '%b' "[${R1:?}!!${G1:?}] No masternode ${CY:?}address${N0:?} found!\n"
+        exit
+      fi
+
       # keep masternode status updated
       cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
 
       # get useable wallet balance
-      WALLET_BALANCE=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      WALLET_BALANCE=$(grep "amount:" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
       # get masternode address balance
       MASTER_BALANCE=$(echo "$(grep -c "txhash" "${WALLET_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
