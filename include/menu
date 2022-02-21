@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.2.0.6
+# 2.2.0.5
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1279,9 +1279,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
         # already setup and running
         echo
-        read -r -p "[!!] Already setup and running!" </dev/tty
-        echo
-        printf '%b' "[${G1:?}Ok${G1:?}] Press Enter to continue\n"
+        printf '%b' "[${G1:?}!?${N0:?}] Already setup and running!\n"
+        read -r -p "[!!] Press Enter to continue!" </dev/tty
         clear
       fi
 
