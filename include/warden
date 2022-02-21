@@ -364,7 +364,7 @@ if [[ -f "${WALLET_DIR:?}"/masternode_lock ]] &>/dev/null; then
 
     # lock inputs with masternode_lock list
     while IFS= read -r LOCK; do
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" lockunspent false "${LOCK:?}" 2>&1
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" lockunspent false "[{\"txid\":\"${LOCK:?}\",\"vout\":1}]" 2>&1
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Locking ${CY:?}${LOCK:?}${N0:?} address ($(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null))!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     done <"${WALLET_DIR:?}"/masternode_lock 2>&1
 
