@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.3.5.9
+# 2.3.7.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1242,11 +1242,17 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         sudo apt-get install libzmq3-dev -y
       fi
 
+      printf '%b' "[${GR:?}Ok${N0:?}] Creating directory ${GR:?}build_${LATEST_VERSION:?}${N0:?}\n"
+      mkdir /home/"$(whoami)"/build_"${LATEST_VERSION:?}" &>/dev/null
+
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Source code (zip)${N0:?}\n"
+
       URL="${WALLET_SOURCE:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
       UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
-      yes "A" 2>&1 | unzip -j "${LATEST_VERSION:?}.zip" 2>&1
+
+      cd /home/"$(whoami)"/build_"${LATEST_VERSION:?}" || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
+
+      yes "A" 2>&1 | unzip -j "${LATEST_VERSION:?}.zip" -d /home/"$(whoami)"/build_"${LATEST_VERSION:?}" 2>&1
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
       echo
@@ -1301,6 +1307,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
         printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
       fi
+
+      read -r -p "[YN] Remove build? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        rm -R /home/"$(whoami)"/build_"${LATEST_VERSION:?}" &>/dev/null
+      fi
+
       echo
       read -r -p "[Ok] Something was built, press Enter to continue" </dev/tty
       echo
