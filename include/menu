@@ -1265,29 +1265,29 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd /home/"$(whoami)"/build || exit
       printf '%b' "${CY:?}!!${N0:?}] This could take some time, make some ${GR:?}coffee..${N0:?}\n"
 
-      # start_timer, duration in seconds
-      START_TIMER=$TIMER_SECONDS
-      printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
-      ./autogen.sh
-      # duration_timer
-      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
-      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
-      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
-
-      # start_timer, duration in seconds
-      START_TIMER=$TIMER_SECONDS
-      printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
-      ./configure
-      # duration_timer
-      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
-      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
-      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
-
       printf '%b' "[${Y1:?}!!${N0:?}] How many threads (CPU)? \n"
       read -r CPU_COMPILER
       if [[ -z "$CPU_COMPILER" ]] &>/dev/null; then
         CPU_COMPILER="2" # use two as default
       fi
+
+      # start_timer, duration in seconds
+      START_TIMER=$TIMER_SECONDS
+      printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
+      sudo ./autogen.sh
+      # duration_timer
+      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
+      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
+      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+
+      # start_timer, duration in seconds
+      START_TIMER=$TIMER_SECONDS
+      printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
+      sudo ./configure
+      # duration_timer
+      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
+      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
+      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
 
       read -r -p "[YN] Sudo make? y/n " -n 1 -r
       echo
