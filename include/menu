@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222202
-# 2.3.7.7
+# 2.3.7.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1271,52 +1271,45 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         CPU_COMPILER="2" # use two as default
       fi
 
-      # start_timer, duration in seconds
-      START_TIMER=$TIMER_SECONDS
-      printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
-      cd /home/"$(whoami)"/build || exit && ./autogen.sh
-      # duration_timer
-      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
-      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
-      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
-
-      # start_timer, duration in seconds
-      START_TIMER=$TIMER_SECONDS
-      printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
-      cd /home/"$(whoami)"/build || exit && ./configure
-      # duration_timer
-      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
-      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
-      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
-
       read -r -p "[YN] Sudo make? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-        # start_timer, duration in seconds (sudo)
-        START_TIMER=$TIMER_SECONDS
-        printf '%b' "[${Y1:?}!!${N0:?}] sudo make install${N0:?}\n"
-        sudo make install -j "${CPU_COMPILER:?}" # optional
-        # duration_timer
-        DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
-        COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
-        printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+        CMAKE_USER="sudo"
       else
-
-        # start_timer, duration in seconds (user)
-        START_TIMER=$TIMER_SECONDS
-        printf '%b' "[${Y1:?}!!${N0:?}] make${N0:?}\n"
-        make -j "${CPU_COMPILER:?}"
-        # duration_timer
-        DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
-        COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
-        printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+        CMAKE_USER="${N0:?}"
       fi
+
+      # start_timer, duration in seconds
+      START_TIMER=$TIMER_SECONDS
+      printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
+      cd /home/"$(whoami)"/build || exit && "${CMAKE_USER:?}" bash autogen.sh
+      # duration_timer
+      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
+      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
+      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+
+      # start_timer, duration in seconds
+      START_TIMER=$TIMER_SECONDS
+      printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
+      cd /home/"$(whoami)"/build || exit && "${CMAKE_USER:?}" bash configure
+      # duration_timer
+      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
+      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
+      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+
+      # start_timer, duration in seconds
+      START_TIMER=$TIMER_SECONDS
+      printf '%b' "[${Y1:?}!!${N0:?}] sudo make install${N0:?}\n"
+      "${CMAKE_USER:?}" make install -j "${CPU_COMPILER:?}" # optional
+      # duration_timer
+      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
+      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
+      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
 
       read -r -p "[YN] Remove build? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        rm -R /home/"$(whoami)"/build &>/dev/null
+        sudo rm -R /home/"$(whoami)"/build &>/dev/null
       fi
 
       echo
