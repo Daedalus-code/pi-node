@@ -1535,7 +1535,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
         cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
 
         display_result() {
-          dialog --title "TXHash $(grep "txhash" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)" \
+          dialog --title " TXHash $(grep "txhash" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)" \
             --no-collapse \
             --msgbox "$RESULT" 0 0
         }
