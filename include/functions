@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222102
-# 1.8.4.4
+# 1.8.3.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.4.4"
+VERSION="v1.8.3.2"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1718,18 +1718,6 @@ else # restore it
     cp "${WALLET_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-fi
-
-# remove empty files, try to restore
-if [ ! -s "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
-  rm "${LOG_DIR:?}"/node_data/stats/price.cg &>/dev/null
-  cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
-fi
-
-# remove empty files, try to restore
-if [ ! -s "${WALLET_DIR:?}"/price.cg ] &>/dev/null; then
-  rm "${WALLET_DIR:?}"/price.cg &>/dev/null
-  cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg 2>&1
 fi
 
 # run data with intervals, every n minutes, update api, arp and ticker
