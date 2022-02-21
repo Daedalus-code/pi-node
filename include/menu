@@ -1265,7 +1265,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd /home/"$(whoami)"/build || exit
       printf '%b' "[${CY:?}!!${N0:?}] This could take some time, make some ${GR:?}coffee..${N0:?}\n"
 
-      printf '%b' "[${Y1:?}!!${N0:?}] How many threads (CPU)? \n"
+      printf '%b' "[${Y1:?}!!${N0:?}] How many threads (CPU)? ${G1:?}> ${N0:?}"
       read -r CPU_COMPILER
       if [[ -z "$CPU_COMPILER" ]] &>/dev/null; then
         CPU_COMPILER="2" # use two as default
