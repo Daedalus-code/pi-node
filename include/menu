@@ -1530,12 +1530,12 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
       # greater than n seconds, continue
       if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
 
-        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status
+        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
         # keep masternode status updated
         cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
 
         display_result() {
-          dialog --title "$(grep "txhash" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)" \
+          dialog --title "TXHash $(grep "txhash" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)" \
             --no-collapse \
             --msgbox "$RESULT" 0 0
         }
