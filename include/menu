@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.1.9.4
+# 2.2.0.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -55,10 +55,16 @@ FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>&1 | awk '{ prin
 CPU_CTEMP="${CELCIUS:?}"
 CPU_FTEMP="${FAHRENHEIT:?}"
 
+OLD_HEAD=$(grep "Update.Script" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $7 }' 2>&1 | tail -1 2>&1 | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" 2>&1)
+if [[ -z "$OLD_HEAD" ]] &>/dev/null; then
+  # non responsive (fsociety)
+  OLD_HEAD="${GR:?}[fsociety]${N0:?}"
+fi
+
 HEIGHT=17
 WIDTH=55
 CHOICE_HEIGHT=10
-BACKTITLE="Pi-Node - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -v "127." 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -v "127." 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1)) ${CPU_CTEMP:?}C ${CPU_FTEMP:?}F"
+BACKTITLE="Pi-Node - ${OLD_HEAD:?} - $(LC_ALL=de_US.utf8 date 2>&1) - ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -v "127." 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $1 }' 2>&1) $(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1 | grep -v "127." 2>&1 | awk '{ print $2 }' 2>&1 | xargs 2>&1 | awk '{ print $2 }' 2>&1)) ${CPU_CTEMP:?}C ${CPU_FTEMP:?}F"
 TITLE="Node options"
 MENU="Choose one option:"
 
