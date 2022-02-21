@@ -14,7 +14,7 @@ source /usr/local/bin/include/color 2>&1
 
 # dated configuration ##########################################################
 
-CONFIG_DATE="1645220338" # configuration date (date '+%s')
+CONFIG_DATE="1645481912" # configuration date (date '+%s')
 
 if [[ "$(grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode.conf 2>&1)" ]] &>/dev/null; then
   echo "Configuration ${G1:?}Ok${N0:?}" >"${LOG_DIR:?}"/node_data/config 2>&1
