@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 0.4.3.2
+# 0.4.5.2
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -349,6 +349,26 @@ if [[ "$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash"
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     cat "${WALLET_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+fi
+
+# make sure inputs with masternode collateral is locked
+grep -B6 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${WALLET_DIR:?}"/masternode_lock 2>&1
+
+if [[ -f "${WALLET_DIR:?}"/masternode_lock ]] &>/dev/null; then
+
+  # make sure masternode_check exist
+  touch "${WALLET_DIR:?}"/masternode_check &>/dev/null
+
+  if [[ ! "${WALLET_DIR:?}"/masternode_lock -eq "${WALLET_DIR:?}"/masternode_check ]] &>/dev/null; then
+
+    # lock inputs with masternode_lock list
+    while IFS= read -r LOCK; do
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" lockunspent false "${LOCK:?}" 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Locking ${CY:?}${LOCK:?}${N0:?} address ($(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null))!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    done <"${WALLET_DIR:?}"/masternode_lock 2>&1
+
+    cp "${WALLET_DIR:?}"/masternode_lock "${WALLET_DIR:?}"/masternode_check &>/dev/null
   fi
 fi
 
