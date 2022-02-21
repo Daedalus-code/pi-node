@@ -1731,11 +1731,11 @@ fi
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/null; then
 
   # make sure backup is updated
-  if [[ "${LOG_DIR:?}"/node_data/stats/price.cg -eq "${WALLET_DIR:?}"/price.cg ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/price.cg 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/price.cg 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/price.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-  if [[ "${LOG_DIR:?}"/node_data/stats/volume.cg -eq "${WALLET_DIR:?}"/volume.cg ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/volume.cg 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/volume.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/stats/volume.cg "${WALLET_DIR:?}"/volume.cg &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
@@ -1803,19 +1803,19 @@ fi
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/null; then
 
   # make sure backup is updated
-  if [[ "${LOG_DIR:?}"/node_data/stats/price.cmc -eq "${WALLET_DIR:?}"/price.cmc ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/price.cmc 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/price.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/stats/price.cmc "${WALLET_DIR:?}"/price.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/price.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-  if [[ "${LOG_DIR:?}"/node_data/stats/rank.cmc -eq "${WALLET_DIR:?}"/rank.cmc ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/rank.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/stats/rank.cmc "${WALLET_DIR:?}"/rank.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/rank.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Rank! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-  if [[ "${LOG_DIR:?}"/node_data/stats/volume.cmc -eq "${WALLET_DIR:?}"/volume.cmc ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/volume.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/stats/volume.cmc "${WALLET_DIR:?}"/volume.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
-  if [[ "${LOG_DIR:?}"/node_data/stats/watchers.cmc -eq "${WALLET_DIR:?}"/watchers.cmc ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/watchers.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/stats/watchers.cmc "${WALLET_DIR:?}"/watchers.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${G1:?}->${N0:?} ${G1:?}$(egrep "[0-9]+" "${WALLET_DIR:?}"/watchers.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Watchers! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
