@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222102
-# 2.2.6.3
+# 2.3.4.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -709,17 +709,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
 "4")
 
-  HEIGHT=11
+  HEIGHT=12
   WIDTH=68
-  CHOICE_HEIGHT=4
-  BACKTITLE="Download & Install"
-  TITLE="Download wallets, bootstrap, display drivers"
+  CHOICE_HEIGHT=5
+  BACKTITLE="Download, Install & Compile"
+  TITLE="Download wallets, bootstrap, drivers, compiler"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Download         Download a specific wallet manually"
     2 "Download         Download wallet, bootstrap automatically"
     3 "Bootstrap        Download and Install bootstrap"
-    4 "Display          Setup display (HyperPixel4) drivers")
+    4 "Display          Setup display (HyperPixel4) drivers"
+    5 "Compiler         Compile new wallet")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -807,7 +808,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "1")
 
-      echo "Downloading libs.zip"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading libs.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/libs.zip
       UNAME_SYSTEM="libs.zip"
@@ -819,7 +820,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "2")
 
-      echo "Downloading Wallet.aarch64-linux-gnu.zip"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.aarch64-linux-gnu.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip
       UNAME_SYSTEM="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
@@ -829,7 +830,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "3")
 
-      echo "Downloading Wallet.arm-linux-gnueabihf.zip"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.arm-linux-gnueabihf.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".arm-linux-gnueabihf.zip
       UNAME_SYSTEM="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
@@ -839,7 +840,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "4")
 
-      echo "Downloading Wallet.Linux.zip"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Linux.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Linux.zip
       UNAME_SYSTEM="${WALLET_NAME:?}.Linux.zip"
@@ -849,7 +850,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "5")
 
-      echo "Downloading Wallet.Mac.dmg"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Mac.dmg${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Mac.dmg
       UNAME_SYSTEM="${WALLET_NAME:?}.Mac.dmg"
@@ -861,7 +862,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "6")
 
-      echo "Downloading Wallet.Mac.zip"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Mac.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Mac.zip
       UNAME_SYSTEM="${WALLET_NAME:?}.Mac.zip"
@@ -873,7 +874,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "7")
 
-      echo "Downloading Wallet.Ubuntu16.zip"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Ubuntu16.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Ubuntu16.zip
       UNAME_SYSTEM="${WALLET_NAME:?}.Ubuntu16.zip"
@@ -883,7 +884,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "8")
 
-      echo "Downloading Source code (zip)"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Source code (zip)${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
       UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
@@ -895,10 +896,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "9")
 
-      echo "Downloading Source code (tar.gz)"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Source code (tar.gz)${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".tar.gz
-      UNAME_SYSTEM="${LATEST_VERSION:?}"
+      UNAME_SYSTEM="${LATEST_VERSION:?}.tar.gz"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
       echo
@@ -1209,6 +1210,89 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       ;;
 
     esac
+
+    ;;
+
+    # compiler
+
+  "5")
+
+    read -r -p "[YN] Install Packages? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      # dependency build - ubuntu & debian
+      sudo apt-get install build-essential libssl1.0-dev ibdb++-dev libboost-all-dev libqrencode-dev -y
+      # bypass some of the issues
+      sudo apt-get install libtool autotools-dev automake pkg-config libevent-dev bsdmainutils libgmp3-dev -y
+      # generic names for the individual boost development packages
+      sudo apt-get install libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev -y
+      # this is a must to avoid errors
+      sudo apt-get install software-properties-common -y
+      sudo add-apt-repository ppa:bitcoin/bitcoin
+      sudo apt-get update
+      sudo apt-get install libdb4.8-dev libdb4.8++-dev -y
+      sudo apt-get install libminiupnpc-dev -y
+      sudo apt-get install libzmq3-dev -y
+    fi
+
+    # cd home
+    cd || exit
+
+    printf '%b' "[${GR:?}Ok${N0:?}] Downloading Source code (zip)${N0:?}\n"
+    URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
+    cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
+    UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
+    echo
+    read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+    echo
+
+    cd "${LATEST_VERSION:?}" || exit
+    printf '%b' "${CY:?}!!${N0:?}] This could take some time, make some ${GR:?}coffee..${N0:?}\n"
+
+    # start_timer, duration in seconds
+    START_TIMER=$TIMER_SECONDS
+    printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
+    ./autogen.sh
+    # duration_timer
+    DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
+    COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
+    printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+
+    # start_timer, duration in seconds
+    START_TIMER=$TIMER_SECONDS
+    printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
+    ./configure
+    # duration_timer
+    DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
+    COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
+    printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+
+    read -r -p "[YN] Sudo make? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+      # start_timer, duration in seconds (sudo)
+      START_TIMER=$TIMER_SECONDS
+      printf '%b' "[${Y1:?}!!${N0:?}] sudo make install${N0:?}\n"
+      sudo make install # optional
+      # duration_timer
+      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
+      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
+      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+    else
+
+      # start_timer, duration in seconds (user)
+      START_TIMER=$TIMER_SECONDS
+      printf '%b' "[${Y1:?}!!${N0:?}] make${N0:?}\n"
+      make
+      # duration_timer
+      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
+      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
+      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+    fi
+    echo
+    read -r -p "[Ok] Something was built, press Enter to continue" </dev/tty
+    echo
 
     ;;
 
