@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.9.3.7
+# 1.9.4.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.3.7"
+VERSION="v1.9.4.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -870,7 +870,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
   # get wallet stakes count
   wc -l "${LOG_DIR:?}"/node_data/stats/staking 2>&1 | awk '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/stake_count 2>&1
-  # get wallet proof-of-stake value
+  # get wallet proof-of-stake count
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/stake_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # count saved vs wallet stakes
   SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
@@ -879,11 +879,11 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     WALLET_POS="0"
   fi
   WALLET_STAKES="${WALLET_POS:?}"
-  # wallet pos value greater then saved pos value
+  # wallet pos count greater then saved pos count
   if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
     # get bitcoinminer, remove duplicates
     grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/staking 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Stake Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}proof-of-stake data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Stake Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}proof-of-stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else # non responsive (color)
   WALLET_STAKES="${GR:?}0${N0:?}"
@@ -931,11 +931,15 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     MASTER_REWARDS="${N0:?}"
   fi
 
-  # wallet pos value greater then saved pos value
-  if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
+  # count saved vs wallet rewards
+  SAVED_REWARDS=$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  # get wallet masternode reward count
+  WALLET_REWARDS=$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  # wallet masternode reward count greater then saved masternode reward count
+  if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
     # get bitcoinminer, remove duplicates
-    grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/staking 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Stake Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}proof-of-stake data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Masternode.R() Saved ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Masternode Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else
   MASTER_REWARDS="${N0:?}"
