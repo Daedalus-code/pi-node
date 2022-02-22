@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.8.5.0
+# 1.8.7.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.5.0"
+VERSION="v1.8.7.3"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -876,6 +876,30 @@ else # non responsive (color)
   WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 
+# dashbord indicator, only staking
+DASH_SR="Stakes"
+
+### masternode rewards #########################################################
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/payment_value ]] &>/dev/null; then
+  grep "payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/payment_value 2>&1
+fi
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/rewards ]] &>/dev/null; then
+  # count masternode rewards, w a not so good indicator
+  grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+fi
+
+if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" -gt "0" ]] &>/dev/null; then
+  # dashbord variable
+  MASTER_REWARDS="$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+  MASTER_REWARDS="${MASTER_REWARDS:?} "
+  # dashbord indicator, pos + rewards
+  DASH_SR="PoS/R"
+else
+  MASTER_REWARDS="${N0:?} "
+fi
+
 ### dashbord ###################################################################
 
 # wallet_dashbord function (color)
@@ -1376,6 +1400,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     AVG_POS_TIME="Average Time $AVG_TX (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
 
     SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
+    MASTER_REWARDS="$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
 
     # interval dashbord for debug.log
     # note: should always start later on since daemon start (uptime_daemon)
@@ -1391,6 +1416,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Addnode.Size()${N0:?} Add New Peers ${CY:?}${ADD_PEERS_SIZE:?}${N0:?} Addnode Peers ${C1:?}$ADDNODES_MANUAL_SIZE${N0:?} Arp ${G0:?}${ADDNODES_ARP_SIZE:?}${N0:?} Curl ${G1:?}${ADDNODES_CURL_SIZE:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Peers.Status()${N0:?} Total ${WALLET_PEERS_TOTAL:?} Latest ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Proof.Of.Work:${N0:?} PoS ${SAVED_POS:?} ${AVG_POS_TIME:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() MasterRewards:${N0:?} Rewards ${MASTER_REWARDS:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     echo
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     echo

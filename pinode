@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222102
+# V20222202
 # 0.0.4.5
 
 # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
@@ -30,7 +30,7 @@ ${CB:?}      ###.    ,###     ${N0:?} ${USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?
 ${CB:?}      ###########      ${N0:?} ${WALLET_DAEMON:0:11} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
 ${CB:?}      ###       ###    ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_LATEST:?} ${WALLET_PEERS_OTHER:?}
 ${CB:?}      ###.     ,###    ${N0:?}
-${CB:?}    ##############     ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} Stakes ${G0:?}${WALLET_STAKES:?}${N0:?} Inputs ${G0:?}${WALLET_INPUTS:?} ${N0:?}${MASTER_INPUTS:?}
+${CB:?}    ##############     ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} ${DASH_SR:?} ${G0:?}${WALLET_STAKES:?} ${N0:?}${MASTER_REWARDS:?}Inputs ${G0:?}${WALLET_INPUTS:?} ${N0:?}${MASTER_INPUTS:?}
 ${CB:?}        ##   ##        ${N0:?} TxCount ${N0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
 ${CB:?}        ##   ##        ${N0:?} ${TIMELINE:?}
 
