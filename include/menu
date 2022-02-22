@@ -1936,12 +1936,12 @@ ${HIDDEN_SERVICE:?}
 
       # backup with wallet
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" backupwallet "${WALLET_DIR:?}"/backups
-      printf '%b' "[${G1:?}Ok${G1:?}] $(ls -lSh "${WALLET_DIR:?}"/backups/wallet.dat 2>/dev/null)/n"
+      printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh "${WALLET_DIR:?}"/backups/wallet.dat 2>/dev/null)\n"
 
       # zip backups directory
-      printf '%b' "[${Y1:?}!!${G1:?}] Zipping backup, please wait!/n"
+      printf '%b' "[${Y1:?}!!${N0:?}] Zipping backup, please wait!\n"
       zip /home/"$(whoami)"/backup.zip "${WALLET_DIR:?}"/backups/*
-      printf '%b' "[${G1:?}Ok${G1:?}] $(ls -lSh /home/"$(whoami)"/backup.zip 2>/dev/null)/n"
+      printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh /home/"$(whoami)"/backup.zip 2>/dev/null)\n"
       echo
       read -r -p "[Ok] Backups is done! Press Enter to continue" </dev/tty
       echo
