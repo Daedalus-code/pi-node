@@ -1936,7 +1936,7 @@ TH="${RC:?}D${N0:?}"
 
 ### proof-of-stake block was signed ############################################
 
-if tail -369 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "BitcoinMiner" &>/dev/null; then
+if tail -420 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "BitcoinMiner" &>/dev/null; then # :)
   # green
   CB="${G1:?}"
 else # default (theme based)

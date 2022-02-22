@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222202
-# 2.2.7.5
+# 2.2.9.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1229,9 +1229,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
 "5")
 
-  HEIGHT=17
+  HEIGHT=18
   WIDTH=48
-  CHOICE_HEIGHT=10
+  CHOICE_HEIGHT=11
   BACKTITLE="Node configuration"
   TITLE="Edit configurations"
   MENU="Choose one option:"
@@ -1245,7 +1245,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   7 "Crontab (root)   Admin job scheduler"
   8 "Filesystem       /etc/fstab"
   9 "Graphs           rrdtool options"
-  10 "Reset            Reset configs")
+  10 "Reset            Reset configs"
+  11 "Backup           Zip backup files")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1916,6 +1917,29 @@ ${HIDDEN_SERVICE:?}
         printf '%b' "[${Y1:?}!!${N0:?}] Please reset wallet configuration!\n"
         echo
         read -r -p "[Ok] Hard reset of tor done! Press Enter to continue" </dev/tty
+        echo
+      fi
+
+      ;;
+
+      # backup files
+
+    "11")
+
+      read -r -p "[YN] Backup files (backups/keys)? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+        # backup with wallet
+        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" backupwallet "${WALLET_DIR:?}"/backups
+        printf '%b' "[${G1:?}Ok${G1:?}] $(ls -lSh "${WALLET_DIR:?}"/backups/wallet.dat 2>/dev/null)/n"
+
+        # zip backups directory
+        printf '%b' "[${Y1:?}!!${G1:?}] Zipping backup, please wait!/n"
+        zip /home/"$(whoami)"/backup.zip "${WALLET_DIR:?}"/backups/*
+        printf '%b' "[${G1:?}Ok${G1:?}] $(ls -lSh /home/"$(whoami)"/backup.zip 2>/dev/null)/n"
+        echo
+        read -r -p "[Ok] Backups is done! Press Enter to continue" </dev/tty
         echo
       fi
 

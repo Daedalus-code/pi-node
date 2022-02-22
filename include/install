@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222102
-# 0.3.0.4
+# V20222202
+# 0.3.2.2
 
 # create directories, ruled by configuration
 if [ ! -d /usr/local/bin/include ] &>/dev/null; then
@@ -62,6 +62,24 @@ if ! [ -x "$(command -v xinput)" ] &>/dev/null; then
   sudo apt-get install xinput -y
   echo
   read -r -p "[Ok] xinput installed! Press Enter to continue" </dev/tty
+  echo
+fi
+
+# make sure zip is installed
+if ! [ -x "$(command -v zip)" ] &>/dev/null; then
+  echo "Installing zip"
+  sudo apt-get install zip -y
+  echo
+  read -r -p "[Ok] zip installed! Press Enter to continue" </dev/tty
+  echo
+fi
+
+# make sure unzip is installed
+if ! [ -x "$(command -v unzip)" ] &>/dev/null; then
+  echo "Installing unzip"
+  sudo apt-get install unzip -y
+  echo
+  read -r -p "[Ok] unzip installed! Press Enter to continue" </dev/tty
   echo
 fi
 
