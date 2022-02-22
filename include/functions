@@ -856,7 +856,7 @@ fi
 # greater than n seconds, continue
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
-  if [[ "$WALLET_BALANCE" -gt "1" ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
 
     # save wallet stakes (addtowallet), remove duplicates
 
