@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222202
-# 2.3.0.4
+# 2.3.1.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -694,6 +694,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   ;;
 
 "6")
+
+  if [ -x "$(command -v ncdu)" ] &>/dev/null; then
+    ncdu -v
+  fi
+  read -r -p "[YN] Analyze the entire system with (ncdu)? y/n " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    if ! [ -x "$(command -v ncdu)" ] &>/dev/null; then
+      sudo apt-get install ncdu -y
+    fi
+    sudo ncdu /
+  fi
 
   display_result() {
     dialog --title "$1" \
