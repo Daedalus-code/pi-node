@@ -887,9 +887,9 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/staking 2>&1
       printf '%b' "${LOG_DATE:?} Status() Proof.of.Stake Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
+  else # non responsive (color)
+    WALLET_STAKES="${GR:?}0${N0:?}"
   fi
-else # non responsive (color)
-  WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 
 # dashbord indicator, only staking
