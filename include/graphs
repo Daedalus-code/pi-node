@@ -106,7 +106,7 @@ rrdtool graph /var/www/html/stakes_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
-  DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:stakes:MAX \
+  DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:rewards:MAX \
   GPRINT:stakes:LAST:%.0lf\ Now\ PoS \
   GPRINT:stakes:MAX:%.0lf\ Max \
   GPRINT:stakes:MIN:%.0lf\ Min \
