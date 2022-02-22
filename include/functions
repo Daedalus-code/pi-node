@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.8.7.3
+# 1.8.8.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.7.3"
+VERSION="v1.8.8.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -881,18 +881,23 @@ DASH_SR="Stakes"
 
 ### masternode rewards #########################################################
 
+# note: not so good indicator
+
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/payment_value ]] &>/dev/null; then
-  grep "payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/payment_value 2>&1
+  grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/payment_value 2>&1
 fi
 
-if [[ ! -f "${LOG_DIR:?}"/node_data/stats/rewards ]] &>/dev/null; then
-  # count masternode rewards, w a not so good indicator
-  grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/reward_count ]] &>/dev/null; then
+  # count masternode rewards
+  grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
 fi
 
-if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" -gt "0" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -gt "0" ]] &>/dev/null; then
+
+  grep -B8 "2.09999999" /tmp/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+
   # dashbord variable
-  MASTER_REWARDS="$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+  MASTER_REWARDS="$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ printf $2 }' 2>&1)"
   MASTER_REWARDS="${MASTER_REWARDS:?} "
   # dashbord indicator, pos + rewards
   DASH_SR="PoS/R"
