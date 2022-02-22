@@ -1941,9 +1941,9 @@ ${HIDDEN_SERVICE:?}
       # zip backups directory
       printf '%b' "[${Y1:?}!!${N0:?}] Zipping backup, please wait!\n"
       if [[ -f /home/"$(whoami)"/backup.zip ]] &>/dev/null; then
-        zip /home/"$(whoami)"/backup.zip "${WALLET_DIR:?}"/backups/*
+        zip -r /home/"$(whoami)"/backup.zip "${WALLET_DIR:?}"/backups/*
       else
-        zip -f /home/"$(whoami)"/backup.zip "${WALLET_DIR:?}"/backups/*
+        zip -r /home/"$(whoami)"/backup.zip "${WALLET_DIR:?}"/backups/*
       fi
       printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh /home/"$(whoami)"/backup.zip 2>/dev/null)\n"
       echo
