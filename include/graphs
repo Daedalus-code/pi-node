@@ -113,8 +113,8 @@ rrdtool graph /var/www/html/stakes_graph.png \
   GPRINT:rewards:LAST:%.0lf\ Now\ R \
   GPRINT:rewards:MAX:%.0lf\ Max \
   GPRINT:rewards:MIN:%.0lf\ Min \
-  LINE1:stakes#FFDC77 \
-  LINE2:rewards#779CFF
+  LINE2:stakes#FFDC77 \
+  AREA:rewards#779CFF
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
