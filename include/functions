@@ -908,7 +908,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -gt "0" ]
   MASTER_REWARDS="${MASTER_REWARDS:?} "
   # dashbord indicator, pos + rewards
   DASH_SR="PoS/R"
-  DASH_INMN="IN/MN"
+  DASH_INMN="In/MN"
 else
   if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
     # get confirmations from masternode collateral inputs
