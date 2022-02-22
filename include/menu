@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222202
-# 2.3.0.3
+# 2.3.0.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1934,7 +1934,8 @@ ${HIDDEN_SERVICE:?}
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-      # backup with wallet
+      # backup with wallet, backupwallet
+      printf '%b' "[${Y1:?}!!${N0:?}] backupwallet, please wait!\n"
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" backupwallet "${WALLET_DIR:?}"/backups
       printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh "${WALLET_DIR:?}"/backups/wallet.dat 2>/dev/null)\n"
 
