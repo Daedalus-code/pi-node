@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222202
-# 2.3.7.1
+# 2.3.7.3
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1227,19 +1227,23 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       read -r -p "[YN] Install Packages? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        # dependency build - ubuntu & debian
-        sudo apt-get install build-essential libssl1.0-dev ibdb++-dev libboost-all-dev libqrencode-dev -y
-        # bypass some of the issues
-        sudo apt-get install libtool autotools-dev automake pkg-config libevent-dev bsdmainutils libgmp3-dev -y
-        # generic names for the individual boost development packages
-        sudo apt-get install libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev -y
-        # this is a must to avoid errors
-        sudo apt-get install software-properties-common -y
-        sudo add-apt-repository ppa:bitcoin/bitcoin
         sudo apt-get update
-        sudo apt-get install libdb4.8-dev libdb4.8++-dev -y
-        sudo apt-get install libminiupnpc-dev -y
-        sudo apt-get install libzmq3-dev -y
+
+        sudo apt-get install autoconf pkg-config python3 libgmp-dev libsodium-dev cargo libqt5gui5 libqt5core5a libqt5dbus5 libqt5svg5-dev libqt5charts5-dev qttools5-dev qttools5-dev-tools libminiupnpc-dev libzmq3-dev libboost-system-dev libboost-thread-dev libtool autotools-dev automake libgmp3-dev -y
+        sudo apt-get install software-properties-common libssl1.0-dev ibdb++-dev libboost-all-dev libqrencode-dev software-properties-common libdb4.8-dev libdb4.8++-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev pkg-config libevent-dev bsdmainutils build-essential -y
+
+        read -r -p "[YN] Add Bitcoin repository? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          sudo add-apt-repository ppa:bitcoin/bitcoin
+        fi
+        read -r -p "[YN] Add Pivx repository? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          sudo add-apt-repository ppa:pivx/pivx
+        fi
+        sudo apt-get update
+
       fi
 
       printf '%b' "[${GR:?}Ok${N0:?}] Creating directory ${GR:?}build${N0:?}\n"
@@ -1275,8 +1279,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
         CMAKE_USER="sudo"
-      else
-        CMAKE_USER=""
       fi
 
       # start_timer, duration in seconds
