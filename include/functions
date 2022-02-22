@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.9.1.9
+# 1.9.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.1.9"
+VERSION="v1.9.2.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -863,10 +863,15 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     touch "${WALLET_DIR:?}"/staking &>/dev/null
   fi
 
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/staking ]] &>/dev/null; then
+    # get bitcoinminer, remove duplicates
+    grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/staking 2>&1
+  fi
+
   # get wallet stakes count
-  grep -c "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/staking 2>&1
+  wc -l "${LOG_DIR:?}"/node_data/stats/staking 2>&1 | awk '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/stake_count 2>&1
   # get wallet proof-of-stake value
-  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/stake_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # count saved vs wallet stakes
   SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   if [[ -z "$WALLET_POS" ]] &>/dev/null; then
@@ -1351,7 +1356,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   # count saved vs wallet stakes
   SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
   # get wallet proof-of-stake count
-  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null)
+  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/stake_count 2>/dev/null)
   # if wallet pos is less than saved pos
   if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
     # restore missing proof-of-stake count
@@ -1443,7 +1448,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     AVG_POS_TIME="Average Time $AVG_TX (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
 
     SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-    MASTER_REWARDS="$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+    MASTER_REWARDS="$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1)"
 
     # interval dashbord for debug.log
     # note: should always start later on since daemon start (uptime_daemon)
