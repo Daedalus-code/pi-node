@@ -170,7 +170,7 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/stats/cpuinfo ]] &>/dev/null; then
   # do this once (cpu speed, wait time)
   if [ ! -f "${LOG_DIR:?}"/node_data/stats/lscpu ] &>/dev/null; then
     lscpu >"${LOG_DIR:?}"/node_data/stats/lscpu 2>&1
-    cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>/dev/null | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
+    cat "${LOG_DIR:?}"/node_data/stats/lscpu 2>&1 | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' 2>&1 | awk -F, '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/cpuspeed 2>&1
   fi
 
   # get cpu count, threads, cores, vendor id, model and speed
