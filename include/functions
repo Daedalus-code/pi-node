@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.8.9.2
+# 1.8.9.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.9.2"
+VERSION="v1.8.9.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -908,6 +908,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -gt "0" ]
   # dashbord indicator, pos + rewards
   DASH_SR="PoS/R"
   DASH_INMN="IN/MN"
+  # make sure masternode_confirmations exist
+  touch "${LOG_DIR:?}"/node_data/stats/masternode_confirmations &>/dev/null
 else
   if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
     # get confirmations from masternode collateral inputs
