@@ -897,7 +897,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" -gt "0" ]] &>/
   # dashbord indicator, pos + rewards
   DASH_SR="PoS/R"
 else
-  MASTER_REWARDS="${N0:?} "
+  MASTER_REWARDS="${N0:?}"
 fi
 
 ### dashbord ###################################################################
