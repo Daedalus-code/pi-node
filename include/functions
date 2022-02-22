@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.9.4.1
+# 1.9.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.4.1"
+VERSION="v1.9.4.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -856,34 +856,37 @@ fi
 # greater than n seconds, continue
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
-  # save wallet stakes (addtowallet), remove duplicates
+  if [[ "$WALLET_BALANCE" -gt "1" ]] &>/dev/null; then
 
-  if [ ! -f "${WALLET_DIR:?}"/staking ] &>/dev/null; then
-    # make sure staking exist
-    touch "${WALLET_DIR:?}"/staking &>/dev/null
-  fi
+    # save wallet stakes (addtowallet), remove duplicates
 
-  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/staking ]] &>/dev/null; then
-    # get bitcoinminer, remove duplicates
-    grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/staking 2>&1
-  fi
+    if [ ! -f "${WALLET_DIR:?}"/staking ] &>/dev/null; then
+      # make sure staking exist
+      touch "${WALLET_DIR:?}"/staking &>/dev/null
+    fi
 
-  # get wallet stakes count
-  wc -l "${LOG_DIR:?}"/node_data/stats/staking 2>&1 | awk '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/stake_count 2>&1
-  # get wallet proof-of-stake count
-  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/stake_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  # count saved vs wallet stakes
-  SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  if [[ -z "$WALLET_POS" ]] &>/dev/null; then
-    # non responsive
-    WALLET_POS="0"
-  fi
-  WALLET_STAKES="${WALLET_POS:?}"
-  # wallet pos count greater then saved pos count
-  if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
-    # get bitcoinminer, remove duplicates
-    grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/staking 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Stake Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}proof-of-stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/staking ]] &>/dev/null; then
+      # get bitcoinminer, remove duplicates
+      grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/staking 2>&1
+    fi
+
+    # get wallet stakes count
+    wc -l "${LOG_DIR:?}"/node_data/stats/staking 2>&1 | awk '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/stake_count 2>&1
+    # get wallet proof-of-stake count
+    WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/stake_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    # count saved vs wallet stakes
+    SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    if [[ -z "$WALLET_POS" ]] &>/dev/null; then
+      # non responsive
+      WALLET_POS="0"
+    fi
+    WALLET_STAKES="${WALLET_POS:?}"
+    # wallet pos count greater then saved pos count
+    if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
+      # get bitcoinminer, remove duplicates
+      grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/staking 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Proof.of.Stake Saved ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
 else # non responsive (color)
   WALLET_STAKES="${GR:?}0${N0:?}"
@@ -1378,7 +1381,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
     # restore missing proof-of-stake count
     cat "${WALLET_DIR:?}"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Proof.Of.Stake Restored PoS Data! - ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}proof-of-stake data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Proof.of.Stake Restored PoS Data! - ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -1397,7 +1400,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
     # restore missing masternode rewards count
     cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Masternode.R() Restored Masternode Reward Data! - ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}proof-of-stake data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Masternode.R() Restored Masternode Reward Data! - ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
