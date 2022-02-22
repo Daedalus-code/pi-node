@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222202
-# 2.3.7.3
+# 2.3.8.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1227,10 +1227,22 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       read -r -p "[YN] Install Packages? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        sudo apt-get update
 
-        sudo apt-get install autoconf pkg-config python3 libgmp-dev libsodium-dev cargo libqt5gui5 libqt5core5a libqt5dbus5 libqt5svg5-dev libqt5charts5-dev qttools5-dev qttools5-dev-tools libminiupnpc-dev libzmq3-dev libboost-system-dev libboost-thread-dev libtool autotools-dev automake libgmp3-dev -y
+        sudo apt-get update
+        sudo apt-get install gpg autoconf pkg-config python3 libgmp-dev libsodium-dev cargo libqt5gui5 libqt5core5a libqt5dbus5 libqt5svg5-dev libqt5charts5-dev qttools5-dev qttools5-dev-tools libminiupnpc-dev libzmq3-dev libboost-system-dev libboost-thread-dev libtool autotools-dev automake make libgmp3-dev -y
         sudo apt-get install software-properties-common libssl1.0-dev ibdb++-dev libboost-all-dev libqrencode-dev software-properties-common libdb4.8-dev libdb4.8++-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev pkg-config libevent-dev bsdmainutils build-essential -y
+
+        if [[ ! "$(grep "bitcoin" /etc/apt/sources.list)" ]] &>/dev/null; then
+          (
+            echo deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian stretch main
+            echo deb-src http://ppa.launchpad.net/bitcoin/bitcoin/ubuntu xenial main
+          ) | sudo sh -c 'cat >>/etc/apt/sources.list'
+        fi
+
+        gpg --keyserver keys.gnupg.net --recv-key D46F45428842CE5E
+        gpg -a --export D46F45428842CE5E | sudo apt-key add -
+        gpg --keyserver keys.gnupg.net --recv-key 3B4FE6ACC0B21F32
+        gpg -a --export 3B4FE6ACC0B21F32 | sudo apt-key add -
 
         read -r -p "[YN] Add Bitcoin repository? y/n " -n 1 -r
         echo
@@ -1249,7 +1261,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Creating directory ${GR:?}build${N0:?}\n"
       mkdir /home/"$(whoami)"/build &>/dev/null
 
-      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Source code (zip)${N0:?}\n"
+      if [[ -f /home/"$(whoami)"/build/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
+        printf '%b' "[${G1:?}Ok${N0:?}] Downloaded! Source code (zip)${N0:?}\n"
+      else
+        printf '%b' "[${GR:?}Ok${N0:?}] Downloading Source code! (zip)${N0:?}\n"
+      fi
 
       URL="${WALLET_SOURCE:?}/${LATEST_VERSION:?}"
       UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
@@ -1261,52 +1277,51 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
 
       if [[ ! -f /home/"$(whoami)"/build/COPYRIGHT ]] &>/dev/null; then
-        yes "A" 2>&1 | unzip -j "${LATEST_VERSION:?}.zip" -d /home/"$(whoami)"/build 2>&1
+        yes "A" 2>&1 | unzip -j /home/"$(whoami)"/build/"${LATEST_VERSION:?}".zip -d /home/"$(whoami)"/build 2>&1
         read -r -p "[Ok] ${UNAME_SYSTEM:?} unzipped! Press Enter to continue" </dev/tty
         echo
       fi
 
       cd /home/"$(whoami)"/build || exit
-      printf '%b' "[${CY:?}!!${N0:?}] This could take some time, make some ${GR:?}coffee..${N0:?}\n"
+      sudo chmod 777 /home/"$(whoami)"/build/autogen.sh /home/"$(whoami)"/build/configure.ac /home/"$(whoami)"/build/share/genbuild.sh &>/dev/null
 
       printf '%b' "[${Y1:?}!!${N0:?}] How many threads (CPU)? ${G1:?}> ${N0:?}"
       read -r CPU_COMPILER
       if [[ -z "$CPU_COMPILER" ]] &>/dev/null; then
         CPU_COMPILER="2" # use two as default
+        echo "${CPU_COMPILER:?}" >"${LOG_DIR:?}"/build_cpu 2>&1
+      else
+        echo "${CPU_COMPILER:?}" >"${LOG_DIR:?}"/build_cpu 2>&1
       fi
+      printf '%b' "[${G1:?}Ok${N0:?}] Building with ${G1:?}${CPU_COMPILER:?}${N0:?} CPU\n"
 
-      read -r -p "[YN] Sudo make? y/n " -n 1 -r
+      read -r -p "[YN] Sudo? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        CMAKE_USER="sudo"
+        cd /home/"$(whoami)"/build || exit && sudo make clean
+
+        cd /home/"$(whoami)"/build || exit && sudo ./autogen.sh
+        cd /home/"$(whoami)"/build || exit && sudo ./configure --prefix=$PWD/depends/"$(uname -m 2>&1)"-linux-gnu --disable-tests --disable-bench
+        cd /home/"$(whoami)"/build || exit && sudo make HOST="$(uname -m 2>&1)"-linux-gnu -j "${CPU_COMPILER:?}"
+      else
+        cd /home/"$(whoami)"/build || exit && sudo make clean
+
+        cd /home/"$(whoami)"/build || exit && ./autogen.sh
+        cd /home/"$(whoami)"/build || exit && ./configure --prefix=$PWD/depends/"$(uname -m 2>&1)"-linux-gnu --disable-tests --disable-bench
+        cd /home/"$(whoami)"/build || exit && make HOST="$(uname -m 2>&1)"-linux-gnu -j "${CPU_COMPILER:?}"
       fi
 
       # start_timer, duration in seconds
       START_TIMER=$TIMER_SECONDS
-      printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
-      cd /home/"$(whoami)"/build || exit && "${CMAKE_USER:?}" bash autogen.sh
-      # duration_timer
-      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
-      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
-      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+      printf '%b' "[${CY:?}!!${N0:?}] This could take some time, make some ${GR:?}coffee..${N0:?}\n"
 
-      # start_timer, duration in seconds
-      START_TIMER=$TIMER_SECONDS
+      bash "${LOG_DIR:?}"/build 2>&1
+      printf '%b' "[${Y1:?}!!${N0:?}] ./autogen.sh${N0:?}\n"
       printf '%b' "[${Y1:?}!!${N0:?}] ./configure${N0:?}\n"
-      cd /home/"$(whoami)"/build || exit && "${CMAKE_USER:?}" bash configure
+      printf '%b' "[${Y1:?}!!${N0:?}] make install -j ${CPU_COMPILER:?}${N0:?}\n"
       # duration_timer
       DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
-      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
-      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
-
-      # start_timer, duration in seconds
-      START_TIMER=$TIMER_SECONDS
-      printf '%b' "[${Y1:?}!!${N0:?}] sudo make install${N0:?}\n"
-      "${CMAKE_USER:?}" make install -j "${CPU_COMPILER:?}" # optional
-      # duration_timer
-      DURATION_TIMER=$((TIMER_SECONDS - START_TIMER))
-      COMPILER_TIMER=$(printf '%dh:%dm:%ds\n' $(("${DURATION_TIMER:?}/3600")) $(("${DURATION_TIMER:?}%3600/60")) $(("${DURATION_TIMER:?}%60")))
-      printf '%b' "[${GR:?}Ok${N0:?}] ${COMPILER_TIMER:?}${N0:?}\n"
+      printf '%b' "${GR:?}${DURATION_TIMER:?} seconds${N0:?}\n"
 
       read -r -p "[YN] Remove build? y/n " -n 1 -r
       echo
