@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.8.8.1
+# 1.8.9.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.8.1"
+VERSION="v1.8.9.3"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -767,6 +767,12 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "1" ]] &>/dev/null; then
     WALLET_PROOF="1"
   fi
 
+  # get total confirmations from listunspent if it exist
+  if [[ -f "${LOG_DIR:?}"/node_data/client/listunspent ]] &>/dev/null; then
+    # minus masternode collateral confirmations that exist
+    echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-$(cat "${LOG_DIR:?}"/node_data/stats/masternode_confirmations 2>/dev/null)" >"${LOG_DIR:?}"/node_data/stats/total_confirmations 2>&1
+  fi
+
   # look for balance greater than n
   if [[ "$(grep "balance" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk -F. '{ print $2 }' 2>&1)" -gt "1" ]] &>/dev/null; then
 
@@ -878,6 +884,7 @@ fi
 
 # dashbord indicator, only staking
 DASH_SR="Stakes"
+DASH_INMN="Inputs"
 
 ### masternode rewards #########################################################
 
@@ -901,7 +908,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -gt "0" ]
   MASTER_REWARDS="${MASTER_REWARDS:?} "
   # dashbord indicator, pos + rewards
   DASH_SR="PoS/R"
+  DASH_INMN="IN/MN"
 else
+  if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
+    # get confirmations from masternode collateral inputs
+    grep -A2 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/stats/masternode_confirmations 2>&1
+  fi
   MASTER_REWARDS="${N0:?}"
 fi
 
@@ -1400,7 +1412,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     # calculate seconds into age
     INPUT_AGE=$(printf '%dh:%dm' $(("$SECONDS_TX/3600")) $(("$SECONDS_TX%3600/60")))
     # save the value
-    echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avgconfirmation
+    echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avg_confirmations
     INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     AVG_POS_TIME="Average Time $AVG_TX (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
 
@@ -1580,7 +1592,7 @@ if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       # calculate seconds into age
       INPUT_AGE=$(printf '%dh:%dm' $(("${TIMELINE_SEC:?}/3600")) $(("${TIMELINE_SEC:?}%3600/60")))
       # save the value
-      echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avgconfirmation
+      echo "${INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/stats/avg_confirmations
       INPUT_AGE_D=$(echo "$(echo "$INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       TIMELINE="Average $TIMELINE_AVG (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
       # wallet value

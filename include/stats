@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222102
+# V20222202
 # 0.5.7.4
 
 source /usr/local/bin/include/pinode.conf 2>&1
@@ -490,8 +490,8 @@ $(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)"
     NOT_POS_INPUT=$(cat "${LOG_DIR:?}"/node_data/stats/not_pos 2>/dev/null)
 
     # get amount of inputs, disregard with var not_pos_input value, disregard negative symbol
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)+${NOT_POS_INPUT:?}" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1 | tr -d '-' 2>&1)" 2>/dev/null
-    rrdtool update /home/"$(whoami)"/stats/total_tx_q.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1 | tr -d '-' 2>&1)" 2>/dev/null
+    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_confirmations 2>/dev/null)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)+${NOT_POS_INPUT:?}" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1 | tr -d '-' 2>&1)" 2>/dev/null
+    rrdtool update /home/"$(whoami)"/stats/total_tx_q.rrd N:"$(echo "$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_confirmations 2>/dev/null)-${TOTAL_CONF_BELOW:?}" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1 | tr -d '-' 2>&1)" 2>/dev/null
     rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}" 2>/dev/null
   fi
 
@@ -505,12 +505,12 @@ $(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)"
       POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/stats/lim_pos 2>/dev/null)
     fi
 
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
+    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_confirmations 2>/dev/null)" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
   fi
 
   if [[ "$AUTO_POS" -eq "0" ]] &>/dev/null; then
     # original normal values
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
+    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/total_confirmations 2>/dev/null)/$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
   fi
 
   rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" 2>/dev/null
