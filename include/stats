@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222202
-# 0.5.7.4
+# 0.5.8.2
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -178,6 +178,14 @@ if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ] &>/dev/null; then
   rrdtool create /home/"$(whoami)"/stats/stakes.rrd \
     --step=60 \
     DS:stakes:GAUGE:300:U:U \
+    RRA:AVERAGE:0.5:1:315360
+fi
+# rewards
+if [ ! -f "/home/$(whoami)/stats/rewards.rrd" ] &>/dev/null; then
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating rewards.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  rrdtool create /home/"$(whoami)"/stats/rewards.rrd \
+    --step=60 \
+    DS:rewards:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
 # inputs

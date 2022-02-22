@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221702
-# 0.4.4.6
+# V20222202
+# 0.4.5.0
 
 source /usr/local/bin/include/pinode.conf 2>&1
 
@@ -106,11 +106,15 @@ rrdtool graph /var/www/html/stakes_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
-  GPRINT:stakes:LAST:%.0lf\ Now \
-  GPRINT:stakes:AVERAGE:%.0lf\ AVG \
+  DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:stakes:MAX \
+  GPRINT:stakes:LAST:%.0lf\ Now \Stakes \
   GPRINT:stakes:MAX:%.0lf\ Max \
   GPRINT:stakes:MIN:%.0lf\ Min \
-  AREA:stakes#FFB777:"Stakes"
+  GPRINT:rewards:LAST:%.0lf\ Now \Rewards \
+  GPRINT:rewards:MAX:%.0lf\ Max \
+  GPRINT:rewards:MIN:%.0lf\ Min \
+  LINE1:stakes#FFDC77 \
+  LINE2:rewards#779CFF
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
