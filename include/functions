@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.9.5.0
+# 1.9.5.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.5.0"
+VERSION="v1.9.5.5"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -906,6 +906,11 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   if [[ ! -f "${LOG_DIR:?}"/node_data/stats/payment_value ]] &>/dev/null; then
     # get masternode payment value from debug.log
     grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/payment_value 2>&1
+    # if missing data, use another method to get masternode reward data
+    if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/payment_value)" ]] &>/dev/null; then
+      # use masternode reward inputs to determine the reward
+      egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/payment_value 2>&1
+    fi
   fi
 
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -eq $(grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) ]] &>/dev/null; then
