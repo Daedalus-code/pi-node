@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.9.5.5
+# 1.9.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.5.5"
+VERSION="v1.9.6.2"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1182,7 +1182,6 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${FAILED_CHECK:?}" 2>&1)" ]] &>/dev
 fi
 
 # create "connected/working" ipv4/ipv6 peers list, sort, remove duplicates
-# note: only use addr, no port
 if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
   # get clean ipv4 address, disregard non ipv4
   egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/success 2>&1
@@ -1194,6 +1193,8 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
   cat "${LOG_DIR:?}"/success 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | grep -v "127." >"${LOG_DIR:?}"/node_data/peers/success 2>&1
   # remove old file
   rm "${LOG_DIR:?}"/success &>/dev/null
+  # backup onion connections
+  grep ".onion" "${LOG_DIR:?}"/node_data/peers/success >"${WALLET_DIR:?}"/onion_address 2>&1
 fi
 
 ### add_peers screen script ####################################################
@@ -1202,7 +1203,7 @@ fi
 LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
 # kill when too many screens appears (all of them)
-if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "add_peers")" -gt "1" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "add_peers" 2>&1)" -gt "1" ]] &>/dev/null; then
   killall screen &>/dev/null
 fi
 
@@ -1254,8 +1255,13 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
 
     # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
-    echo "$RIP_IPV6" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
-    echo "$RIP_IPV4" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+    echo "${RIP_IPV6:?}" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+    echo "${RIP_IPV4:?}" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+
+    if [[ ! "$(grep "$(cat "${WALLET_DIR:?}"/onion_address 2>/dev/null)" "${LOG_DIR:?}"/node_data/peers/success 2>&1)" ]] &>/dev/null; then
+      # keep onions around
+      cat "${WALLET_DIR:?}"/onion_address >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+    fi
 
     ### remove failed, connected peers and invalid pattern address ######### ###
 
@@ -1516,8 +1522,9 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     truncate -s 0 "${WALLET_DIR:?}"/rewards &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/stats/total.cidr &>/dev/null
 
-    # remove old file
+    # remove old files
     rm "${LOG_DIR:?}"/node_data/client/latest &>/dev/null
+    rm "${LOG_DIR:?}"/node_data/stats/cpuinfo &>/dev/null
 
     # truncate old log (debug.log)
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
