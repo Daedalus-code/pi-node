@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222202
-# 2.3.7.0
+# 2.3.7.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1662,7 +1662,8 @@ Message $(grep "message" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>
 Address $(grep "netaddr" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }')
 Updated $(ls -l "${WALLET_DIR:?}"/masternode_status 2>&1 | awk '{ print $6,$7,$8 }' 2>&1 | tr -d '.' 2>&1)
 Outputidx $(grep "outputidx" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)
-Status $(grep "status" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)"
+Status $(grep "status" "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)
+Rewards $(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
           )
           display_result "Masternode Status"
           clear
