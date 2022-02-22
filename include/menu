@@ -74,7 +74,7 @@ OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   2 "Keys Menu        Dump/Import keys PoS (${POS_COUNT:?})"
   3 "Information      Pi node status"
   4 "Download Menu    Wallet, bootstrap, display"
-  5 "Configuration    Node configurations"
+  5 "Configs & Tools  Node configurations"
   6 "System Space     Disk space utilized"
   7 "Swap Menu        Swap space options"
   8 "UFW Menu         Uncomplicated firewall"
@@ -1233,7 +1233,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   WIDTH=48
   CHOICE_HEIGHT=11
   BACKTITLE="Node configuration"
-  TITLE="Edit configurations"
+  TITLE="Configuration & Tools"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Wallet           Edit $(echo "${WALLET_CONFIG:?}" 2>&1 | awk -F. '{ print $1 }' 2>&1)"
