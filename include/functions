@@ -908,7 +908,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/payment_value 2>&1
   fi
 
-  if [[ ! "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -eq $(grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent) ]] &>/dev/null; then
+  if [[ ! "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -eq $(grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) ]] &>/dev/null; then
     # count masternode rewards
     grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
   fi
