@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222202
-# 1.8.9.6
+# 1.9.1.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.8.9.6"
+VERSION="v1.9.1.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -891,6 +891,7 @@ DASH_INMN="Inputs"
 ### masternode rewards #########################################################
 
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/payment_value ]] &>/dev/null; then
+  # get masternode payment value from debug.log
   grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/payment_value 2>&1
 fi
 
@@ -901,8 +902,10 @@ fi
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -gt "0" ]] &>/dev/null; then
 
-  # get txid from inputs with payment value
+  # get raw txid lines from inputs with payment value
   grep -B8 "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+  grep "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/rewards.tmp 2>&1
+  mv "${LOG_DIR:?}"/rewards.tmp "${LOG_DIR:?}"/node_data/stats/rewards 2>&1
 
   # dashbord variable
   MASTER_REWARDS="$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
@@ -1344,15 +1347,35 @@ fi
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
   # save proof-of-stake data from debug.log
+
   # count saved vs wallet stakes
   SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-  # get wallet proof-of-stake value
+  # get wallet proof-of-stake count
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/staking 2>/dev/null)
   # if wallet pos is less than saved pos
   if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
-    # restore missing proof-of-stake data
+    # restore missing proof-of-stake count
     cat "${WALLET_DIR:?}"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Proof.Of.Stake Restored PoS Data! - ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}proof-of-stake data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+fi
+
+### restore masternode rewards data ############################################
+
+# greater than n seconds, continue
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+
+  # save masternode rewards data from debug.log
+
+  # count saved vs wallet rewards
+  SAVED_REWARDS=$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)
+  # get wallet masternode reward count
+  WALLET_REWARDS=$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1)
+  # if wallet masternode rewards is less than saved masternode rewards
+  if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
+    # restore missing masternode rewards count
+    cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Masternode.R() Restored Masternode Reward Data! - ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}proof-of-stake data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
