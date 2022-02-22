@@ -865,7 +865,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       touch "${WALLET_DIR:?}"/staking &>/dev/null
     fi
 
-    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/staking ]] &>/dev/null; then
+    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/staking 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
       # get bitcoinminer, remove duplicates
       grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/staking 2>&1
     fi
