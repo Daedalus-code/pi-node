@@ -275,7 +275,7 @@ Then the importprivkey can be used with this output
   "3")
 
     display_result() {
-      dialog --title "Wallet Inputs $(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" \
+      dialog --title "Wallet Inputs $(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) Amount $(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)" \
         --no-collapse \
         --msgbox "$RESULT" 0 0
     }
