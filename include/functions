@@ -914,7 +914,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -eq $(grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) ]] &>/dev/null; then
     # count masternode rewards
-    grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
+    grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
   fi
 
   if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" -gt "0" ]] &>/dev/null; then
