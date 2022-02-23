@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222102
+# V20222302
 # 0.4.6.0
 
 source /usr/local/bin/include/pinode.conf 2>&1
@@ -344,7 +344,7 @@ fi
 if [[ "$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
   if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
     # make sure masternode runs
-    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
     cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     cat "${WALLET_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null

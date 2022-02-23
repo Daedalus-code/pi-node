@@ -977,7 +977,7 @@ MNS="${N0:?} "
 
 # get masternode status
 if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
   cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null
 fi
 
