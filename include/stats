@@ -328,7 +328,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   rrdtool update /home/"$(whoami)"/stats/rank.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/watchlist.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/value.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/balance_value 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(grep -c "BitcoinMiner" "${WALLET_DIR:?}"/staking 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/stake_count 2>/dev/null)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/rewards.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
