@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222302
-# 0.4.6.0
+# 0.4.6.2
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -206,12 +206,14 @@ else
     SCREEN_VALUE_P2P="${GR:?}0${GR:?}"
   fi
 
-  # kill old screen session (max 30 seconds on average for each connection attempt)
-  if [[ "$SCREEN_CALC_P2P" -gt "$(echo "${ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-    screen -X -S add_peers quit &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    SCREEN_IND_P2P="${GR:?}*${N0:?}"
-    SCREEN_VALUE_P2P="${GR:?}0${GR:?}"
+  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/add_peers | awk '{ print $1 }')" -gt "2" ]] &>/dev/null; then
+    # kill old screen session (max 30 seconds on average for each connection attempt)
+    if [[ "$SCREEN_CALC_P2P" -gt "$(echo "${ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+      screen -X -S add_peers quit &>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      SCREEN_IND_P2P="${GR:?}*${N0:?}"
+      SCREEN_VALUE_P2P="${GR:?}0${GR:?}"
+    fi
   fi
 
   # still running
