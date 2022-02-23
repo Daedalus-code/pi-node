@@ -1287,8 +1287,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   8 "Filesystem       /etc/fstab"
   9 "Graphs           rrdtool options"
   10 "Reset            Reset configs"
-  11 "Backup           Zip backup files"
-  12 "Connections      Wallet peers")
+  11 "Peers            Connections"
+  12 "Backup           Zip backup files")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1970,7 +1970,7 @@ ${HIDDEN_SERVICE:?}
 
     # backup files
 
-  "11")
+  "12")
 
     read -r -p "[YN] Backup files (backups/keys)? y/n " -n 1 -r
     echo
@@ -1996,7 +1996,7 @@ ${HIDDEN_SERVICE:?}
 
     ;;
 
-  "12")
+  "11")
 
     if [[ -f "${LOG_DIR:?}"/node_data/client/getinfo ]] &>/dev/null; then
       cat "${LOG_DIR:?}"/node_data/client/getinfo 2>/dev/null | grep "connections" 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/connections 2>&1
@@ -2020,7 +2020,7 @@ ${HIDDEN_SERVICE:?}
           --msgbox "$RESULT" 0 0
       }
 
-      # output total memory, swap info
+      # output connections, peer info
       RESULT=$(grep -A12 "id" /tmp/node_data/client/getpeerinfo 2>&1 | egrep -v "version|timeoffset|conntime|bytesrecv|bytessent|lastrecv|lastsend|services|inbound|startingheight|pingwait" 2>&1 | tr -d ' |-' 2>&1)
       display_result "Wallet peers information"
       clear
