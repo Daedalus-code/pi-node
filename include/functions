@@ -937,7 +937,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
 
       # get raw txid lines from inputs with payment value
       grep -B8 "$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
-      grep "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/rewards.tmp 2>/dev/null
+      grep "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/rewards.tmp 2>/dev/null
       mv "${LOG_DIR:?}"/rewards.tmp "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null
     fi
 
