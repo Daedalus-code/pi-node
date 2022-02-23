@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222302
-# 2.3.3.2
+# 2.3.3.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -272,16 +272,23 @@ Then the importprivkey can be used with this output
 
   "3")
 
-    display_result() {
-      dialog --title "Wallet Inputs $(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) Amount $(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" \
-        --no-collapse \
-        --msgbox "$RESULT" 0 0
-    }
+    read -r -p "[YN] Raw format (without dialog)? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "scriptPubKey" 2>&1
+    else
 
-    # output wallet inputs - address, label and amount
-    RESULT=$(grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | egrep -v "label|scriptPubKey" 2>&1)
-    display_result "Coin Control"
-    clear
+      display_result() {
+        dialog --title "Wallet Inputs $(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) Amount $(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" \
+          --no-collapse \
+          --msgbox "$RESULT" 0 0
+      }
+
+      # output wallet inputs - address, label and amount
+      RESULT=$(grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "scriptPubKey" 2>&1)
+      display_result "Coin Control"
+      clear
+    fi
 
     ;;
 
