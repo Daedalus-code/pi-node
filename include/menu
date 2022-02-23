@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222302
-# 2.3.4.5
+# 2.3.4.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -276,9 +276,10 @@ Then the importprivkey can be used with this output
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       clear
-      printf '%b' "Inputs ${G1:?}$(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)${N0:?} Amount ${G1:?}$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)${N0:?}\n"
       echo
       grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "scriptPubKey" 2>&1 | tr -d ' |-' 2>&1
+      echo
+      printf '%b' "Inputs ${G1:?}$(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)${N0:?} Amount ${G1:?}$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)${N0:?}\n"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
