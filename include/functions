@@ -919,7 +919,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
     fi
     # dashbord indicator, pos + rewards
     DASH_SR="PoS/R"
-    DASH_INMN="IN/MN"
+    DASH_INMN="I/MN"
 
     # payment value
     if [[ ! -f "${LOG_DIR:?}"/node_data/stats/masternode_payment ]] &>/dev/null; then
