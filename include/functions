@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222302
-# 1.9.7.8
+# 1.9.8.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.7.8"
+VERSION="v1.9.8.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1206,8 +1206,11 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
   cat "${LOG_DIR:?}"/success 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | grep -v "127." >"${LOG_DIR:?}"/node_data/peers/success 2>&1
   # remove old file
   rm "${LOG_DIR:?}"/success &>/dev/null
-  # backup onion connections
-  grep ".onion" "${LOG_DIR:?}"/node_data/peers/success >"${WALLET_DIR:?}"/onion_address 2>&1
+
+  if [[ ! "$(grep -c "${WALLET_DIR:?}"/onion_address 2>&1)" -eq "$(grep -c ".onion" "${LOG_DIR:?}"/node_data/peers/success 2>&1)" ]] &>/dev/null; then
+    # backup onion connections
+    grep ".onion" "${LOG_DIR:?}"/node_data/peers/success >"${WALLET_DIR:?}"/onion_address 2>&1
+  fi
 fi
 
 ### add_peers screen script ####################################################
