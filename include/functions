@@ -913,6 +913,10 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
     # dashbord variable
     MASTER_REWARDS="$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
     MASTER_REWARDS="${MASTER_REWARDS:?} "
+    if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
+      # no stakes (color)
+      MASTER_REWARDS="${GR:?}0 ${N0:?}"
+    fi
     # dashbord indicator, pos + rewards
     DASH_SR="PoS/R"
     DASH_INMN="IN/MN"
@@ -966,10 +970,6 @@ fi
 
 if [[ -z "$MASTER_REWARDS" ]] &>/dev/null; then
   MASTER_REWARDS="${N0:?}"
-fi
-if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
-  # no stakes (color)
-  MASTER_REWARDS="${GR:?}0${N0:?}"
 fi
 
 ### dashbord ###################################################################
