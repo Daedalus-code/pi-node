@@ -1429,7 +1429,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   # get wallet masternode reward count
   WALLET_REWARDS=$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # if wallet masternode rewards is less than saved masternode rewards
-  if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
+  if [[ "$WALLET_REWARDS" -lt "$SAVED_REWARDS" ]] &>/dev/null; then
     # restore missing masternode rewards count
     cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Masternode.R() Restored Masternode Reward Data! - ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
