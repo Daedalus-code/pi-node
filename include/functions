@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222302
-# 1.9.8.1
+# 1.9.8.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.8.1"
+VERSION="v1.9.8.2"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -907,6 +907,13 @@ DASH_INMN="Inputs"
 
 if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
+  # dashbord variable
+  MASTER_REWARDS="$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+  MASTER_REWARDS="${MASTER_REWARDS:?} "
+  # dashbord indicator, pos + rewards
+  DASH_SR="PoS/R"
+  DASH_INMN="IN/MN"
+
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
@@ -932,12 +939,6 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
       grep "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/rewards.tmp 2>/dev/null
       mv "${LOG_DIR:?}"/rewards.tmp "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null
 
-      # dashbord variable
-      MASTER_REWARDS="$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
-      MASTER_REWARDS="${MASTER_REWARDS:?} "
-      # dashbord indicator, pos + rewards
-      DASH_SR="PoS/R"
-      DASH_INMN="IN/MN"
       # make sure masternode_confirmations exist
       touch "${LOG_DIR:?}"/node_data/stats/masternode_confirmations &>/dev/null
     else
