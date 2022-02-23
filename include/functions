@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222302
-# 1.9.9.0
+# V20222402
+# 1.9.9.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.9.0"
+VERSION="v1.9.9.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1980,9 +1980,18 @@ TH="${RC:?}D${N0:?}"
 
 ### proof-of-stake block was signed ############################################
 
-if tail -420 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+" 2>&1 | grep "BitcoinMiner" &>/dev/null; then # :)
+if tail -768 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+" 2>&1 | grep "BitcoinMiner" &>/dev/null; then # :)
   # green
   CB="${G1:?}"
+else # default (theme based)
+  CB="${RC:?}"
+fi
+
+### masternode reward  #########################################################
+
+if tail -768 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then # :)
+  # green
+  CB="${N0:?}"
 else # default (theme based)
   CB="${RC:?}"
 fi
