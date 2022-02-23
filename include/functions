@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222302
-# 1.9.7.2
+# 1.9.7.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.7.2"
+VERSION="v1.9.7.7"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -892,6 +892,11 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   else # non responsive (color)
     WALLET_STAKES="${GR:?}0${N0:?}"
   fi
+fi
+
+if [[ -z "$WALLET_STAKES" ]] &>/dev/null; then
+  # non responsive (color)
+  WALLET_STAKES="${GR:?}0${N0:?}"
 fi
 
 # dashbord indicator, only staking
