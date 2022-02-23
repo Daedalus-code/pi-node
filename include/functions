@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222402
-# 2.0.1.3
+# 2.0.1.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.0.1.3"
+VERSION="v2.0.1.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -965,6 +965,11 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
     # get bitcoinminer, remove duplicates
     cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
     printf '%b' "${LOG_DATE:?} Status() Masternode.R() Saved ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+else
+  if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
+    # no stakes (color)
+    MASTER_REWARDS="${N0:?}"
   fi
 fi
 
