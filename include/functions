@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222302
-# 1.9.6.3
+# 1.9.6.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.6.3"
+VERSION="v1.9.6.5"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1524,6 +1524,8 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     truncate -s 0 "${LOG_DIR:?}"/node_data/stats/total.cidr &>/dev/null
 
     # remove old files
+    rm "${LOG_DIR:?}"/node_data/stats/stak* &>/dev/null
+    rm "${LOG_DIR:?}"/node_data/stats/reward* &>/dev/null
     rm "${LOG_DIR:?}"/node_data/client/latest &>/dev/null
     rm "${LOG_DIR:?}"/node_data/stats/cpuinfo &>/dev/null
 
