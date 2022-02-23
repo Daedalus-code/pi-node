@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222302
-# 2.3.3.4
+# 2.3.3.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -233,17 +233,16 @@ may report that the imported key exists but related transactions are still missi
     read -r IMPORT_KEY
     if [[ -z "$IMPORT_KEY" ]] &>/dev/null; then
       # non responsive
-      printf '%b' "[${R1:?}!!${N0:?}] Nothing was typed!\n"
+      printf '%b' "[${R1:?}!!${N0:?}] ${GR:?}Empty! Nothing was typed!${GR:?}\n"
       sleep 1
+    else
+      printf '%b' "[${R1:?}!!${GR:?}?${N0:?}] Please wait..! This call can take minutes to complete.\n"
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" importprivkey "${IMPORT_KEY:?}"
       clear
-      exit
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
     fi
-    printf '%b' "[${R1:?}!!${GR:?}?${N0:?}] Please wait..! This call can take minutes to complete.\n"
-    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" importprivkey "${IMPORT_KEY:?}"
-    clear
-    echo
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
 
     ;;
 
@@ -256,17 +255,16 @@ Then the importprivkey can be used with this output
     read -r DUMP_ADDRESS
     if [[ -z "$DUMP_ADDRESS" ]] &>/dev/null; then
       # non responsive
-      printf '%b' "[${R1:?}!!${N0:?}] Nothing was typed!\n"
+      printf '%b' "[${R1:?}!!${N0:?}] ${GR:?}Empty! Nothing was typed!${GR:?}\n"
       sleep 1
+    else
+      echo "[!?] Please copy this!"
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" dumpprivkey "${DUMP_ADDRESS:?}"
       clear
-      exit
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
     fi
-    echo "[!?] Please copy this!"
-    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" dumpprivkey "${DUMP_ADDRESS:?}"
-    clear
-    echo
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
-    echo
 
     ;;
 
@@ -275,7 +273,7 @@ Then the importprivkey can be used with this output
   "3")
 
     display_result() {
-      dialog --title "Wallet Inputs $(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) Amount $(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)" \
+      dialog --title "Wallet Inputs $(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) Amount $(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" \
         --no-collapse \
         --msgbox "$RESULT" 0 0
     }
