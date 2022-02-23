@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222302
-# 2.3.4.5
+# 2.3.7.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1270,9 +1270,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
 "5")
 
-  HEIGHT=18
+  HEIGHT=19
   WIDTH=48
-  CHOICE_HEIGHT=11
+  CHOICE_HEIGHT=12
   BACKTITLE="Node configuration"
   TITLE="Configuration & Tools"
   MENU="Choose one option:"
@@ -1287,7 +1287,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   8 "Filesystem       /etc/fstab"
   9 "Graphs           rrdtool options"
   10 "Reset            Reset configs"
-  11 "Backup           Zip backup files")
+  11 "Backup           Zip backup files"
+  12 "Connections      Wallet peers")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1991,6 +1992,38 @@ ${HIDDEN_SERVICE:?}
       echo
       read -r -p "[Ok] Backups is done! Press Enter to continue" </dev/tty
       echo
+    fi
+
+    ;;
+
+  "12")
+
+    if [[ -f "${LOG_DIR:?}"/node_data/client/getinfo ]] &>/dev/null; then
+      cat "${LOG_DIR:?}"/node_data/client/getinfo 2>/dev/null | grep "connections" 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/connections 2>&1
+    fi
+
+    read -r -p "[YN] Raw format (without dialog)? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      clear
+      grep -A12 "id" /tmp/node_data/client/getpeerinfo 2>&1 | egrep -v "version|timeoffset|conntime|bytesrecv|bytessent|lastrecv|lastsend|services|inbound|startingheight|pingwait" 2>&1 | tr -d ' |-' 2>&1
+      echo
+      printf '%b' "Connections ${G1:?}$(grep -c "id" "${LOG_DIR:?}"/node_data/client/getpeerinfo)${N0:?}${N0:?}\n"
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+    else
+
+      display_result() {
+        dialog --title "Connections $(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null)" \
+          --no-collapse \
+          --msgbox "$RESULT" 0 0
+      }
+
+      # output total memory, swap info
+      RESULT=$(grep -A12 "id" /tmp/node_data/client/getpeerinfo 2>&1 | egrep -v "version|timeoffset|conntime|bytesrecv|bytessent|lastrecv|lastsend|services|inbound|startingheight|pingwait" 2>&1 | tr -d ' |-' 2>&1)
+      display_result "Wallet peers information"
+      clear
     fi
 
     ;;
