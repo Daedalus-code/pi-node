@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222302
-# 1.9.8.0
+# 1.9.7.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.8.0"
+VERSION="v1.9.7.7"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -960,9 +960,6 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
     fi
   fi
 else
-  # delete old files
-  rm "${WALLET_DIR:?}"/masternode_check &>/dev/null
-  rm "${WALLET_DIR:?}"/masternode_lock &>/dev/null
   # output no masternode rewards
   MASTER_REWARDS="${N0:?}"
 fi
