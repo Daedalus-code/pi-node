@@ -930,7 +930,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
 
     if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }')" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" ]] &>/dev/null; then
       # count masternode rewards
-      grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | awk '{ print $3 }' 2>&1)" "${LOG_DIR:?}"/node_data/client/listunspent >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
+      grep -c "AddToWallet" "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
     fi
 
     if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep -c "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" ]] &>/dev/null; then
