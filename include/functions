@@ -918,13 +918,13 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
     DASH_INMN="IN/MN"
 
     # payment value
-    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/payment_value ]] &>/dev/null; then
+    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/masternode_payment ]] &>/dev/null; then
       # get masternode payment value from debug.log
-      grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/payment_value 2>&1
+      grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
       # if missing data, use another method to get masternode reward data
-      if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/payment_value)" ]] &>/dev/null; then
+      if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment)" ]] &>/dev/null; then
         # use masternode reward inputs to determine the reward
-        egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/payment_value 2>&1
+        egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
       fi
     fi
 
@@ -933,32 +933,32 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
       grep -c "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | awk '{ print $3 }' 2>&1)" "${LOG_DIR:?}"/node_data/client/listunspent >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
     fi
 
-    if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep -c "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/payment_value 2>&1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" ]] &>/dev/null; then
+    if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep -c "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" ]] &>/dev/null; then
 
       # get raw txid lines from inputs with payment value
-      grep -B8 "$(cat "${LOG_DIR:?}"/node_data/stats/payment_value 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+      grep -B8 "$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
       grep "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/rewards.tmp 2>/dev/null
       mv "${LOG_DIR:?}"/rewards.tmp "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null
-
-      # make sure masternode_confirmations exist
-      touch "${LOG_DIR:?}"/node_data/stats/masternode_confirmations &>/dev/null
-    else
-      if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
-        # get confirmations from masternode collateral inputs
-        grep -A2 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/stats/masternode_confirmations 2>&1
-      fi
     fi
 
-    # count saved vs wallet rewards
-    SAVED_REWARDS=$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    # get wallet masternode reward count
-    WALLET_REWARDS=$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    # wallet masternode reward count greater then saved masternode reward count
-    if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
-      # get bitcoinminer, remove duplicates
-      cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
-      printf '%b' "${LOG_DATE:?} Status() Masternode.R() Saved ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Masternode Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
+      # get confirmations from masternode collateral inputs
+      grep -A2 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/stats/masternode_confirmations 2>&1
     fi
+
+    # make sure masternode_confirmations exist
+    touch "${LOG_DIR:?}"/node_data/stats/masternode_confirmations &>/dev/null
+  fi
+
+  # count saved vs wallet rewards
+  SAVED_REWARDS=$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  # get wallet masternode reward count
+  WALLET_REWARDS=$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  # wallet masternode reward count greater then saved masternode reward count
+  if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
+    # get bitcoinminer, remove duplicates
+    cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Masternode.R() Saved ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Masternode Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
