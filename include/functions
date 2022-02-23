@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222402
-# 2.0.1.9
+# 2.0.1.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.0.1.9"
+VERSION="v2.0.1.7"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1483,7 +1483,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
     DIS_LOCAL=$(echo "$(cat "${LOG_DIR:?}"/node_data/stats/ip_address 2>/dev/null)" 2>&1 | egrep -o "[0-9]+" 2>&1 | head -1 2>&1)
     # keep last n of failed connections
-    RANDOM_FAILED=$((((RANDOM % 512) + 256)))
+    RANDOM_FAILED=$((((RANDOM % 1440) + 128)))
     echo "$(tail -"${RANDOM_FAILED:?}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -v "${DIS_LOCAL:?}" 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
 
     # repository latest head
@@ -1591,9 +1591,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     if [[ "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
       # add failed peers (failed.tmp) back in to debug.log
       while IFS= read -r ADDS; do
-        printf '%b' "${GR:?}"
         echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        printf '%b' "${N0:?}"
       done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -R 2>&1
       printf '%b' "${LOG_DATE:?} Status() Clean.Backup() Restoring old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     else
