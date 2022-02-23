@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222202
+# V20222302
 # 0.4.5.0
 
 source /usr/local/bin/include/pinode.conf 2>&1
@@ -113,8 +113,8 @@ rrdtool graph /var/www/html/stakes_graph.png \
   GPRINT:rewards:LAST:%.0lf\ Now\ R \
   GPRINT:rewards:MAX:%.0lf\ Max \
   GPRINT:rewards:MIN:%.0lf\ Min \
-  LINE2:stakes#FFDC77 \
-  AREA:rewards#779CFF
+  AREA:rewards#779CFF \
+  LINE2:stakes#FFDC77
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
