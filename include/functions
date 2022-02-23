@@ -858,6 +858,16 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
   if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
 
+    # get wallet proof-of-stake count
+    WALLET_POS=$(wc -l "${LOG_DIR:?}"/node_data/stats/staking 2>&1 | awk '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/stake_count 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    # count saved vs wallet stakes
+    SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+    if [[ -z "$WALLET_POS" ]] &>/dev/null; then
+      # non responsive
+      WALLET_POS="0"
+    fi
+
     # wallet pos count greater then saved pos count
     if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
       # get bitcoinminer, remove duplicates
@@ -875,16 +885,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/staking 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep -c "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1)" ]] &>/dev/null; then
       # get bitcoinminer, remove duplicates
       grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/staking 2>&1
-    fi
-
-    # get wallet proof-of-stake count
-    WALLET_POS=$(wc -l "${LOG_DIR:?}"/node_data/stats/staking 2>&1 | awk '{ print $1 }' >"${LOG_DIR:?}"/node_data/stats/stake_count 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    # count saved vs wallet stakes
-    SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-
-    if [[ -z "$WALLET_POS" ]] &>/dev/null; then
-      # non responsive
-      WALLET_POS="0"
     fi
 
     WALLET_STAKES="${WALLET_POS:?}"
