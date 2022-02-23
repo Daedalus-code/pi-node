@@ -1432,7 +1432,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   if [[ "$WALLET_REWARDS" -lt "$SAVED_REWARDS" ]] &>/dev/null; then
     # restore missing masternode rewards count
     cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Masternode.R() Restored Masternode Reward Data! - ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Masternode.R() Restored Masternode Reward Data! - ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}Masternode Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
