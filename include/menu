@@ -277,7 +277,7 @@ Then the importprivkey can be used with this output
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       clear
       echo
-      grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "scriptPubKey" 2>&1 | tr -d ' |-' 2>&1
+      grep -B6 -A4 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | egrep -v "safe|solvable|spendable|scriptPubKey|generated|vout" 2>&1 | tr -d ' |-' 2>&1
       echo
       printf '%b' "Inputs ${G1:?}$(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)${N0:?} Amount ${G1:?}$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)${N0:?}\n"
       echo
@@ -292,7 +292,7 @@ Then the importprivkey can be used with this output
       }
 
       # output wallet inputs - address, label and amount
-      RESULT=$(grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "scriptPubKey" 2>&1 | tr -d ' |-' 2>&1)
+      RESULT=$(grep -B6 -A4 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | egrep -v "safe|solvable|spendable|scriptPubKey|generated|vout" 2>&1 | tr -d ' |-' 2>&1)
       display_result "Coin Control"
       clear
     fi
