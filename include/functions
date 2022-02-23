@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222302
-# 1.9.6.5
+# 1.9.6.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.6.5"
+VERSION="v1.9.6.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1517,10 +1517,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
     # reset old files
     truncate -s 0 "${WALLET_DIR:?}"/getwan &>/dev/null
-    truncate -s 0 "${WALLET_DIR:?}"/staking &>/dev/null
-    truncate -s 0 "${WALLET_DIR:?}"/rewards &>/dev/null
-    truncate -s 0 "${WALLET_DIR:?}"/reward_count &>/dev/null
-    truncate -s 0 "${WALLET_DIR:?}"/stake_count &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/stats/total.cidr &>/dev/null
 
     # remove old files
