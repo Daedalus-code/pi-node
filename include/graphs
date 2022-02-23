@@ -107,8 +107,8 @@ rrdtool graph /var/www/html/stakes_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
   DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:rewards:MAX \
-  GPRINT:stakes:LAST:%.0lf\ Now\ PoS \
-  GPRINT:rewards:LAST:%.0lf\ Now\ R \
+  GPRINT:stakes:LAST:%.0lf\ PoS \
+  GPRINT:rewards:LAST:%.0lf\ Rewards \
   AREA:rewards#779CFF:"Rewards" \
   LINE2:stakes#FFDC77:"PoS"
 
