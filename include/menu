@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222302
-# 2.3.3.9
+# 2.3.4.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -275,7 +275,10 @@ Then the importprivkey can be used with this output
     read -r -p "[YN] Raw format (without dialog)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "scriptPubKey" 2>&1
+      grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "scriptPubKey" 2>&1 | tr -d ' ' 2>&1
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
     else
 
       display_result() {
@@ -285,7 +288,7 @@ Then the importprivkey can be used with this output
       }
 
       # output wallet inputs - address, label and amount
-      RESULT=$(grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "scriptPubKey" 2>&1)
+      RESULT=$(grep -B3 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "scriptPubKey" 2>&1 | tr -d ' ' 2>&1)
       display_result "Coin Control"
       clear
     fi
