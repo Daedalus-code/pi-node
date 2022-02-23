@@ -278,14 +278,14 @@ Then the importprivkey can be used with this output
       clear
       grep -B6 -A4 "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | egrep -v "safe|solvable|spendable|scriptPubKey|generated|vout" 2>&1 | tr -d ' |-' 2>&1
       echo
-      printf '%b' "Inputs ${G1:?}$(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)${N0:?} Amount ${G1:?}$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?}\n"
+      printf '%b' "Inputs ${G1:?}$(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)${N0:?} Amount ${G1:?}$(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)+$(cat "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | grep "immature_balance" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)+$(cat "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | grep "unconfirmed_balance" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?}\n"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
     else
 
       display_result() {
-        dialog --title "Inputs $(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) Amount $(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)" \
+        dialog --title "Inputs $(grep -c "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1) Amount $(grep "amount" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)+$(cat "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | grep "immature_balance" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)+$(cat "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1 | grep "unconfirmed_balance" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)" \
           --no-collapse \
           --msgbox "$RESULT" 0 0
       }
