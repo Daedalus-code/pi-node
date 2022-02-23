@@ -955,7 +955,6 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
   fi
 else
   # delete old files
-  rm "${WALLET_DIR:?}"/masternode_status &>/dev/null
   rm "${WALLET_DIR:?}"/masternode_check &>/dev/null
   rm "${WALLET_DIR:?}"/masternode_lock &>/dev/null
   # output no masternode rewards
@@ -1137,6 +1136,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       printf '%b' "${GR:?}${LOG_DATE:?} Status() getpatriotnodestatus <- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       cat "${WALLET_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
       printf '%b' "${GR:?}${LOG_DATE:?} Status() getpatriotnodestatus <- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      rm "${WALLET_DIR:?}"/masternode_status &>/dev/null
     fi
   fi
 
