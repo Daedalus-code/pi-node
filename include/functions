@@ -1207,7 +1207,7 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
   # remove old file
   rm "${LOG_DIR:?}"/success &>/dev/null
 
-  if [[ ! "$(grep -c "${WALLET_DIR:?}"/onion_address 2>&1)" -eq "$(grep -c ".onion" "${LOG_DIR:?}"/node_data/peers/success 2>&1)" ]] &>/dev/null; then
+  if [[ ! "$(grep -c ".onion" "${WALLET_DIR:?}"/onion_address 2>&1)" -eq "$(grep -c ".onion" "${LOG_DIR:?}"/node_data/peers/success 2>&1)" ]] &>/dev/null; then
     # backup onion connections
     grep ".onion" "${LOG_DIR:?}"/node_data/peers/success >"${WALLET_DIR:?}"/onion_address 2>&1
   fi
