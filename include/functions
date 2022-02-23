@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222302
-# 1.9.8.2
+# 1.9.8.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.8.2"
+VERSION="v1.9.8.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -750,7 +750,7 @@ fi
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "1" ]] &>/dev/null; then
 
   if [ ! -f "${LOG_DIR:?}"/node_data/client/listunspent ] &>/dev/null; then
-    # make sure listunspent exist
+    # make sure listunspent (inputs) exist
     touch "${LOG_DIR:?}"/node_data/client/listunspent &>/dev/null
   fi
   if [ ! -f "${LOG_DIR:?}"/node_data/add_peers ] &>/dev/null; then
@@ -933,19 +933,21 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
       grep -c "AddToWallet" "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
     fi
 
+    # if wallet rewards are less than listunspent (inputs) with payment value, continue
     if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep -c "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" ]] &>/dev/null; then
 
-      # get raw txid lines from inputs with payment value
+      # get raw txid lines from listunspent (inputs) with payment value
       grep -B8 "$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+      # find addtowallet lines from debug.log with the txids found above
       grep "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/rewards.tmp 2>/dev/null
       mv "${LOG_DIR:?}"/rewards.tmp "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null
     fi
 
-    if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
+    # look for inputs with masternode collateral
+    if grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent &>/dev/null; then
       # get confirmations from masternode collateral inputs
       grep -A2 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/stats/masternode_confirmations 2>&1
     fi
-
     # make sure masternode_confirmations exist
     touch "${LOG_DIR:?}"/node_data/stats/masternode_confirmations &>/dev/null
   fi
