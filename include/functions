@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222302
-# 1.9.8.2
+# 1.9.7.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.9.8.2"
+VERSION="v1.9.7.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -946,7 +946,6 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
         # get confirmations from masternode collateral inputs
         grep -A2 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/stats/masternode_confirmations 2>&1
       fi
-      MASTER_REWARDS="${N0:?}"
     fi
 
     # count saved vs wallet rewards
@@ -960,9 +959,6 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
       printf '%b' "${LOG_DATE:?} Status() Masternode.R() Saved ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Masternode Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
-else
-  # output no masternode rewards
-  MASTER_REWARDS="${N0:?}"
 fi
 
 if [[ -z "$MASTER_REWARDS" ]] &>/dev/null; then
@@ -1504,7 +1500,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     AVG_POS_TIME="Average Time $AVG_TX (${INPUT_AGE_D:?}d) ${GR:?}$INPUT_AGE${N0:?}"
 
     SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)
-    MASTER_REWARDS="$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1)"
+    MASTER_REWARDS="$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
 
     # interval dashbord for debug.log
     # note: should always start later on since daemon start (uptime_daemon)
