@@ -1993,8 +1993,8 @@ fi
 
 ### masternode reward  #########################################################
 
-if tail -768 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then # :)
-  # green
+if tail -768 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "AddToWallet" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then # :)
+  # white
   CB="${N0:?}"
 else # default (theme based)
   CB="${RC:?}"
