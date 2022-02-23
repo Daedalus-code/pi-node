@@ -543,7 +543,7 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<img src='hdd_graph.png' alt='Drive' />";
   echo "<img src='network_graph.png' alt='Network' />";
   echo "<img src='balance_graph.png' alt='Balance' />";
-  echo "<img src='stakes_graph.png' alt='Stakes' />";
+  echo "<img src='stakes_and_rewards_graph.png' alt='Stakes' />";
   echo "<img src='inputs_graph.png' alt='Inputs' />";
   echo "<img src='peers_graph.png' alt='Peers' />";
   echo "<img src='rank_graph.png' alt='Rank' />";

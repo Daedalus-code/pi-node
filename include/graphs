@@ -91,11 +91,11 @@ rrdtool graph /var/www/html/peers_graph.png \
   AREA:peers#A28DB8:"Peers" \
   AREA:banned_peers#CC2C4B:"Bans"
 
-# stakes (24hour)
-rrdtool graph /var/www/html/stakes_graph.png \
+# stakes & rewards (24hour)
+rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
-  --vertical-label "Wallet Stakes" \
+  --vertical-label "Stakes & Rewards" \
   --alt-autoscale-max --lower-limit=1 \
   --color BACK#565875 \
   --color FONT#FFFFFF \
