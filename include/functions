@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222402
-# 2.0.3.4
+# 2.0.3.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.0.3.4"
+VERSION="v2.0.3.6"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -908,22 +908,24 @@ DASH_INMN="Inputs"
 # masternode successfully started, continue
 if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
+  # dashbord indicator, pos + rewards
+  DASH_SR="PoS/R"
+  DASH_INMN="I/MN"
+
+  # dashbord variable
+  MASTER_REWARDS="$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+  MASTER_REWARDS="${C1:?}${MASTER_REWARDS:?} ${N0:?}"
+
+  if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" -eq "0" ]] &>/dev/null; then
+    # no rewards (color)
+    MASTER_REWARDS="${GR:?}0 ${N0:?}"
+  fi
+
   # addtowallet found in debug.log, continue
   if [[ "$(grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
 
     # greater than n seconds, continue
     if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
-
-      # dashbord variable
-      MASTER_REWARDS="$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
-      MASTER_REWARDS="${CY:?}${MASTER_REWARDS:?} ${N0:?}"
-      if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
-        # no rewards (color)
-        MASTER_REWARDS="${GR:?}0 ${N0:?}"
-      fi
-      # dashbord indicator, pos + rewards
-      DASH_SR="PoS/R"
-      DASH_INMN="I/MN"
 
       # payment value
       if [[ ! -f "${LOG_DIR:?}"/node_data/stats/masternode_payment ]] &>/dev/null; then
@@ -977,14 +979,14 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
       printf '%b' "${LOG_DATE:?} Status() Masternode.R() Saved ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   else
-    if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
+    if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" -eq "0" ]] &>/dev/null; then
       # no rewards (color)
       MASTER_REWARDS="${N0:?}"
     fi
   fi
 fi
 
-if [[ -z "$MASTER_REWARDS" ]] &>/dev/null; then
+if [[ -z "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" ]] &>/dev/null; then
   # non responsive
   MASTER_REWARDS="${N0:?}"
 fi
@@ -1010,8 +1012,8 @@ fi
 
 if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
   # count masternodes
-  MASTER_INPUTS="${CY:?}$(grep -c "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)${N0:?}"
-  MNS="${CY:?}M${N0:?}" # masternode status
+  MASTER_INPUTS="${C1:?}$(grep -c "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)${N0:?}"
+  MNS="${C1:?}M${N0:?}" # masternode status
 else
   MASTER_INPUTS="${N0:?}"
   MNS="${N0:?} "
@@ -1549,7 +1551,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Addnode.Size()${N0:?} Add New Peers ${CY:?}${ADD_PEERS_SIZE:?}${N0:?} Addnode Peers ${C1:?}$ADDNODES_MANUAL_SIZE${N0:?} Arp ${G0:?}${ADDNODES_ARP_SIZE:?}${N0:?} Curl ${G1:?}${ADDNODES_CURL_SIZE:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Peers.Status()${N0:?} Total ${WALLET_PEERS_TOTAL:?} Latest ${WALLET_PEERS_LATEST:?} Older ${WALLET_PEERS_OTHER:?} - ${G1:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() Proof.Of.Work:${N0:?} PoS ${G1:?}${SAVED_POS:?}${N0:?} ${AVG_POS_TIME:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${GR:?}${LOG_DATE:?} Status() MasterRewards:${N0:?} Rewards ${CY:?}${MASTER_REWARDS:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() MasterRewards:${N0:?} Rewards ${C1:?}${MASTER_REWARDS:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     echo
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     echo
@@ -2025,7 +2027,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
   # get addtowallet, disregard seed lines
   if tail -768 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then # :)
     # cyan
-    CB="${CY:?}"
+    CB="${C1:?}"
   else # default (theme based)
     CB="${RC:?}"
   fi
