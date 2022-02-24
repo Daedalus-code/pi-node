@@ -934,7 +934,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
 
     # find masternode labeled inputs
     if [[ "$(egrep "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
-      # get txid from inouts with that label
+      # get txid from inputs with that label
       grep "$(egrep -B5 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }')" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
     fi
 
