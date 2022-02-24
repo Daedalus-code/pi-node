@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222402
-# 2.0.2.5
+# 2.0.3.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.0.2.5"
+VERSION="v2.0.3.0"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -905,77 +905,82 @@ DASH_INMN="Inputs"
 
 ### masternode rewards #########################################################
 
+# masternode successfully started, continue
 if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
-  # greater than n seconds, continue
-  if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+  # addtowallet found in debug.log, continue
+  if [[ "$(grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
 
-    # dashbord variable
-    MASTER_REWARDS="$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
-    MASTER_REWARDS="${MASTER_REWARDS:?} "
+    # greater than n seconds, continue
+    if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+
+      # dashbord variable
+      MASTER_REWARDS="$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+      MASTER_REWARDS="${MASTER_REWARDS:?} "
+      if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
+        # no rewards (color)
+        MASTER_REWARDS="${GR:?}0 ${N0:?}"
+      fi
+      # dashbord indicator, pos + rewards
+      DASH_SR="PoS/R"
+      DASH_INMN="I/MN"
+
+      # payment value
+      if [[ ! -f "${LOG_DIR:?}"/node_data/stats/masternode_payment ]] &>/dev/null; then
+        # get masternode payment value from debug.log
+        grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
+        # if missing data, use another method to get masternode reward data
+        if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment)" ]] &>/dev/null; then
+          # use masternode reward inputs to determine the reward
+          egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
+        fi
+      fi
+
+      # find masternode labeled inputs
+      if [[ "$(egrep "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
+        # get txid from inputs with that label
+        grep "$(egrep -B5 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }')" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+      fi
+
+      if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }')" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" ]] &>/dev/null; then
+        # count masternode rewards
+        grep -c "AddToWallet" "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
+      fi
+
+      # if wallet rewards are less than listunspent (inputs) with payment value, continue
+      if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep -c "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" ]] &>/dev/null; then
+
+        # get raw txid lines from listunspent (inputs) with payment value
+        grep -B8 "$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+        # find addtowallet lines from debug.log with the txids found above
+        grep "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/rewards.tmp 2>/dev/null
+        mv "${LOG_DIR:?}"/rewards.tmp "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null
+      fi
+
+      # look for inputs with masternode collateral
+      if grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent &>/dev/null; then
+        # get confirmations from masternode collateral inputs
+        grep -A2 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/stats/masternode_confirmations 2>&1
+      fi
+      # make sure masternode_confirmations exist
+      touch "${LOG_DIR:?}"/node_data/stats/masternode_confirmations &>/dev/null
+    fi
+
+    # count saved vs wallet rewards
+    SAVED_REWARDS=$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    # get wallet masternode reward count
+    WALLET_REWARDS=$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    # wallet masternode reward count greater then saved masternode reward count
+    if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
+      # get bitcoinminer, remove duplicates
+      cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Masternode.R() Saved ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
+  else
     if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
       # no rewards (color)
-      MASTER_REWARDS="${GR:?}0 ${N0:?}"
+      MASTER_REWARDS="${N0:?}"
     fi
-    # dashbord indicator, pos + rewards
-    DASH_SR="PoS/R"
-    DASH_INMN="I/MN"
-
-    # payment value
-    if [[ ! -f "${LOG_DIR:?}"/node_data/stats/masternode_payment ]] &>/dev/null; then
-      # get masternode payment value from debug.log
-      grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
-      # if missing data, use another method to get masternode reward data
-      if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment)" ]] &>/dev/null; then
-        # use masternode reward inputs to determine the reward
-        egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
-      fi
-    fi
-
-    # find masternode labeled inputs
-    if [[ "$(egrep "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
-      # get txid from inputs with that label
-      grep "$(egrep -B5 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }')" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
-    fi
-
-    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }')" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" ]] &>/dev/null; then
-      # count masternode rewards
-      grep -c "AddToWallet" "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
-    fi
-
-    # if wallet rewards are less than listunspent (inputs) with payment value, continue
-    if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep -c "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" ]] &>/dev/null; then
-
-      # get raw txid lines from listunspent (inputs) with payment value
-      grep -B8 "$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
-      # find addtowallet lines from debug.log with the txids found above
-      grep "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/rewards.tmp 2>/dev/null
-      mv "${LOG_DIR:?}"/rewards.tmp "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null
-    fi
-
-    # look for inputs with masternode collateral
-    if grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent &>/dev/null; then
-      # get confirmations from masternode collateral inputs
-      grep -A2 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/stats/masternode_confirmations 2>&1
-    fi
-    # make sure masternode_confirmations exist
-    touch "${LOG_DIR:?}"/node_data/stats/masternode_confirmations &>/dev/null
-  fi
-
-  # count saved vs wallet rewards
-  SAVED_REWARDS=$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  # get wallet masternode reward count
-  WALLET_REWARDS=$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  # wallet masternode reward count greater then saved masternode reward count
-  if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
-    # get bitcoinminer, remove duplicates
-    cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Masternode.R() Saved ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-else
-  if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
-    # no rewards (color)
-    MASTER_REWARDS="${N0:?}"
   fi
 fi
 
