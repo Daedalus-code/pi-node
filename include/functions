@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222502
-# 2.0.6.1
+# V20222602
+# 2.0.6.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.0.6.1"
+VERSION="v2.0.6.6"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1854,6 +1854,11 @@ else
   elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
   fi
+fi
+
+if [[ -z "$TIMELINE" ]] &>/dev/null; then
+  # non responsive
+  TIMELINE="${GR}Have fun${N0:?}"
 fi
 
 # less than n seconds, continue
