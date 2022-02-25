@@ -120,8 +120,8 @@ rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
   DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:rewards:MAX \
-  GPRINT:stakes:LAST:%.0lf\ PoS \
-  GPRINT:rewards:LAST:%.0lf\ Rewards \
+  GPRINT:stakes:LAST:%.0lf\ "${POS_OUT:?}" \
+  GPRINT:rewards:LAST:%.0lf\ "${REW_OUT:?}" \
   AREA:rewards"${REW_OUT:?}" \
   LINE2:stakes"${POS_OUT:?}"
 
