@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222502
-# 2.0.5.7
+# 2.0.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.0.5.7"
+VERSION="v2.0.6.2"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -2050,7 +2050,12 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
     # cyan
     CB="${C1:?}"
   else # default (theme based)
-    CB="${RC:?}"
+    if tail -1800 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+|failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
+      # green
+      CB="${G1:?}"
+    else # default (theme based)
+      CB="${RC:?}"
+    fi
   fi
 fi
 
