@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222502
-# 2.0.4.9
+# 2.0.5.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.0.4.9"
+VERSION="v2.0.5.2"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -997,11 +997,14 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
       MASTER_REWARDS="${N0:?}"
     fi
   fi
+else
+  # non responsive
+  MASTER_REWARDS="${N0:?} "
 fi
 
 if [[ -z "$MASTER_REWARDS" ]] &>/dev/null; then
   # non responsive
-  MASTER_REWARDS="${N0:?}"
+  MASTER_REWARDS="${N0:?} "
 fi
 
 ### dashbord ###################################################################
