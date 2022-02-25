@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222502
-# 0.4.5.9
+# 0.4.7.9
 
 source /usr/local/bin/include/pinode.conf 2>&1
 
@@ -104,26 +104,46 @@ if [[ "$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)" -eq "1
   POS_GPRINT="Stake"
 fi
 
-# stakes & rewards (24hour)
-rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
-  -w 400 -h 160 -a PNG \
-  --slope-mode \
-  --vertical-label "Stakes & Rewards" \
-  --alt-autoscale-max --lower-limit=1 \
-  --color BACK#565875 \
-  --color FONT#FFFFFF \
-  --color CANVAS#42445F \
-  --color GRID#565875 \
-  --color FRAME#565875 \
-  --color SHADEA#565875 \
-  --color SHADEB#565875 \
-  --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:rewards:MAX \
-  DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
-  GPRINT:rewards:LAST:%.0lf\ "${REW_GPRINT:?}" \
-  GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
-  AREA:rewards#779CFF:"Rewards" \
-  LINE2:stakes#FFDC77:"Stakes"
+# masternode successfully started, continue
+if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
+  # stakes & rewards (24hour)
+  rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
+    -w 400 -h 160 -a PNG \
+    --slope-mode \
+    --vertical-label "Stakes & Rewards" \
+    --alt-autoscale-max --lower-limit=1 \
+    --color BACK#565875 \
+    --color FONT#FFFFFF \
+    --color CANVAS#42445F \
+    --color GRID#565875 \
+    --color FRAME#565875 \
+    --color SHADEA#565875 \
+    --color SHADEB#565875 \
+    --end now --start end-"${GRAPH_TIME:?}" \
+    DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:rewards:MAX \
+    DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
+    GPRINT:rewards:LAST:%.0lf\ "${REW_GPRINT:?}" \
+    GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
+    AREA:rewards#779CFF:"Rewards" \
+    LINE2:stakes#FFDC77:"Stakes"
+else
+  rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
+    -w 400 -h 160 -a PNG \
+    --slope-mode \
+    --vertical-label "Stakes" \
+    --alt-autoscale-max --lower-limit=1 \
+    --color BACK#565875 \
+    --color FONT#FFFFFF \
+    --color CANVAS#42445F \
+    --color GRID#565875 \
+    --color FRAME#565875 \
+    --color SHADEA#565875 \
+    --color SHADEB#565875 \
+    --end now --start end-"${GRAPH_TIME:?}" \
+    DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
+    GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
+    LINE2:stakes#FFDC77:"Stakes"
+fi
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
