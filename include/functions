@@ -940,7 +940,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
     MASTER_REWARDS="${GR:?}0 ${N0:?}"
   fi
 
-  MASTER_REWARDS="${C1:?}${MASTER_REWARDS:?} ${N0:?}"
+  MASTER_REWARDS="${C1:?}${MASTER_REWARDS:?}${N0:?}"
 
   # addtowallet found in debug.log, continue
   if [[ "$(grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
