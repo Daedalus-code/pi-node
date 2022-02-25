@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222302
-# 0.4.4.6
+# V20222502
+# 0.4.5.9
 
 source /usr/local/bin/include/pinode.conf 2>&1
 
@@ -91,6 +91,19 @@ rrdtool graph /var/www/html/peers_graph.png \
   AREA:peers#A28DB8:"Peers" \
   AREA:banned_peers#CC2C4B:"Bans"
 
+# plural
+REW_OUT="#779CFF:Rewards"
+POS_OUT="#FFDC77:Stakes"
+
+# single reward
+if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -eq "1" ]] &>/dev/null; then
+  REW_OUT="#779CFF:Reward"
+fi
+# single stake
+if [[ "$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)" -eq "1" ]] &>/dev/null; then
+  POS_OUT="#FFDC77:Stake"
+fi
+
 # stakes & rewards (24hour)
 rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
   -w 400 -h 160 -a PNG \
@@ -109,8 +122,8 @@ rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
   DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:rewards:MAX \
   GPRINT:stakes:LAST:%.0lf\ PoS \
   GPRINT:rewards:LAST:%.0lf\ Rewards \
-  AREA:rewards#779CFF:"Rewards" \
-  LINE2:stakes#FFDC77:"PoS"
+  AREA:rewards"${REW_OUT:?}" \
+  LINE2:stakes"${POS_OUT:?}"
 
 # balance (24hour)
 rrdtool graph /var/www/html/balance_graph.png \
