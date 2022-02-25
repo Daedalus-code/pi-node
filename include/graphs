@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222502
-# 0.4.5.9
+# 0.4.6.3
 
 source /usr/local/bin/include/pinode.conf 2>&1
 
@@ -94,14 +94,18 @@ rrdtool graph /var/www/html/peers_graph.png \
 # plural
 REW_OUT="#779CFF:Rewards"
 POS_OUT="#FFDC77:Stakes"
+REW_GPRINT="Rewards"
+POS_GPRINT="Stakes"
 
 # single reward
 if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -eq "1" ]] &>/dev/null; then
   REW_OUT="#779CFF:Reward"
+  REW_GPRINT="Reward"
 fi
 # single stake
 if [[ "$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)" -eq "1" ]] &>/dev/null; then
   POS_OUT="#FFDC77:Stake"
+  POS_GPRINT="Stake"
 fi
 
 # stakes & rewards (24hour)
@@ -118,10 +122,10 @@ rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
   DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:rewards:MAX \
-  GPRINT:stakes:LAST:%.0lf\ "${POS_OUT:?}" \
-  GPRINT:rewards:LAST:%.0lf\ "${REW_OUT:?}" \
+  DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
+  GPRINT:rewards:LAST:%.0lf\ "${REW_GPRINT:?}" \
+  GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
   AREA:rewards"${REW_OUT:?}" \
   LINE2:stakes"${POS_OUT:?}"
 
