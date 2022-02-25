@@ -999,7 +999,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
   fi
 else
   # non responsive
-  MASTER_REWARDS="${N0:?} "
+  MASTER_REWARDS="${N0:?}"
 fi
 
 if [[ -z "$MASTER_REWARDS" ]] &>/dev/null; then
