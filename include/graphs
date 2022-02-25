@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222502
-# 0.4.6.3
+# 0.4.5.9
 
 source /usr/local/bin/include/pinode.conf 2>&1
 
@@ -92,19 +92,15 @@ rrdtool graph /var/www/html/peers_graph.png \
   AREA:banned_peers#CC2C4B:"Bans"
 
 # plural
-REW_OUT="#779CFF:Rewards"
-POS_OUT="#FFDC77:Stakes"
 REW_GPRINT="Rewards"
 POS_GPRINT="Stakes"
 
 # single reward
 if [[ "$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -eq "1" ]] &>/dev/null; then
-  REW_OUT="#779CFF:Reward"
   REW_GPRINT="Reward"
 fi
 # single stake
 if [[ "$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)" -eq "1" ]] &>/dev/null; then
-  POS_OUT="#FFDC77:Stake"
   POS_GPRINT="Stake"
 fi
 
