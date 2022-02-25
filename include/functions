@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222602
-# 2.0.7.3
+# 2.0.6.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.0.7.3"
+VERSION="v2.0.6.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -919,11 +919,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   fi
 fi
 
-if [[ -z "$WALLET_STAKES" ]] &>/dev/null; then
-  # non responsive (color)
-  WALLET_STAKES="${GR:?}0${N0:?}"
-fi
-
 # dashbord indicator, only staking
 DASH_SR="Stakes"
 DASH_INMN="Inputs"
@@ -939,12 +934,13 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
 
   # dashbord variable
   MASTER_REWARDS="$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
-  MASTER_REWARDS="${C1:?}${MASTER_REWARDS:?} ${N0:?}"
 
   if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
     # no rewards (color)
     MASTER_REWARDS="${GR:?}0 ${N0:?}"
   fi
+
+  MASTER_REWARDS="${C1:?}${MASTER_REWARDS:?} ${N0:?}"
 
   # addtowallet found in debug.log, continue
   if [[ "$(grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
