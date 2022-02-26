@@ -877,7 +877,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "1" ]] &>/dev/null; then
       # masternode successfully started, continue
       if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
         # get addtowallet, disregard seed lines (masternode)
-        if tail -2121 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+|failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
+        if tail -1800 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+|failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
           WALLET_TXLAST="${CY:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
         fi
       fi
@@ -885,7 +885,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "1" ]] &>/dev/null; then
       # wallet_txlast - proof-of-stake #########################################
 
       # get bitcoinminer, disregard seed lines (proof-of-stake)
-      if tail -2121 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+|failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
+      if tail -1800 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+|failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
         WALLET_TXLAST="${G1:?}$(tail -1 "${WALLET_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
       fi
     fi
@@ -2143,7 +2143,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
     if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
       # get addtowallet, disregard seed lines
-      if tail -2121 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
+      if tail -1800 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
         # cyan
         CB="${C1:?}"
       fi
@@ -2152,7 +2152,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
   ### proof-of-stake block was signed ##########################################
 
   # get bitcoinminer, disregard seed lines
-  if tail -2121 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
+  if tail -1800 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
     # green
     CB="${G1:?}"
   fi
