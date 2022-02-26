@@ -1137,10 +1137,10 @@ else # save no activity values (0) to mempool.activity
   echo "0" >>"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
 fi
 
-# reset mempool after 1440 lines (1440min=1day)
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
-  # keep log at 720 lines (12h)
-  echo "$(tail -720 "${LOG_DIR:?}"/node_data/stats/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
+# reset mempool after 2880 lines
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2880" ]] &>/dev/null; then
+  # keep log at 1440 lines
+  echo "$(tail -1440 "${LOG_DIR:?}"/node_data/stats/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
 fi
 
 # reset connections after 1440 lines (1440min=1day)
