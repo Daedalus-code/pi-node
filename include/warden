@@ -295,8 +295,8 @@ fi
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   if pgrep -x "${WALLET_DAEMON:?}" &>/dev/null; then
 
-    # look for screen session, if not found, run this block
-    if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
+    # get read_mempool status
+    if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
       # mempool status
       SCREEN_VALUE_MPS="${G1:?}M${GR:?}"
     else
