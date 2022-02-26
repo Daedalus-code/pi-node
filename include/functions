@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222602
-# 2.1.5.5
+# 2.1.5.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.5.5"
+VERSION="v2.1.5.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1140,6 +1140,10 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
     WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
 
     if [[ "$WALLET_POS" -eq "0" ]] &>/dev/null; then
+      # no stakes (color)
+      WALLET_STAKES="${GR:?}0${N0:?}"
+    fi
+    if [[ -z "$WALLET_STAKES" ]] &>/dev/null; then
       # no stakes (color)
       WALLET_STAKES="${GR:?}0${N0:?}"
     fi
