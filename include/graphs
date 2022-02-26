@@ -95,7 +95,7 @@ rrdtool graph /var/www/html/peers_graph.png \
   GPRINT:peers:MIN:%.0lf\ Min \
   AREA:peers#A28DB8:"Peers" \
   LINE2:banned_peers#CC2C4B:"Bans" \
-  LINE2:peers_ipv4#33CC2C \
+  LINE2:peers_ipv4#FFFFFF \
   LINE2:peers_ipv6#2CCC8D \
   LINE2:peers_dns#2C69CC \
   LINE2:peers_onion#A02CCC \
