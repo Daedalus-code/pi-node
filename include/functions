@@ -473,18 +473,26 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
 # By Rainman
 # V20222602
-# 0.0.2.0
+# 0.0.2.8
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
 
-LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
-
 for (( ; ; )); do # loop script
+
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
 
 printf '%b' "${LOG_DATE:?} Status() Read.mempool() Read mempool $(wc -l "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+# get blockchain activity with mempool
+if [[ "$(grep "size" "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>&1 | egrep -o "[0-9]+" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
+  # save activity values (1) to mempool.activity
+  echo "1" >>"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
+else # save no activity values (0) to mempool.activity
+  echo "0" >>"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
+fi
 
 sleep 28
 done
@@ -1127,14 +1135,6 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
   fi
 else
   wallet_dashbord
-fi
-
-# get blockchain activity with mempool
-if [[ "$WALLET_MEMPOOL" -gt "0" ]] &>/dev/null; then
-  # save activity values (1) to mempool.activity
-  echo "1" >>"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
-else # save no activity values (0) to mempool.activity
-  echo "0" >>"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
 fi
 
 # reset mempool after 2880 lines
