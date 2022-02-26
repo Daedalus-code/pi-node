@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222602
-# 0.4.8.3
+# 0.4.8.7
 
 source /usr/local/bin/include/pinode.conf 2>&1
 
@@ -83,6 +83,10 @@ rrdtool graph /var/www/html/peers_graph.png \
   DEF:peers=/home/"$(whoami)"/stats/peers.rrd:peers:MAX \
   DEF:peers=/home/"$(whoami)"/stats/peers.rrd:peers:AVERAGE \
   DEF:banned_peers=/home/"$(whoami)"/stats/banned_peers.rrd:banned_peers:MAX \
+  DEF:peers_ipv4=/home/"$(whoami)"/stats/peers_proto.rrd:peers_ipv4:MAX \
+  DEF:peers_ipv6=/home/"$(whoami)"/stats/peers_proto.rrd:peers_ipv6:MAX \
+  DEF:peers_dns=/home/"$(whoami)"/stats/peers_proto.rrd:peers_dns:MAX \
+  DEF:peers_onion=/home/"$(whoami)"/stats/peers_proto.rrd:peers_onion:MAX \
   GPRINT:peers:LAST:%.0lf\ Now \
   GPRINT:peers:AVERAGE:%.0lf\ AVG \
   GPRINT:banned_peers:LAST:%.0lf\ Bans \
