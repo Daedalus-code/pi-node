@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222602
-# 2.1.5.6
+# 2.1.5.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.5.6"
+VERSION="v2.1.5.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -496,6 +496,8 @@ if [[ "$(grep "size" "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>&1 | egrep
 
     # save activity values (1) to mempool.activity
     echo "1" >>"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
+  else # save no activity values (0) to mempool.activity
+    echo "0" >>"${LOG_DIR:?}"/node_data/stats/mempool 2>&1
   fi
 
 else # save no activity values (0) to mempool.activity
