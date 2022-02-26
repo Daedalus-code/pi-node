@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222602
-# 2.1.5.1
+# 2.1.5.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.5.1"
+VERSION="v2.1.5.0"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -2132,19 +2132,18 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
     if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
       # get addtowallet, disregard seed lines
-      if tail -2121 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+|failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
+      if tail -2121 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
         # cyan
         CB="${C1:?}"
       fi
-
-      ### proof-of-stake block was signed ######################################
-
-      # get bitcoinminer, disregard seed lines
-      if tail -2121 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+|failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
-        # green
-        CB="${G1:?}"
-      fi
     fi
+  fi
+  ### proof-of-stake block was signed ##########################################
+
+  # get bitcoinminer, disregard seed lines
+  if tail -2121 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
+    # green
+    CB="${G1:?}"
   fi
 fi
 
