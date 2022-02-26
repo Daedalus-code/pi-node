@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222602
-# 0.5.8.3
+# 0.5.9.7
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -344,7 +344,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
 
-  rrdtool update /home/"$(whoami)"/stats/peers_proto.rrd N:"$(egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "127." 2>&1 | wc -l 2>&1)":"$(egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sed -r '/^.{,8}$/d' 2>&1 | wc -l 2>&1)":"$(grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v ".onion" 2>&1 | wc -l 2>&1)":"$(egrep -o "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | wc -l 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/peers_proto.rrd N:"$(egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v "127." 2>&1 | wc -l 2>&1)":"$(egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sed -r '/^.{,8}$/d' 2>&1 | wc -l 2>&1)":"$(grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | grep -v ".onion" 2>&1 | wc -l 2>&1)":"$(egrep -o "127.|[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | wc -l 2>&1)" 2>/dev/null
 
   rrdtool update /home/"$(whoami)"/stats/banned_peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/bans 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
