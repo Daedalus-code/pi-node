@@ -298,9 +298,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     # look for screen session, if not found, run this block
     if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
       # mempool status
-      SCREEN_VALUE_MPS="${G1:?}M${N0:?}"
+      SCREEN_VALUE_MPS="${G1:?}M${GR:?}"
     else
-      SCREEN_VALUE_MPS="${GR:?}M${N0:?}"
+      SCREEN_VALUE_MPS="${GR:?}M${GR:?}"
     fi
 
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
