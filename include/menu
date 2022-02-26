@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222602
-# 2.3.8.8
+# 2.3.8.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -668,8 +668,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     # get mempool activity
-    MEMPOOL_ACTIVITY_ACTIVE=$(cat "${LOG_DIR:?}"/tmp/node_data/stats/mempool_activity 2>&1 | grep "A" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    MEMPOOL_ACTIVITY_DEAD=$(cat "${LOG_DIR:?}"/tmp/node_data/stats/mempool_activity 2>&1 | grep "D" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_ACTIVE=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>&1 | grep "A" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_DEAD=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>&1 | grep "D" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     # communication port
     COM=$(awk '{ print $3 }' "${LOG_DIR:?}"/node_data/com 2>/dev/null)
@@ -2015,7 +2015,7 @@ ${HIDDEN_SERVICE:?}
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       clear
-      grep -A12 "id" /tmp/node_data/client/getpeerinfo 2>&1 | egrep -v "version|timeoffset|conntime|bytesrecv|bytessent|lastrecv|lastsend|services|inbound|startingheight|pingwait" 2>&1 | tr -d ' |-' 2>&1
+      grep -A12 "id" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | egrep -v "version|timeoffset|conntime|bytesrecv|bytessent|lastrecv|lastsend|services|inbound|startingheight|pingwait" 2>&1 | tr -d ' |-' 2>&1
       echo
       printf '%b' "Connections ${G1:?}$(grep -c "id" "${LOG_DIR:?}"/node_data/client/getpeerinfo)${N0:?}${N0:?}\n"
       echo
@@ -2030,7 +2030,7 @@ ${HIDDEN_SERVICE:?}
       }
 
       # output connections, peer info
-      RESULT=$(grep -A12 "id" /tmp/node_data/client/getpeerinfo 2>&1 | egrep -v "version|timeoffset|conntime|bytesrecv|bytessent|lastrecv|lastsend|services|inbound|startingheight|pingwait" 2>&1 | tr -d ' |-' 2>&1)
+      RESULT=$(grep -A12 "id" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | egrep -v "version|timeoffset|conntime|bytesrecv|bytessent|lastrecv|lastsend|services|inbound|startingheight|pingwait" 2>&1 | tr -d ' |-' 2>&1)
       display_result "Wallet peers information"
       clear
     fi
