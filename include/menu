@@ -668,8 +668,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     # get mempool activity
-    MEMPOOL_ACTIVITY_ACTIVE=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    MEMPOOL_ACTIVITY_DEAD=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>&1 | awk '{ print $4 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_ACTIVE=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_DEAD=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>&1 | awk '{ print $4 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
     # communication port
     COM=$(awk '{ print $3 }' "${LOG_DIR:?}"/node_data/com 2>/dev/null)
@@ -711,7 +711,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printline "User Space" "$(du -sh /home/* 2>/dev/null | xargs 2>&1 | awk '{ print $1,$2 }' 2>&1)" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))" "Upload" "${UPLOAD:?}"
       printline "Used HDD" "${USED_HDD:?} ${USED_HDD_P:?}" "COM" "$COM" "Download" "${DOWNLOAD:?}"
       echo
-      printline "Mempool" "Alive ${MEMPOOL_ACTIVITY_ACTIVE:?}% Dead ${MEMPOOL_ACTIVITY_DEAD:?}%"
+      printline "Mempool" "A ${MEMPOOL_ACTIVITY_ACTIVE:?}% D ${MEMPOOL_ACTIVITY_DEAD:?}%"
       echo
       printline "Wallet" "${WALLET_VERSION:?}" "Headers/Blocks" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
       printline "PID" "${PID_DAEMON:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Staking Status" "${NODE_PROOF:?}"
