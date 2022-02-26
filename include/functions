@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222602
-# 2.1.2.1
+# 2.1.2.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.2.1"
+VERSION="v2.1.2.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1420,7 +1420,10 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
       CIDRC="${GR:?}CIDR${N0:?}"
     fi
 
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?}/${TOT_INV_CIDR:?} Invalid pattern ${CIDRC:?} ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # get latest occurrence
+    CIDR_DATED=$(ls -l "${LOG_DIR:?}"/node_data/stats/total.cidr 2>&1 | awk '{ print $6,$7,$8 }' 2>&1)
+
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?}/${TOT_INV_CIDR:?} Invalid pattern ${CIDRC:?} ${GR:?}${CIDR_DATED:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
     if [ -f "${LOG_DIR:?}"/node_data/peers.x ] &>/dev/null; then
       # add extras from personal addnodes
