@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222602
-# 2.0.7.9
+# 2.1.2.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.0.7.9"
+VERSION="v2.1.2.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -451,7 +451,46 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   # collect wallet info, on every minute (loop) from client
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getblockchaininfo 2>&1
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getinfo 2>&1
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
+
+  if [[ ! -f "${LOG_DIR:?}"/node_data/stats/screens ]] &>/dev/null; then
+    # create screen list
+    LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+  fi
+
+  # look for screen session, if not found, run this block
+  if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
+
+    # collect mempool two times a loop (time_fix time)
+
+    # create screen session
+    screen -dmS read_mempool 2>&1
+
+    # make sure read_mempool exist
+    if [ ! -f "${LOG_DIR:?}"/read_mempool ] &>/dev/null; then
+      # connect nodes found with nodes list above, (using tmp directory)
+      cat >"${LOG_DIR:?}"/read_mempool <<'EOF'
+#!/bin/bash
+
+# By Rainman
+# V20222602
+# 0.0.1.4
+
+source /usr/local/bin/include/pinode.conf 2>&1
+
+for (( ; ; )); do # loop script
+
+"${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
+
+sleep 28
+done
+
+EOF
+    fi
+
+    # start reading mempool
+    screen -S read_mempool -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/read_mempool\n'
+  fi
+
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getpatriotnodecount 2>&1
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getwalletinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getwalletinfo 2>&1
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/listunspent 2>&1
@@ -1594,6 +1633,9 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       printf '%b' "${LOG_DATE:?} Status() Old.DebugLog() Storing old wallet log --> ${GR:?}${WALLET_DIR:?}/debug.log${G1:?}${N0:?} <--${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       cat "${WALLET_LOG_DIR:?}"/debug.log >>"${WALLET_DIR:?}"/debug.log 2>/dev/null
     fi
+
+    # restart mempool script
+    screen -X -S read_mempool quit &>/dev/null
 
     # keep masternode status updated
     cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getpatriotnodestatus &>/dev/null

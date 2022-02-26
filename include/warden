@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222302
-# 0.4.6.6
+# V20222602
+# 0.4.7.4
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -295,8 +295,16 @@ fi
 if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   if pgrep -x "${WALLET_DAEMON:?}" &>/dev/null; then
 
+    # look for screen session, if not found, run this block
+    if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
+      # mempool status
+      SCREEN_VALUE_MPS="${G1:?}M${N0:?}"
+    else
+      SCREEN_VALUE_MPS="${GR:?}M${N0:?}"
+    fi
+
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${GR:?}(${SCREEN_VALUE_P2P:?}/${SCREEN_VALUE_CG:?}/${SCREEN_VALUE_CMC:?})${N0:?} ${SCREEN_IND_P2P:?}${SCREEN_IND_CG:?}${SCREEN_IND_CMC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${GR:?}(${SCREEN_VALUE_MPS:?}/${SCREEN_VALUE_P2P:?}/${SCREEN_VALUE_CG:?}/${SCREEN_VALUE_CMC:?})${N0:?} ${SCREEN_IND_P2P:?}${SCREEN_IND_CG:?}${SCREEN_IND_CMC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() System.Warden: $(cat "${LOG_DIR:?}"/node_data/stats/uptime 2>/dev/null)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # make sure debug.log exist
