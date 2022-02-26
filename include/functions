@@ -472,7 +472,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   # kill when too many screens appears (all of them)
   if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "read_mempool" 2>&1)" -gt "1" ]] &>/dev/null; then
     # restart mempool script
-    screen -X -S read_mempool quit &>/dev/null
+    killall screen &>/dev/null
   fi
 
   # look for screen session, if not found, run this block
