@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222602
-# 2.1.4.3
+# 2.1.4.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.4.3"
+VERSION="v2.1.4.5"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -473,7 +473,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
 # By Rainman
 # V20222602
-# 0.0.1.4
+# 0.0.1.7
 
 source /usr/local/bin/include/pinode.conf 2>&1
 
@@ -482,6 +482,8 @@ for (( ; ; )); do # loop script
 "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
 
 sleep 28
+printf '%b' "${LOG_DATE:?} Status() Read.mempool() Read mempool $(wc -l "${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
 done
 
 EOF
