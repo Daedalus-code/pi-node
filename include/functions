@@ -464,7 +464,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   MEMPOOL_PERC_ACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_ACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   MEMPOOL_PERC_NOACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
-  echo "A ${MEMPOOL_PERC_ACTIVE:?} D ${MEMPOOL_PERC_NOACTIVE:?}" >"${LOG_DIR:?}"/tmp/node_data/stats/mempool_activity 2>&1
+  echo "A ${MEMPOOL_PERC_ACTIVE:?} D ${MEMPOOL_PERC_NOACTIVE:?}" >"${LOG_DIR:?}"/node_data/stats/mempool_activity 2>&1
 
   MEMPOOL_PERC_ACTIVE="${MEMPOOL_PERC_ACTIVE:?}%"
   MEMPOOL_PERC_NOACTIVE="${MEMPOOL_PERC_NOACTIVE:?}%"
