@@ -481,9 +481,9 @@ for (( ; ; )); do # loop script
 
 "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
 
-sleep 28
 printf '%b' "${LOG_DATE:?} Status() Read.mempool() Read mempool $(wc -l "${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
+sleep 28
 done
 
 EOF
