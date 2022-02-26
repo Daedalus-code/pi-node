@@ -1415,15 +1415,15 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     TOT_INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/stats/total.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
 
     if [[ "$TOT_INV_CIDR" -gt "0" ]] &>/dev/null; then
-      CIDRC="${R1:?}CIDR${N0:?}"
+      CIDRC="${R1:?}CIDR"
     else
-      CIDRC="${GR:?}CIDR${N0:?}"
+      CIDRC="${GR:?}CIDR"
     fi
 
     # get latest occurrence
     CIDR_DATED=$(ls -l "${LOG_DIR:?}"/node_data/stats/total.cidr 2>&1 | awk '{ print $6,$7,$8 }' 2>&1)
 
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?}/${TOT_INV_CIDR:?} Invalid pattern ${CIDRC:?} ${GR:?}${CIDR_DATED:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?}/${TOT_INV_CIDR:?} Invalid pattern ${CIDRC:?} -> ${CIDR_DATED:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
     if [ -f "${LOG_DIR:?}"/node_data/peers.x ] &>/dev/null; then
       # add extras from personal addnodes
