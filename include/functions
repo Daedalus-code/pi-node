@@ -972,7 +972,7 @@ if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>
 
       if [[ ! -f "${LOG_DIR:?}"/node_data/stats/reward_count ]] &>/dev/null; then
         # make sure reward_count exist
-        touch "${LOG_DIR:?}"/node_data/stats/reward_count &>/dev/null
+        echo "0" >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
       fi
 
       if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }')" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" ]] &>/dev/null; then
