@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222502
-# 0.4.7.9
+# V20222602
+# 0.4.8.3
 
 source /usr/local/bin/include/pinode.conf 2>&1
 
@@ -89,7 +89,11 @@ rrdtool graph /var/www/html/peers_graph.png \
   GPRINT:peers:MAX:%.0lf\ Max \
   GPRINT:peers:MIN:%.0lf\ Min \
   AREA:peers#A28DB8:"Peers" \
-  AREA:banned_peers#CC2C4B:"Bans"
+  LINE1:banned_peers#CC2C4B:"Bans" \
+  LINE1:peers_ipv4#33CC2C \
+  LINE1:peers_ipv6#2CCC8D \
+  LINE1:peers_dns#2C69CC \
+  LINE1:peers_onion#A02CCC
 
 # plural
 REW_GPRINT="Rewards"
