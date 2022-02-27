@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222702
-# 2.1.7.3
+# 2.1.7.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.7.3"
+VERSION="v2.1.7.7"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -827,6 +827,10 @@ fi
 if [[ -f "${LOG_DIR:?}"/node_data/client/getmempoolinfo ]] &>/dev/null; then
   # get wallet mempool
   WALLET_MEMPOOL=$(grep "size" "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>&1 | egrep -o "[0-9]+" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+fi
+
+if [[ -z "$WALLET_MEMPOOL" ]] &>/dev/null; then
+  WALLET_MEMPOOL="${GR:?}0${N0:?}"
 fi
 
 # greater than n seconds, continue
