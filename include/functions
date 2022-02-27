@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222702
-# 2.1.8.8
+# 2.1.6.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.8.8"
+VERSION="v2.1.6.6"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -893,30 +893,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "1" ]] &>/dev/null; then
   LAST_TX=$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
   # get last wallet txid with help of last_tx var
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations $LAST_TX" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-
-  # greater than n seconds, continue
-  if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5460" ]] &>/dev/null; then
-
-    # wallet_txlast - masternode reward ########################################
-
-    if [[ "$(wc -l "${LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2369" ]] &>/dev/null; then
-
-      # masternode successfully started, continue
-      if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
-        # get addtowallet, disregard seed lines (masternode)
-        if tail -1800 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+|failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
-          WALLET_TXLAST="${CY:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
-        fi
-      fi
-
-      # wallet_txlast - proof-of-stake #########################################
-
-      # get bitcoinminer, disregard seed lines (proof-of-stake)
-      if tail -1800 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "seed[0-9]+|failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
-        WALLET_TXLAST="${G1:?}$(tail -1 "${WALLET_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
-      fi
-    fi
-  fi
 
   # sync progress missing, continue
   if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
@@ -2171,6 +2147,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
 
       # get addtowallet, disregard seed lines
       if tail -1800 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
+        WALLET_TXLAST="${CY:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
         # cyan
         CB="${C1:?}"
       fi
@@ -2180,6 +2157,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
 
   # get bitcoinminer, disregard seed lines
   if tail -1800 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
+    WALLET_TXLAST="${G1:?}$(tail -1 "${WALLET_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
     # green
     CB="${G1:?}"
   fi
