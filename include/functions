@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222702
-# 2.1.7.7
+# 2.1.8.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.7.7"
+VERSION="v2.1.8.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -830,6 +830,10 @@ if [[ -f "${LOG_DIR:?}"/node_data/client/getmempoolinfo ]] &>/dev/null; then
 fi
 
 if [[ -z "$WALLET_MEMPOOL" ]] &>/dev/null; then
+  WALLET_MEMPOOL="${GR:?}0${N0:?}"
+fi
+
+if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "read_mempool" 2>&1)" -gt "1" ]] &>/dev/null; then
   WALLET_MEMPOOL="${GR:?}0${N0:?}"
 fi
 
@@ -2046,9 +2050,9 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/n
 
   # make sure backup is updated
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/stats/price.cg 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/price.cg 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
-    OLD_PRICE_CG=$(egrep "[0-9]+" "${WALLET_DIR:?}"/price.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    OLD_PRICE_CG=$(egrep "[0-9]+" "${WALLET_DIR:?}"/price.cg 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)
     cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${CY:?}->${N0:?} ${GR:?}$OLD_PRICE_CG${N0:?} Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)${N0:?} ${CY:?}->${N0:?} ${GR:?}$OLD_PRICE_CG${N0:?} Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/stats/volume.cg 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/volume.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     OLD_VOLUME_CG=$(egrep "[0-9]+" "${WALLET_DIR:?}"/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
@@ -2120,9 +2124,9 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/n
 
   # make sure backup is updated
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/stats/price.cmc 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/price.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
-    OLD_PRICE_CMC=$(egrep "[0-9]+" "${WALLET_DIR:?}"/price.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    OLD_PRICE_CMC=$(egrep "[0-9]+" "${WALLET_DIR:?}"/price.cmc 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)
     cp "${LOG_DIR:?}"/node_data/stats/price.cmc "${WALLET_DIR:?}"/price.cmc &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${CY:?}->${N0:?} ${GR:?}${OLD_PRICE_CMC:?}${N0:?} Price! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)${N0:?} ${CY:?}->${N0:?} ${GR:?}${OLD_PRICE_CMC:?}${N0:?} Price! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/rank.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     OLD_RANK_CMC=$(egrep "[0-9]+" "${WALLET_DIR:?}"/rank.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
