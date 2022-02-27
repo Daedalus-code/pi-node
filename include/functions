@@ -1360,9 +1360,9 @@ if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
   # remove old file
   rm "${LOG_DIR:?}"/success &>/dev/null
 
-  if [[ ! "$(grep -c ".onion" "${WALLET_DIR:?}"/onion_address 2>&1)" -eq "$(grep -c ".onion" "${LOG_DIR:?}"/node_data/peers/success 2>&1)" ]] &>/dev/null; then
+  if [[ ! "$(grep -c ".onion" "${WALLET_DIR:?}"/onion_addnodes 2>&1)" -eq "$(grep -c ".onion" "${LOG_DIR:?}"/node_data/peers/success 2>&1)" ]] &>/dev/null; then
     # backup onion connections
-    grep ".onion" "${LOG_DIR:?}"/node_data/peers/success >"${WALLET_DIR:?}"/onion_address 2>&1
+    grep ".onion" "${LOG_DIR:?}"/node_data/peers/success >"${WALLET_DIR:?}"/onion_addnodes 2>&1
   fi
 fi
 
@@ -1427,9 +1427,9 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     echo "${RIP_IPV6:?}" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
     echo "${RIP_IPV4:?}" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
-    if [[ ! "$(grep "$(cat "${WALLET_DIR:?}"/onion_address 2>/dev/null)" "${LOG_DIR:?}"/node_data/peers/success 2>&1)" ]] &>/dev/null; then
-      # keep onions around
-      cat "${WALLET_DIR:?}"/onion_address >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+    if [[ ! "$(grep "$(cat "${WALLET_DIR:?}"/onion_addnodes 2>/dev/null)" "${LOG_DIR:?}"/node_data/peers/success 2>&1)" ]] &>/dev/null; then
+      # always keep onions around
+      cat "${WALLET_DIR:?}"/onion_addnodes >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
     fi
 
     ### remove failed, connected peers and invalid pattern address ######### ###
