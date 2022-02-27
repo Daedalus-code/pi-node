@@ -70,7 +70,7 @@ HEIGHT=17
 WIDTH=55
 CHOICE_HEIGHT=10
 BACKTITLE="Pi-Node - ${OLD_HEAD:?} ${LATEST_DATE:?}"
-TITLE="$(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>/dev/null | grep -v "127." 2>/dev/null | awk '{ print $2 }' 2>/dev/null | xargs 2>/dev/null | awk '{ print $1 }' 2>/dev/null) $(hostname 2>/dev/null)"
+TITLE="$(hostname 2>/dev/null) ($(grep "inet" "${LOG_DIR:?}"/node_data/stats/ifconfig 2>/dev/null | grep -v "127." 2>/dev/null | awk '{ print $2 }' 2>/dev/null | xargs 2>/dev/null | awk '{ print $1 }' 2>/dev/null))"
 MENU=" $(LC_ALL=de_US.utf8 date 2>/dev/null) ${CPU_CTEMP:?}C ${CPU_FTEMP:?}F P2P $(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>/dev/null | awk '{ print $2 }' 2>/dev/null)"
 
 OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
