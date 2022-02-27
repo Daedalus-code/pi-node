@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222702
-# 2.1.6.7
+# 2.1.6.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.6.7"
+VERSION="v2.1.6.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -469,12 +469,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   MEMPOOL_PERC_ACTIVE="${MEMPOOL_PERC_ACTIVE:?}%"
   MEMPOOL_PERC_NOACTIVE="${MEMPOOL_PERC_NOACTIVE:?}%"
 
-  # kill when too many screens appears (all of them)
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "read_mempool" 2>&1)" -gt "1" ]] &>/dev/null; then
-    # restart mempool script
-    killall screen &>/dev/null
-  fi
-
   # look for screen session, if not found, run this block
   if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
 
@@ -490,8 +484,8 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 #!/bin/bash
 
 # By Rainman
-# V20222602
-# 0.0.3.0
+# V20222702
+# 0.0.3.7
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -501,6 +495,13 @@ for (( ; ; )); do # loop script
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
+
+# kill when too many screens appears (all of them)
+if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "read_mempool" 2>&1)" -gt "1" ]] &>/dev/null; then
+  # kill all running screens
+  killall screen &>/dev/null
+  printf '%b' "${LOG_DATE:?} Status() Read.mempool() Killed bunch of screens! (killall)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
 
 printf '%b' "${LOG_DATE:?} Status() Read.mempool() Memory pool $(wc -l "${LOG_DIR:?}"/node_data/stats/mempool 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
