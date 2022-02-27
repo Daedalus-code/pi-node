@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222702
-# 2.1.8.1
+# 2.1.8.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.8.1"
+VERSION="v2.1.8.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -468,6 +468,13 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
   MEMPOOL_PERC_ACTIVE="${MEMPOOL_PERC_ACTIVE:?}%"
   MEMPOOL_PERC_NOACTIVE="${MEMPOOL_PERC_NOACTIVE:?}%"
+
+  # kill when too many screens appears (all of them)
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "read_mempool" 2>&1)" -gt "1" ]] &>/dev/null; then
+    # kill all running screens
+    killall screen &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Read.mempool() Killed bunch of screens! (killall)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 
   # look for screen session, if not found, run this block
   if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
