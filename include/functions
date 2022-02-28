@@ -1481,7 +1481,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 #!/bin/bash
 
 # By Rainman
-# V20222502
+# V20222802
 # 0.0.4.8
 
 source /usr/local/bin/include/pinode.conf 2>&1
@@ -1501,7 +1501,7 @@ LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
 
 while IFS= read -r ADDS; do
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" addnode "$ADDS" onetry 2>&1
-done <"${LOG_DIR:?}"/node_data/add_peers 2>&1 | shuf 2>&1 | grep -vf "${LOG_DIR:?}"/node_data/peers/success 2>&1
+done <"${LOG_DIR:?}"/node_data/add_peers 2>&1 | shuf 2>&1 | grep -vf "${LOG_DIR:?}"/node_data/peers/success 2>&1 | egrep -v "127.|" 2>&1 | awk '!a[$0]++' 2>&1
 
 P2P=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | tail -1 2>&1)
 FAILED=$(grep " to $(cat "${LOG_DIR:?}"/node_data/add_peers.check 2>/dev/null) failed" "$WALLET_LOG_DIR"/debug.log 2>&1 | egrep -o " to .*. failed" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
