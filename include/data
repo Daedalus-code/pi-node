@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222802
-# 0.2.8.8
+# 0.2.9.5
 
 # shellcheck disable=SC2154
 
@@ -93,7 +93,14 @@ grepcidr -f "${LOG_DIR:?}"/node_data/nodes.all "${LOG_DIR:?}"/node_data/nodes.al
 ### getnodeaddresses ###########################################################
 
 # get node address with client, max n
-NODE_LIMIT="1000"
+NODE_LIMIT="${MAX_P2P:?}"
+
+if [[ -z "$NODE_LIMIT" ]] &>/dev/null; then
+  # random nodes
+  RANDOM_NODES=$((((RANDOM % 125) + 1)))
+  NODE_LIMIT=$(echo "${RANDOM_NODES:?}")
+fi
+
 "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getnodeaddresses "${NODE_LIMIT:?}" 2>&1 | grep "address" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/nodes.get 2>&1
 
 # get new count
