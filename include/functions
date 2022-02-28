@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222802
-# 2.1.7.4
+# 2.1.8.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.7.4"
+VERSION="v2.1.8.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1752,7 +1752,7 @@ if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
 
     # random start number
-    RANDOM_TIMELINE=$((((RANDOM % 18) + 1)))
+    RANDOM_TIMELINE=$((((RANDOM % 19) + 1)))
 
     if [[ -z "$RANDOM_TIMELINE" ]] &>/dev/null; then
       # non responsive, go with difficulty
@@ -1917,6 +1917,16 @@ if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       if [[ ! -f "${LOG_DIR:?}"/node_data/stats/model ]] &>/dev/null; then
         cat /proc/device-tree/model 2>/dev/null | tr -d '\0' >"${LOG_DIR:?}"/node_data/stats/model 2>&1
       fi
+    elif [ "$RANDOM_TIMELINE" -eq "19" ] &>/dev/null; then
+      # get average confirmations
+      TIMELINE_AVG_CONFIRM=$(echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ SUM += $2} END { print SUM }' 2>&1)/$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      # calculate staking percentage
+      TIMELINE_PROOF=$(echo "100/${WALLET_ACTIVE:?}*${TIMELINE_AVG_CONFIRM:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+      if [[ -z "$TIMELINE_PROOF" ]] &>/dev/null; then
+        TIMELINE_PROOF="0"
+      fi
+      TIMELINE="PoS ${TIMELINE_PROOF:?}%"
+
       TIMELINE_MODEL=$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)
       TIMELINE="${TIMELINE_MODEL:?}"
       if [[ -z "$TIMELINE_MODEL" ]] &>/dev/null; then
