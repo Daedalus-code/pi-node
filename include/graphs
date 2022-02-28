@@ -103,7 +103,7 @@ rrdtool graph /var/www/html/peers_graph.png \
 
 # masternodes
 rrdtool graph /var/www/html/masternode_count_graph.png \
-  -w 1200 -h 160 -a PNG \
+  -w 1394 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Masternodes" \
   --alt-autoscale-max --lower-limit=1 \
