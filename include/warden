@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222602
-# 0.4.7.4
+# V20222802
+# 0.4.8.1
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -115,6 +115,13 @@ fi
 
 # create screen list
 LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/stats/screens 2>&1
+
+# kill when too many screens appears (all of them)
+if [[ "$(cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -c "read_mempool" 2>&1)" -gt "1" ]] &>/dev/null; then
+  # kill all running screens
+  killall screen &>/dev/null
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Killed bunch of screens! (killall)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
 
 # screen indicator (is add_cg running)
 if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_cg" &>/dev/null; then
