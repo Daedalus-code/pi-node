@@ -1324,9 +1324,9 @@ function failed_peers() {
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
     NEW_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    DIFF_FAIL=$(echo "${OLD_COUNT:?}-${NEW_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    DIFF_FAIL=$(echo "${NEW_COUNT:?}-${OLD_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
-    if [[ "$(echo "$DIFF_FAIL" | grep "-")" ]] &>/dev/null; then
+    if [[ "$(echo "${DIFF_FAIL:?}" 2>&1 | grep "-" 2>&1)" ]] &>/dev/null; then
       DIFF_C="${G1:?}+"
     else
       DIFF_C="${GR:?}"
