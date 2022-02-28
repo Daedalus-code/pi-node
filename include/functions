@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222802
-# 2.1.8.4
+# V20222902
+# 2.1.8.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.8.4"
+VERSION="v2.1.8.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -270,6 +270,10 @@ IP_ADDRESS_N="${IP_ADDRESS:?}"
 echo "${IP_ADDRESS_N:?}" >"${LOG_DIR:?}"/node_data/stats/ip_address 2>&1
 # get ip address (color)
 IP_ADDRESS="${C1:?}${IP_ADDRESS:?}${N0:?}"
+
+if [[ -z "$IP_ADDRESS" ]]; then
+  IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
+fi
 
 ### wan address ################################################################
 
