@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222702
+# V20222802
 # 2.3.8.8
 
 # dialog, ncurses no utf8 acs
@@ -2018,14 +2018,14 @@ ${HIDDEN_SERVICE:?}
       clear
       grep -A12 "id" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | egrep -v "version|timeoffset|conntime|bytesrecv|bytessent|lastrecv|lastsend|services|inbound|startingheight|pingwait" 2>&1 | tr -d ' |-' 2>&1
       echo
-      printf '%b' "Connections ${G1:?}$(grep -c "id" "${LOG_DIR:?}"/node_data/client/getpeerinfo)${N0:?}${N0:?}\n"
+      printf '%b' "Connections ${G1:?}$(grep -c "id" "${LOG_DIR:?}"/node_data/client/getpeerinfo)${N0:?}${N0:?} Success/Failed ${G1:?}$(egrep -c "[a0-z9]+" "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${N0:?}/${R1:?}$(egrep -c "[a0-z9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${N0:?}\n"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
     else
 
       display_result() {
-        dialog --title "Connections $(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null)" \
+        dialog --title "Connections $(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null) Success/Failed $(egrep -c "[a0-z9]+" "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)/$(egrep -c "[a0-z9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" \
           --no-collapse \
           --msgbox "$RESULT" 0 0
       }
