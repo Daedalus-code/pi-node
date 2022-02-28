@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222702
-# 0.4.8.9
+# V20222802
+# 0.5.1.6
 
 source /usr/local/bin/include/pinode.conf 2>&1
 
@@ -23,7 +23,7 @@ fi
 
 ### create graphs ##############################################################
 
-# loadavg 1,5,15m (24hour)
+# loadavg 1,5,15m
 rrdtool graph /var/www/html/load_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
@@ -46,7 +46,7 @@ rrdtool graph /var/www/html/load_graph.png \
   LINE2:load5#FFE000:"Load 5m" \
   LINE2:load15#FF5100:"Load 15m"
 
-# inputs (24hour)
+# inputs
 rrdtool graph /var/www/html/inputs_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
@@ -66,7 +66,7 @@ rrdtool graph /var/www/html/inputs_graph.png \
   GPRINT:inputs:MIN:%.0lf\ Min \
   AREA:inputs#819C7D:"Inputs"
 
-# peers (24hour)
+# peers
 rrdtool graph /var/www/html/peers_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
@@ -101,6 +101,33 @@ rrdtool graph /var/www/html/peers_graph.png \
   LINE2:peers_onion#A02CCC \
   LINE2:peers_proxy#C26EE2
 
+# masternodes
+rrdtool graph /var/www/html/masternode_count_graph.png \
+  -w 1200 -h 160 -a PNG \
+  --slope-mode \
+  --vertical-label "Masternodes" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-"${GRAPH_TIME:?}" \
+  DEF:total=/home/"$(whoami)"/stats/masternodes.rrd:total:MAX \
+  DEF:stable=/home/"$(whoami)"/stats/masternodes.rrd:stable:MAX \
+  DEF:enabled=/home/"$(whoami)"/stats/masternodes.rrd:enabled:MAX \
+  DEF:inqueue=/home/"$(whoami)"/stats/masternodes.rrd:inqueue:MAX \
+  GPRINT:total:LAST:%.0lf\ Total \
+  GPRINT:stable:LAST:%.0lf\ Total \
+  GPRINT:enabled:LAST:%.0lf\ Total \
+  GPRINT:inqueue:LAST:%.0lf\ Total \
+  LINE2:total#F4F4F4:"Total" \
+  LINE2:stable#3BE536:"Stable" \
+  LINE2:enabled#3bbb33:"Enabled" \
+  LINE2:inqueue#828282:"Inqueue"
+
 # plural
 REW_GPRINT="Rewards"
 POS_GPRINT="Stakes"
@@ -116,7 +143,7 @@ fi
 
 # masternode successfully started, continue
 if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
-  # stakes & rewards (24hour)
+  # stakes & rewards
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
@@ -155,7 +182,7 @@ else
     LINE2:stakes#FFDC77:"Stakes"
 fi
 
-# balance (24hour)
+# balance
 rrdtool graph /var/www/html/balance_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
@@ -176,7 +203,7 @@ rrdtool graph /var/www/html/balance_graph.png \
   AREA:balance#85bb65:"Balance" \
   LINE2:value#668163:"USD"
 
-# rank (24hour)
+# rank
 rrdtool graph /var/www/html/rank_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
@@ -196,7 +223,7 @@ rrdtool graph /var/www/html/rank_graph.png \
   GPRINT:rank:AVERAGE:%.0lf\ Rank\ AVG \
   LINE1:rank#8A8FAB:"Rank"
 
-# watchlist (24hour)
+# watchlist
 rrdtool graph /var/www/html/watchlist_graph.png \
   -w 400 -h 150 -a PNG \
   --slope-mode \
@@ -216,7 +243,7 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   GPRINT:watchlist:AVERAGE:%.0lf\ Watchlist\ AVG \
   LINE1:watchlist#65AABB:"Watchlist"
 
-# market price (24hour)
+# market price
 rrdtool graph /var/www/html/market_price_graph.png \
   -w 400 -h 150 -a PNG \
   --slope-mode \
@@ -239,7 +266,7 @@ rrdtool graph /var/www/html/market_price_graph.png \
   LINE1:price_cmc#7476A8 \
   LINE3:price_avg#9A9DE1
 
-# market volume (24hour)
+# market volume
 rrdtool graph /var/www/html/market_volume_graph.png \
   -w 400 -h 150 -a PNG \
   --slope-mode \
@@ -262,7 +289,7 @@ rrdtool graph /var/www/html/market_volume_graph.png \
   LINE1:volume_cmc#7476A8 \
   LINE3:volume_avg#7C9AC2
 
-# network (24hour)
+# network
 rrdtool graph /var/www/html/network_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
@@ -282,7 +309,7 @@ rrdtool graph /var/www/html/network_graph.png \
   LINE1:rxbytes#3DCD3D:"Down" \
   LINE1:txbytes#DC5F3A:"Up"
 
-# total hdd, used (24hour)
+# total hdd, used
 rrdtool graph /var/www/html/hdd_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
@@ -303,7 +330,7 @@ rrdtool graph /var/www/html/hdd_graph.png \
   AREA:hdd_total#8AA6B6:"Total Space" \
   AREA:hdd#597E93:"Used Space"
 
-# memory (24hour)
+# memory
 rrdtool graph /var/www/html/memory_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
@@ -323,7 +350,7 @@ rrdtool graph /var/www/html/memory_graph.png \
   AREA:memory_total#8BABB6:"Total" \
   AREA:memory_free#9FC49A:"Free"
 
-# cpu temperature (24hour)
+# cpu temperature
 rrdtool graph /var/www/html/temp_graph.png \
   -w 400 -h 160 -a PNG \
   --slope-mode \
@@ -344,7 +371,7 @@ rrdtool graph /var/www/html/temp_graph.png \
   AREA:temp#F15A3A:"CPUTemp"
 
 function difficulty_auto() {
-  # difficulty (24hour)
+  # difficulty
   rrdtool graph /var/www/html/difficulty_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
@@ -370,7 +397,7 @@ function difficulty_auto() {
 }
 
 function avgconfirmation_auto_one() {
-  # total avg confirmations (24hour)
+  # total avg confirmations
   rrdtool graph /var/www/html/total_tx_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
@@ -396,7 +423,7 @@ function avgconfirmation_auto_one() {
 }
 
 function avgconfirmation_auto_two() {
-  # total avg confirmations (24hour)
+  # total avg confirmations
   rrdtool graph /var/www/html/total_tx_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
@@ -425,7 +452,7 @@ function avgconfirmation_auto_two() {
 }
 
 function difficulty_normal() {
-  # difficulty (24hour)
+  # difficulty
   rrdtool graph /var/www/html/difficulty_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
@@ -448,7 +475,7 @@ function difficulty_normal() {
 }
 
 function avgconfirmation_normal() {
-  # total avg confirmations (24hour)
+  # total avg confirmations
   rrdtool graph /var/www/html/total_tx_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
