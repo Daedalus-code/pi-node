@@ -120,9 +120,9 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
   DEF:enabled=/home/"$(whoami)"/stats/masternodes.rrd:enabled:MAX \
   DEF:inqueue=/home/"$(whoami)"/stats/masternodes.rrd:inqueue:MAX \
   GPRINT:total:LAST:%.0lf\ Total \
-  GPRINT:stable:LAST:%.0lf\ Total \
-  GPRINT:enabled:LAST:%.0lf\ Total \
-  GPRINT:inqueue:LAST:%.0lf\ Total \
+  GPRINT:stable:LAST:%.0lf\ Stable \
+  GPRINT:enabled:LAST:%.0lf\ Enabled \
+  GPRINT:inqueue:LAST:%.0lf\ Inqueue \
   LINE2:total#F4F4F4:"Total" \
   LINE2:stable#3BE536:"Stable" \
   LINE2:enabled#3bbb33:"Enabled" \
