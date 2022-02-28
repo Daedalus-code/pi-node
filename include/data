@@ -109,7 +109,7 @@ printf '%b' "${LOG_DATE:?} Status() Addnode.Script Total ${G1:?}${TOTAL_NODES:?}
 
 # sort peers.tmp, remove duplicates
 cat "${LOG_DIR:?}"/node_data/peers.tmp | sort -n | awk '!a[$0]++' >"${LOG_DIR:?}"/peers.tmp 2>&1
-mv >"${LOG_DIR:?}"/peers.tmp >"${LOG_DIR:?}"/node_data/peers.tmp 2>&1
+mv "${LOG_DIR:?}"/peers.tmp "${LOG_DIR:?}"/node_data/peers.tmp 2>&1
 
 ### coingecko price, volume ####################################################
 
