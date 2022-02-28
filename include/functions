@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222802
-# 2.1.7.1
+# 2.1.7.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.7.1"
+VERSION="v2.1.7.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1329,6 +1329,9 @@ function failed_peers() {
     DIFF_C="${GR:?}"
     if [[ ! "$(echo "${DIFF_FAIL:?}" 2>&1 | grep "-" 2>&1)" ]] &>/dev/null; then
       DIFF_C="${G1:?}+"
+    fi
+    if [[ "$(echo "${DIFF_FAIL:?}" 2>&1)" -eq "0" ]] &>/dev/null; then
+      DIFF_C="${GR:?}"
     fi
 
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! ${N0:?}$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1) (${G1:?}${IPV4_FAILS:?}${N0:?}/${C1:?}$IPV6_FAILS${N0:?}/${CY:?}${DNS_FAILS:?}${N0:?}/${P0:?}${ONION_FAILS:?}${N0:?}) ${DIFF_C:?}${DIFF_FAIL:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
