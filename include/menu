@@ -1832,7 +1832,7 @@ Rewards $(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }'
         RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
         # get proxy (tor) hostname with root
-        EXTERNALIP=$(sudo cat /var/lib/tor/"${WALLET_DAEMON:?}"-service/hostname 2>/dev/null)
+        EXTERNALIP=$(sudo cat /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null)
 
         if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
           # non responsive
@@ -2020,7 +2020,7 @@ ${HIDDEN_SERVICE:?}
       printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
       read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
       clear
-      sudo nano /var/lib/tor/"${WALLET_DAEMON:?}"-service/hostname 2>/dev/null
+      sudo nano /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null
 
     else
 
@@ -2037,7 +2037,7 @@ ${HIDDEN_SERVICE:?}
       }
 
       # output connections, peer info
-      RESULT=$(sudo cat /var/lib/tor/"${WALLET_DAEMON:?}"-service/hostname 2>/dev/null)
+      RESULT=$(sudo cat /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null)
       display_result "Proxy hostname"
       clear
     fi
