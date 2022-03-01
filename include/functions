@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220103
-# 2.2.1.9
+# 2.2.2.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.1.9"
+VERSION="v2.2.2.5"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -2177,13 +2177,19 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
     # masternode successfully started, continue
     if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
-      # find lowest confirmation with mn|pn label
+      # get input with the lowest confirmations with label mn/pn from listunspent
       LOW_MN=$(egrep -A4 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)
-      if [[ "$LOW_MN" -lt "480" ]] &>/dev/null; then
+      # if confirmations are lower than n, continue, ruled by configuration
+      if [[ "$LOW_MN" -lt "$WALLET_ACTIVE" ]] &>/dev/null; then
+        # get txid with that low confirmation
         LOW_TX=$(egrep -B7 "confirmations: ${LOW_MN:?}" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)
+        # if txid doesn't already exist inside rewards, continue
         if [[ ! "$(grep "$LOW_TX" "${WALLET_DIR:?}"/rewards)" ]] &>/dev/null; then
+          # get input size
           INPUT_SIZE=$(grep -A6 "${LOW_TX:?}" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '.' 2>&1)
+          # get masternode payment size
           PAYME_SIZE=$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>/dev/null | tr -d '.' 2>&1)
+          # if payment size is correct, continue
           if [[ "${INPUT_SIZE:?}" -eq "${PAYME_SIZE:?}" ]] &>/dev/null; then
             echo "$LOG_DATE AddToWallet ${LOW_TX:?}  new" >>"${WALLET_DIR:?}"/rewards 2>&1
           fi
