@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222902
-# 2.1.9.5
+# 2.1.9.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.1.9.5"
+VERSION="v2.1.9.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1981,6 +1981,10 @@ fi
 # less than n seconds, continue
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "60" ]] &>/dev/null; then
   WALLET_TXLAST="${CY:?}       Loading${N0:?}"
+  WALLET_BALANCE="${GR:?}$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)${N0:?}"
+  if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
+    WALLET_BALANCE="${GR:?}0${N0:?}"
+  fi
 fi
 
 ### collect data for rrdtool (round robin databases) ###########################
