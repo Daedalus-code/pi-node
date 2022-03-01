@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220103
-# 2.2.2.2
+# 2.2.0.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.2.2"
+VERSION="v2.2.0.6"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -2190,22 +2190,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
         # cyan
         CB="${C1:?}"
       fi
-    fi
-
-    # low confirmation
-    if [[ ! "$(grep "$(grep -B7 "$(egrep -A4 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)" "${WALLET_DIR:?}"/rewards 2>&1)" ]] &>/dev/null; then
-      # add reward
-      echo "${LOG_DATE:?} AddToWallet $(grep -B7 "$(egrep -A4 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)  new" >>"${WALLET_DIR:?}"/rewards 2>&1
-    fi
-
-    if [[ ! "$(grep "$(grep -B7 "$(egrep -A4 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)" "${LOG_DIR:?}"/node_data/stats/rewards 2>&1)" ]] &>/dev/null; then
-      # copy (cat) reward
-      cat "${WALLET_DIR:?}"/rewards >>"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
-    fi
-
-    if [[ "$(egrep -A4 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1)" -lt "100" ]] &>/dev/null; then
-      # cyan
-      CB="${C1:?}"
     fi
   fi
 
