@@ -1130,10 +1130,10 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     # count masternodes
     MASTER_INPUTS="${C1:?}$(grep -c "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)${N0:?}"
     MNS="${C1:?}M${N0:?}" # masternode status
-  else
-    MASTER_INPUTS="${N0:?}"
-    MNS="${N0:?} "
   fi
+else
+  MASTER_INPUTS="${N0:?}"
+  MNS="${N0:?} "
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
