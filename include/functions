@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222902
+# V20220103
 # 2.2.2.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -1714,12 +1714,12 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
     # reset old files
     truncate -s 0 "${WALLET_DIR:?}"/getwan &>/dev/null
+    truncate -s 0 "${WALLET_DIR:?}"/staking &>/dev/null
+    truncate -s 0 "${WALLET_DIR:?}"/rewards &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/stats/mempool &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/stats/total.cidr &>/dev/null
 
     # remove old files
-    rm "${WALLET_DIR:?}"/staking &>/dev/null
-    rm "${WALLET_DIR:?}"/rewards &>/dev/null
     rm "${LOG_DIR:?}"/node_data/stats/stak* &>/dev/null
     rm "${LOG_DIR:?}"/node_data/stats/reward* &>/dev/null
     rm "${LOG_DIR:?}"/node_data/client/latest &>/dev/null
@@ -2193,11 +2193,11 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
     fi
 
     # low confirmation
-    LOW_CMN="$(egrep -A4 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1)"
-    if [[ ! "$(grep "$(grep -B7 "${LOW_CMN:?}" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)" "${WALLET_DIR:?}"/rewards 2>&1)" ]] &>/dev/null; then
+    if [[ ! "$(grep "$(grep -B7 "$(egrep -A4 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)" "${WALLET_DIR:?}"/rewards 2>&1)" ]] &>/dev/null; then
       # add reward
       echo "AddToWallet $(grep -B7 "${LOW_CMN:?}" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)  new" >>"${WALLET_DIR:?}"/rewards 2>&1
     fi
+
     if [[ ! "$(grep "$(grep -B7 "${LOW_CMN:?}" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)" "${LOG_DIR:?}"/node_data/stats/rewards 2>&1)" ]] &>/dev/null; then
       # copy (cat) reward
       cat "${WALLET_DIR:?}"/rewards >>"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
