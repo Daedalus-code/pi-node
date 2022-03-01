@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222902
-# 2.4.6.6
+# 2.4.7.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -2062,6 +2062,10 @@ ${HIDDEN_SERVICE:?}
       clear
       # get proxy (tor) hostname with root
       sudo nano /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null
+      echo "$(cat "${WALLET_DIR:?}"/onion 2>/dev/null)"
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
 
     else
 
@@ -2080,7 +2084,7 @@ ${HIDDEN_SERVICE:?}
       # get proxy (tor) hostname with root
       RESULT=$(
         sudo cat /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null
-        echo "${EXTERNALIP:?}" 2>&1
+        echo "$(echo "${EXTERNALIP:?}" 2>&1 | awk -F: '{ print $1 }' 2>&1)" 2>&1
       )
       display_result "Proxy hostname"
       clear
