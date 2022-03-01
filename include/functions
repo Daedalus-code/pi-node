@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220103
-# 2.2.1.5
+# 2.2.1.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.1.5"
+VERSION="v2.2.1.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -2182,7 +2182,11 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
       if [[ "$LOW_MN" -lt "480" ]] &>/dev/null; then
         LOW_TX=$(egrep -B7 "confirmations: ${LOW_MN:?}" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)
         if [[ ! "$(grep "$LOW_TX" "${WALLET_DIR:?}"/rewards)" ]] &>/dev/null; then
-          echo "$LOG_DATE AddToWallet ${LOW_TX:?}  new" >>"${WALLET_DIR:?}"/rewards 2>&1
+          INPUT_SIZE=$(grep -A6 "${LOW_TX:?}" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '.' 2>&1)
+          PAYME_SIZE=$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>/dev/null | tr -d '.' 2>&1)
+          if [[ "${INPUT_SIZE:?}" -eq "${PAYME_SIZE:?}" ]] &>/dev/null; then
+            echo "$LOG_DATE AddToWallet ${LOW_TX:?}  new" >>"${WALLET_DIR:?}"/rewards 2>&1
+          fi
         fi
       fi
 
