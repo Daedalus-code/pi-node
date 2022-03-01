@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222202
+# V20222902
 # 0.3.2.2
 
 # create directories, ruled by configuration
@@ -222,7 +222,7 @@ if [[ ! -f "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" ]] &>/dev/null; then
   RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
   # get proxy (tor) hostname with root
-  EXTERNALIP=$(sudo cat /var/lib/tor/"${WALLET_NAME:?}"-service/hostname 2>/dev/null)
+  EXTERNALIP=$(sudo cat /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null)
 
   if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
     # non responsive
