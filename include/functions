@@ -1982,7 +1982,7 @@ fi
 # less than n seconds, continue
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "60" ]] &>/dev/null; then
   WALLET_TXLAST="${CY:?}       Loading${N0:?}"
-  WALLET_BALANCE="${GR:?}$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null)${N0:?}"
+  WALLET_BALANCE="${GR:?}$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?}"
   if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
     WALLET_BALANCE="${GR:?}0${N0:?}"
   fi
