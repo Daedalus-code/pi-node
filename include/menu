@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222902
-# 2.3.9.5
+# 2.4.2.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -2013,7 +2013,34 @@ ${HIDDEN_SERVICE:?}
 
   "12")
 
-    sudo nano /var/lib/tor/*-service/hostname
+    read -r -p "[YN] Raw format (without dialog)? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+      printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
+      read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
+      clear
+      sudo nano /var/lib/tor/"${WALLET_DAEMON:?}"-service/hostname 2>/dev/null
+
+    else
+
+      if [[ "$(pidof tor 2>&1 | wc -w 2>&1)" -eq "1" ]] &>/dev/null; then
+        PROXY="Proxy Online"
+      else
+        PROXY="Proxy Offline"
+      fi
+
+      display_result() {
+        dialog --title "Hostname - ${PROXY:?}" \
+          --no-collapse \
+          --msgbox "$RESULT" 0 0
+      }
+
+      # output connections, peer info
+      RESULT=$(sudo cat /var/lib/tor/"${WALLET_DAEMON:?}"-service/hostname 2>/dev/null)
+      display_result "Proxy hostname"
+      clear
+    fi
 
     ;;
 
