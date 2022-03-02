@@ -479,7 +479,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     # collect mempool two times a loop (time_fix time)
 
     # create screen session
-    screen -dmS read_mempool 2>&1
+    screen -dmS read_mempool &>/dev/null
 
     # make sure read_mempool exist
     if [ ! -f "${LOG_DIR:?}"/read_mempool ] &>/dev/null; then
@@ -1530,7 +1530,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     truncate -s 0 "${LOG_DIR:?}"/node_data/peers.cidr &>/dev/null
 
     # create screen session
-    screen -dmS add_peers 2>&1
+    screen -dmS add_peers &>/dev/null
 
     # create temp and backup list for connection check
     cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers.check 2>&1
