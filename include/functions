@@ -1976,7 +1976,7 @@ if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       if [[ -z "$TIMELINE_PROOF" ]] &>/dev/null; then
         TIMELINE_PROOF="0"
       fi
-      if [[ "$TIMELINE_PROOF" -gt "0" ]]; then
+      if [[ "$TIMELINE_PROOF" -gt "0" ]] &>/dev/null; then
         TIMELINE="Proof of stake ${G1:?}${TIMELINE_PROOF:?}%${N0:?}"
       else
         TIMELINE="Proof of stake ${GR:?}${TIMELINE_PROOF:?}%${N0:?}"
