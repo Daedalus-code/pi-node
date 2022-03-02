@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220203
-# 2.2.3.1
+# 2.2.3.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.3.1"
+VERSION="v2.2.3.5"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -700,14 +700,18 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
   # wallet peers total (no color)
   WALLET_PEERS_TOTAL_N="$WALLET_PEERS_TOTAL"
+
   if [[ -z "$WALLET_PEERS_TOTAL_N" ]] &>/dev/null; then
+
     if [[ -f /home/"$(whoami)"/stats/peers.rrd ]] &>/dev/null; then
       # make sure peers exist, use rrdtool database, if available
       rrdtool info /home/"$(whoami)"/stats/peers.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/connections 2>&1
     fi
+
     # non responsive
     WALLET_PEERS_TOTAL_N=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | tail -1 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   fi
+
   # create a list this time
   echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/stats/connections
 
