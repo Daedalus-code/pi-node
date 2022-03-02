@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220203
-# 2.2.5.3
+# 2.2.5.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.5.3"
+VERSION="v2.2.5.7"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1976,7 +1976,11 @@ if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
       if [[ -z "$TIMELINE_PROOF" ]] &>/dev/null; then
         TIMELINE_PROOF="0"
       fi
-      TIMELINE="PoS ${TIMELINE_PROOF:?}%"
+      if [[ "$TIMELINE_PROOF" -gt "0" ]]; then
+        TIMELINE="Proof of stake ${G1:?}${TIMELINE_PROOF:?}%${N0:?}"
+      else
+        TIMELINE="Proof of stake ${GR:?}${TIMELINE_PROOF:?}%${N0:?}"
+      fi
     fi
   fi
 else
