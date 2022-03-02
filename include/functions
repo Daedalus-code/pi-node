@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220103
-# 2.2.2.5
+# V20220203
+# 2.2.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.2.5"
+VERSION="v2.2.3.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -669,24 +669,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   # count banned peers
   grep -c "address" "${LOG_DIR:?}"/node_data/client/listbanned >"${LOG_DIR:?}"/node_data/stats/bans 2>&1
 
-  # get wallet connections (peers) total
-  WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)
-  # wallet peers total (no color)
-  WALLET_PEERS_TOTAL_N="$WALLET_PEERS_TOTAL"
-  if [[ -z "$WALLET_PEERS_TOTAL_N" ]] &>/dev/null; then
-    if [[ -f /home/"$(whoami)"/stats/peers.rrd ]] &>/dev/null; then
-      # make sure peers exist, use rrdtool database, if available
-      rrdtool info /home/"$(whoami)"/stats/peers.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/connections 2>&1
-    fi
-    # non responsive
-    WALLET_PEERS_TOTAL_N=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | tail -1 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  fi
-  # create a list this time
-  echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/stats/connections
-
-  # wallet peers total (color)
-  WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
-
   if [[ ! -f "${LOG_DIR:?}"/node_data/client/latest ]] &>/dev/null; then
     torify curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" >"${LOG_DIR:?}"/node_data/client/latest 2>&1
   fi
@@ -707,6 +689,30 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   WALLET_PEERS_LATEST=$(grep "subver" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | egrep -o "$(echo "${LATEST_VERSION:?}" 2>&1 | tr -d 'v' 2>&1)" 2>&1 | wc -l 2>&1)
   # get wallet connections other (not latest, probably older wallets)
   WALLET_PEERS_OTHER=$(grep "subver" "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tr -d 'v' 2>&1 | grep -v "$(echo "$WALLET_VERSION" | tr -d 'v' 2>&1)" 2>&1 | wc -l 2>&1)
+  # get total connections combining latest and other
+  WALLET_PEERS_TOTAL=$(echo "${WALLET_PEERS_LATEST:?}+${WALLET_PEERS_OTHER:?}" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+  if [[ ! "$WALLET_PEERS_OTHER" -gt "0" ]] &>/dev/null; then
+
+    # get wallet connections (peers) total from getinfo
+    WALLET_PEERS_TOTAL=$(grep "connections" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)
+  fi
+
+  # wallet peers total (no color)
+  WALLET_PEERS_TOTAL_N="$WALLET_PEERS_TOTAL"
+  if [[ -z "$WALLET_PEERS_TOTAL_N" ]] &>/dev/null; then
+    if [[ -f /home/"$(whoami)"/stats/peers.rrd ]] &>/dev/null; then
+      # make sure peers exist, use rrdtool database, if available
+      rrdtool info /home/"$(whoami)"/stats/peers.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }' >>"${LOG_DIR:?}"/node_data/stats/connections 2>&1
+    fi
+    # non responsive
+    WALLET_PEERS_TOTAL_N=$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | tail -1 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  fi
+  # create a list this time
+  echo "$WALLET_PEERS_TOTAL_N" >>"${LOG_DIR:?}"/node_data/stats/connections
+
+  # wallet peers total (color)
+  WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
 
   # wallet peers latest (color)
   WALLET_PEERS_LATEST="${G1:?}${WALLET_PEERS_LATEST:?}${N0:?}"
