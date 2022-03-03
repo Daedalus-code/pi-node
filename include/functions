@@ -1390,7 +1390,7 @@ function failed_peers() {
 
   # add system ip address
   echo "${IP_ADDRESS_N:?}" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  cat "${LOG_DIR:?}"/node_data/peers/failed | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
+  cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
   mv "${LOG_DIR:?}"/node_data/peers/failed.clean "${LOG_DIR:?}"/node_data/peers/failed 2>&1
 
   ONION_FAILS=$(egrep -c "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)
