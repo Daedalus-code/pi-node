@@ -244,8 +244,8 @@ USED_HDD="${G1:?}${USED_HDD:?}${N0:?}"
 ### network - download and upload ##############################################
 
 # save ifconfig, iwconfig values to ifconfig, iwconfig
-ifconfig 2>&1 | egrep -A8 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1
-iwconfig 2>&1 | egrep -A8 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/stats/iwconfig 2>&1
+ifconfig 2>&1 | egrep -A9 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/stats/ifconfig 2>&1
+iwconfig 2>&1 | egrep -A9 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/stats/iwconfig 2>&1
 
 # get download from wlan(*) - eth(*)
 DOWNLOAD=$(egrep "RX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/stats/i*config 2>&1 | awk '{ print $6 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
