@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220203
+# V20220303
 # 2.2.5.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -2236,7 +2236,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
       fi
 
       # get addtowallet, disregard seed lines
-      if tail -1600 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
+      if tail -3200 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
         WALLET_TXLAST="${C1:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
         # cyan
         CB="${C1:?}"
