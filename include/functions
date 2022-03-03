@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220303
-# 2.2.9.1
+# 2.3.0.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -961,7 +961,10 @@ if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     SYNC_PROGRESS_BAR="${N0:?}       Loading${N0:?}"
 
     if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-      wallet_dashbord
+      POS_STATUS="${GR:?}S${N0:?}"
+      WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
+      WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
+      WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
     fi
 
   fi
@@ -973,7 +976,10 @@ else
   SYNC_PROGRESS_BAR="${GR:?}       Loading${N0:?}"
 
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-    wallet_dashbord
+    POS_STATUS="${GR:?}S${N0:?}"
+    WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
+    WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
+    WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
   fi
 
 fi
@@ -2044,7 +2050,10 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "60" ]] &>/dev/null; then
   WALLET_TXLAST="${CY:?}       Loading${N0:?}"
 
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-    wallet_dashbord
+    POS_STATUS="${GR:?}S${N0:?}"
+    WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
+    WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
+    WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
   fi
 
   WALLET_BALANCE="${GR:?}$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?}"
