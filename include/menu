@@ -717,7 +717,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printline "User Space" "$(du -sh /home/* 2>/dev/null | xargs 2>&1 | awk '{ print $1,$2 }' 2>&1)" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))" "Upload" "${UPLOAD:?}"
       printline "Used HDD" "${USED_HDD:?} ${USED_HDD_P:?}" "COM" "$COM" "Download" "${DOWNLOAD:?}"
       echo
-      printf '%b' "   Mempool Active ${MEMPOOL_ACTIVITY_ACTIVE:?}% Dead >${MEMPOOL_ACTIVITY_DEAD:?}% Size ${MEMPOOL_ACTIVITY_SIZE:?} Bytes ${MEMPOOL_ACTIVITY_BYTE:?} Usage ${MEMPOOL_ACTIVITY_USAGE:?} MemPoolMinFee ${MEMPOOL_ACTIVITY_POOL_MIN_FEE:?} MinRelayTXFee ${MEMPOOL_ACTIVITY_MIN_RELAY_TX_FEE:?}\n"
+      printf '%b' "   Mempool Active ${MEMPOOL_ACTIVITY_ACTIVE:?}% Dead ${MEMPOOL_ACTIVITY_DEAD:?}% Size ${MEMPOOL_ACTIVITY_SIZE:?} Bytes ${MEMPOOL_ACTIVITY_BYTE:?} Usage ${MEMPOOL_ACTIVITY_USAGE:?} MemPoolMinFee ${MEMPOOL_ACTIVITY_POOL_MIN_FEE:?} MinRelayTXFee ${MEMPOOL_ACTIVITY_MIN_RELAY_TX_FEE:?}\n"
       echo
       printline "Wallet" "${WALLET_VERSION:?}" "Headers/Blocks" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
       printline "PID" "${PID_DAEMON:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Staking Status" "${NODE_PROOF:?}"
