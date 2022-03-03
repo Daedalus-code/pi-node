@@ -1044,8 +1044,8 @@ MASTER_REWARDS="${N0:?}"
 
 ### masternode rewards #########################################################
 
-# payment value
-if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment)" ]] &>/dev/null; then
+# payment value missing, continue
+if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1)" ]] &>/dev/null; then
   # get masternode payment value from debug.log
   grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
 fi
@@ -1077,11 +1077,11 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
         # payment value
-        if [[ ! -f "${LOG_DIR:?}"/node_data/stats/masternode_payment ]] &>/dev/null; then
+        if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1)" ]] &>/dev/null; then
           # get masternode payment value from debug.log
           grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
           # if missing data, use another method to get masternode reward data
-          if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment)" ]] &>/dev/null; then
+          if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1)" ]] &>/dev/null; then
             # use masternode rewards to determine the average reward, minus average fee
             echo "$(egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }')/$(egrep -c "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent)-0.00000001" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
           fi
