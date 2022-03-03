@@ -536,14 +536,14 @@ EOF
   if grep -o "error: couldn't connect to server" "${LOG_DIR:?}"/node_data/client/tmp/getinfo &>/dev/null; then
     rm -R "${LOG_DIR:?}"/node_data/client/tmp/* &>/dev/null
   else # use existing data without any errors
-    cp "${LOG_DIR:?}"/node_data/client/tmp/getblockchaininfo "${LOG_DIR:?}"/node_data/client/getblockchaininfo 2>&1
-    cp "${LOG_DIR:?}"/node_data/client/tmp/getinfo "${LOG_DIR:?}"/node_data/client/getinfo 2>&1
-    cp "${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>&1
-    cp "${LOG_DIR:?}"/node_data/client/tmp/getmasternodecount "${LOG_DIR:?}"/node_data/client/getmasternodecount 2>&1
-    cp "${LOG_DIR:?}"/node_data/client/tmp/getwalletinfo "${LOG_DIR:?}"/node_data/client/getwalletinfo 2>&1
-    cp "${LOG_DIR:?}"/node_data/client/tmp/listunspent "${LOG_DIR:?}"/node_data/client/listunspent 2>&1
-    cp "${LOG_DIR:?}"/node_data/client/tmp/getpeerinfo "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1
-    cp "${LOG_DIR:?}"/node_data/client/tmp/listbanned "${LOG_DIR:?}"/node_data/client/listbanned 2>&1
+    cp "${LOG_DIR:?}"/node_data/client/tmp/getblockchaininfo "${LOG_DIR:?}"/node_data/client/getblockchaininfo &>/dev/null
+    cp "${LOG_DIR:?}"/node_data/client/tmp/getinfo "${LOG_DIR:?}"/node_data/client/getinfo &>/dev/null
+    cp "${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo "${LOG_DIR:?}"/node_data/client/getmempoolinfo &>/dev/null
+    cp "${LOG_DIR:?}"/node_data/client/tmp/getmasternodecount "${LOG_DIR:?}"/node_data/client/getmasternodecount &>/dev/null
+    cp "${LOG_DIR:?}"/node_data/client/tmp/getwalletinfo "${LOG_DIR:?}"/node_data/client/getwalletinfo &>/dev/null
+    cp "${LOG_DIR:?}"/node_data/client/tmp/listunspent "${LOG_DIR:?}"/node_data/client/listunspent &>/dev/null
+    cp "${LOG_DIR:?}"/node_data/client/tmp/getpeerinfo "${LOG_DIR:?}"/node_data/client/getpeerinfo &>/dev/null
+    cp "${LOG_DIR:?}"/node_data/client/tmp/listbanned "${LOG_DIR:?}"/node_data/client/listbanned &>/dev/null
   fi
 fi
 
