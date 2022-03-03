@@ -1308,7 +1308,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   # get clean ipv4 address, disregard non ipv4
   egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]+' /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/addnodes.ipv4 2>&1
   # get clean ipv6 address, disregard non ipv6 and lines shorter than n
-  #egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}.' /home/"$(whoami)"/addnodes 2>&1 | sed -r '/^.{,8}$/d' 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/addnodes.ipv6 2>&1
+  #egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}.' /home/"$(whoami)"/addnodes 2>&1 | sed -r '/^.{,9}$/d' 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/addnodes.ipv6 2>&1
   # get clean dns address, disregard non dns
   grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}:[0-9]+' /home/"$(whoami)"/addnodes 2>&1 | grep -v ".onion" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/addnodes.dns 2>&1
   # get clean onion address
@@ -1386,13 +1386,13 @@ function failed_peers() {
   OLD_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
 
   # grep all failed connections in debug.log
-  grep "failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,8}$/d' >"${LOG_DIR:?}"/node_data/peers/failed.all 2>&1
-  grep "(111)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $4 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed.all 2>&1
+  grep "failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,9}$/d' >"${LOG_DIR:?}"/node_data/peers/failed.all 2>&1
+  grep "(111)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $4 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,9}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed.all 2>&1
 
-  egrep "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed.all | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,8}$/d' >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | egrep -v ".onion|:" 2>&1 | awk '!a[$0]++' | sort -n 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  #egrep -o "([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}." "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | grep -v ".onion" | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  egrep -o ".[a-z]|.*.com" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  egrep "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed.all | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,9}$/d' >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | egrep -v ".onion|:" 2>&1 | awk '!a[$0]++' | sort -n 2>&1 | sed -r '/^.{,9}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  #egrep -o "([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}." "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | grep -v ".onion" | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,9}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  egrep -o ".[a-z]|.*.com" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,9}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   rm "${LOG_DIR:?}"/node_data/peers/failed.all &>/dev/null
 
   # add system ip address
@@ -1401,7 +1401,7 @@ function failed_peers() {
   ONION_FAILS=$(egrep -c "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)
   IPV4_FAILS=$(egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | egrep -c -v ".onion|:" 2>&1)
   IPV6_FAILS=$(egrep -o "([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}." "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -c -v ".onion" 2>&1)
-  DNS_FAILS=$(egrep -o ".[a-z]|.*.com" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | sed -r '/^.{,8}$/d' 2>&1 | egrep -c -v ":|.onion" 2>&1)
+  DNS_FAILS=$(egrep -o ".[a-z]|.*.com" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | sed -r '/^.{,9}$/d' 2>&1 | egrep -c -v ":|.onion" 2>&1)
 
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
@@ -1430,13 +1430,13 @@ fi
 if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
 
   # get clean ipv4 address, disregard non ipv4
-  egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,8}$/d' >"${LOG_DIR:?}"/success 2>&1
+  egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,9}$/d' >"${LOG_DIR:?}"/success 2>&1
   # get clean ipv6 address, disregard non ipv6 and lines shorter than n
-  #egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}.' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/success 2>&1
+  #egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}.' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,9}$/d' >>"${LOG_DIR:?}"/success 2>&1
   # get clean dns address, disregard non dns
-  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/success 2>&1
+  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,9}$/d' >>"${LOG_DIR:?}"/success 2>&1
   # remove duplicates, sort, disregard 127 address
-  cat "${LOG_DIR:?}"/success 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | grep -v "127." 2>&1 | sed -r '/^.{,8}$/d' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+  cat "${LOG_DIR:?}"/success 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | grep -v "127." 2>&1 | sed -r '/^.{,9}$/d' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
   # remove old file
   rm "${LOG_DIR:?}"/success &>/dev/null
 
