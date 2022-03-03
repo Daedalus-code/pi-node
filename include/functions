@@ -1391,7 +1391,7 @@ function failed_peers() {
   egrep "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed.all | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | egrep -v ".onion|:" | awk '!a[$0]++' | sort -n >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   egrep -o "([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | grep -v ".onion" | awk '!a[$0]++' | sort -n >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  egrep -o ".[a-z]|.*.com" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  egrep -o ".[a-z]|.*.com" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   rm "${LOG_DIR:?}"/node_data/peers/failed.all &>/dev/null
 
   # add system ip address
@@ -1402,7 +1402,7 @@ function failed_peers() {
   ONION_FAILS=$(egrep -c "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)
   IPV4_FAILS=$(egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | egrep -c -v ".onion|:" 2>&1)
   IPV6_FAILS=$(egrep -o "([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -c -v ".onion" 2>&1)
-  DNS_FAILS=$(egrep ".[a-z]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | egrep -c -v ":|.onion" 2>&1)
+  DNS_FAILS=$(egrep -o ".[a-z]|.*.com" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | egrep -c -v ":|.onion" 2>&1)
 
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
