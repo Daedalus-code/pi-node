@@ -1045,7 +1045,7 @@ MASTER_REWARDS="${N0:?}"
 ### masternode rewards #########################################################
 
 # payment value
-if [[ ! -f "${LOG_DIR:?}"/node_data/stats/masternode_payment ]] &>/dev/null; then
+if [[ ! "$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/masternode_payment)" ]] &>/dev/null; then
   # get masternode payment value from debug.log
   grep "node payment value" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $7 }' 2>&1 | tr -d '()' >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
 fi
