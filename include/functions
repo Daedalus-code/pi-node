@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220303
-# 2.2.5.7
+# 2.2.6.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.5.7"
+VERSION="v2.2.6.3"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1034,7 +1034,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     DASH_INMN="I/MN"
 
     # dashbord variable
-    MASTER_REWARDS="$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+    MASTER_REWARDS="$(cat "${WALLET_DIR:?}"/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' | wc -l 2>&1)"
 
     if [[ "$MASTER_REWARDS" -eq "0" ]] &>/dev/null; then
       # no rewards (color)
@@ -1102,7 +1102,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       # wallet masternode reward count greater then saved masternode reward count
       if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
         # get bitcoinminer, remove duplicates
-        cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
+        cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null | grep "AddToWallet" | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
         printf '%b' "${LOG_DATE:?} Status() Saved -------> ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
     else
@@ -2216,14 +2216,20 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
         # get txid with that low confirmation
         LOW_TX=$(egrep -B7 "confirmations: ${LOW_MN:?}" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1)
         # if txid doesn't already exist inside rewards, continue
-        if [[ ! "$(grep "$LOW_TX" "${WALLET_DIR:?}"/rewards)" ]] &>/dev/null; then
+        if [[ ! "$(grep "${LOW_TX:?}" "${WALLET_DIR:?}"/rewards 2>&1)" ]] &>/dev/null; then
           # get input size
           INPUT_SIZE=$(grep -A6 "${LOW_TX:?}" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '.' 2>&1)
           # get masternode payment size
           PAYME_SIZE=$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>/dev/null | tr -d '.' 2>&1)
           # if payment size is correct, continue
           if [[ "${INPUT_SIZE:?}" -eq "${PAYME_SIZE:?}" ]] &>/dev/null; then
-            echo "$LOG_DATE AddToWallet ${LOW_TX:?}  new" >>"${WALLET_DIR:?}"/rewards 2>&1
+
+            if [[ ! "${LOW_TX:?}" -eq "$(grep "AddToWallet" "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $4 }' 2>&1)" ]] &>/dev/null; then
+              echo "$LOG_DATE AddToWallet ${LOW_TX:?}  new" >>"${WALLET_DIR:?}"/rewards 2>&1
+            fi
+
+            cat "${WALLET_DIR:?}"/rewards | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards.tmp 2>&1
+            mv "${WALLET_DIR:?}"/rewards.tmp "${WALLET_DIR:?}"/rewards &>/dev/null
           fi
         fi
       fi
