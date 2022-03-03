@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220303
-# 2.2.6.3
+# 2.2.5.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.6.3"
+VERSION="v2.2.5.5"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -271,7 +271,7 @@ echo "${IP_ADDRESS_N:?}" >"${LOG_DIR:?}"/node_data/stats/ip_address 2>&1
 # get ip address (color)
 IP_ADDRESS="${C1:?}${IP_ADDRESS:?}${N0:?}"
 
-if [[ -z "$IP_ADDRESS" ]]; then
+if [[ -z "$IP_ADDRESS" ]] &>/dev/null; then
   IP_ADDRESS="${GR:?}0.0.0.0${N0:?}"
 fi
 
@@ -1446,9 +1446,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
   cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
   # make sure addnodes is clean of successfully peers, as above as below
   grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-  if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
-    cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-  fi
+  cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers &>/dev/null
 
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
@@ -1473,15 +1471,11 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 
     # disregard already connected peers (success list)
     grep -vf "${LOG_DIR:?}"/node_data/peers/success "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-    if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
-      cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-    fi
+    cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers &>/dev/null
 
     # disregard failed peers (failed list), remove 127. address (localhost)
     grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${LOG_DIR:?}"/node_data/add_peers 2>&1 | sort -n 2>&1 | grep -v "127." >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
-    if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
-      cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-    fi
+    cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers &>/dev/null
 
     # disregard invalid pattern address (cidr - classless inter-domain routing) and count wrong patterns (cidr)
     grepcidr -f "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers >"${LOG_DIR:?}"/node_data/add_peers.tmp 2>"${LOG_DIR:?}"/node_data/peers.cidr
@@ -1494,14 +1488,12 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 
     # disregard onion address
     grep -v ".onion" "${LOG_DIR:?}"/node_data/peers.cidr >"${LOG_DIR:?}"/node_data/peers.cidr.tmp 2>&1
-    mv "${LOG_DIR:?}"/node_data/peers.cidr.tmp "${LOG_DIR:?}"/node_data/peers.cidr 2>&1
+    mv "${LOG_DIR:?}"/node_data/peers.cidr.tmp "${LOG_DIR:?}"/node_data/peers.cidr &>/dev/null
 
     # count all invalid patterns
     INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/peers.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
 
-    if [[ -f "${LOG_DIR:?}"/node_data/add_peers.tmp ]] &>/dev/null; then
-      cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers 2>&1
-    fi
+    cp "${LOG_DIR:?}"/node_data/add_peers.tmp "${LOG_DIR:?}"/node_data/add_peers &>/dev/null
 
     # create total cidr list
     cat "${LOG_DIR:?}"/node_data/peers.cidr >>"${LOG_DIR:?}"/node_data/stats/total.cidr 2>/dev/null
@@ -1533,7 +1525,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     screen -dmS add_peers &>/dev/null
 
     # create temp and backup list for connection check
-    cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers.check 2>&1
+    cp "${LOG_DIR:?}"/node_data/add_peers "${LOG_DIR:?}"/node_data/add_peers.check &>/dev/null
 
     # make sure add_peers exist
     if [ ! -f "${LOG_DIR:?}"/add_peers ] &>/dev/null; then

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222902
-# 2.4.7.0
+# V20220303
+# 2.4.7.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -285,6 +285,7 @@ Then the importprivkey can be used with this output
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
+      clear
     else
 
       display_result() {
@@ -1383,7 +1384,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       clear
 
-      if [[ ! -f "${WALLET_DIR:?}"/masternode_collateral ]]; then
+      if [[ ! -f "${WALLET_DIR:?}"/masternode_collateral ]] &>/dev/null; then
         echo "Enter masternode collateral"
         read -r MASTERNODECO
         echo
@@ -2027,6 +2028,7 @@ ${HIDDEN_SERVICE:?}
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
+      clear
     else
 
       display_result() {
@@ -2066,7 +2068,7 @@ ${HIDDEN_SERVICE:?}
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
-
+      clear
     else
 
       if [[ "$(pidof tor 2>&1 | wc -w 2>&1)" -eq "1" ]] &>/dev/null; then
