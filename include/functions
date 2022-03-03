@@ -231,11 +231,11 @@ FREE_MEM="${G1:?}$FREE_MEM${N0:?}"
 ### system space ###############################################################
 
 # get used space, disregard boot
-USED_HDD=$(df -k 2>&1 | sort -n 2>&1 | grep -v "boot" 2>&1 | head -1 2>&1 | awk '{ print $3 }' 2>&1)
+USED_SPACE=$(df -k 2>&1 | sort -n 2>&1 | grep -v "boot" 2>&1 | head -1 2>&1 | awk '{ print $3 }' 2>&1)
 # calculate --block-size=1k
-USED_HDD=$(echo "$USED_HDD*1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+USED_MEGA=$(echo "${USED_SPACE:?}*1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 # human-readable format
-USED_HDD=$(numfmt --to iec --format "%8.3f" "$USED_HDD" 2>&1 | xargs 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+USED_HDD=$(numfmt --to iec --format "%8.3f" "${USED_MEGA:?}" 2>&1 | xargs 2>/dev/null)
 # get used hdd percentage
 USED_HDD_P=$(df -k 2>&1 | sort -n 2>&1 | grep -v "boot" 2>&1 | head -1 2>&1 | awk '{ print $5 }' 2>&1)
 # get used hdd (color)
@@ -252,8 +252,8 @@ DOWNLOAD=$(egrep "RX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/stat
 # get upload from wlan(*) - eth(*)
 UPLOAD=$(egrep "TX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/stats/i*config 2>&1 | awk '{ print $6 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
 # human-readable format
-DOWNLOAD=$(numfmt --to iec --format "%8.3f" "$DOWNLOAD" 2>&1 | xargs 2>/dev/null | awk '{ printf "%.3f\n", $1 }' 2>&1)
-UPLOAD=$(numfmt --to iec --format "%8.3f" "$UPLOAD" 2>&1 | xargs 2>/dev/null | awk '{ printf "%.3f\n", $1 }' 2>&1)
+DOWNLOAD=$(numfmt --to iec --format "%8.3f" "${DOWNLOAD:?}" 2>&1 | xargs 2>/dev/null)
+UPLOAD=$(numfmt --to iec --format "%8.3f" "${UPLOAD:?}" 2>&1 | xargs 2>/dev/null)
 
 # if non responsive
 IFCONFIG="${GR:?}eth()${N0:?}"
