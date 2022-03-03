@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220303
-# 2.3.0.0
+# 2.3.0.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.0.0"
+VERSION="v2.3.0.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1387,6 +1387,7 @@ function failed_peers() {
 
   # grep all failed connections in debug.log
   grep "failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,8}$/d' >"${LOG_DIR:?}"/node_data/peers/failed.all 2>&1
+  grep "(111)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $4 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed.all 2>&1
 
   egrep "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed.all | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | sed -r '/^.{,8}$/d' >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | egrep -v ".onion|:" 2>&1 | awk '!a[$0]++' | sort -n 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
