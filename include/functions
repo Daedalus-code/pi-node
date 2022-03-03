@@ -1257,7 +1257,7 @@ fi
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${ADDNODES_CHECK:?}" 2>&1)" ]] &>/dev/null; then
   # create addnodes backup if backup is less
   if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-    cp "${LOG_DIR:?}"/node_data/peers/success "${WALLET_DIR:?}"/addnodes 2>&1
+    cp "${LOG_DIR:?}"/node_data/peers/success "${WALLET_DIR:?}"/addnodes &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}<<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # disregard failed peers (failed list)
     grep -vf "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/addnodes >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
@@ -2060,12 +2060,12 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/price.cg ] &>/dev/null; then
 
   if [[ ! -f "${WALLET_DIR:?}"/price.cg ]] &>/dev/null; then
     # create backup if missing
-    cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg 2>&1
+    cp "${LOG_DIR:?}"/node_data/stats/price.cg "${WALLET_DIR:?}"/price.cg &>/dev/null
   fi
 
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/price.cg ]] &>/dev/null; then
-    cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1
+    cp "${WALLET_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/stats/price.cg &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cg 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)${N0:?} Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
@@ -2074,12 +2074,12 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/volume.cg ] &>/dev/null; then
 
   if [[ ! -f "${WALLET_DIR:?}"/volume.cg ]] &>/dev/null; then
     # create backup if missing
-    cp "${LOG_DIR:?}"/node_data/stats/volume.cg "${WALLET_DIR:?}"/volume.cg 2>&1
+    cp "${LOG_DIR:?}"/node_data/stats/volume.cg "${WALLET_DIR:?}"/volume.cg &>/dev/null
   fi
 
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/volume.cg ]] &>/dev/null; then
-    cp "${WALLET_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1
+    cp "${WALLET_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/stats/volume.cg &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
@@ -2106,12 +2106,12 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/rank.cmc ] &>/dev/null; then
 
   if [[ ! -f "${WALLET_DIR:?}"/rank.cmc ]] &>/dev/null; then
     # create backup if missing
-    cp "${LOG_DIR:?}"/node_data/stats/rank.cmc "${WALLET_DIR:?}"/rank.cmc 2>&1
+    cp "${LOG_DIR:?}"/node_data/stats/rank.cmc "${WALLET_DIR:?}"/rank.cmc &>/dev/null
   fi
 
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/rank.cmc ]] &>/dev/null; then
-    cp "${WALLET_DIR:?}"/rank.cmc "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1
+    cp "${WALLET_DIR:?}"/rank.cmc "${LOG_DIR:?}"/node_data/stats/rank.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${N0:?} Rank! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
@@ -2120,12 +2120,12 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/price.cmc ] &>/dev/null; then
 
   if [[ ! -f "${WALLET_DIR:?}"/price.cmc ]] &>/dev/null; then
     # create backup if missing
-    cp "${LOG_DIR:?}"/node_data/stats/price.cmc "${WALLET_DIR:?}"/price.cmc 2>&1
+    cp "${LOG_DIR:?}"/node_data/stats/price.cmc "${WALLET_DIR:?}"/price.cmc &>/dev/null
   fi
 
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/price.cmc ]] &>/dev/null; then
-    cp "${WALLET_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1
+    cp "${WALLET_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/stats/price.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/price.cmc 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)${N0:?} Price! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
@@ -2134,12 +2134,12 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/volume.cmc ] &>/dev/null; then
 
   if [[ ! -f "${WALLET_DIR:?}"/volume.cmc ]] &>/dev/null; then
     # create backup if missing
-    cp "${LOG_DIR:?}"/node_data/stats/volume.cmc "${WALLET_DIR:?}"/volume.cmc 2>&1
+    cp "${LOG_DIR:?}"/node_data/stats/volume.cmc "${WALLET_DIR:?}"/volume.cmc &>/dev/null
   fi
 
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/volume.cmc ]] &>/dev/null; then
-    cp "${WALLET_DIR:?}"/volume.cmc "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>&1
+    cp "${WALLET_DIR:?}"/volume.cmc "${LOG_DIR:?}"/node_data/stats/volume.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
@@ -2148,12 +2148,12 @@ if [ -f "${LOG_DIR:?}"/node_data/stats/watchers.cmc ] &>/dev/null; then
 
   if [[ ! -f "${WALLET_DIR:?}"/watchers.cmc ]] &>/dev/null; then
     # create backup if missing
-    cp "${LOG_DIR:?}"/node_data/stats/watchers.cmc "${WALLET_DIR:?}"/watchers.cmc 2>&1
+    cp "${LOG_DIR:?}"/node_data/stats/watchers.cmc "${WALLET_DIR:?}"/watchers.cmc &>/dev/null
   fi
 
 else # restore it
   if [[ -f "${WALLET_DIR:?}"/watchers.cmc ]] &>/dev/null; then
-    cp "${WALLET_DIR:?}"/watchers.cmc "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1
+    cp "${WALLET_DIR:?}"/watchers.cmc "${LOG_DIR:?}"/node_data/stats/watchers.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${N0:?} Watchlist! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi

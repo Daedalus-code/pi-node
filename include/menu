@@ -129,7 +129,7 @@ case $CHOICE in
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
       if [[ "$(cat "${LOG_DIR:?}"/node_data/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
-        cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed 2>&1
+        cp "${LOG_DIR:?}"/node_data/peers/failed "${WALLET_DIR:?}"/failed &>/dev/null
       fi # only ask if wallet is not synced
       if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
         read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
@@ -824,7 +824,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         fi
 
         # setup node wallet
-        cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip 2>&1
+        cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip &>/dev/null
         yes "A" 2>&1 | unzip -j /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/Wallet/ 2>&1
       fi
     }
@@ -1047,7 +1047,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           # setup wallet daemon
-          cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip
+          cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip &>/dev/null
           yes "A" 2>&1 | unzip -j /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/Wallet/
         fi
       }
@@ -1923,7 +1923,7 @@ daemon=1" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
         echo "Reset pinode.conf!"
-        cp /home/"$(whoami)"/pi-node/pinode.conf /home/"$(whoami)"/
+        cp /home/"$(whoami)"/pi-node/pinode.conf /home/"$(whoami)"/ &>/dev/null
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
@@ -1938,7 +1938,7 @@ daemon=1" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
         echo "Creating backup! (/boot/config.txt)"
-        cp /boot/config.txt /home/"$(whoami)"/
+        cp /boot/config.txt /home/"$(whoami)"/ &>/dev/null
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
