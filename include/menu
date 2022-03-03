@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220303
-# 2.4.7.2
+# 2.4.7.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -669,8 +669,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     # get mempool activity
-    MEMPOOL_ACTIVITY_ACTIVE=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    MEMPOOL_ACTIVITY_DEAD=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>&1 | awk '{ print $4 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_ACTIVE=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>/dev/null | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_DEAD=$(cat "${LOG_DIR:?}"/node_data/stats/mempool_activity 2>/dev/null | awk '{ print $4 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_SIZE=$(cat "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>/dev/null | grep "size" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_BYTE=$(cat "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>/dev/null | grep "bytes" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_USAGE=$(cat "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>/dev/null | grep "usage" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_POOL_MIN_FEE=$(cat "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>/dev/null | grep "mempoolminfee" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
+    MEMPOOL_ACTIVITY_MIN_RELAY_TX_FEE=$(cat "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>/dev/null | grep "minrelaytxfee" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
 
     # communication port
     COM=$(awk '{ print $3 }' "${LOG_DIR:?}"/node_data/com 2>/dev/null)
@@ -712,7 +717,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printline "User Space" "$(du -sh /home/* 2>/dev/null | xargs 2>&1 | awk '{ print $1,$2 }' 2>&1)" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))" "Upload" "${UPLOAD:?}"
       printline "Used HDD" "${USED_HDD:?} ${USED_HDD_P:?}" "COM" "$COM" "Download" "${DOWNLOAD:?}"
       echo
-      printline "Mempool" "A ${MEMPOOL_ACTIVITY_ACTIVE:?}% D ${MEMPOOL_ACTIVITY_DEAD:?}%"
+      printf '%b' "   Mempool Active ${MEMPOOL_ACTIVITY_ACTIVE:?}% Dead >${MEMPOOL_ACTIVITY_DEAD:?}% Size ${MEMPOOL_ACTIVITY_SIZE:?} Bytes ${MEMPOOL_ACTIVITY_BYTE:?} Usage ${MEMPOOL_ACTIVITY_USAGE:?} MemPoolMinFee ${MEMPOOL_ACTIVITY_POOL_MIN_FEE:?} MinRelayTXFee ${MEMPOOL_ACTIVITY_MIN_RELAY_TX_FEE:?}\n"
       echo
       printline "Wallet" "${WALLET_VERSION:?}" "Headers/Blocks" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
       printline "PID" "${PID_DAEMON:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Staking Status" "${NODE_PROOF:?}"
