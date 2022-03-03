@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220303
-# 2.4.7.7
+# 2.4.8.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1525,10 +1525,6 @@ patriotnodeaddr=$(cat "${WALLET_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[
 # masternode private key
 patriotnodeprivkey=${MASTERNODE_KEY:?}
 
-# get onion address
-listenonion=1
-discover=1
-
 # external ip address
 ${EXTERNALIP:?}
 
@@ -1541,8 +1537,14 @@ onion=${PROXY:?}
 # Tor control port to use if onion listening enabled (default: 127.0.0.1:9051)
 torcontrol=${TOR_CONTROL:?}
 
-# Maximum number of inbound+outbound connections. (default: 125)
+# Listening mode, enabled by default except when 'connect' is being used
+listen=1
 
+discover=1
+
+listenonion=1
+
+# Maximum number of inbound+outbound connections. (default: 125)
 maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
 
           echo
@@ -1891,6 +1893,9 @@ rpcpassword=${RANDOM_RPCN:?}${RANDOM_RPCL:?}
 rpcallowip=${RPC_IP:?}
 rpcbind=${RPC_IP:?}
 
+# Tor onion externalip
+${EXTERNALIP:?}
+
 # Connect via a SOCKS5 proxy (default: 127.0.0.1:9050)
 proxy=${PROXY:?}
 
@@ -1900,18 +1905,16 @@ onion=${PROXY:?}
 # Tor control port to use if onion listening enabled (default: 127.0.0.1:9051)
 torcontrol=${TOR_CONTROL:?}
 
-# Tor onion externalip
-${EXTERNALIP:?}
-
 # Listening mode, enabled by default except when 'connect' is being used
 listen=1
+
 discover=1
 
-# Maximum number of inbound+outbound connections. (default: 125)
-maxconnections=${MAX_P2P:?}
+listenonion=1
 
-# can be commented out if you use the service script
-daemon=1" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
+# Maximum number of inbound+outbound connections. (default: 125)
+maxconnections=${MAX_P2P:?}" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
+
         mv "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" 2>&1
         echo "[Ok] Installed new wallet configuration! -> ${WALLET_DIR:?}/${WALLET_CONFIG:?}"
         echo
