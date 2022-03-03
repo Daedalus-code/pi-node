@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220303
-# 2.2.8.4
+# 2.2.9.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.8.4"
+VERSION="v2.2.9.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1379,13 +1379,20 @@ function failed_peers() {
   # get old count
   OLD_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
 
-  # grep all failed in debug.log
-  grep "failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  # grep all failed connections in debug.log
+  grep "failed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.all 2>&1
+
+  egrep "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed.all | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | egrep -v ".onion|:" | awk '!a[$0]++' | sort -n >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  egrep -o "([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}" "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | grep -v ".onion" | awk '!a[$0]++' | sort -n >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  egrep -o ".[a-z]|.*.com" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | sed -r '/^.{,7}$/d' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  rm "${LOG_DIR:?}"/node_data/peers/failed.all &>/dev/null
 
   # add system ip address
-  echo "$IP_ADDRESS_N" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  awk '!a[$0]++' "${LOG_DIR:?}"/node_data/peers/failed >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
+  echo "${IP_ADDRESS_N:?}" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  cat "${LOG_DIR:?}"/node_data/peers/failed | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/peers/failed.clean 2>&1
   mv "${LOG_DIR:?}"/node_data/peers/failed.clean "${LOG_DIR:?}"/node_data/peers/failed 2>&1
+
   ONION_FAILS=$(egrep -c "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)
   IPV4_FAILS=$(egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | egrep -c -v ".onion|:" 2>&1)
   IPV6_FAILS=$(egrep -o "([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | grep -c -v ".onion" 2>&1)
