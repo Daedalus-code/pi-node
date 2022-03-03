@@ -1429,13 +1429,13 @@ fi
 if [ -f "${LOG_DIR:?}"/node_data/client/getpeerinfo ] &>/dev/null; then
 
   # get clean ipv4 address, disregard non ipv4
-  egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/success 2>&1
+  egrep -o '([0-9]{1,3}\.){3}[0-9]{1,3}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,8}$/d' >"${LOG_DIR:?}"/success 2>&1
   # get clean ipv6 address, disregard non ipv6 and lines shorter than n
   egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/success 2>&1
   # get clean dns address, disregard non dns
-  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >>"${LOG_DIR:?}"/success 2>&1
+  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,8}$/d' >>"${LOG_DIR:?}"/success 2>&1
   # remove duplicates, sort, disregard 127 address
-  cat "${LOG_DIR:?}"/success 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | grep -v "127." >"${LOG_DIR:?}"/node_data/peers/success 2>&1
+  cat "${LOG_DIR:?}"/success 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n 2>&1 | grep -v "127." 2>&1 | sed -r '/^.{,8}$/d' >"${LOG_DIR:?}"/node_data/peers/success 2>&1
   # remove old file
   rm "${LOG_DIR:?}"/success &>/dev/null
 
