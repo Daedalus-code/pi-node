@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220303
-# 2.4.8.0
+# V20220403
+# 2.5.1.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1825,17 +1825,18 @@ Rewards $(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }'
 
   "10")
 
-    HEIGHT=11
+    HEIGHT=12
     WIDTH=51
-    CHOICE_HEIGHT=4
-    BACKTITLE="Reset configurations"
-    TITLE="Reset a specific config"
+    CHOICE_HEIGHT=5
+    BACKTITLE="Reset configurations, node lists"
+    TITLE="Reset a specific config, list"
     MENU="Choose one option:"
 
     OPTIONS=(1 "${WALLET_CONFIG:?}   Reset wallet config"
       2 "pinode.conf      Reset pi-node config"
       3 "config.txt       Reset boot/config.txt"
-      4 "torrc            Reset Tor config")
+      4 "torrc            Reset Tor config"
+      5 "addnodes         Reset Node lists")
 
     CHOICE=$(dialog --clear \
       --backtitle "$BACKTITLE" \
@@ -2013,6 +2014,42 @@ ${HIDDEN_SERVICE:?}
         read -r -p "[Ok] Hard reset of tor done! Press Enter to continue" </dev/tty
         echo
       fi
+
+      ;;
+
+      # reset node lists
+
+    "5")
+
+      printf '%b' "OLD=$(wc -l /home/"$(whoami)"/addnodes | awk '{ print $1 }')\n"
+      truncate -s 0 /home/"$(whoami)"/addnodes
+      printf '%b' "NEW=$(wc -l /home/"$(whoami)"/addnodes | awk '{ print $1 }')\n"
+      sleep 1
+      printf '%b' "OLD=$(wc -l "${WALLET_DIR:?}"/addnodes | awk '{ print $1 }')\n"
+      truncate -s 0 "${WALLET_DIR:?}"/addnodes
+      printf '%b' "NEW=$(wc -l "${WALLET_DIR:?}"/addnodes | awk '{ print $1 }')\n"
+      sleep 1
+      wc -l "${LOG_DIR:?}"/node_data/peers* | awk '{ print $1 }' | tail -1 >"${LOG_DIR:?}"/wc_peers.tmp 2>&1
+      printf '%b' "OLD=$(cat "${LOG_DIR:?}"/wc_peers.tmp 2>/dev/null)\n"
+      truncate -s 0 "${LOG_DIR:?}"/node_data/peers*
+      wc -l "${LOG_DIR:?}"/node_data/peers* | awk '{ print $1 }' | tail -1 >"${LOG_DIR:?}"/wc_peers.tmp 2>&1
+      printf '%b' "NEW=$(cat "${LOG_DIR:?}"/wc_peers.tmp 2>/dev/null)\n"
+      sleep 1
+      wc -l "${LOG_DIR:?}"/node_data/node* | awk '{ print $1 }' | tail -1 >"${LOG_DIR:?}"/wc_node.tmp 2>&1
+      printf '%b' "OLD=$(cat "${LOG_DIR:?}"/wc_node.tmp 2>/dev/null)\n"
+      truncate -s 0 "${LOG_DIR:?}"/node_data/node*
+      wc -l "${LOG_DIR:?}"/node_data/node* | awk '{ print $1 }' | tail -1 >"${LOG_DIR:?}"/wc_node.tmp 2>&1
+      printf '%b' "NEW=$(cat "${LOG_DIR:?}"/wc_node.tmp 2>/dev/null)\n"
+      sleep 1
+      wc -l "${LOG_DIR:?}"/node_data/add* | awk '{ print $1 }' | tail -1 >"${LOG_DIR:?}"/wc_add.tmp 2>&1
+      printf '%b' "OLD=$(cat "${LOG_DIR:?}"/wc_add.tmp 2>/dev/null)\n"
+      truncate -s 0 "${LOG_DIR:?}"/node_data/add*
+      wc -l "${LOG_DIR:?}"/node_data/add* | awk '{ print $1 }' | tail -1 >"${LOG_DIR:?}"/wc_add.tmp 2>&1
+      printf '%b' "NEW=$(cat "${LOG_DIR:?}"/wc_add.tmp 2>/dev/null)\n"
+
+      echo
+      read -r -p "[Ok] Hard reset of addnodes lists done! Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
