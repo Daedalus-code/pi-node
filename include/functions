@@ -1330,7 +1330,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   # add extras domain names
   cat "${LOG_DIR:?}"/addnodes.dns >"${LOG_DIR:?}"/node_data/peers.x.tmp 2>/dev/null
   cat "${LOG_DIR:?}"/addnodes.onion >>"${LOG_DIR:?}"/node_data/peers.x.tmp 2>/dev/null
-  cat "${LOG_DIR:?}"/node_data/peers.x.tmp 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers.x 2>/dev/null
+  cat "${LOG_DIR:?}"/node_data/peers.x.tmp 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >>"${LOG_DIR:?}"/node_data/peers.x 2>/dev/null
 
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_IPv4 $(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
