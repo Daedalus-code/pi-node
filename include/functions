@@ -1538,7 +1538,7 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     # note: do this after grepcidr
     if [[ ! "$(grep "$(cat "${WALLET_DIR:?}"/onion_addnodes 2>/dev/null)" "${LOG_DIR:?}"/node_data/peers/success 2>&1)" ]] &>/dev/null; then
       # always keep onions around
-      cat "${WALLET_DIR:?}"/onion_addnodes >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+      cat "${WALLET_DIR:?}"/onion_addnodes >>"${LOG_DIR:?}"/node_data/add_peers.tmp 2>&1
     fi
 
     # disregard onion address
