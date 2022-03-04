@@ -92,7 +92,7 @@ grepcidr -f "${LOG_DIR:?}"/node_data/nodes.all "${LOG_DIR:?}"/node_data/nodes.al
 
 ### getnodeaddresses ###########################################################
 
-"${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getnodeaddresses 1440 2>&1 | grep "address" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/nodes.get 2>&1
+"${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getnodeaddresses 1440 2>&1 | grep -B3 "ipv4" 2>&1 | grep "address" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d ',|"' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/nodes.get 2>&1
 
 # get new count
 GET_NEW=$(wc -l "${LOG_DIR:?}"/node_data/nodes.get 2>&1 | awk '{ print $1 }' 2>&1)
