@@ -2056,21 +2056,21 @@ ${HIDDEN_SERVICE:?}
         printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers/success 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/peers.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1) - peers.*\n"
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/peers.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1) - Peers\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers.* 2>&1)\n"
         truncate -s 0 "${LOG_DIR:?}"/node_data/peers.* &>/dev/null
         echo
         printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/peers.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers.* 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/nodes.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1) - nodes.*\n"
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/nodes.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1) - Nodes\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/nodes.* 2>&1)\n"
         truncate -s 0 "${LOG_DIR:?}"/node_data/nodes.* &>/dev/null
         echo
         printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/nodes.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/nodes.* 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/add_* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1) - add_*\n"
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/add_* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1) - Add_\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/add_* 2>&1)\n"
         truncate -s 0 "${LOG_DIR:?}"/node_data/add_* &>/dev/null
         echo
