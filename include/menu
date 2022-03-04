@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220403
-# 2.5.4.7
+# 2.5.3.5
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -2052,28 +2052,16 @@ ${HIDDEN_SERVICE:?}
         printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers/success 2>&1)\n"
         echo
-        wc -l "${LOG_DIR:?}"/node_data/peers* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 >"${LOG_DIR:?}"/wc_peers.tmp 2>&1
-        printf '%b' "OLD=$(cat "${LOG_DIR:?}"/wc_peers.tmp 2>/dev/null)\n"
-        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers* 2>&1)\n"
-        truncate -s 0 "${LOG_DIR:?}"/node_data/peers* &>/dev/null
-        wc -l "${LOG_DIR:?}"/node_data/peers* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 >"${LOG_DIR:?}"/wc_peers.tmp 2>&1
-        printf '%b' "NEW=$(cat "${LOG_DIR:?}"/wc_peers.tmp 2>/dev/null)\n"
-        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers* 2>&1)\n"
-        echo
-        wc -l "${LOG_DIR:?}"/node_data/node* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 >"${LOG_DIR:?}"/wc_node.tmp 2>&1
-        printf '%b' "OLD=$(cat "${LOG_DIR:?}"/wc_node.tmp 2>/dev/null)\n"
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/node* 2>/dev/null)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/node* 2>&1)\n"
         truncate -s 0 "${LOG_DIR:?}"/node_data/node* &>/dev/null
-        wc -l "${LOG_DIR:?}"/node_data/node* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 >"${LOG_DIR:?}"/wc_node.tmp 2>&1
-        printf '%b' "NEW=$(cat "${LOG_DIR:?}"/wc_node.tmp 2>/dev/null)\n"
+        printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/node* 2>/dev/null)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/node* 2>&1)\n"
         echo
-        wc -l "${LOG_DIR:?}"/node_data/add* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 >"${LOG_DIR:?}"/wc_add.tmp 2>&1
-        printf '%b' "OLD=$(cat "${LOG_DIR:?}"/wc_add.tmp 2>/dev/null)\n"
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/add* 2>/dev/null)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/add* 2>&1)\n"
         truncate -s 0 "${LOG_DIR:?}"/node_data/add* &>/dev/null
-        wc -l "${LOG_DIR:?}"/node_data/add* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 >"${LOG_DIR:?}"/wc_add.tmp 2>&1
-        printf '%b' "NEW=$(cat "${LOG_DIR:?}"/wc_add.tmp 2>/dev/null)\n"
+        printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/add* 2>/dev/null)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/add* 2>&1)\n"
         echo
         rm "${LOG_DIR:?}"/wc_* &>/dev/null
