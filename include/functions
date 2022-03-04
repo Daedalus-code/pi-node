@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220403
-# 2.3.1.1
+# 2.3.1.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.1.1"
+VERSION="v2.3.1.5"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1403,11 +1403,6 @@ function failed_peers() {
   # grep all onion failed connections in debug.log
   egrep -o " to .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >>"${LOG_DIR:?}"/node_data/peers/failed.all 2>&1
 
-  if [[ ! "$(grep "${IP_ADDRESS_N:?}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" ]] &>/dev/null; then
-    # add system ip address
-    echo "${IP_ADDRESS_N:?}" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
-  fi
-
   cat "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | grep -v "/" 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   rm "${LOG_DIR:?}"/node_data/peers/failed.all &>/dev/null
 
@@ -1485,8 +1480,19 @@ if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep "dead" &>/dev/n
   fi
 fi
 
-# look for screen session, if not found, run this block
+### look for screen session, if not found, run this block ################## ###
+
 if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then
+
+  ### add extras from personal addnodes #################################### ###
+
+  if [ -f "${LOG_DIR:?}"/node_data/peers.x ] &>/dev/null; then
+    # add extras from personal addnodes
+    cat "${LOG_DIR:?}"/node_data/peers.x >>"${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding personal +$(wc -l "${LOG_DIR:?}"/node_data/peers.x 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # remove file, now old
+    rm "${LOG_DIR:?}"/node_data/peers.x &>/dev/null
+  fi
 
   cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
   # make sure addnodes is clean of successfully peers, as above as below
@@ -1510,16 +1516,14 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
 
     # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
     echo "${RIP_IPV6:?}" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
-    echo "${RIP_IPV4:?}" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+    echo "${RIP_IPV4:?}" 2>&1 | grep -vwE "($(cat "${LOG_DIR:?}"/node_data/stats/ifconfig 2>/dev/null | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
 
-    ### add extras from personal addnodes ################################## ###
+    ### ban system ip $##################################################### ###
 
-    if [ -f "${LOG_DIR:?}"/node_data/peers.x ] &>/dev/null; then
-      # add extras from personal addnodes
-      cat "${LOG_DIR:?}"/node_data/peers.x >>"${LOG_DIR:?}"/node_data/add_peers 2>/dev/null
-      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding personal +$(wc -l "${LOG_DIR:?}"/node_data/peers.x 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      # remove file, now old
-      rm "${LOG_DIR:?}"/node_data/peers.x &>/dev/null
+    # ban wallet from connecting itself
+    if [[ ! "$(grep "$(cat "${LOG_DIR:?}"/node_data/stats/ifconfig 2>/dev/null | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" ]] &>/dev/null; then
+      # add system ip address
+      echo "$(cat "${LOG_DIR:?}"/node_data/stats/ifconfig 2>/dev/null | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
     fi
 
     ### remove failed, connected peers and invalid pattern address ######### ###
