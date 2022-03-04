@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220403
-# 2.2.9.4
+# 2.2.9.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.9.4"
+VERSION="v2.2.9.6"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -495,7 +495,9 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
     # collect mempool two times a loop (time_fix time)
 
-    # create screen session
+    # kill old session
+    screen -X -S read_mempool quit &>/dev/null
+    # create new screen session
     screen -dmS read_mempool &>/dev/null
 
     # make sure read_mempool exist
@@ -1754,8 +1756,8 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       cat "${WALLET_LOG_DIR:?}"/debug.log >>"${WALLET_DIR:?}"/debug.log 2>/dev/null
     fi
 
-    # restart mempool script
-    screen -X -S read_mempool quit &>/dev/null
+    # restart
+    killall screen &>/dev/null
 
     # keep masternode status updated
     cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getmasternodestatus &>/dev/null
