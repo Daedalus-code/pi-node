@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220403
-# 2.2.9.1
+# 2.2.9.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.9.1"
+VERSION="v2.2.9.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1394,6 +1394,9 @@ function failed_peers() {
     # add system ip address
     echo "${IP_ADDRESS_N:?}" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
   fi
+
+  cat "${LOG_DIR:?}"/node_data/peers/failed.all 2>&1 | grep -v "/" 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  rm "${LOG_DIR:?}"/node_data/peers/failed.all &>/dev/null
 
   IPV4_FAILS=$(egrep -c "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)
   DNS_FAILS=$(egrep -c " to .*\.[^.]+\.[[:alpha:]].[[:alpha:]]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)
