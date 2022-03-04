@@ -1001,7 +1001,7 @@ fi
 
 if [[ ! -s "${LOG_DIR:?}"/node_data/stats/stake_count ]] &>/dev/null; then
   # make sure stake_count exist
-  echo "0" "${LOG_DIR:?}"/node_data/stats/stake_count 2>&1
+  echo "0" >"${LOG_DIR:?}"/node_data/stats/stake_count 2>&1
 fi
 
 # greater than n seconds, continue
@@ -1054,7 +1054,7 @@ MASTER_REWARDS="${N0:?}"
 
 if [[ ! -s "${LOG_DIR:?}"/node_data/stats/reward_count ]] &>/dev/null; then
   # make sure reward_count exist
-  echo "0" "${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
+  echo "0" >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
 fi
 
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/masternode_payment ]] &>/dev/null; then
