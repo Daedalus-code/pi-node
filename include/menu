@@ -2028,54 +2028,54 @@ ${HIDDEN_SERVICE:?}
       }
 
       RESULT=$(
-        printf '%b' "OLD=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)\n"
+        printf '%b' "OLD=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) - Personal addnodes\n"
         printf '%b' "FILE=$(ls -lh /home/"$(whoami)"/addnodes 2>&1)\n"
         truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
         echo
         printf '%b' "NEW=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)\n"
         printf '%b' "FILE=$(ls -lh /home/"$(whoami)"/addnodes 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)\n"
+        printf '%b' "OLD=$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) - Wallet addnodes (backup)\n"
         printf '%b' "FILE=$(ls -lh "${WALLET_DIR:?}"/addnodes 2>&1)\n"
         truncate -s 0 "${WALLET_DIR:?}"/addnodes &>/dev/null
         echo
         printf '%b' "NEW=$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)\n"
         printf '%b' "FILE=$(ls -lh "${WALLET_DIR:?}"/addnodes 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)\n"
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1) - Peers failed\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers/failed 2>&1)\n"
         truncate -s 0 "${LOG_DIR:?}"/node_data/peers/failed &>/dev/null
         echo
         printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers/failed 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)\n"
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1) - Peers success\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers/success 2>&1)\n"
         truncate -s 0 "${LOG_DIR:?}"/node_data/peers/success &>/dev/null
         echo
         printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/peers/success 2>&1 | awk '{ print $1 }' 2>&1)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers/success 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/peers.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/peers.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1) - peers.*\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers.* 2>&1)\n"
         truncate -s 0 "${LOG_DIR:?}"/node_data/peers.* &>/dev/null
         echo
         printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/peers.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/peers.* 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/node* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
-        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/node* 2>&1)\n"
-        truncate -s 0 "${LOG_DIR:?}"/node_data/node* &>/dev/null
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/nodes.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1) - nodes.*\n"
+        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/nodes.* 2>&1)\n"
+        truncate -s 0 "${LOG_DIR:?}"/node_data/nodes.* &>/dev/null
         echo
-        printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/node* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
-        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/node* 2>&1)\n"
+        printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/nodes.* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
+        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/nodes.* 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/add* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
-        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/add* 2>&1)\n"
-        truncate -s 0 "${LOG_DIR:?}"/node_data/add* &>/dev/null
+        printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/add_* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1) - add_*\n"
+        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/add_* 2>&1)\n"
+        truncate -s 0 "${LOG_DIR:?}"/node_data/add_* &>/dev/null
         echo
-        printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/add* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
-        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/add* 2>&1)\n"
+        printf '%b' "NEW=$(wc -l "${LOG_DIR:?}"/node_data/add_* 2>&1 | awk '{ print $1 }' 2>&1 | tail -1 2>&1)\n"
+        printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/add_* 2>&1)\n"
         echo
         rm "${LOG_DIR:?}"/wc_* &>/dev/null
       )
