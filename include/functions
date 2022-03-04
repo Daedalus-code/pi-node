@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220403
-# 2.3.1.5
+# 2.3.2.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.1.5"
+VERSION="v2.3.2.0"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1487,11 +1487,16 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
   ### add extras from personal addnodes #################################### ###
 
   if [ -f "${LOG_DIR:?}"/node_data/peers.x ] &>/dev/null; then
+
     # add extras from personal addnodes
     cat "${LOG_DIR:?}"/node_data/peers.x >>"${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null
+    # remove duplicates, sort
+    cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers.clean 2>&1
+    mv "${LOG_DIR:?}"/node_data/peers.clean "${LOG_DIR:?}"/node_data/peers.tmp &>/dev/null
+
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding personal +$(wc -l "${LOG_DIR:?}"/node_data/peers.x 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # remove file, now old
-    rm "${LOG_DIR:?}"/node_data/peers.x &>/dev/null
+    rm "${LOG_DIR:?}"/node_data/peers.x* &>/dev/null
   fi
 
   cat "${LOG_DIR:?}"/node_data/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/add_peers 2>&1
