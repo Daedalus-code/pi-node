@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220403
-# 2.2.8.9
+# 2.2.9.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.8.9"
+VERSION="v2.2.9.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1390,8 +1390,10 @@ function failed_peers() {
   # grep all onion failed connections in debug.log
   egrep -o " to .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >>"${LOG_DIR:?}"/node_data/peers/failed.all 2>&1
 
-  # add system ip address
-  echo "${IP_ADDRESS_N:?}" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  if [[ ! "$(grep "${IP_ADDRESS_N:?}" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)" ]] &>/dev/null; then
+    # add system ip address
+    echo "${IP_ADDRESS_N:?}" >>"${LOG_DIR:?}"/node_data/peers/failed 2>&1
+  fi
 
   IPV4_FAILS=$(egrep -c "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)
   DNS_FAILS=$(egrep -c " to .*\.[^.]+\.[[:alpha:]].[[:alpha:]]" "${LOG_DIR:?}"/node_data/peers/failed 2>&1)
