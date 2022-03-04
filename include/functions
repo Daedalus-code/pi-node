@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220403
-# 2.3.0.4
+# 2.3.0.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.0.4"
+VERSION="v2.3.0.7"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1324,8 +1324,9 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   grepcidr -f "${LOG_DIR:?}"/addnodes.ipv6 "${LOG_DIR:?}"/addnodes.ipv6 >>"${LOG_DIR:?}"/node_data/peers.x 2>"${LOG_DIR:?}"/node_data/peers.cidr
 
   # add extras domain names
-  cat "${LOG_DIR:?}"/addnodes.dns >>"${LOG_DIR:?}"/node_data/peers.x 2>/dev/null
-  cat "${LOG_DIR:?}"/addnodes.onion >>"${LOG_DIR:?}"/node_data/peers.x 2>/dev/null
+  cat "${LOG_DIR:?}"/addnodes.dns >"${LOG_DIR:?}"/peers.x.tmp 2>/dev/null
+  cat "${LOG_DIR:?}"/addnodes.onion >>"${LOG_DIR:?}"/peers.x.tmp 2>/dev/null
+  cat "${LOG_DIR:?}"/peers.x.tmp 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/peers.x 2>/dev/null
 
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding extra nodes\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script |_IPv4 $(wc -l "${LOG_DIR:?}"/addnodes.ipv4 2>&1 | awk '{ print $1 }' 2>&1)\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -1480,14 +1481,6 @@ if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep "dead" &>/dev/n
   fi
 fi
 
-if [ -f "${LOG_DIR:?}"/node_data/peers.x ] &>/dev/null; then
-  # add extras from personal addnodes
-  cat "${LOG_DIR:?}"/node_data/peers.x >>"${LOG_DIR:?}"/node_data/add_peers 2>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding personal +$(wc -l "${LOG_DIR:?}"/node_data/peers.x 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # remove file, now old
-  rm "${LOG_DIR:?}"/node_data/peers.x &>/dev/null
-fi
-
 # look for screen session, if not found, run this block
 if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then
 
@@ -1514,6 +1507,16 @@ if ! cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "add_peers
     # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
     echo "${RIP_IPV6:?}" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
     echo "${RIP_IPV4:?}" 2>&1 | grep -vwE "(${IP_ADDRESS_N:?}|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/add_peers 2>&1
+
+    ### add extras from personal addnodes ################################## ###
+
+    if [ -f "${LOG_DIR:?}"/node_data/peers.x ] &>/dev/null; then
+      # add extras from personal addnodes
+      cat "${LOG_DIR:?}"/node_data/peers.x >>"${LOG_DIR:?}"/node_data/add_peers 2>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding personal +$(wc -l "${LOG_DIR:?}"/node_data/peers.x 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      # remove file, now old
+      rm "${LOG_DIR:?}"/node_data/peers.x &>/dev/null
+    fi
 
     ### remove failed, connected peers and invalid pattern address ######### ###
 
