@@ -897,7 +897,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "1" ]] &>/dev/null; then
   fi
 
   # get total confirmations
-  if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep -v "txid" 2>&1)" ]] &>/dev/null; then
+  if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | egrep -v "txid|scriptPubKey|confirmations|address" 2>&1)" ]] &>/dev/null; then
     # minus masternode collateral confirmations that exist
     echo "$(grep "confirmations" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.0f\n", $1 }')-$(cat "${LOG_DIR:?}"/node_data/stats/masternode_confirmations 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/total_confirmations 2>&1
   else # total confirmations from listunspent
