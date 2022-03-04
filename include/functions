@@ -2233,7 +2233,7 @@ RC="${GR:?}"
 TH="${RC:?}D${N0:?}"
 
 # greater than n seconds, continue
-if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "5555" ]] &>/dev/null; then
+if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "3600" ]] &>/dev/null; then
 
   ### masternode reward  #######################################################
 
