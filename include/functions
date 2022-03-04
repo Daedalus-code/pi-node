@@ -1052,6 +1052,11 @@ MASTER_REWARDS="${N0:?}"
 
 ### masternode rewards #########################################################
 
+if [[ ! -f "${LOG_DIR:?}"/node_data/stats/reward_count ]] &>/dev/null; then
+  # make sure reward_count exist
+  touch "${LOG_DIR:?}"/node_data/stats/reward_count &>/dev/null
+fi
+
 if [[ ! -f "${LOG_DIR:?}"/node_data/stats/masternode_payment ]] &>/dev/null; then
 
   touch "${LOG_DIR:?}"/node_data/stats/masternode_payment &>/dev/null
@@ -1103,11 +1108,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
         if [[ "$(egrep "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent)" ]] &>/dev/null; then
           # get txid from inputs with that label
           grep "$(egrep -B5 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }')" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
-        fi
-
-        if [[ ! -f "${LOG_DIR:?}"/node_data/stats/reward_count ]] &>/dev/null; then
-          # make sure reward_count exist
-          echo "0" >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
         fi
 
         if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }')" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" ]] &>/dev/null; then
