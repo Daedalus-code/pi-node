@@ -357,7 +357,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "${WAIT_TIME:?}" 
   rrdtool update /home/"$(whoami)"/stats/rank.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/rank.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/watchlist.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/watchers.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/value.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/balance_value 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(cat "${WALLET_DIR:?}"/staking 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(cat "${WALLET_DIR:?}"/staking 2>&1 | grep "BitcoinMiner" 2>&1 | awk '!a[$0]++' | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/rewards.rrd N:"$(cat "${WALLET_DIR:?}"/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/stats/connections 2>/dev/null | tail -1 2>&1)" 2>/dev/null
