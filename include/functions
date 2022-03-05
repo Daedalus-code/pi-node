@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220503
-# 2.2.6.0
+# 2.2.5.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.6.0"
+VERSION="v2.2.5.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -2236,7 +2236,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "3600" ]] &>/dev/null; then
     if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
       grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log | grep -v "$(grep -A1 -B2 "Dust" "${WALLET_LOG_DIR:?}"/debug.log | grep "AddToWallet" | awk '{ print $3 }' | awk '!a[$0]++')" >>"${WALLET_DIR:?}"/rewards 2>&1
-      cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards.tmp 2>&1
       cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards &>/dev/null
 
       if tail -1600 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "$(tail -1 "${WALLET_DIR:?}"/rewards 2>&1)" &>/dev/null; then
