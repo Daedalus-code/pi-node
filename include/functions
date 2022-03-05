@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220503
-# 2.2.6.4
+# 2.2.8.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.6.4"
+VERSION="v2.2.8.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -690,8 +690,9 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   WALLET_REWARD_COUNT=$(echo "${POS_LIMIT:?}/${WALLET_NODES_TOTAL:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
   # save pay count
   echo "${WALLET_REWARD_COUNT:?}" >"${LOG_DIR:?}"/node_data/stats/masternode_paycount 2>&1
-  # calculate, payout
+  # calculate average masternode payout with pn|mn input amounts
   echo "$(egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | wc -l 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/stats/masternode_payment 2>&1
+  # calculate, payout
   echo "${WALLET_REWARD_COUNT:?}*$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payment 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/masternode_payout 2>&1
   # calculate, value
   echo "$(cat "${LOG_DIR:?}"/node_data/stats/masternode_payout)*$(tail -1 "${LOG_DIR:?}"/node_data/stats/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/stats/masternode_payvalue 2>&1
@@ -1025,7 +1026,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
     if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
       # get bitcoinminer, remove duplicates
       grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/staking 2>&1
-      printf '%b' "${LOG_DATE:?} Status() Saved -------> ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Saved - - - -> ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
 
     # save wallet stakes (addtowallet), remove duplicates
@@ -1112,7 +1113,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
         # get bitcoinminer, remove duplicates
         cat "${WALLET_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
-        printf '%b' "${LOG_DATE:?} Status() Saved -------> ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        printf '%b' "${LOG_DATE:?} Status() Saved - - - -> ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
 
     else
@@ -2240,13 +2241,17 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "3600" ]] &>/dev/null; then
     # masternode successfully started, continue
     if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
-      grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -v "$(egrep -A1 -B2 "BitcoinMiner|Dust" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "AddToWallet" 2>&1 | awk '{ print $3 }' 2>&1 | awk '!a[$0]++')" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
+      # get addtowallet txids, disregard txids with non related keywords, remove duplicates
+      grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -v "$(egrep -A1 -B2 "CPUMiner|BitcoinMiner|AutoCombineDust" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "AddToWallet" 2>&1 | awk '{ print $3 }' 2>&1 | awk '!a[$0]++')" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
       cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null
       # get reward txid, disregard failed lines
       if tail -1600 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "$(tail -1 "${WALLET_DIR:?}"/rewards 2>&1)" &>/dev/null; then
         WALLET_TXLAST="${C1:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
         # cyan
         CB="${C1:?}"
+        CBR_IND="1"
+      else
+        CBS_IND="3"
       fi
     fi
   fi
@@ -2254,10 +2259,29 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "3600" ]] &>/dev/null; then
   ### proof-of-stake block was signed ##########################################
 
   # get bitcoinminer, disregard failed lines
-  if tail -1600 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
+  if tail -1600 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | egrep -o "CPUMiner|BitcoinMiner" &>/dev/null; then
     WALLET_TXLAST="${G1:?}$(tail -1 "${WALLET_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
     # green
     CB="${G1:?}"
+    CBS_IND="1"
+  else
+    CBS_IND="4"
+  fi
+fi
+
+### stake and reward ###########################################################
+
+if [[ "$CBR_IND" -eq "$CBS_IND" ]] &>/dev/null; then
+
+  RANDOM_CB=$((((RANDOM % 2) + 1)))
+
+  if [[ "$RANDOM_CB" -eq "1" ]] &>/dev/null; then
+    WALLET_TXLAST="${G1:?}$(tail -1 "${WALLET_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
+    CB="${G1:?}"
+  fi
+  if [[ "$RANDOM_CB" -eq "2" ]] &>/dev/null; then
+    WALLET_TXLAST="${C1:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
+    CB="${C1:?}"
   fi
 fi
 
