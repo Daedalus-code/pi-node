@@ -2242,7 +2242,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "3600" ]] &>/dev/null; then
 
       grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -v "$(egrep -A1 -B2 "BitcoinMiner|Dust" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "AddToWallet" 2>&1 | awk '{ print $3 }' 2>&1 | awk '!a[$0]++')" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
       cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null
-
+      # get reward txid, disregard failed lines
       if tail -1600 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "$(tail -1 "${WALLET_DIR:?}"/rewards 2>&1)" &>/dev/null; then
         WALLET_TXLAST="${C1:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
         # cyan
@@ -2253,7 +2253,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "3600" ]] &>/dev/null; then
 
   ### proof-of-stake block was signed ##########################################
 
-  # get bitcoinminer, disregard seed lines
+  # get bitcoinminer, disregard failed lines
   if tail -1600 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "BitcoinMiner" &>/dev/null; then
     WALLET_TXLAST="${G1:?}$(tail -1 "${WALLET_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
     # green
