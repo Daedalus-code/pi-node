@@ -1110,7 +1110,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
           grep "$(egrep -B5 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }')" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
         fi
 
-        if [[ "$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }')" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" ]] &>/dev/null; then
+        if [[ "$(wc -l "${WALLET_LOG_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" ]] &>/dev/null; then
           # count masternode rewards
           grep -c "AddToWallet" "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null >"${LOG_DIR:?}"/node_data/stats/reward_count 2>&1
         fi
