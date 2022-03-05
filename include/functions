@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220403
-# 2.3.2.0
+# V20220503
+# 2.3.1.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.2.0"
+VERSION="v2.3.1.6"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -2292,17 +2292,13 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "3600" ]] &>/dev/null; then
       fi
 
       # possible reward
-      if tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | egrep "AddToWallet .*  new" &>/dev/null; then
-        if [[ ! "$(tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | egrep "BitcoinMiner|AutoCombineDust" 2>&1)" ]] &>/dev/null; then
+      if tail -3200 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | egrep "AddToWallet .*  new" &>/dev/null; then
+        if [[ ! "$(tail -3200 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | egrep "BitcoinMiner|AutoCombineDust" 2>&1)" ]] &>/dev/null; then
           egrep "AddToWallet .*  new" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+          WALLET_TXLAST="${C1:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
+          # cyan
+          CB="${C1:?}"
         fi
-      fi
-
-      # get addtowallet, disregard seed lines
-      if tail -3200 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep "AddToWallet $(tail -1 "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $3 }')" 2>&1 | grep -o "$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null)" &>/dev/null; then
-        WALLET_TXLAST="${C1:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
-        # cyan
-        CB="${C1:?}"
       fi
     fi
   fi
