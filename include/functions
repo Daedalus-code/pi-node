@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220503
-# 2.2.8.8
+# 2.2.9.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.8.8"
+VERSION="v2.2.9.0"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1083,11 +1083,11 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       MASTER_REWARDS="${C1:?}${MASTER_REWARDS:?} ${N0:?}"
     fi
 
-    # addtowallet found in debug.log, continue
-    if [[ "$(grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+    # greater than n seconds, continue
+    if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
-      # greater than n seconds, continue
-      if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+      # addtowallet found in debug.log, continue
+      if [[ "$(grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
 
         if [[ "$(cat "${WALLET_DIR:?}"/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' | wc -l 2>&1)" -gt "$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null)" ]] &>/dev/null; then
           # count masternode rewards
@@ -1105,14 +1105,14 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
       fi
 
       # count saved vs wallet rewards
-      SAVED_REWARDS=$(cat "${WALLET_DIR:?}"/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      WALLET_REWARDS=$(cat "${WALLET_DIR:?}"/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
       # get wallet masternode reward count
-      WALLET_REWARDS=$(wc -l "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      SAVED_REWARDS=$(cat "${LOG_DIR:?}"/node_data/stats/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
       # wallet masternode reward count greater then saved masternode reward count
       if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
-        # get bitcoinminer, remove duplicates
-        cat "${WALLET_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
+        # get addtowallet, remove duplicates
+        cat "${WALLET_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>&1
         printf '%b' "${LOG_DATE:?} Status() Saved - - - -> ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
 
@@ -1635,14 +1635,15 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   # save proof-of-stake data from debug.log
 
   # count saved vs wallet stakes
-  SAVED_POS=$(wc -l "${WALLET_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  SAVED_POS=$(cat "${WALLET_DIR:?}"/staking 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # get wallet proof-of-stake count
   WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/stake_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
   # if wallet pos is less than saved pos
   if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
     # restore missing proof-of-stake count
-    cat "${WALLET_DIR:?}"/staking 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Restored ----> ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    cat "${WALLET_DIR:?}"/staking 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Restored - - > ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -1654,14 +1655,15 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   # save masternode rewards data from debug.log
 
   # count saved vs wallet rewards
-  SAVED_REWARDS=$(wc -l "${WALLET_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  SAVED_REWARDS=$(cat "${WALLET_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   # get wallet masternode reward count
   WALLET_REWARDS=$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
   # if wallet masternode rewards is less than saved masternode rewards
   if [[ "$WALLET_REWARDS" -lt "$SAVED_REWARDS" ]] &>/dev/null; then
     # restore missing masternode rewards count
-    cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Restored ----> ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    cat "${WALLET_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Restored - - > ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
@@ -2242,7 +2244,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "3600" ]] &>/dev/null; then
     if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
       # get addtowallet txids, disregard txids with non related keywords, remove duplicates
-      grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -v "$(egrep -A1 -B2 "CPUMiner|BitcoinMiner|AutoCombineDust" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "AddToWallet" 2>&1 | awk '{ print $3 }' 2>&1 | awk '!a[$0]++')" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
+      grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -v "$(egrep -A1 -B2 "CPUMiner|BitcoinMiner|AutoCombineDust" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "AddToWallet" 2>&1 | awk '{ print $3 }' 2>&1 | awk '!a[$0]++' 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/rewards 2>&1
       cat "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/stats/rewards 2>/dev/null
       # get reward txid, disregard failed lines
       if tail -1600 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -v "failed" 2>&1 | grep -o "$(tail -1 "${WALLET_DIR:?}"/rewards 2>&1)" &>/dev/null; then
