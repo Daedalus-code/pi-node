@@ -716,7 +716,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
   # count banned peers
   grep -c "address" "${LOG_DIR:?}"/node_data/client/listbanned >"${LOG_DIR:?}"/node_data/stats/bans 2>&1
 
-  if [[ ! -f "${LOG_DIR:?}"/node_data/client/latest ]] &>/dev/null; then
+  if [[ ! -s "${LOG_DIR:?}"/node_data/client/latest ]] &>/dev/null; then
     torify curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" >"${LOG_DIR:?}"/node_data/client/latest 2>&1
   fi
 
