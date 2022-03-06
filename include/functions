@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220603
-# 2.3.0.6
+# 2.3.0.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.0.6"
+VERSION="v2.3.0.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -79,6 +79,8 @@ else
     WALLET_DAEMON="${GR:?}${WALLET_DAEMON:?} ${N0:?}"
   done
 fi
+
+WALLET_DAEMON="${GR:?}${WALLET_DAEMON:?}${N0:?}"
 
 # get system uptime information
 uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/stats/uptime 2>&1
