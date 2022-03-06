@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220503
-# 2.2.9.7
+# V20220603
+# 2.3.0.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.2.9.7"
+VERSION="v2.3.0.6"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -70,6 +70,15 @@ function uptime_daemon() {
 }
 # create uptime
 echo "$(uptime_daemon 2>&1)" 2>&1 | tr -d '-' >"${LOG_DIR:?}"/node_data/uptime 2>&1
+
+# variable too long or too short
+if [[ "${#WALLET_DAEMON}" -gt "11" ]] &>/dev/null; then
+  WALLET_DAEMON="${GR:?}${WALLET_DAEMON:0:11}${N0:?}"
+else
+  until [[ "${#WALLET_DAEMON}" -ge "11" ]] &>/dev/null; do
+    WALLET_DAEMON="${GR:?}${WALLET_DAEMON:?} ${N0:?}"
+  done
+fi
 
 # get system uptime information
 uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/stats/uptime 2>&1

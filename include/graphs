@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220203
+# V20220603
 # 0.5.2.5
 
 source /usr/local/bin/include/pinode.conf 2>&1
@@ -123,14 +123,14 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
   DEF:payout=/home/"$(whoami)"/stats/masternode_pay.rrd:payout:MAX \
   DEF:payvalue=/home/"$(whoami)"/stats/masternode_pay.rrd:payvalue:MAX \
   GPRINT:total:LAST:%.0lf\ Total \
-  GPRINT:paycount:LAST:%.2lf\ Daily \
+  GPRINT:paycount:LAST:%.2lf\ R\ Daily \
   GPRINT:payout:LAST:%.2lf\ Coins \
   GPRINT:payvalue:LAST:%.2lf\ USD \
   GPRINT:stable:LAST:%.0lf\ Stable \
   GPRINT:enabled:LAST:%.0lf\ Enabled \
   GPRINT:inqueue:LAST:%.0lf\ Inqueue \
   LINE2:total#F4F4F4:"Total" \
-  LINE2:paycount#FFDC77:"Daily" \
+  LINE2:paycount#FFDC77:"R Daily" \
   LINE2:payout#85bb65:"Coins" \
   LINE2:payvalue#668163:"USD" \
   LINE2:stable#3BE536:"Stable" \
