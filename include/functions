@@ -76,7 +76,7 @@ if [[ "${#WALLET_DAEMON}" -gt "11" ]] &>/dev/null; then
   WALLET_DAEMON="${WALLET_DAEMON:0:11}"
 else
   until [[ "${#WALLET_DAEMON}" -ge "11" ]] &>/dev/null; do
-    WALLET_DAEMON="${WALLET_DAEMON:?} "
+    WALLET_DAEMON="${WALLET_DAEMON} "
   done
 fi
 
