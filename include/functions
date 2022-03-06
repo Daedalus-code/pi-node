@@ -73,10 +73,10 @@ echo "$(uptime_daemon 2>&1)" 2>&1 | tr -d '-' >"${LOG_DIR:?}"/node_data/uptime 2
 
 # variable too long or too short
 if [[ "${#WALLET_DAEMON}" -gt "11" ]] &>/dev/null; then
-  WALLET_DAEMON="${GR:?}${WALLET_DAEMON:0:11}${N0:?}"
+  WALLET_DAEMON="${WALLET_DAEMON:0:11}"
 else
   until [[ "${#WALLET_DAEMON}" -ge "11" ]] &>/dev/null; do
-    WALLET_DAEMON="${GR:?}${WALLET_DAEMON:?} ${N0:?}"
+    WALLET_DAEMON="${WALLET_DAEMON:?} "
   done
 fi
 
