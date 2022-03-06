@@ -2285,21 +2285,21 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "3600" ]] &>/dev/null; then
   else
     CBS_IND="4"
   fi
-fi
 
-### stake and reward ###########################################################
+  ### stake and reward #########################################################
 
-if [[ "$CBR_IND" -eq "$CBS_IND" ]] &>/dev/null; then
+  if [[ "$CBR_IND" -eq "$CBS_IND" ]] &>/dev/null; then
 
-  RANDOM_CB=$((((RANDOM % 2) + 1)))
+    RANDOM_CB=$((((RANDOM % 2) + 1)))
 
-  if [[ "$RANDOM_CB" -eq "1" ]] &>/dev/null; then
-    WALLET_TXLAST="${G1:?}$(tail -1 "${WALLET_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
-    CB="${G1:?}"
-  fi
-  if [[ "$RANDOM_CB" -eq "2" ]] &>/dev/null; then
-    WALLET_TXLAST="${C1:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
-    CB="${C1:?}"
+    if [[ "$RANDOM_CB" -eq "1" ]] &>/dev/null; then
+      WALLET_TXLAST="${G1:?}$(tail -1 "${WALLET_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
+      CB="${G1:?}"
+    fi
+    if [[ "$RANDOM_CB" -eq "2" ]] &>/dev/null; then
+      WALLET_TXLAST="${C1:?}$(tail -1 "${WALLET_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
+      CB="${C1:?}"
+    fi
   fi
 fi
 
