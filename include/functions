@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220603
-# 2.3.1.0
+# 2.3.0.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.1.0"
+VERSION="v2.3.0.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -851,6 +851,7 @@ fi
 
 # wallet_balances function (color)
 function wallet_balances() {
+  POS_STATUS="${GR:?}S${N0:?}"
   WALLET_TICKER="${GR:?}0${N0:?}"
   WALLET_MEMPOOL="${GR:?}0${N0:?}"
   WALLET_TXCOUNT="${GR:?}0${N0:?}"
@@ -969,6 +970,8 @@ fi
 if [[ ! -f "${LOG_DIR:?}"/node_data/client/tmp/proc ]] &>/dev/null; then
   # make sure proc exist
   bash /usr/local/bin/include/proc 2>&1
+
+  wallet_balances
 fi
 
 if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
@@ -981,10 +984,7 @@ if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     SYNC_PROGRESS_BAR="${N0:?}       Loading${N0:?}"
 
     if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-      POS_STATUS="${GR:?}S${N0:?}"
-      WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
-      WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
-      WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
+      wallet_balances
     fi
 
   fi
@@ -996,10 +996,7 @@ else
   SYNC_PROGRESS_BAR="${GR:?}       Loading${N0:?}"
 
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-    POS_STATUS="${GR:?}S${N0:?}"
-    WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
-    WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
-    WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
+    wallet_balances
   fi
 
 fi
@@ -2071,6 +2068,8 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "60" ]] &>/dev/null; then
     WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
     WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
     WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
+    WALLET_MEMPOOL="${GR:?}${WALLET_MEMPOOL:?}${N0:?}"
+    WALLET_TXCOUNT="${GR:?}${WALLET_INPUTS:?}${N0:?}"
   fi
 
   WALLET_BALANCE="${GR:?}$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?}"
