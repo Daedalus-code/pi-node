@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220703
-# 2.3.5.1
+# 2.3.5.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.5.1"
+VERSION="v2.3.5.2"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -53,6 +53,7 @@ until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   echo "$(pidof unzip)" >"${LOG_DIR:?}"/unzip
   if [[ -f "${LOG_DIR:?}"/unzip ]] &>/dev/null; then
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+    rm "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null
     killall "${WALLET_DAEMON:?}" &>/dev/null
   fi
 
