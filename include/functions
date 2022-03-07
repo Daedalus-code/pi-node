@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220703
-# 2.3.3.6
+# 2.3.5.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.3.6"
+VERSION="v2.3.5.0"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1219,12 +1219,26 @@ fi
 if [ -f "${LOG_DIR:?}"/node_data/client/getinfo ] &>/dev/null; then
   # wallet pos status
   if [[ "$(grep "Staking Active" "${LOG_DIR:?}"/node_data/client/getinfo 2>&1)" ]] &>/dev/null; then
-    # pos active
-    POS_STATUS="${G1:?}S${N0:?}"
-    # balance is staking, highlight balance, stakes and inputs (color)
-    WALLET_BALANCE="${G1:?}${WALLET_BALANCE:?}${N0:?}"
-    WALLET_STAKES="${G1:?}${WALLET_STAKES:?}${N0:?}"
-    WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
+
+    if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+
+      # pos active
+      POS_STATUS="${G1:?}S${N0:?}"
+      # balance is staking, highlight balance, stakes and inputs (color)
+      WALLET_BALANCE="${G1:?}${WALLET_BALANCE:?}${N0:?}"
+      WALLET_STAKES="${G1:?}${WALLET_STAKES:?}${N0:?}"
+      WALLET_INPUTS="${G1:?}${WALLET_INPUTS:?}${N0:?}"
+
+    else
+
+      # pos active
+      POS_STATUS="${GR:?}S${N0:?}"
+      # balance is staking, highlight balance, stakes and inputs (color)
+      WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
+      WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
+      WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
+
+    fi
 
     if [[ "$WALLET_POS" -eq "0" ]] &>/dev/null; then
       # no stakes (color)
