@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220303
-# 0.5.2.2
+# V20220703
+# 0.5.3.4
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -333,63 +333,75 @@ fi
 ### start wallet daemon ########################################################
 
 # daemon uptime greater then n
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
-  if pgrep -x "${WALLET_DAEMON:?}" &>/dev/null; then
+if pgrep -x "${WALLET_DAEMON:?}" &>/dev/null; then
 
-    # get read_mempool status
-    if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
-      # mempool status
-      SCREEN_IND_MPS="${G1:?}M ${GR:?}"
-    else
-      SCREEN_IND_MPS="${GR:?}N${GR:?}"
-    fi
-
-    UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${GR:?}(${SCREEN_VALUE_P2P:?}/${SCREEN_VALUE_CG:?}/${SCREEN_VALUE_CMC:?})${N0:?} ${SCREEN_IND_MPS:?}${SCREEN_IND_P2P:?}${SCREEN_IND_CG:?}${SCREEN_IND_CMC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() System.Warden: $(cat "${LOG_DIR:?}"/node_data/stats/uptime 2>/dev/null)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # get read_mempool status
+  if cat "${LOG_DIR:?}"/node_data/stats/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
+    # mempool status
+    SCREEN_IND_MPS="${G1:?}M ${GR:?}"
   else
-    # make sure debug.log exist
-    touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # rebuild index
-    if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-      yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
+    SCREEN_IND_MPS="${GR:?}N${GR:?}"
+  fi
 
-    if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
+  UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID() ${CY:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?} ${GR:?}::${N0:?} [${G1:?}Ok${N0:?}] ${GR:?}::${N0:?} Daemon Uptime ${UPTIME:?} ${GR:?}(${SCREEN_VALUE_P2P:?}/${SCREEN_VALUE_CG:?}/${SCREEN_VALUE_CMC:?})${N0:?} ${SCREEN_IND_MPS:?}${SCREEN_IND_P2P:?}${SCREEN_IND_CG:?}${SCREEN_IND_CMC:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() System.Warden: $(cat "${LOG_DIR:?}"/node_data/stats/uptime 2>/dev/null)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+else
+  # make sure debug.log exist
+  touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # rebuild index
+  if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+    yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
 
-      # look for bootstrap before starting/syncing, use if found
-      if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
-        # create lock file
-        echo "$(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/boot
+  if [[ "$(grep "forked chain older than max reorganization depth" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+    echo "$(date '+%s')" >"${LOG_DIR:?}"/repair 2>&1
+    printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+    # remove corrupt blockchain
+    rm -r "${WALLET_DIR:?}"/blocks "${WALLET_DIR:?}"/chainstate "${WALLET_DIR:?}"/database "${WALLET_DIR:?}"/evodb "${WALLET_DIR:?}"/boot "${WALLET_DIR:?}"/bootstrap "${LOG_DIR:?}"/node_data/synced "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null
+  fi
 
-        if [[ ! -f "${WALLET_DIR:?}"/bootstrap ]] &>/dev/null; then
+  if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
 
-          printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          # stop wallet daemon
-          printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
-          killall "${WALLET_DAEMON:?}" &>/dev/null
-          # unzip bootstrap
-          yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
-          # create bootstrap check
-          echo "Bootstrap installed $(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
-          printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        fi
-      else
-        if [[ ! "$(pidof wget 2>&1)" ]] &>/dev/null; then
-          printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
-          # get latest release
-          LATEST_VERSION=$(torify curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" 2>&1)
-          cd || exit && torify wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".bootstrap.zip
-        fi
+    # look for bootstrap before starting/syncing, use if found
+    if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
+      # create lock file
+      echo "$(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/boot
+
+      if [[ ! -f "${WALLET_DIR:?}"/bootstrap ]] &>/dev/null; then
+
+        printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        # stop wallet daemon
+        printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+        killall "${WALLET_DAEMON:?}" &>/dev/null
+        # unzip bootstrap
+        yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
+        # create bootstrap check
+        echo "Bootstrap installed $(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
+        printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        rm "${LOG_DIR:?}"/repair &>/dev/null
+      fi
+    else
+      if [[ ! "$(pidof wget 2>&1)" ]] &>/dev/null; then
+        printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
+        # get latest release
+        LATEST_VERSION=$(torify curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" 2>&1)
+        cd || exit && torify wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".bootstrap.zip
+        rm "${LOG_DIR:?}"/repair &>/dev/null
       fi
     fi
+  fi
 
-    # remove old files
-    rm "${WALLET_DIR:?}"/wait &>/dev/null
-    rm "${WALLET_DIR:?}"/onion &>/dev/null
-    truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
-    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # remove old files
+  rm "${WALLET_DIR:?}"/wait &>/dev/null
+  rm "${WALLET_DIR:?}"/onion &>/dev/null
+  truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
+  truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+  if [[ -f "${LOG_DIR:?}"/repair ]] &>/dev/null; then
+    printf '%b' "${Y1:?}${LOG_DATE:?} Status() Wallet.Warden: :: Not starting daemon! Waiting on repair status! ::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  else
     # report hardware model at start of log
     printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
