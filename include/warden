@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220703
-# 0.5.3.8
+# 0.5.4.0
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -339,7 +339,7 @@ if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR
 fi
 
 if [[ "$(grep "forked chain older than max reorganization depth" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-  echo "$(date '+%s')" >"${LOG_DIR:?}"/repair 2>&1
+  echo "$(LC_ALL=de_US.utf8 date '+%s')" >"${LOG_DIR:?}"/repair 2>&1
   printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
   # remove corrupt blockchain
   rm -r "${WALLET_DIR:?}"/blocks "${WALLET_DIR:?}"/chainstate "${WALLET_DIR:?}"/database "${WALLET_DIR:?}"/evodb "${WALLET_DIR:?}"/boot "${WALLET_DIR:?}"/bootstrap "${LOG_DIR:?}"/node_data/synced "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null
@@ -353,6 +353,8 @@ if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
     echo "$(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/boot
 
     if [[ ! -f "${WALLET_DIR:?}"/bootstrap ]] &>/dev/null; then
+
+      echo "$(LC_ALL=de_US.utf8 date '+%s')" >"${LOG_DIR:?}"/repair 2>&1
 
       printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # stop wallet daemon
