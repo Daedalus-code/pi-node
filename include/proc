@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220703
-# 0.3.8.2
+# 0.3.8.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -46,10 +46,11 @@ if ! grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
 
     # progress left
     echo "${SYNCING_REPLACE_TX}" >>"${LOG_DIR:?}"/node_data/synced_progress
-    PRO_DIFF=$(echo "$(cat "${LOG_DIR:?}"/node_data/synced_progress 2>/dev/null | tail -2 2>&1 | head -1 2>&1)-$(cat "${LOG_DIR:?}"/node_data/synced_progress 2>/dev/null | tail -1 2>&1)" | bc 2>&1)
+    PRO_DIFF=$(echo "$(cat "${LOG_DIR:?}"/node_data/synced_progress 2>/dev/null | head -1 2>&1)-$(cat "${LOG_DIR:?}"/node_data/synced_progress 2>/dev/null | tail -1 2>&1)" | bc 2>&1)
+    PRO_DIFF_EST=$(echo "${PRO_DIFF:?}/$(wc -l "${LOG_DIR:?}"/node_data/synced_progress | awk '{ print $1 }' 2>&1)" | bc -l 2>&1)
     # minutes left approx
     SYNC_PRO_LEFT=$(echo "1000-${SYNCING_REPLACE_TX:?}" 2>&1 | bc -l 2>&1)
-    EST_MIN_LEFT=$(echo "1000/${SYNC_PRO_LEFT:?}" 2>&1 | bc -l 2>&1)
+    EST_MIN_LEFT=$(echo "1000/${PRO_DIFF_EST:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     if [[ "$EST_MIN_LEFT" -eq "0" ]] &>/dev/null; then
       EST_MIN_LEFT="1"
