@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220703
-# 2.3.5.0
+# 2.3.5.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.5.0"
+VERSION="v2.3.5.4"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -1880,7 +1880,7 @@ if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
   if [ -f "${LOG_DIR:?}"/node_data/client/getblockchaininfo ] &>/dev/null; then
 
     # random start number
-    RANDOM_TIMELINE=$((((RANDOM % 19) + 1)))
+    RANDOM_TIMELINE=$((((RANDOM % 20) + 1)))
 
     if [[ -z "$RANDOM_TIMELINE" ]] &>/dev/null; then
       # non responsive, go with difficulty
@@ -2066,9 +2066,9 @@ if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
     fi
   fi
 else
-  # wait on wallet w random quotes
+  # wait on wallet w random quotes and times left
   # random start number
-  RANDOM_QUOTES=$((((RANDOM % 10) + 1)))
+  RANDOM_QUOTES=$((((RANDOM % 11) + 1)))
   # quotes - art of the deal
   if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
     TIMELINE="${GR}Think big${N0:?}"
@@ -2090,6 +2090,10 @@ else
     TIMELINE="${GR}Contain the costs${N0:?}"
   elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
+  elif [ "$RANDOM_TIMELINE" -eq "11" ] &>/dev/null; then
+    if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+      TIMELINE="${CY:?}${SYNC_MIN_LEFT:?}${N0:?} est. minutes left"
+    fi
   fi
 fi
 
