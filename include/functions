@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220603
-# 2.3.2.2
+# 2.3.2.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.2.2"
+VERSION="v2.3.2.9"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -2076,19 +2076,26 @@ fi
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "60" ]] &>/dev/null; then
   WALLET_TXLAST="${CY:?}       Loading${N0:?}"
 
-  if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "${WAIT_TIME:?}" ]] &>/dev/null; then
-    POS_STATUS="${GR:?}S${N0:?}"
-    WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
-    WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
-    WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
-    WALLET_MEMPOOL="${GR:?}${WALLET_MEMPOOL:?}${N0:?}"
-    WALLET_TXCOUNT="${GR:?}${WALLET_INPUTS:?}${N0:?}"
-  fi
+  POS_STATUS="${GR:?}S${N0:?}"
+  WALLET_BALANCE="${GR:?}0${N0:?}"
+  WALLET_STAKES="${GR:?}0${N0:?}"
+  WALLET_INPUTS="${GR:?}0${N0:?}"
+  WALLET_MEMPOOL="${GR:?}0${N0:?}"
+  WALLET_TXCOUNT="${GR:?}0${N0:?}"
 
   WALLET_BALANCE="${GR:?}$(cat "${LOG_DIR:?}"/node_data/stats/total_balance 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?}"
   if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
     WALLET_BALANCE="${GR:?}0${N0:?}"
   fi
+fi
+
+if [[ -z "${DAEMON_UPTIME:?}" ]] &>/dev/null; then
+  POS_STATUS="${GR:?}S${N0:?}"
+  WALLET_BALANCE="${GR:?}${WALLET_BALANCE:?}${N0:?}"
+  WALLET_STAKES="${GR:?}${WALLET_STAKES:?}${N0:?}"
+  WALLET_INPUTS="${GR:?}${WALLET_INPUTS:?}${N0:?}"
+  WALLET_MEMPOOL="${GR:?}${WALLET_MEMPOOL:?}${N0:?}"
+  WALLET_TXCOUNT="${GR:?}${WALLET_INPUTS:?}${N0:?}"
 fi
 
 ### collect data for rrdtool (round robin databases) ###########################

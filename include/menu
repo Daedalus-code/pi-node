@@ -141,7 +141,7 @@ case $CHOICE in
       fi
       # normal shutdown
       printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5 2>/dev/null
       # wait on node (daemon) to stop
       until ! pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
         clear
@@ -171,7 +171,7 @@ case $CHOICE in
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
       # stop wallet daemon
-      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5 2>/dev/null)\n"
       killall "${WALLET_DAEMON:?}" &>/dev/null
       printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
 
@@ -1000,7 +1000,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
           printf '%b' "[${R1:?}!!${N0:?}] "
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5 2>/dev/null
           # wait on node (daemon) to stop
           until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
             clear
@@ -1108,7 +1108,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
       printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5 2>/dev/null
       # wait on node (daemon) to stop
       until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
         clear
@@ -1593,7 +1593,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
           # stop wallet daemon
-          printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+          printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5 2>/dev/null)\n"
           killall "${WALLET_DAEMON:?}" &>/dev/null
           printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
 
@@ -2440,7 +2440,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           printf '%b' "[${R1:?}!!${N0:?}] "
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5 2>/dev/null
           # wait on node (daemon) to stop
           until ! pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
             clear
