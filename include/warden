@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220703
-# 0.5.3.0
+# V20220303
+# 0.5.1.5
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -354,12 +354,9 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
       yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      rm /tmp/repair &>/dev/null
     fi
 
     if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
-
-      echo "$(date '+%s')" >/tmp/repair
 
       # look for bootstrap before starting/syncing, use if found
       if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
@@ -377,74 +374,62 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
           # create bootstrap check
           echo "Bootstrap installed $(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
           printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          rm /tmp/repair &>/dev/null
         fi
       fi
     fi
 
-    if [[ -f /tmp/repair ]]; then
-      printf '%b' "${Y1:?}${LOG_DATE:?} Status() Wallet.Warden: Not starting daemon! Repair mode!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    else
-
-      # remove old files
-      rm "${WALLET_DIR:?}"/wait &>/dev/null
-      rm "${WALLET_DIR:?}"/onion &>/dev/null
-      truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
-      truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      # report hardware model at start of log
-      printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
+    # remove old files
+    rm "${WALLET_DIR:?}"/wait &>/dev/null
+    rm "${WALLET_DIR:?}"/onion &>/dev/null
+    truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
+    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # report hardware model at start of log
+    printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
+    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
 ## masternode status ###########################################################
 
-if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-
-  if [[ "$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
-    if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
-      # make sure masternode runs
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-      cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getmasternodestatus &>/dev/null
-      printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      cat "${WALLET_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-      printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
+if [[ "$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
+  if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
+    # make sure masternode runs
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getmasternodestatus &>/dev/null
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    cat "${WALLET_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
 # make sure inputs with masternode collateral is locked #################### ###
 
-if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+if [[ ! "$(egrep "Wallet.Warden: Locking addr with .*$(tail -1 "${WALLET_DIR:?}"/masternode_lock)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
 
-  if [[ ! "$(egrep "Wallet.Warden: Locking addr with .*$(tail -1 "${WALLET_DIR:?}"/masternode_lock)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+  # if collateral exist in listunspent, continue
+  if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" ]] &>/dev/null; then
 
-    # if collateral exist in listunspent, continue
-    if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" ]] &>/dev/null; then
+    # look for inputs with masternode collateral, get txid
+    grep -B6 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${WALLET_DIR:?}"/masternode_lock 2>&1
 
-      # look for inputs with masternode collateral, get txid
-      grep -B6 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${WALLET_DIR:?}"/masternode_lock 2>&1
+    if [[ -f "${WALLET_DIR:?}"/masternode_lock ]] &>/dev/null; then
 
-      if [[ -f "${WALLET_DIR:?}"/masternode_lock ]] &>/dev/null; then
+      # make sure masternode_check exist
+      touch "${WALLET_DIR:?}"/masternode_check &>/dev/null
 
-        # make sure masternode_check exist
-        touch "${WALLET_DIR:?}"/masternode_check &>/dev/null
+      if [[ ! "${WALLET_DIR:?}"/masternode_lock -eq "${WALLET_DIR:?}"/masternode_check ]] &>/dev/null; then
 
-        if [[ ! "${WALLET_DIR:?}"/masternode_lock -eq "${WALLET_DIR:?}"/masternode_check ]] &>/dev/null; then
+        while IFS= read -r LOCK; do
+          # lock inputs with txid from masternode_lock list
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" lockunspent false "[{\"txid\":\"${LOCK:?}\",\"vout\":1}]" 2>&1
+          printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Locking addr with ${CY:?}${LOCK:?}${N0:?} txid${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        done <"${WALLET_DIR:?}"/masternode_lock 2>&1
 
-          while IFS= read -r LOCK; do
-            # lock inputs with txid from masternode_lock list
-            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" lockunspent false "[{\"txid\":\"${LOCK:?}\",\"vout\":1}]" 2>&1
-            printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Locking addr with ${CY:?}${LOCK:?}${N0:?} txid${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          done <"${WALLET_DIR:?}"/masternode_lock 2>&1
+        # listlockunspent
+        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" listlockunspent >"${LOG_DIR:?}"/node_data/client/listlockunspent 2>&1
 
-          # listlockunspent
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" listlockunspent >"${LOG_DIR:?}"/node_data/client/listlockunspent 2>&1
-
-          cp "${WALLET_DIR:?}"/masternode_lock "${WALLET_DIR:?}"/masternode_check &>/dev/null
-        fi
+        cp "${WALLET_DIR:?}"/masternode_lock "${WALLET_DIR:?}"/masternode_check &>/dev/null
       fi
     fi
   fi
