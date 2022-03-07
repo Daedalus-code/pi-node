@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222002
-# 0.3.8.0
+# V20220703
+# 0.3.8.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -40,6 +40,9 @@ if ! grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
 
       # less than 10%, continue
       if [[ "$SYNCING_REPLACE_TX" -lt "100" ]] &>/dev/null; then
+
+        echo "$(date '+%s')" >/tmp/repair
+
         # remove bootstrap lock
         rm "${WALLET_DIR:?}"/boot &>/dev/null
         printf '%b' "${LOG_DATE:?} Status() Progress.Bar() Reinstall bootstrap${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1

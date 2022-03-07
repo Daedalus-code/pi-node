@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220703
-# 0.5.2.5
+# 0.5.2.4
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -354,9 +354,12 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
     if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
       yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      rm /tmp/repair &>/dev/null
     fi
 
     if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
+
+      echo "$(date '+%s')" >/tmp/repair
 
       # look for bootstrap before starting/syncing, use if found
       if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
@@ -374,19 +377,25 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
           # create bootstrap check
           echo "Bootstrap installed $(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
           printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          rm /tmp/repair &>/dev/null
         fi
       fi
     fi
 
-    # remove old files
-    rm "${WALLET_DIR:?}"/wait &>/dev/null
-    rm "${WALLET_DIR:?}"/onion &>/dev/null
-    truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
-    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # report hardware model at start of log
-    printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    if [[ -f /tmp/repair ]]; then
+      printf '%b' "${Y1:?}${LOG_DATE:?} Status() Wallet.Warden: Not starting daemon! Repair mode!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    else
+
+      # remove old files
+      rm "${WALLET_DIR:?}"/wait &>/dev/null
+      rm "${WALLET_DIR:?}"/onion &>/dev/null
+      truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
+      truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      # report hardware model at start of log
+      printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
 fi
 
