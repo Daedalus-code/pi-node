@@ -982,7 +982,7 @@ if [[ "$(tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "skipped on sync"
   rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
 fi
 
-if ! grep "progress=" "${LOG_DIR:?}"/node_data/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
+if ! grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null
 fi
 
