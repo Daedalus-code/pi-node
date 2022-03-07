@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220703
-# 0.3.8.3
+# 0.3.7.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -44,23 +44,11 @@ if ! grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | grep
       fi
     fi
 
-    # progress left
-    echo "${SYNCING_REPLACE_TX}" >>"${LOG_DIR:?}"/node_data/synced_progress
-    PRO_DIFF=$(echo "$(cat "${LOG_DIR:?}"/node_data/synced_progress 2>/dev/null | tail -1 2>&1)-$(cat "${LOG_DIR:?}"/node_data/synced_progress 2>/dev/null | head -1 2>&1)" | bc 2>&1)
-    PRO_DIFF_EST=$(echo "${PRO_DIFF:?}/$(wc -l "${LOG_DIR:?}"/node_data/synced_progress | awk '{ print $1 }' 2>&1)" | bc -l 2>&1)
-    # minutes left approx
-    SYNC_PRO_LEFT=$(echo "1000-$(cat "${LOG_DIR:?}"/node_data/synced_progress 2>/dev/null | wc -l)" 2>&1 | bc -l 2>&1)
-    EST_MIN_LEFT=$(echo "${SYNC_PRO_LEFT:?}/${PRO_DIFF_EST:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-
-    if [[ "$EST_MIN_LEFT" -eq "0" ]] &>/dev/null; then
-      EST_MIN_LEFT="1"
-    fi
-
     # syncing blockchain with progress bar
     SYNC_PROGRESS_BAR=$(
       if [ "$SYNCING_REPLACE_TX" -ge "995" ] &>/dev/null; then
         echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%\\r"
-        WALLET_SYNC="100" # wallet blockchain is synced 100%
+        WALLET_SYNC="${G1:?}100%${N0:?}" # wallet blockchain is synced 100%
       else
         # something went wrong
         if [[ -z "$SYNCING_REPLACE_TX" ]] &>/dev/null; then
