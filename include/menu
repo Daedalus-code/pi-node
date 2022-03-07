@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220403
-# 2.5.4.8
+# V20220703
+# 2.5.6.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -831,6 +831,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         # setup node wallet
         cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip &>/dev/null
         yes "A" 2>&1 | unzip -j /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/Wallet/ 2>&1
+        rm "${LOG_DIR:?}"/unzip &>/dev/null
       fi
     }
 
@@ -1010,6 +1011,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           done
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
           yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
+          rm "${LOG_DIR:?}"/unzip &>/dev/null
 
           # create lock file
           echo "Bootstrap installed $(LC_ALL=de_US.utf8 date 2>&1)" >"${WALLET_DIR:?}"/boot
@@ -1054,6 +1056,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           # setup wallet daemon
           cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip &>/dev/null
           yes "A" 2>&1 | unzip -j /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /home/"$(whoami)"/Wallet/
+          rm "${LOG_DIR:?}"/unzip &>/dev/null
         fi
       }
 
@@ -1118,6 +1121,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       done
       printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
       yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
+      rm "${LOG_DIR:?}"/unzip &>/dev/null
       echo
       read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
       echo
