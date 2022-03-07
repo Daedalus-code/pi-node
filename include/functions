@@ -1659,41 +1659,47 @@ fi
 
 ### restore proof-of-stake data ################################################
 
-# greater than n seconds, continue
-if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
-  # save proof-of-stake data from debug.log
+  # greater than n seconds, continue
+  if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
-  # count saved vs wallet stakes
-  SAVED_POS=$(cat "${WALLET_DIR:?}"/staking 2>/dev/null | grep "BitcoinMiner" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  # get wallet proof-of-stake count
-  WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/stake_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    # save proof-of-stake data from debug.log
 
-  # if wallet pos is less than saved pos
-  if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
-    # restore missing proof-of-stake count
-    cat "${WALLET_DIR:?}"/staking 2>/dev/null | grep "BitcoinMiner" 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Restored - - > ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # count saved vs wallet stakes
+    SAVED_POS=$(cat "${WALLET_DIR:?}"/staking 2>/dev/null | grep "BitcoinMiner" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    # get wallet proof-of-stake count
+    WALLET_POS=$(cat "${LOG_DIR:?}"/node_data/stats/stake_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+    # if wallet pos is less than saved pos
+    if [[ "$WALLET_POS" -lt "$SAVED_POS" ]] &>/dev/null; then
+      # restore missing proof-of-stake count
+      cat "${WALLET_DIR:?}"/staking 2>/dev/null | grep "BitcoinMiner" 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Restored - - > ${G1:?}${SAVED_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
 fi
 
 ### restore masternode rewards data ############################################
 
-# greater than n seconds, continue
-if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
+if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
-  # save masternode rewards data from debug.log
+  # greater than n seconds, continue
+  if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
 
-  # count saved vs wallet rewards
-  SAVED_REWARDS=$(cat "${WALLET_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  # get wallet masternode reward count
-  WALLET_REWARDS=$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    # save masternode rewards data from debug.log
 
-  # if wallet masternode rewards is less than saved masternode rewards
-  if [[ "$WALLET_REWARDS" -lt "$SAVED_REWARDS" ]] &>/dev/null; then
-    # restore missing masternode rewards count
-    cat "${WALLET_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Restored - - > ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # count saved vs wallet rewards
+    SAVED_REWARDS=$(cat "${WALLET_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    # get wallet masternode reward count
+    WALLET_REWARDS=$(cat "${LOG_DIR:?}"/node_data/stats/reward_count 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+    # if wallet masternode rewards is less than saved masternode rewards
+    if [[ "$WALLET_REWARDS" -lt "$SAVED_REWARDS" ]] &>/dev/null; then
+      # restore missing masternode rewards count
+      cat "${WALLET_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Restored - - > ${G1:?}${SAVED_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
 fi
 
