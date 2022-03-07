@@ -50,7 +50,7 @@ if ! grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
     PRO_DIFF_EST=$(echo "${PRO_DIFF:?}/$(wc -l "${LOG_DIR:?}"/node_data/synced_progress | awk '{ print $1 }' 2>&1)" | bc -l 2>&1)
     # minutes left approx
     SYNC_PRO_LEFT=$(echo "1000-${SYNCING_REPLACE_TX:?}" 2>&1 | bc -l 2>&1)
-    EST_MIN_LEFT=$(echo "1000/${PRO_DIFF_EST:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    EST_MIN_LEFT=$(echo "${SYNC_PRO_LEFT:?}/${PRO_DIFF_EST:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     if [[ "$EST_MIN_LEFT" -eq "0" ]] &>/dev/null; then
       EST_MIN_LEFT="1"
