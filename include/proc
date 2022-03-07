@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220703
-# 0.3.8.3
+# 0.3.8.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -43,6 +43,8 @@ if ! grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
 
         echo "$(date '+%s')" >/tmp/repair
 
+        printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+
         # remove bootstrap lock
         rm "${WALLET_DIR:?}"/boot &>/dev/null
         printf '%b' "${LOG_DATE:?} Status() Progress.Bar() Reinstall bootstrap${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -50,7 +52,6 @@ if ! grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
         LATEST_VERSION=$(curl -s "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" 2>&1)
         # download bootstrap
         cd || exit && torify wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".bootstrap.zip
-        printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
         # remove corrupt blockchain
         rm -r "${WALLET_DIR:?}"/blocks "${WALLET_DIR:?}"/chainstate "${WALLET_DIR:?}"/database "${WALLET_DIR:?}"/evodb "${WALLET_DIR:?}"/boot "${WALLET_DIR:?}"/bootstrap "${LOG_DIR:?}"/node_data/synced "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null
       fi
