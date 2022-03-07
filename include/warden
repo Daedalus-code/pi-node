@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220703
-# 0.5.2.4
+# 0.5.3.0
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -401,44 +401,50 @@ fi
 
 ## masternode status ###########################################################
 
-if [[ "$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
-  if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
-    # make sure masternode runs
-    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-    cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getmasternodestatus &>/dev/null
-    printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    cat "${WALLET_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-    printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+
+  if [[ "$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
+    if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
+      # make sure masternode runs
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+      cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getmasternodestatus &>/dev/null
+      printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      cat "${WALLET_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+      printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
 fi
 
 # make sure inputs with masternode collateral is locked #################### ###
 
-if [[ ! "$(egrep "Wallet.Warden: Locking addr with .*$(tail -1 "${WALLET_DIR:?}"/masternode_lock)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
-  # if collateral exist in listunspent, continue
-  if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" ]] &>/dev/null; then
+  if [[ ! "$(egrep "Wallet.Warden: Locking addr with .*$(tail -1 "${WALLET_DIR:?}"/masternode_lock)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
 
-    # look for inputs with masternode collateral, get txid
-    grep -B6 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${WALLET_DIR:?}"/masternode_lock 2>&1
+    # if collateral exist in listunspent, continue
+    if [[ "$(grep "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1)" -eq "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" ]] &>/dev/null; then
 
-    if [[ -f "${WALLET_DIR:?}"/masternode_lock ]] &>/dev/null; then
+      # look for inputs with masternode collateral, get txid
+      grep -B6 "$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' >"${WALLET_DIR:?}"/masternode_lock 2>&1
 
-      # make sure masternode_check exist
-      touch "${WALLET_DIR:?}"/masternode_check &>/dev/null
+      if [[ -f "${WALLET_DIR:?}"/masternode_lock ]] &>/dev/null; then
 
-      if [[ ! "${WALLET_DIR:?}"/masternode_lock -eq "${WALLET_DIR:?}"/masternode_check ]] &>/dev/null; then
+        # make sure masternode_check exist
+        touch "${WALLET_DIR:?}"/masternode_check &>/dev/null
 
-        while IFS= read -r LOCK; do
-          # lock inputs with txid from masternode_lock list
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" lockunspent false "[{\"txid\":\"${LOCK:?}\",\"vout\":1}]" 2>&1
-          printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Locking addr with ${CY:?}${LOCK:?}${N0:?} txid${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        done <"${WALLET_DIR:?}"/masternode_lock 2>&1
+        if [[ ! "${WALLET_DIR:?}"/masternode_lock -eq "${WALLET_DIR:?}"/masternode_check ]] &>/dev/null; then
 
-        # listlockunspent
-        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" listlockunspent >"${LOG_DIR:?}"/node_data/client/listlockunspent 2>&1
+          while IFS= read -r LOCK; do
+            # lock inputs with txid from masternode_lock list
+            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" lockunspent false "[{\"txid\":\"${LOCK:?}\",\"vout\":1}]" 2>&1
+            printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Locking addr with ${CY:?}${LOCK:?}${N0:?} txid${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          done <"${WALLET_DIR:?}"/masternode_lock 2>&1
 
-        cp "${WALLET_DIR:?}"/masternode_lock "${WALLET_DIR:?}"/masternode_check &>/dev/null
+          # listlockunspent
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" listlockunspent >"${LOG_DIR:?}"/node_data/client/listlockunspent 2>&1
+
+          cp "${WALLET_DIR:?}"/masternode_lock "${WALLET_DIR:?}"/masternode_check &>/dev/null
+        fi
       fi
     fi
   fi
