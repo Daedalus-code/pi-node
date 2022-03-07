@@ -1659,7 +1659,7 @@ fi
 
 ### restore proof-of-stake data ################################################
 
-if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
@@ -1682,7 +1682,7 @@ fi
 
 ### restore masternode rewards data ############################################
 
-if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
+if grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
 
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
