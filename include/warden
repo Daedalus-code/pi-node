@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220703
-# 0.5.3.2
+# 0.5.3.3
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -393,6 +393,7 @@ else
     # remove old files
     rm "${WALLET_DIR:?}"/wait &>/dev/null
     rm "${WALLET_DIR:?}"/onion &>/dev/null
+    rm "${WALLET_DIR:?}"/masternode_status &>/dev/null
     truncate -s 0 "${LOG_DIR:?}"/node_data/* &>/dev/null
     truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # report hardware model at start of log
