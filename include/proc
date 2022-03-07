@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222002
-# 0.3.7.3
+# V20220703
+# 0.3.6.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -35,15 +35,11 @@ if ! grep "progress=1" "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null; then
 
     SYNCING_REPLACE_TX=$(echo "100/999990*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1 | tr -d '.' 2>&1)
 
-    # greater than n seconds, continue
-    if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "420" ]] &>/dev/null; then
-
-      # less than 10%, continue
-      if [[ "$SYNCING_REPLACE_TX" -lt "100" ]] &>/dev/null; then
-        # remove bootstrap lock
-        rm "${WALLET_DIR:?}"/boot &>/dev/null
-        printf '%b' "${LOG_DATE:?} Status() Progress.Bar() Reinstall bootstrap${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      fi
+    # less than 10%, continue
+    if [[ "$SYNCING_REPLACE_TX" -lt "100" ]] &>/dev/null; then
+      # remove bootstrap lock
+      rm "${WALLET_DIR:?}"/boot &>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Progress.Bar() Reinstall bootstrap${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
 
     # syncing blockchain with progress bar
