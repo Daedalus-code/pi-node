@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220703
-# 0.5.3.6
+# 0.5.3.8
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -402,6 +402,8 @@ else
   truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
   if [[ -f "${LOG_DIR:?}"/repair ]] &>/dev/null; then
+    printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5 &>/dev/null)\n"
+
     printf '%b' "${Y1:?}${LOG_DATE:?} Status() Wallet.Warden: :: Not starting daemon! Waiting on repair status! ::${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   else
     # report hardware model at start of log
