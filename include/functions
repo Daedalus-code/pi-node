@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220703
-# 2.3.2.2
+# 2.3.2.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.2.2"
+VERSION="v2.3.2.8"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -111,6 +111,11 @@ fi
 
 # clock, log date, log check, waiting orders, log size #########################
 
+# date for logs
+LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
+# date check
+LC_ALL=de_US.utf8 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
+
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/stats/date 2>/dev/null)
 
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
@@ -126,11 +131,6 @@ fi
 # time - date, trim extra spaces with xargs
 CLOCK=$(LC_ALL=de_US.utf8 date '+%H:%M:%S' 2>&1)
 
-# date for logs
-LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/stats/date 2>&1
-
-# date check
-LC_ALL=de_US.utf8 date '+%T' >"${LOG_DIR:?}"/node_data/stats/date.check 2>&1
 LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/stats/date.check 2>/dev/null)
 
 if [[ -z "$LOG_CHECK" ]] &>/dev/null; then
