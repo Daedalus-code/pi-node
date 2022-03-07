@@ -2092,7 +2092,7 @@ else
     TIMELINE="${GR}Have fun${N0:?}"
   elif [ "$RANDOM_TIMELINE" -eq "11" ] &>/dev/null; then
     if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
-      TIMELINE="${CY:?}${SYNC_MIN_LEFT:?}${N0:?} est. minutes left"
+      TIMELINE="${CY:?}${EST_MIN_LEFT:?}${N0:?} est. minutes left"
     fi
   fi
 fi
