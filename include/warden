@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220303
-# 0.5.1.5
+# V20220703
+# 0.5.3.2
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -111,12 +111,9 @@ if ! egrep "[0-9]+" "${WALLET_DIR:?}"/wait &>/dev/null; then
 
     # creat wait_time
     echo "$(echo "${READY:?}" 2>&1 | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }' 2>&1)-$(echo "${BOOTS:?}" 2>&1 | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }')" 2>&1 | bc -l >"${WALLET_DIR:?}"/wait 2>&1
-    # create wait_time_block
-    echo "$(cat "${WALLET_DIR:?}"/wait 2>/dev/null)+60" 2>&1 | bc -l >>"${WALLET_DIR:?}"/wait 2>&1
 
     # waiting values
     WAIT_TIME=$(head -1 "${WALLET_DIR:?}"/wait 2>&1)
-    WAIT_TIME_BLOCK=$(tail -1 "${WALLET_DIR:?}"/wait 2>&1)
 
     # get device model
     if [[ ! -f "${LOG_DIR:?}"/node_data/stats/model ]] &>/dev/null; then
@@ -124,14 +121,13 @@ if ! egrep "[0-9]+" "${WALLET_DIR:?}"/wait &>/dev/null; then
     fi
 
     if [[ ! "$(grep "CPU.SpeedMHz" "${WALLET_LOG_DIR:?}"/debug.log)" ]] &>/dev/null; then
-      printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)\e[0m") [ ${G1:?}$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null | awk -F, '{ print $1 }' 2>&1)MHz${N0:?} ] ${G1:?}${WAIT_TIME:?}${N0:?}/${G0:?}${WAIT_TIME_BLOCK:?}${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() CPU.SpeedMHz() $(echo -e "\e[4m$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)\e[0m") [ ${G1:?}$(cat "${LOG_DIR:?}"/node_data/stats/cpuspeed 2>/dev/null | awk -F, '{ print $1 }' 2>&1)MHz${N0:?} ] ${G1:?}${WAIT_TIME:?}${N0:?} Wait${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 fi
 
 # waiting values
 WAIT_TIME=$(head -1 "${WALLET_DIR:?}"/wait 2>&1)
-WAIT_TIME_BLOCK=$(tail -1 "${WALLET_DIR:?}"/wait 2>&1)
 
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
@@ -328,12 +324,55 @@ if [[ "$(grep -c "AcceptBlock FAILED" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" -gt
   # stop wallet daemon
   printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
   killall "${WALLET_DAEMON:?}" &>/dev/null
+
+  # create lock file
+  echo "$(date '+%s')" >/tmp/repair 2>&1
+
 fi
 
 ### start wallet daemon ########################################################
 
-# daemon uptime greater then n
-if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
+
+  # look for bootstrap before starting/syncing, use if found
+  if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
+    # create lock file
+    echo "$(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/boot
+
+    if [[ ! -f "${WALLET_DIR:?}"/bootstrap ]] &>/dev/null; then
+
+      printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      # stop wallet daemon
+      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+      killall "${WALLET_DAEMON:?}" &>/dev/null
+      # unzip bootstrap
+      yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
+      # create bootstrap check
+      echo "Bootstrap installed $(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
+      printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      rm /tmp/repair &>/dev/null
+    fi
+  fi
+fi
+
+if [[ -f /tmp/repair ]] &>/dev/null; then
+
+  rm "${WALLET_DIR:?}"/wait &>/dev/null
+  rm "${WALLET_DIR:?}"/bootstrap &>/dev/null
+  rm "${LOG_DIR:?}"/node_data/uptime &>/dev/null
+  # stop wallet daemon
+  printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+  # lock warden from starting wallet again (repair mode)
+  printf '%b' "${Y1:?}${LOG_DATE:?} Status() Wallet.Warden: Not starting daemon! Wallet set in Repair mode!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+  if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+    # rebuild index
+    yes "" 2>&1 | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon 2>&1
+    rm /tmp/repair &>/dev/null
+  fi
+
+else
+
   if pgrep -x "${WALLET_DAEMON:?}" &>/dev/null; then
 
     # get read_mempool status
@@ -350,33 +389,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/nul
   else
     # make sure debug.log exist
     touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    # rebuild index
-    if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-      yes "" | "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
-
-    if [[ ! -f "${WALLET_DIR:?}"/boot ]] &>/dev/null; then
-
-      # look for bootstrap before starting/syncing, use if found
-      if [[ -f "$(ls /home/"$(whoami)"/*bootstrap.zip 2>&1)" ]] &>/dev/null; then
-        # create lock file
-        echo "$(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/boot
-
-        if [[ ! -f "${WALLET_DIR:?}"/bootstrap ]] &>/dev/null; then
-
-          printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Found bootstrap.zip, using it! Stopping daemon now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          # stop wallet daemon
-          printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
-          killall "${WALLET_DAEMON:?}" &>/dev/null
-          # unzip bootstrap
-          yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
-          # create bootstrap check
-          echo "Bootstrap installed $(LC_ALL=de_US.utf8 date)" >"${WALLET_DIR:?}"/bootstrap 2>&1
-          printf '%b' "${N0:?}${LOG_DATE:?} Status() Wallet.Warden: Unzip bootstrap.zip done!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        fi
-      fi
-    fi
 
     # remove old files
     rm "${WALLET_DIR:?}"/wait &>/dev/null
@@ -392,8 +404,13 @@ fi
 
 ## masternode status ###########################################################
 
-if [[ "$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
-  if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+
+  if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
+  fi
+
+  if [[ "$(cat "${WALLET_DIR:?}"/masternode_status 2>/dev/null | grep -c "successfully started" 2>&1)" -gt "0" ]] &>/dev/null; then
     # make sure masternode runs
     "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
     cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getmasternodestatus &>/dev/null

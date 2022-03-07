@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220603
-# 2.3.1.0
+# V20220703
+# 2.3.0.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.1.0"
+VERSION="v2.3.0.1"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -41,8 +41,16 @@ mkdir "${LOG_DIR:?}"/node_data/client/tmp &>/dev/null
 until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
 
   RANDOM_PID=$((((RANDOM % 9999) + 1)))
+
+  if [[ -f /tmp/repair ]]; then
+    WALLET_N="repair"
+    WALLET_D="status"
+  else
+    WALLET_N="wallet"
+    WALLET_D="daemon"
+  fi
   clear
-  printf '%b' "waiting on wallet (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..${GR:?}
+  printf '%b' "waiting on ${WALLET_N:?} (${GR:?}${RANDOM_PID:?}${N0:?}) ${WALLET_D:?}..${GR:?}
 
   Honk Honk  . .. . .,
    __________________ll___
@@ -144,16 +152,11 @@ fi
 
 # waiting values
 WAIT_TIME=$(head -1 "${WALLET_DIR:?}"/wait 2>&1)
-WAIT_TIME_BLOCK=$(tail -1 "${WALLET_DIR:?}"/wait 2>&1)
 
 # non responsive, use default timer
 if [[ -z "$WAIT_TIME" ]] &>/dev/null; then
   WAIT_TIME="360"
   echo "${WAIT_TIME:?}" >"${WALLET_DIR:?}"/wait
-fi
-if [[ -z "$WAIT_TIME_BLOCK" ]] &>/dev/null; then
-  WAIT_TIME_BLOCK="420"
-  echo "${WAIT_TIME_BLOCK:?}" >>"${WALLET_DIR:?}"/wait
 fi
 
 ### system information, load, user, cpu temp ###################################
@@ -1178,12 +1181,8 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; t
 
   # get masternode status
   if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
+
     "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
-
-    if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmasternodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
-    fi
-
     cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/client/getmasternodestatus &>/dev/null
   fi
 
