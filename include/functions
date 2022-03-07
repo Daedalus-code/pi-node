@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220703
-# 2.3.5.2
+# 2.3.5.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v2.3.5.2"
+VERSION="v2.3.5.0"
 
 source /usr/local/bin/include/pinode.conf 2>&1
 source /usr/local/bin/include/color 2>&1
@@ -481,14 +481,8 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/requests* &>/dev/null
 fi
 
-### wallet information #########################################################
-
 # greater than n seconds, continue
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "${WAIT_TIME:?}" ]] &>/dev/null; then
-
-  # collect wallet info, on every minute (loop) from client
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getblockchaininfo 2>&1
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getinfo 2>&1
 
   if [[ ! -f "${LOG_DIR:?}"/node_data/stats/screens ]] &>/dev/null; then
     # create screen list
@@ -558,10 +552,14 @@ EOF
     screen -S read_mempool -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/read_mempool\n'
   fi
 
-  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmasternodecount 2>&1
-  if [[ ! -f "${LOG_DIR:?}"/node_data/client/tmp/getmasternodecount ]] &>/dev/null; then
-    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmasternodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmasternodecount 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getinfo 2>&1
+  if [[ ! -f "${LOG_DIR:?}"/node_data/client/tmp/getinfo ]] &>/dev/null; then
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getinfo 2>&1
   fi
+
+  # collect wallet info, on every minute (loop) from client
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getblockchaininfo 2>&1
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getinfo 2>&1
 
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getwalletinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getwalletinfo 2>&1
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/listunspent 2>&1
