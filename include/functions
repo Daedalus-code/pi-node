@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221103
-# 0.9.5.6
+# 0.9.5.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.5.6"
+VERSION="v0.9.5.8"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -123,10 +123,10 @@ UPLOAD=$(egrep "TX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/system
 
 ### wallet information #########################################################
 
-# wallet version
-cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/wallet/client/version 2>&1
 # getinfo
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo 2>&1
+# wallet version
+cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/version 2>&1
 # getblockchaininfo
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getblockchaininfo 2>&1
 # getmempoolinfo
@@ -155,14 +155,16 @@ fi
 if grep -o "error: couldn't connect to server" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo &>/dev/null; then
   rm -R "${LOG_DIR:?}"/node_data/wallet/client/tmp/* &>/dev/null
 else # use existing data without any errors
-  cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getblockchaininfo "${LOG_DIR:?}"/node_data/wallet/client/getblockchaininfo &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo "${LOG_DIR:?}"/node_data/wallet/client/getinfo &>/dev/null
+  cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/version "${LOG_DIR:?}"/node_data/wallet/client/version &>/dev/null
+  cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getblockchaininfo "${LOG_DIR:?}"/node_data/wallet/client/getblockchaininfo &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo "${LOG_DIR:?}"/node_data/wallet/client/getmempoolinfo &>/dev/null
-  cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getwalletinfo "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/listunspent "${LOG_DIR:?}"/node_data/wallet/client/listunspent &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getpeerinfo "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/listbanned "${LOG_DIR:?}"/node_data/wallet/client/listbanned &>/dev/null
+  cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodestatus "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
+  cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount &>/dev/null
 fi
 
 ### dashbord variables #########################################################
