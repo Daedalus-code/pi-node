@@ -600,7 +600,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
   SAVED_POS=$(grep -c "BitcoinMiner" "${DATA_DIR:?}"/staking 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
   echo "${WALLET_POS:?}" >"${LOG_DIR:?}"/node_data/wallet/data/stake_count 2>&1
 
-  if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
+  if [[ "$SAVED_POS" -gt "$WALLET_POS" ]] &>/dev/null; then
     grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/staking 2>&1
     printf '%b' "${LOG_DATE:?} Status() Saved - - - -> ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
