@@ -27,7 +27,7 @@ Save with ctrl+o
 ### Setup Crontab
 ``crontab -e``  
 Put this at bottom  
-``*/1 * * * * bash /usr/local/bin/include/warden``  
+``*/1 * * * * bash /usr/local/bin/include/pinode/warden``  
 Save with ctrl+o  
 
 ### Setup display (HyperPixel4)
