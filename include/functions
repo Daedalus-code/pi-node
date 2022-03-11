@@ -754,7 +754,7 @@ else # restore it
 fi
 
 # run data with intervals, every n minutes, update api, arp and ticker
-if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/null; then
+if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
 
   # make sure backup is updated
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${DATA_DIR:?}"/price.cg 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
@@ -828,7 +828,7 @@ else # restore it
 fi
 
 # run data with intervals, every n minutes, update api, arp and ticker
-if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "${DATA_CHECK:?}" 2>&1)" ]] &>/dev/null; then
+if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
 
   # make sure backup is updated
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${DATA_DIR:?}"/price.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
