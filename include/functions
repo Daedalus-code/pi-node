@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221103
-# 0.9.7.2
+# 0.9.7.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.7.2"
+VERSION="v0.9.7.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -646,6 +646,10 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
       fi
     fi
   fi
+fi
+
+if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+  WALLET_TXLAST="${N0:?}       Loading${N0:?}"
 fi
 
 # clean up
