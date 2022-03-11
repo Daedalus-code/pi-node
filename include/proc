@@ -1,369 +1,361 @@
 #!/bin/bash
 
 # By Rainman
-# V20220703
-# 0.3.7.1
+# V20221103
+# 0.3.6.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 ########## config ##############################################################
 
-source /usr/local/bin/include/pinode.conf 2>&1
-source /usr/local/bin/include/color 2>&1
+source /usr/local/bin/include/pinode/pinode.conf 2>&1
+source /usr/local/bin/include/pinode/color 2>&1
 
 ########## sync_progress_bar ###################################################
 
 # save progress
-grep -o "progress=........" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/client/tmp/proc 2>&1
+grep -o "progress=........" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/wallet/client/tmp/proc 2>&1
+
+# look for 'progress=1' line, save it there and then
+grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | grep "progress=1.00" >"${LOG_DIR:?}"/node_data/wallet/synced 2>&1
 
 # when debug.log says wallet is synced, this stops here
 if ! grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | grep "progress=1.00" &>/dev/null; then
-  # look for 'progress=1' line, save it there and then
-  grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | grep "progress=1.00" >"${LOG_DIR:?}"/node_data/synced 2>&1
 
   # greater than n seconds, continue
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
     # make sure proc exist
-    touch "${LOG_DIR:?}"/node_data/client/tmp/proc &>/dev/null
+    touch "${LOG_DIR:?}"/node_data/wallet/client/tmp/proc &>/dev/null
 
     # get blockchain sync
-    WALLET_SYNC_PROC=$(cat "${LOG_DIR:?}"/node_data/client/tmp/proc 2>/dev/null | sed 's/^0*//' 2>&1 | tr -d '.' 2>&1)
+    WALLET_SYNC_PROC=$(cat "${LOG_DIR:?}"/node_data/wallet/client/tmp/proc 2>&1 | awk -F. '{ print $2 }' 2>&1)
 
     if [[ -z "$WALLET_SYNC_PROC" ]] &>/dev/null; then
       WALLET_SYNC_PROC="1"
     fi
 
-    SYNCING_REPLACE_TX=$(echo "100/999990*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1 | tr -d '.' 2>&1)
+    echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>&1
+    SYNCING="$(cat "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+    SYNCING_REPLACE_TX=$(echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
-    if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "300" ]] &>/dev/null; then
-      # less than 10%, continue
-      if [[ "$SYNCING_REPLACE_TX" -lt "100" ]] &>/dev/null; then
-        # remove bootstrap lock
-        rm "${WALLET_DIR:?}"/boot &>/dev/null
-        printf '%b' "${LOG_DATE:?} Status() Progress.Bar() Reinstall bootstrap${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      fi
+    # something went wrong
+    if [[ -z "$SYNCING_REPLACE_TX" ]] &>/dev/null; then
+      echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r"
     fi
 
     # syncing blockchain with progress bar
     SYNC_PROGRESS_BAR=$(
-      if [ "$SYNCING_REPLACE_TX" -ge "995" ] &>/dev/null; then
-        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%\\r"
+      if [ "$SYNCING_REPLACE_TX" -ge "100" ] &>/dev/null; then
+        echo "100" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>&1
+        cp "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/sync.log &>/dev/null
+        truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+        echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ ${SYNCING:?}% \\r"
         WALLET_SYNC="${G1:?}100%${N0:?}" # wallet blockchain is synced 100%
+        SYNCING="${G1:?}100%${N0:?}"
       else
-        # something went wrong
-        if [[ -z "$SYNCING_REPLACE_TX" ]] &>/dev/null; then
-          echo -ne "     · · · · · · · · · · · · · · · · · · · · · · · · · · %\\r"
-        fi
-        # is less than 99
-        if [ "$SYNCING_REPLACE_TX" -lt "10" ] &>/dev/null; then
-          SYNC_PROGRESS_BAR="${N0:?}       Loading${N0:?}"
+        if [[ "$(grep "100" "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>&1)" ]] &>/dev/null; then
+          rm "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing &>/dev/null
         fi
         # is equal to
+        if [ "$SYNCING_REPLACE_TX" -ge "1" ] &>/dev/null; then
+          echo -ne "     ▓·················································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "2" ] &>/dev/null; then
+          echo -ne "     ▓▓················································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "3" ] &>/dev/null; then
+          echo -ne "     ▓▓▓················································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "4" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓··············································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "5" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓·············································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "6" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓············································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "7" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓············································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "8" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓··········································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "9" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓·········································· ${SYNCING:?}% \\r"
+        fi
         if [ "$SYNCING_REPLACE_TX" -ge "10" ] &>/dev/null; then
-          echo -ne "     ▓·················································· 1%\\r"
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "11" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "12" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "13" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "14" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "15" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "16" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "17" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "18" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "19" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ ${SYNCING:?}% \\r"
         fi
         if [ "$SYNCING_REPLACE_TX" -ge "20" ] &>/dev/null; then
-          echo -ne "     ▓▓················································· 2%\\r"
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "21" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "22" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "23" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "24" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "25" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "26" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "27" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "28" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "29" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· ${SYNCING:?}% \\r"
         fi
         if [ "$SYNCING_REPLACE_TX" -ge "30" ] &>/dev/null; then
-          echo -ne "     ▓▓▓················································ 3%\\r"
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "31" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "32" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "33" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "34" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "35" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "36" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "37" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "38" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "39" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ ${SYNCING:?}% \\r"
         fi
         if [ "$SYNCING_REPLACE_TX" -ge "40" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓··············································· 4%\\r"
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "41" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "42" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "43" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "44" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "45" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "46" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "47" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "48" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "49" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· ${SYNCING:?}% \\r"
         fi
         if [ "$SYNCING_REPLACE_TX" -ge "50" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓·············································· 5%\\r"
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "51" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "52" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "53" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "54" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "55" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "56" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "57" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "58" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "59" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ ${SYNCING:?}% \\r"
         fi
         if [ "$SYNCING_REPLACE_TX" -ge "60" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓············································· 6%\\r"
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "61" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "62" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "63" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "64" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "65" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "66" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "67" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "68" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "69" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· ${SYNCING:?}% \\r"
         fi
         if [ "$SYNCING_REPLACE_TX" -ge "70" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓············································ 7%\\r"
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "71" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "72" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "73" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "74" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "75" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "76" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "77" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "78" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "79" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· ${SYNCING:?}% \\r"
         fi
         if [ "$SYNCING_REPLACE_TX" -ge "80" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓··········································· 8%\\r"
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "81" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "82" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "83" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "84" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "85" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "86" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "87" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "88" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· ${SYNCING:?}% \\r"
+        fi
+        if [ "$SYNCING_REPLACE_TX" -ge "89" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· ${SYNCING:?}% \\r"
         fi
         if [ "$SYNCING_REPLACE_TX" -ge "90" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓·········································· 9%\\r"
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········· ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "100" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· 10%\\r"
+        if [ "$SYNCING_REPLACE_TX" -ge "91" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········ ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "110" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓········································· 11%\\r"
+        if [ "$SYNCING_REPLACE_TX" -ge "92" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······· ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "120" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 12%\\r"
+        if [ "$SYNCING_REPLACE_TX" -ge "93" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······ ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "130" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 13%\\r"
+        if [ "$SYNCING_REPLACE_TX" -ge "94" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····· ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "140" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓········································ 14%\\r"
+        if [ "$SYNCING_REPLACE_TX" -ge "95" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···· ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "150" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· 15%\\r"
+        if [ "$SYNCING_REPLACE_TX" -ge "96" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··· ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "160" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓······································· 16%\\r"
+        if [ "$SYNCING_REPLACE_TX" -ge "97" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·· ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "170" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 17%\\r"
+        if [ "$SYNCING_REPLACE_TX" -ge "98" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓· ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "180" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 18%\\r"
+        if [ "$SYNCING_REPLACE_TX" -ge "99" ] &>/dev/null; then
+          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ ${SYNCING:?}% \\r"
         fi
-        if [ "$SYNCING_REPLACE_TX" -ge "190" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓······································ 19%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "200" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· 20%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "210" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓····································· 21%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "220" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 22%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "230" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 23%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "240" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···································· 24%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "250" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· 25%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "260" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··································· 26%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "270" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 27%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "280" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 28%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "290" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·································· 29%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "300" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· 30%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "310" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································· 31%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "320" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 32%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "330" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 33%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "340" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓································ 34%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "350" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· 35%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "360" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························· 36%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "370" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 37%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "380" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 38%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "390" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······························ 39%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "400" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· 40%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "410" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····························· 41%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "420" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 42%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "430" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 43%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "440" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···························· 44%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "450" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· 45%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "460" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··························· 46%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "470" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 47%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "480" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 48%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "490" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·························· 49%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "500" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· 50%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "510" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························· 51%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "520" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 52%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "530" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 53%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "540" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓························ 54%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "550" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· 55%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "560" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················· 56%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "570" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 57%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "580" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 58%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "590" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······················ 59%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "600" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· 60%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "610" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····················· 61%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "620" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 62%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "630" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 63%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "640" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···················· 64%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "650" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· 65%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "660" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··················· 66%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "670" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 67%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "680" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 68%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "690" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·················· 69%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "700" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· 70%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "710" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················· 71%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "720" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 72%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "730" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 73%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "740" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓················ 74%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "750" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· 75%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "760" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··············· 76%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "770" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 77%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "780" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 78%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "790" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·············· 79%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "800" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· 80%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "810" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············· 81%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "820" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 82%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "830" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 83%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "840" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓············ 84%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "850" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· 85%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "860" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··········· 86%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "870" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 87%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "880" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 88%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "890" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·········· 89%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "900" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········· 90%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "910" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓········ 91%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "920" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······· 92%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "930" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······ 93%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "940" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓····· 94%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "950" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓···· 95%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "960" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓··· 96%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "970" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·· 97%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "980" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓· 98%\\r"
-        fi
-        if [ "$SYNCING_REPLACE_TX" -ge "990" ] &>/dev/null; then
-          echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 99%\\r"
-        fi
-        WALLET_TXLAST="$SYNCING_REPLACE_TX"
       fi
     )
-    if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
-      # non responsive
-      SYNC_PROGRESS_BAR="${N0:?}       Loading${N0:?}"
-    fi
-
     ### sync should be done ####################################################
   fi
 fi

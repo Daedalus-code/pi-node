@@ -1,40 +1,37 @@
 #!/bin/bash
 
 # By Rainman
-# V20220603
-# 0.0.4.5
+# V20221103
+# 0.0.4.2
 
-# setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
-sudo setfont /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz &>/dev/null
-
-source /usr/local/bin/include/pinode.conf 2>&1
+source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
 for (( ; ; )); do # loop dashbord
 
   # save dashbord time
-  echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/stats/time.dashbord 2>&1
+  echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/time.dashbord 2>&1
 
-  source /usr/local/bin/include/color 2>&1
-  source /usr/local/bin/include/functions 2>&1
-  source /usr/local/bin/include/time_fix 2>&1
+  source /usr/local/bin/include/pinode/color 2>&1
+  source /usr/local/bin/include/pinode/functions 2>&1
+  source /usr/local/bin/include/pinode/time_fix 2>&1
 
   clear
   # dashbord
   printf '%b' "
-${RC:?}                       ${RC:?} Pi-Node ${N0:?}${VERSION:?} ${GR:?}pinode${N0:?}          ${CLOCK:?}
-${CB:?}        ##   ##        ${N0:?} Fullnode + Stakebox       ${MNS:?}${PROOF:?} ${TH:?} ${POS_STATUS:?} ${TOR_ICON:?} ${CY:?}${INTERFACE:0:4}${N0:?}
+${RC:?}                       ${RC:?} Pi-Node ${REPO_VERSION:?} pinode          ${SYSTEM_CLOCK:?}
+${CB:?}        ##   ##        ${N0:?} Fullnode + Stakebox       ${MASTER_STATUS:?} ${PROOF_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}        ##.  ##        ${RC:?} -----------------------------------------${N0:?}
-${CB:?}    ##############     ${N0:?} Load ${LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
+${CB:?}    ##############     ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP:?}°C ${CPU_FTEMP:?}°F
 ${CB:?}      ###      ####    ${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?} (${USED_HDD_P:?})
-${CB:?}      ###.    ,###     ${N0:?} ${USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
-${CB:?}      ###########      ${N0:?} $(echo "${WALLET_DAEMON:?}" 2>&1 | tr -d ' ' 2>&1) ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
+${CB:?}      ###.    ,###     ${N0:?} ${SYSTEM_USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
+${CB:?}      ###########      ${N0:?} ${WALLET_DAEMON:?} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
 ${CB:?}      ###       ###    ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_LATEST:?} ${WALLET_PEERS_OTHER:?}
 ${CB:?}      ###.     ,###    ${N0:?}
-${CB:?}    ##############     ${N0:?} Balance ${G0:?}${WALLET_BALANCE:?}${N0:?} ${DASH_SR:?} ${G0:?}${WALLET_STAKES:?} ${N0:?}${MASTER_REWARDS:?}${DASH_INMN:?} ${G0:?}${WALLET_INPUTS:?} ${N0:?}${MASTER_INPUTS:?}
-${CB:?}        ##   ##        ${N0:?} TxCount ${N0:?}${WALLET_TXCOUNT:?}${N0:?} Mempool ${WALLET_MEMPOOL:?}${N0:?} Block ${WALLET_HEADS:?}${N0:?}
+${CB:?}    ##############     ${N0:?} Balance ${WALLET_BALANCES:?} ${WALLET_POS_REWARDS:?} ${WALLET_INPUTS_NODES:?}
+${CB:?}        ##   ##        ${N0:?} TxCount ${WALLET_TXCOUNT:?} Mempool ${WALLET_MEMPOOL:?} Block ${WALLET_HEADS:?}
 ${CB:?}        ##   ##        ${N0:?} ${TIMELINE:?}
 
-${TX:?} ${WALLET_TXLAST:?}${N0:?}
+${TX:?} ${WALLET_TXLAST:?}
 
 ${LAST_LOG:?}
 "
