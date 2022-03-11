@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221103
-# 0.9.4.7
+# 0.9.5.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.4.7"
+VERSION="v0.9.5.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -141,6 +141,12 @@ cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" 
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" listbanned 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/listbanned 2>&1
 # getmasternodecount
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount 2>&1
+# masternodestatus
+cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
+if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
+  cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getmasternodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
+fi
+cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
 
 if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount ]] &>/dev/null; then
   "${WALLET_DIR:?}"/./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getmasternodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount 2>&1
