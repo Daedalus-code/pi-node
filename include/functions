@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221103
-# 0.9.5.2
+# 0.9.5.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.5.2"
+VERSION="v0.9.5.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -542,6 +542,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
         WALLET_TXLAST="${C1:?}$(tail -1 "${DATA_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
         CB="${C1:?}"
         CBR_IND="1"
+
         # false positive
         if [[ ! -s "${DATA_DIR:?}"/rewards ]] &>/dev/null; then
           WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
@@ -591,6 +592,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
     WALLET_TXLAST="${G1:?}$(tail -1 "${DATA_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
     CB="${G1:?}"
     CBS_IND="1"
+
     # false positive
     if [[ ! -s "${DATA_DIR:?}"/staking ]] &>/dev/null; then
       WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
@@ -610,6 +612,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
     if [[ "$RANDOM_CB" -eq "1" ]] &>/dev/null; then
       WALLET_TXLAST="${G1:?}$(tail -1 "${DATA_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
       CB="${G1:?}"
+
       # false positive
       if [[ ! -s "${DATA_DIR:?}"/staking ]] &>/dev/null; then
         WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
@@ -619,6 +622,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
     if [[ "$RANDOM_CB" -eq "2" ]] &>/dev/null; then
       WALLET_TXLAST="${C1:?}$(tail -1 "${DATA_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
       CB="${C1:?}"
+
       # false positive
       if [[ ! -s "${DATA_DIR:?}"/rewards ]] &>/dev/null; then
         WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
@@ -629,11 +633,11 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
 fi
 
 # clean up
-if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/rewards)))")" -lt "5460" ]] &>/dev/null; then
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/rewards)))")" -lt "1" ]] &>/dev/null; then
   cat "${DATA_DIR:?}"/rewards 2>&1 | grep -v "update" >"${DATA_DIR:?}"/rewards.tmp 2>&1
   mv "${DATA_DIR:?}"/rewards.tmp "${DATA_DIR:?}"/rewards &>/dev/null
 fi
-if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/staking)))")" -lt "5460" ]] &>/dev/null; then
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/staking)))")" -lt "1" ]] &>/dev/null; then
   cat "${DATA_DIR:?}"/staking 2>&1 | grep -v "update" >"${DATA_DIR:?}"/staking.tmp 2>&1
   mv "${DATA_DIR:?}"/staking.tmp "${DATA_DIR:?}"/staking &>/dev/null
 fi
