@@ -402,6 +402,10 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 fi
 
+if [[ -z "$LAST_TX" ]] &>/dev/null; then
+  LAST_TX="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
+fi
+
 # wait on wallet w random quotes
 # random start number
 RANDOM_QUOTES=$((((RANDOM % 10) + 1)))
