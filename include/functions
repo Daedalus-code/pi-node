@@ -306,8 +306,8 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/wall
     fi
   else
     PUBLIC_IP="$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)"
-    PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
   fi
+  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 fi
 
 LATEST_RELEASE=$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)
