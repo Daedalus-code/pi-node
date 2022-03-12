@@ -555,7 +555,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
     if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
 
       if [[ "$(tail -21 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep "AddToWallet .*  new" 2>&1)" ]] &>/dev/null; then
-        if [[ ! "$(grep -A10 -B10 "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log | egrep "BitcoinMiner|AutoCombineDust" 2>&1)" ]] &>/dev/null; then
+        if [[ ! "$(tail -21 "${WALLET_LOG_DIR:?}"/debug.log | grep -A10 -B10 "AddToWallet" 2>&1 | egrep "BitcoinMiner|AutoCombineDust" 2>&1)" ]] &>/dev/null; then
           egrep "AddToWallet .*  new" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/rewards 2>&1
         fi
       fi
