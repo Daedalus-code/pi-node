@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221303
-# 0.9.9.0
+# 0.9.9.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.0"
+VERSION="v0.9.9.4"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -322,6 +322,9 @@ WALLET_PEERS_TOTAL=$(echo "${WALLET_PEERS_LATEST:?}+${WALLET_PEERS_OTHER:?}" 2>&
 WALLET_PEERS_TOTAL="${P1:?}$WALLET_PEERS_TOTAL${N0:?}"
 WALLET_PEERS_LATEST="${G1:?}$WALLET_PEERS_LATEST${N0:?}"
 WALLET_PEERS_OTHER="${G0:?}$(echo "${WALLET_PEERS_OTHER:?}" 2>&1 | tr -d '-' 2>&1)${N0:?}"
+
+# count banned peers
+grep -c "address" "${LOG_DIR:?}"/node_data/wallet/client/listbanned >"${LOG_DIR:?}"/node_data/wallet/data/banlist 2>&1
 
 if [[ -z "$WALLET_PEERS_TOTAL" ]] &>/dev/null; then
   WALLET_PEERS_TOTAL="${GR:?}0${N0:?}"
@@ -659,11 +662,12 @@ if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
 fi
 
-# clean up
+# clean up rewards
 if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/rewards)))")" -lt "1" ]] &>/dev/null; then
   cat "${DATA_DIR:?}"/rewards 2>&1 | grep -v "update" >"${DATA_DIR:?}"/rewards.tmp 2>&1
   mv "${DATA_DIR:?}"/rewards.tmp "${DATA_DIR:?}"/rewards &>/dev/null
 fi
+# clean up staking
 if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/staking)))")" -lt "1" ]] &>/dev/null; then
   cat "${DATA_DIR:?}"/staking 2>&1 | grep -v "update" >"${DATA_DIR:?}"/staking.tmp 2>&1
   mv "${DATA_DIR:?}"/staking.tmp "${DATA_DIR:?}"/staking &>/dev/null

@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221303
-# 0.1.9.6
+# 0.1.9.7
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -163,10 +163,11 @@ sudo cp -R /home/"$(whoami)"/pi-node/include/* /usr/local/bin/include/pinode &>/
 sudo cp -R /home/"$(whoami)"/pi-node/pinode /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/update /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/helpme /usr/local/bin/ &>/dev/null
+sudo cp -R /home/"$(whoami)"/pi-node/include/menu /usr/local/bin/ &>/dev/null
 echo "clear && tail -f ${WALLET_LOG_DIR:?}/debug.log" >/tmp/log.tmp 2>/dev/null
 sudo mv /tmp/log.tmp /usr/local/bin/log &>/dev/null
 
-sudo chmod +x /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/helpme /usr/local/bin/log 2>&1
+sudo chmod +x /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/helpme /usr/local/bin/menu /usr/local/bin/log 2>&1
 
 sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/pinode 2>&1
 sudo chown -R "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
