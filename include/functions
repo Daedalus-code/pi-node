@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221303
-# 1.0.0.0
+# 0.9.9.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.0.0"
+VERSION="v0.9.9.0"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -553,9 +553,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
   ### reward indicator #########################################################
 
   if [[ "$(wc -l "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2369" ]] &>/dev/null; then
-
     if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
-
       if [[ "$(tail -21 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep "AddToWallet .*  new" 2>&1)" ]] &>/dev/null; then
         if [[ ! "$(tail -21 "${WALLET_LOG_DIR:?}"/debug.log | grep -A10 -B10 "AddToWallet" 2>&1 | egrep "BitcoinMiner|AutoCombineDust" 2>&1)" ]] &>/dev/null; then
           egrep "AddToWallet .*  new" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/rewards 2>&1
@@ -758,13 +756,13 @@ echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/dat
 ### backup values coingecko ####################################################
 
 if [ -f "${LOG_DIR:?}"/node_data/wallet/data/price.cg ] &>/dev/null; then
-
   if [[ ! -f "${DATA_DIR:?}"/price.cg ]] &>/dev/null; then
     # create backup if missing
     cp "${LOG_DIR:?}"/node_data/wallet/data/price.cg "${DATA_DIR:?}"/price.cg &>/dev/null
   fi
 
 else # restore it
+
   if [[ -f "${DATA_DIR:?}"/price.cg ]] &>/dev/null; then
     cp "${DATA_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/wallet/data/price.cg &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)${N0:?} Price! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -772,13 +770,13 @@ else # restore it
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/wallet/data/volume.cg ] &>/dev/null; then
-
   if [[ ! -f "${DATA_DIR:?}"/volume.cg ]] &>/dev/null; then
     # create backup if missing
     cp "${LOG_DIR:?}"/node_data/wallet/data/volume.cg "${DATA_DIR:?}"/volume.cg &>/dev/null
   fi
 
 else # restore it
+
   if [[ -f "${DATA_DIR:?}"/volume.cg ]] &>/dev/null; then
     cp "${DATA_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/wallet/data/volume.cg &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CG)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -787,7 +785,6 @@ fi
 
 # run data with intervals, every n minutes, update api, arp and ticker
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
-
   # make sure backup is updated
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${DATA_DIR:?}"/price.cg 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     OLD_PRICE_CG=$(egrep "[0-9]+" "${DATA_DIR:?}"/price.cg 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)
@@ -804,13 +801,13 @@ fi
 ### backup values coinmarketcap ################################################
 
 if [ -f "${LOG_DIR:?}"/node_data/wallet/data/rank.cmc ] &>/dev/null; then
-
   if [[ ! -f "${DATA_DIR:?}"/rank.cmc ]] &>/dev/null; then
     # create backup if missing
     cp "${LOG_DIR:?}"/node_data/wallet/data/rank.cmc "${DATA_DIR:?}"/rank.cmc &>/dev/null
   fi
 
 else # restore it
+
   if [[ -f "${DATA_DIR:?}"/rank.cmc ]] &>/dev/null; then
     cp "${DATA_DIR:?}"/rank.cmc "${LOG_DIR:?}"/node_data/wallet/data/rank.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/rank.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${N0:?} Rank! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -818,13 +815,13 @@ else # restore it
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/wallet/data/price.cmc ] &>/dev/null; then
-
   if [[ ! -f "${DATA_DIR:?}"/price.cmc ]] &>/dev/null; then
     # create backup if missing
     cp "${LOG_DIR:?}"/node_data/wallet/data/price.cmc "${DATA_DIR:?}"/price.cmc &>/dev/null
   fi
 
 else # restore it
+
   if [[ -f "${DATA_DIR:?}"/price.cmc ]] &>/dev/null; then
     cp "${DATA_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/wallet/data/price.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)${N0:?} Price! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -832,13 +829,13 @@ else # restore it
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc ] &>/dev/null; then
-
   if [[ ! -f "${DATA_DIR:?}"/volume.cmc ]] &>/dev/null; then
     # create backup if missing
     cp "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc "${DATA_DIR:?}"/volume.cmc &>/dev/null
   fi
 
 else # restore it
+
   if [[ -f "${DATA_DIR:?}"/volume.cmc ]] &>/dev/null; then
     cp "${DATA_DIR:?}"/volume.cmc "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} Volume! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -846,13 +843,13 @@ else # restore it
 fi
 
 if [ -f "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc ] &>/dev/null; then
-
   if [[ ! -f "${DATA_DIR:?}"/watchers.cmc ]] &>/dev/null; then
     # create backup if missing
     cp "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc "${DATA_DIR:?}"/watchers.cmc &>/dev/null
   fi
 
 else # restore it
+
   if [[ -f "${DATA_DIR:?}"/watchers.cmc ]] &>/dev/null; then
     cp "${DATA_DIR:?}"/watchers.cmc "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc &>/dev/null
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${N0:?} Watchlist! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -861,7 +858,6 @@ fi
 
 # run data with intervals, every n minutes, update api, arp and ticker
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
-
   # make sure backup is updated
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${DATA_DIR:?}"/price.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
     OLD_PRICE_CMC=$(egrep "[0-9]+" "${DATA_DIR:?}"/price.cmc 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)
@@ -920,16 +916,13 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "420" ]] &>/dev/null; then
-
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_PRICE_CMC:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_VOLUME_CMC:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_RANK_CMC:?}${N0:?} rank!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_WATCH_CMC:?}${N0:?} watchlist!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
   fi
-
   screen -X -S add_cmc quit &>/dev/null
   killall curl &>/dev/null
   rm "${LOG_DIR:?}"/node_data/requests* &>/dev/null
@@ -958,14 +951,11 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
 
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "420" ]] &>/dev/null; then
-
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Found ${G1:?}${API_PRICE_CG:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Found ${G1:?}${API_VOLUME_CG:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
   fi
-
   screen -X -S add_cg quit &>/dev/null
   killall curl &>/dev/null
   rm "${LOG_DIR:?}"/node_data/requests* &>/dev/null
