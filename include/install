@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221103
+# V20221303
 # 0.1.9.6
 
 # create script directories
@@ -163,7 +163,7 @@ sudo cp -R /home/"$(whoami)"/pi-node/include/* /usr/local/bin/include/pinode &>/
 sudo cp -R /home/"$(whoami)"/pi-node/pinode /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/update /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/helpme /usr/local/bin/ &>/dev/null
-echo "tail -f ${WALLET_LOG_DIR:?}/debug.log" >/tmp/log.tmp 2>/dev/null
+echo "clear && tail -f ${WALLET_LOG_DIR:?}/debug.log" >/tmp/log.tmp 2>/dev/null
 sudo mv /tmp/log.tmp /usr/local/bin/log &>/dev/null
 
 sudo chmod +x /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/helpme /usr/local/bin/log 2>&1
