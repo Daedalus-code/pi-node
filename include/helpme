@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220903
+# V20221303
 # 0.0.2.0
 
 source /usr/local/bin/include/pinode/color 2>&1
@@ -10,11 +10,11 @@ clear
 printf '%b' " ${G1:?}$(uptime 2>&1 | sed 's/\([0-9]\),/\1./g' 2>&1 | xargs 2>&1)${N0:?}
 ${GR:?}   ==${Y0:?}=======${Y1:?}========== Commands FAQ ==========${Y0:?}=======${GR:?}== ${N0:?}
 
-${G1:?}pinode${N0:?}                    -> pinode display
-${Y1:?}helpme${N0:?}                    -> shows this FAQ.
-${C1:?}update${N0:?}                    -> update repository (pinode)
-${CY:?}menu${N0:?}                      -> wallet, system, tools menu
-${CY:?}log${N0:?}                       -> tail -f debug.log
+   ${G1:?}pinode${N0:?}                  -> pinode display
+   ${Y1:?}helpme${N0:?}                  -> shows this FAQ.
+   ${C1:?}update${N0:?}                  -> update repository (pinode)
+   ${CY:?}menu${N0:?}                    -> wallet, system, tools menu
+   ${CY:?}log${N0:?}                     -> tail -f debug.log
 \n"
 
 # END
