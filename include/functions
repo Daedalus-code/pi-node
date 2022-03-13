@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221303
-# 1.0.3.7
+# 1.0.3.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.3.7"
+VERSION="v1.0.3.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -770,12 +770,11 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   rm "${LOG_DIR:?}"/addnodes.dns &>/dev/null
 
   # kill old session
-  screen -X -S add_peers quit &>/dev/null
+  screen -X -S run_data quit &>/dev/null
   # create screen session
-  screen -dmS add_peers &>/dev/null
+  screen -dmS run_data &>/dev/null
   # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
-  # start adding nodes, inside screen session (timeout n seconds)
-  timeout 1800 screen -S add_peers -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
+  timeout 1800 screen -S run_data -X -p 0 stuff $'bash /usr/local/bin/include/pinode/data\n'
 fi
 
 ### calculate average price and volume #########################################
