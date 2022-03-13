@@ -74,7 +74,7 @@ TITLE="$(hostname 2>/dev/null) ($(grep "inet" "${LOG_DIR:?}"/node_data/system/if
 MENU=" $(LC_ALL=de_US.utf8 date 2>/dev/null) ${CPU_CTEMP:?}C ${CPU_FTEMP:?}F P2P $(grep "connections" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' 2>/dev/null)"
 
 OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
-  2 "Keys Menu        Dump/Import keys PoS (${POS_COUNT:?})"
+  2 "Keys Menu        Dump/Import keys PoS"
   3 "Information      Pi node status"
   4 "Download Menu    Wallet, bootstrap, display"
   5 "Configs & Tools  Configurations & tools"
@@ -211,7 +211,7 @@ case $CHOICE in
 
   OPTIONS=(1 "Import key       Adds a private key"
     2 "Dump key         Reveals the private key"
-    3 "Inputs           Wallet inputs")
+    3 "Inputs           Wallet inputs (${POS_COUNT:?})")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
