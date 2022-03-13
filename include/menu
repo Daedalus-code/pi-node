@@ -309,19 +309,19 @@ Then the importprivkey can be used with this output
 "8")
 
   HEIGHT=14
-  WIDTH=46
+  WIDTH=50
   CHOICE_HEIGHT=7
   BACKTITLE="Pi-Node"
   TITLE="Uncomplicated firewall Menu"
   MENU="Choose one option:"
 
-  OPTIONS=(1 "Status       Show firewall status"
-    2 "Enable       Enables the firewall"
-    3 "Disable      Disables the firewall"
-    4 "Allow        Add allow rule"
-    5 "Deny         Add deny rule"
-    6 "Delete All   Delete all rules"
-    7 "Use Default  Set default rules")
+  OPTIONS=(1 "Status           Show firewall status"
+    2 "Enable           Enables the firewall"
+    3 "Disable          Disables the firewall"
+    4 "Allow            Add allow rule"
+    5 "Deny             Add deny rule"
+    6 "Delete All       Delete all rules"
+    7 "Use Default      Set default rules")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -482,8 +482,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # set default ufw rules
     echo "[Ok] Set allow rules ${PORT:?}, 80, 22"
-    sudo ufw allow "${PORT:?}" comment "${WALLET_NAME:?} mainnet"
-    sudo ufw allow 80 comment "${WALLET_NAME:?} Graphs"
+    sudo ufw allow "${PORT:?}" comment "Node mainnet"
+    sudo ufw allow 80 comment "Node Graphs"
     sudo ufw allow 22 comment "SSH"
     sudo ufw status
     echo
