@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221203
-# 0.9.8.3
+# 1.0.0.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.8.3"
+VERSION="v1.0.0.0"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -371,7 +371,7 @@ WALLET_POS_REWARDS="Stakes ${WALLET_POS:?}"
 WALLET_INPUTS_NODES="Inputs ${WALLET_INPUTS:?}"
 
 if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
-  WALLET_REW="$(cat "${DATA_DIR:?}"/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' | wc -l 2>&1)"
+  WALLET_REW="$(cat "${DATA_DIR:?}"/rewards 2>&1 | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' | wc -l 2>&1)"
   WALLET_MAS_OUTPUT="$(grep -c "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)"
   WALLET_POS_REWARDS="PoS/R ${WALLET_POS:?} ${CY:?}${WALLET_REW:?}${N0:?}"
   WALLET_INPUTS_NODES="I/MN ${WALLET_INPUTS:?} ${CY:?}${WALLET_MAS_OUTPUT:?}${N0:?}"
@@ -527,23 +527,25 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
   fi
 
   if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
-    if [[ "$(grep "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-
-      if grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent &>/dev/null; then
-        grep -A2 "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/data/masternode_confirmations 2>&1
+    if [[ "$(egrep "AddToWallet .*  new" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+      if [[ "$(grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent)" ]] &>/dev/null; then
+        if grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent &>/dev/null; then
+          grep -A2 "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/data/masternode_confirmations 2>&1
+        fi
       fi
-      touch "${LOG_DIR:?}"/node_data/wallet/data/masternode_confirmations &>/dev/null
+    else
+      echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/masternode_confirmations &>/dev/null
     fi
 
-    WALLET_REWARDS=$(cat "${DATA_DIR:?}"/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    SAVED_REWARDS=$(cat "${LOG_DIR:?}"/node_data/wallet/data/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    WALLET_REWARDS=$(cat "${DATA_DIR:?}"/rewards 2>&1 | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    SAVED_REWARDS=$(cat "${LOG_DIR:?}"/node_data/wallet/data/rewards 2>&1 | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
-    if [[ "$(cat "${DATA_DIR:?}"/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' | wc -l 2>&1)" -gt "$(cat "${LOG_DIR:?}"/node_data/wallet/data/reward_count 2>/dev/null)" ]] &>/dev/null; then
-      grep "AddToWallet" "${DATA_DIR:?}"/rewards 2>&1 | awk '!a[$0]++' 2>&1 | wc -l >"${LOG_DIR:?}"/node_data/wallet/data/reward_count 2>&1
+    if [[ "$(cat "${DATA_DIR:?}"/rewards 2>&1 | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' | wc -l 2>&1)" -gt "$(cat "${LOG_DIR:?}"/node_data/wallet/data/reward_count 2>/dev/null)" ]] &>/dev/null; then
+      egrep "AddToWallet .*  new" "${DATA_DIR:?}"/rewards 2>&1 | awk '!a[$0]++' 2>&1 | wc -l >"${LOG_DIR:?}"/node_data/wallet/data/reward_count 2>&1
     fi
 
     if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
-      cat "${DATA_DIR:?}"/rewards 2>/dev/null | grep "AddToWallet" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/data/rewards 2>&1
+      cat "${DATA_DIR:?}"/rewards 2>/dev/null | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/data/rewards 2>&1
       printf '%b' "${LOG_DATE:?} Status() Saved - - - -> ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
@@ -578,7 +580,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
     fi
   fi
 
-  ### proof-of-stake block was signed ##########################################
+  ### staking rewards ##########################################################
 
   if [[ ! -s "${LOG_DIR:?}"/node_data/wallet/data/stake_count ]] &>/dev/null; then
     echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/stake_count 2>&1
@@ -972,6 +974,21 @@ fi
 ### clean up ###################################################################
 
 if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+
+  # use old failed list as a continuation to the next day, ruled by -lines above
+  if [[ "$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+    # add failed peers (failed.tmp) back in to debug.log
+    while IFS= read -r ADDS; do
+      echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    done <"${WALLET_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -R 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Clean.Backup() Restoring old failed list, failed.tmp +$(wc -l "${WALLET_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  else
+    DIS_LOCAL=$(echo "$(cat "${LOG_DIR:?}"/node_data/system/ip_address 2>/dev/null)" 2>&1 | egrep -o "[0-9]+" 2>&1 | head -1 2>&1)
+    # keep last n of failed connections
+    RANDOM_FAILED=$((((RANDOM % 1440) + 128)))
+    echo "$(tail -"${RANDOM_FAILED:?}" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | grep -v "${DIS_LOCAL:?}" 2>&1)" 2>&1 | awk '!a[$0]++' >"${WALLET_DIR:?}"/failed 2>&1
+  fi
+
   truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/reward_count &>/dev/null
   truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/stake_count &>/dev/null
   truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
