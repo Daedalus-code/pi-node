@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221303
-# 0.5.5.8
+# 0.5.5.0
 
 # shellcheck disable=SC2154
 
@@ -293,20 +293,12 @@ fi
 
 if [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
   rm "${DATA_DIR:?}"/masternode_status &>/dev/null
-
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${DATA_DIR:?}"/masternode_status 2>/dev/null
-
   if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
     "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmasternodestatus >"${DATA_DIR:?}"/masternode_status 2>/dev/null
   fi
-
-  # make sure masternode runs
+  # update masternode status
   cp "${DATA_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
-  printf '%b' "${GR:?}${LOG_DATE:?} Status() $(ls -lh "${DATA_DIR:?}"/masternode_status 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus <- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  cat "${DATA_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-  printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus <- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  printf '%b' "${GR:?}${LOG_DATE:?} Status() $(ls -lh "${LOG_DIR:?}"/node_data/wallet/client/get*nodestatus 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # keep masternode status updated
