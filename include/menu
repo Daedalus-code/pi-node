@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221303
-# 2.5.5.2
+# 2.5.5.3
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -498,13 +498,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
 "3")
 
-  echo "Please wait"
+  printf '%b' "${GR:?}Please Wait${N0:?}\n"
+  clear
   # greater than n seconds, continue
-  if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+  if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
 
     # get uptime
-    UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)%60")))
-    UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
+    UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)%60")))
+    UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
     UPTIME="${UPTIME_DAYS:?}d ${UPTIME:?}"
 
     # get system uptime
@@ -1635,7 +1636,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
       if [[ -s "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus ]] &>/dev/null; then
 
         # greater than n seconds, continue
-        if [[ "$(cat "${LOG_DIR:?}"/node_data/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+        if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
 
           "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
           # keep masternode status updated
