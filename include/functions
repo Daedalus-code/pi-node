@@ -170,8 +170,8 @@ if ! cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "rea
 # By Rainman
 # V20221303
 # 0.0.3.0
-source /usr/local/bin/include/pinode.conf 2>&1
-source /usr/local/bin/include/color 2>&1
+source /usr/local/bin/include/pinode/pinode.conf 2>&1
+source /usr/local/bin/include/pinode/color 2>&1
 for (( ; ; )); do # loop script
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/wallet/data/date 2>/dev/null)
 "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
