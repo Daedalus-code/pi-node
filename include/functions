@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221303
-# 0.9.9.4
+# 1.0.5.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v0.9.9.4"
+VERSION="v1.0.5.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -132,6 +132,65 @@ cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>&1 | egrep "RX packets" 2>&1 | aw
 DOWNLOAD=$(egrep "RX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/system/ifconfig 2>&1 | egrep -o "bytes [0-9]+" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
 # get upload from wlan(*) - eth(*)
 UPLOAD=$(egrep "TX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/system/ifconfig 2>&1 | egrep -o "bytes [0-9]+" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
+
+### mempool activity ###########################################################
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/screens ]] &>/dev/null; then
+  # create screen list
+  LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&1
+fi
+
+# mempool activity
+MEMPOOL_LINES=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)
+MEMPOOL_ACTIVE=$(grep "1" "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+MEMPOOL_NOACTIVE=$(grep "0" "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+MEMPOOL_PERC_ACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_ACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+MEMPOOL_PERC_NOACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+
+echo "A ${MEMPOOL_PERC_ACTIVE:?} D ${MEMPOOL_PERC_NOACTIVE:?}" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
+
+MEMPOOL_PERC_ACTIVE="${MEMPOOL_PERC_ACTIVE:?}%"
+MEMPOOL_PERC_NOACTIVE="${MEMPOOL_PERC_NOACTIVE:?}%"
+
+# look for screen session, if not found, run this block
+if ! cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
+
+  # collect mempool two times a loop (time_fix time)
+
+  # kill old session
+  screen -X -S read_mempool quit &>/dev/null
+  # create new screen session
+  screen -dmS read_mempool &>/dev/null
+
+  # make sure read_mempool exist
+  if [ ! -f "${LOG_DIR:?}"/read_mempool ] &>/dev/null; then
+    # connect nodes found with nodes list above, (using tmp directory)
+    cat >"${LOG_DIR:?}"/read_mempool <<'EOF'
+#!/bin/bash
+# By Rainman
+# V20221303
+# 0.0.3.0
+source /usr/local/bin/include/pinode.conf 2>&1
+source /usr/local/bin/include/color 2>&1
+for (( ; ; )); do # loop script
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/wallet/data/date 2>/dev/null)
+"${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/client/tmp/getmempoolinfo 2>&1
+printf '%b' "${LOG_DATE:?} Status() Read.mempool() Memory pool $(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+# get blockchain activity with mempool
+if [[ "$(grep "size" "${LOG_DIR:?}"/node_data/client/getmempoolinfo 2>&1 | egrep -o "[0-9]+" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
+  # save activity values (1) to mempool.activity
+  echo "1" >>"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
+else # save no activity values (0) to mempool.activity
+  echo "0" >>"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
+fi
+sleep 28
+done
+EOF
+  fi
+
+  # start reading mempool
+  screen -S read_mempool -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/read_mempool\n'
+fi
 
 ### wallet information #########################################################
 
