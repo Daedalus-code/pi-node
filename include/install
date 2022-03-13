@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221303
-# 0.1.9.9
+# 0.2.0.0
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -194,6 +194,7 @@ ls -lSh /usr/local/bin/include/ 2>&1
 ls -lSh /usr/local/bin/ 2>&1 | egrep -o ".* pinode|.* update|total [0-9]+[Aa-Zz]+" 2>/dev/null
 rm "${LOG_DIR:?}"/read_* &>/dev/null
 rm "${LOG_DIR:?}"/add_* &>/dev/null
+killall screen &>/dev/null
 echo "${PLEASE:?}"
 
 # END
