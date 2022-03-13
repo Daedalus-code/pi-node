@@ -128,8 +128,8 @@ case $CHOICE in
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-      if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null)" -gt "$(cat "${WALLET_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
-        cp "${LOG_DIR:?}"/node_data/wallet/peers/failed "${WALLET_DIR:?}"/failed &>/dev/null
+      if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null)" -gt "$(cat "${DATA_DIR:?}"/failed 2>/dev/null)" ]] &>/dev/null; then
+        cp "${LOG_DIR:?}"/node_data/wallet/peers/failed "${DATA_DIR:?}"/failed &>/dev/null
       fi # only ask if wallet is not synced
       if ! grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced &>/dev/null; then
         read -r -p "[YN] Kill PID?, No for client stop! y/n " -n 1 -r
@@ -141,7 +141,7 @@ case $CHOICE in
       fi
       # normal shutdown
       printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
       # wait on node (daemon) to stop
       until ! pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
         clear
@@ -171,7 +171,7 @@ case $CHOICE in
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
       # stop wallet daemon
-      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
       killall "${WALLET_DAEMON:?}" &>/dev/null
       printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
 
@@ -180,15 +180,15 @@ case $CHOICE in
       # remove old files
       rm "${LOG_DIR:?}"/node_data/wallet/client/tmp/proc &>/dev/null
       rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
-      rm "${WALLET_DIR:?}"/getwan &>/dev/null
-      rm "${WALLET_DIR:?}"/getonion &>/dev/null
-      rm "${WALLET_DIR:?}"/wait &>/dev/null
+      rm "${DATA_DIR:?}"/getwan &>/dev/null
+      rm "${DATA_DIR:?}"/getonion &>/dev/null
+      rm "${DATA_DIR:?}"/wait &>/dev/null
 
       truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
       sleep 1
       # start node (daemon)
       printf '%b' "[${G1:?}Ok${N0:?}] "
-      "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
+      "${DATA_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
@@ -240,7 +240,7 @@ may report that the imported key exists but related transactions are still missi
       sleep 1
     else
       printf '%b' "[${R1:?}!!${GR:?}?${N0:?}] Please wait..! This call can take minutes to complete.\n"
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" importprivkey "${IMPORT_KEY:?}"
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" importprivkey "${IMPORT_KEY:?}"
       clear
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -262,7 +262,7 @@ Then the importprivkey can be used with this output
       sleep 1
     else
       echo "[!?] Please copy this!"
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" dumpprivkey "${DUMP_ADDRESS:?}"
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" dumpprivkey "${DUMP_ADDRESS:?}"
       clear
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -439,17 +439,17 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "6")
 
     # get wallet port, do this once
-    if [[ ! -f "${WALLET_DIR:?}"/wallet_port ]] &>/dev/null; then
+    if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
       printf '%b' "[??] Enter wallet Port ${G1:?}> ${N0:?}"
       read -r PORT
-      echo "${PORT:?}" >"${WALLET_DIR:?}"/wallet_port 2>&1
+      echo "${PORT:?}" >"${DATA_DIR:?}"/wallet_port 2>&1
       if [[ -z "$PORT" ]] &>/dev/null; then
         # empty, exit
         printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
         exit
       fi
     else
-      PORT="$(cat "${WALLET_DIR:?}"/wallet_port 2>/dev/null)"
+      PORT="$(cat "${DATA_DIR:?}"/wallet_port 2>/dev/null)"
     fi
 
     # delete ufw rules
@@ -467,17 +467,17 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   "7")
 
     # get wallet port, do this once
-    if [[ ! -f "${WALLET_DIR:?}"/wallet_port ]] &>/dev/null; then
+    if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
       printf '%b' "[??] Enter wallet Port ${G1:?}> ${N0:?}"
       read -r PORT
-      echo "${PORT:?}" >"${WALLET_DIR:?}"/wallet_port 2>&1
+      echo "${PORT:?}" >"${DATA_DIR:?}"/wallet_port 2>&1
       if [[ -z "$PORT" ]] &>/dev/null; then
         # empty, exit
         printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
         exit
       fi
     else
-      PORT="$(cat "${WALLET_DIR:?}"/wallet_port 2>/dev/null)"
+      PORT="$(cat "${DATA_DIR:?}"/wallet_port 2>/dev/null)"
     fi
 
     # set default ufw rules
@@ -722,9 +722,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo
       printline "Wallet" "${WALLET_VERSION:?}" "Headers/Blocks" "${WALLET_HEADS:?}/${WALLET_BLOCK:?}" "Repository" "${LATEST_HEAD:?} - ${LATEST_DATE:?}"
       printline "PID" "${PID_DAEMON:?}" "Connections" "${WALLET_PEERS_TOTAL:?} Unique ${UNIQP2P:?}" "Staking Status" "${NODE_PROOF:?}"
-      printline "Wallet Size" "$(du -sh "${WALLET_DIR:?}" | awk '{ print $1 }' 2>&1) ${WALLET_SYNC:?}" "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "Coin Supply" "${NODE_COIN_SUPPLY:?}"
-      printline "Backups Size" "$(du -sh "${WALLET_DIR:?}"/backups 2>&1 | awk '{ print $1 }' 2>&1)" "Add/Saved" "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" "Wallet Balance" "${WALLET_BALANCE:?} (${WALLET_INPUTS:?})"
-      printline "wallet.dat" "$(du -sh "${WALLET_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "Bans" "${WALLET_PEERS_BANNED:?}" "Wallet Value" "${WALLET_VALUE:?} USD"
+      printline "Wallet Size" "$(du -sh "${DATA_DIR:?}" | awk '{ print $1 }' 2>&1) ${WALLET_SYNC:?}" "Failed/Success" "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" "Coin Supply" "${NODE_COIN_SUPPLY:?}"
+      printline "Backups Size" "$(du -sh "${DATA_DIR:?}"/backups 2>&1 | awk '{ print $1 }' 2>&1)" "Add/Saved" "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)/$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" "Wallet Balance" "${WALLET_BALANCE:?} (${WALLET_INPUTS:?})"
+      printline "wallet.dat" "$(du -sh "${DATA_DIR:?}"/wallet.dat 2>&1 | awk '{ print $1 }' 2>&1)" "Bans" "${WALLET_PEERS_BANNED:?}" "Wallet Value" "${WALLET_VALUE:?} USD"
       echo
     )
     display_result "System Information"
@@ -1002,7 +1002,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
           printf '%b' "[${R1:?}!!${N0:?}] "
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
           # wait on node (daemon) to stop
           until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
             clear
@@ -1011,11 +1011,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
             kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
           done
           printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
-          yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
+          yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${DATA_DIR:?}" 2>&1
           rm "${LOG_DIR:?}"/unzip &>/dev/null
 
           # create lock file
-          echo "Bootstrap installed $(LC_ALL=de_US.utf8 date 2>&1)" >"${WALLET_DIR:?}"/boot
+          echo "Bootstrap installed $(LC_ALL=de_US.utf8 date 2>&1)" >"${DATA_DIR:?}"/boot
           read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
           echo
           if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -1112,7 +1112,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
       printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
       # wait on node (daemon) to stop
       until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
         clear
@@ -1121,7 +1121,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
       done
       printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
-      yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${WALLET_DIR:?}" 2>&1
+      yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${DATA_DIR:?}" 2>&1
       rm "${LOG_DIR:?}"/unzip &>/dev/null
       echo
       read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
@@ -1327,7 +1327,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
     read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
-    nano "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}"
+    nano "${DATA_DIR:?}"/"${WALLET_CONFIG:?}"
 
     ;;
 
@@ -1358,7 +1358,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "1")
 
-      if [[ "$(grep "successfully started" "${WALLET_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+      if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
         # already setup and running
         echo
         printf '%b' "[${G1:?}!?${N0:?}] Already setup and running!\n"
@@ -1371,66 +1371,66 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           # disable setautocombinethreshold & setstakesplitthreshold
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold false
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold 0
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold false
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold 0
         fi
       fi
 
       # get wallet port, do this once
-      if [[ ! -f "${WALLET_DIR:?}"/wallet_port ]] &>/dev/null; then
+      if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
         printf '%b' "[??] Enter wallet Port ${G1:?}> ${N0:?}"
         read -r PORT
-        echo "${PORT:?}" >"${WALLET_DIR:?}"/wallet_port 2>&1
+        echo "${PORT:?}" >"${DATA_DIR:?}"/wallet_port 2>&1
         if [[ -z "$PORT" ]] &>/dev/null; then
           # empty, exit
           printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
           exit
         fi
       else
-        PORT="$(cat "${WALLET_DIR:?}"/wallet_port 2>/dev/null)"
+        PORT="$(cat "${DATA_DIR:?}"/wallet_port 2>/dev/null)"
       fi
 
       printf '%b' "[${R1:?}!!${N0:?}] ${R1:?}Warning:${GR:?} This will use all available coins in wallet!${N0:?}\n"
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       clear
 
-      if [[ ! -f "${WALLET_DIR:?}"/masternode_collateral ]] &>/dev/null; then
+      if [[ ! -f "${DATA_DIR:?}"/masternode_collateral ]] &>/dev/null; then
         echo "Enter masternode collateral"
         read -r MASTERNODECO
         echo
-        echo "${MASTERNODECO:?}" >"${WALLET_DIR:?}"/masternode_collateral
+        echo "${MASTERNODECO:?}" >"${DATA_DIR:?}"/masternode_collateral
         if [[ -z "$MASTERNODECO" ]] &>/dev/null; then
           echo "empty!"
           exit
         fi
       fi
-      MASTERNODECO="$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" # masternode collateral
+      MASTERNODECO="$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" # masternode collateral
 
-      if [[ ! -f "${WALLET_DIR:?}"/masternode_address ]] &>/dev/null; then
+      if [[ ! -f "${DATA_DIR:?}"/masternode_address ]] &>/dev/null; then
         read -r -p "[YN] Create new masternode address? y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           # old guide - trumpcoin patriotnode -> https://github.com/trumpcoinsupport/TrumpCoin/wiki/Windows-Linux-Mac-Patriotnode-Setup-Guide
           # in the console window enter getnewaddress MN and copy the result.
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getnewaddress MN >"${WALLET_DIR:?}"/masternode_address
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getnewaddress MN >"${DATA_DIR:?}"/masternode_address
         fi
       else
-        MASTERNODE_ADDRESS=$(cat "${WALLET_DIR:?}"/masternode_address 2>/dev/null)
+        MASTERNODE_ADDRESS=$(cat "${DATA_DIR:?}"/masternode_address 2>/dev/null)
         printf '%b' "[${G1:?}Ok${N0:?}] ${CY:?}${MASTERNODE_ADDRESS:?}${N0:?} MN\n"
       fi
 
-      if [[ ! -f "${WALLET_DIR:?}"/masternode_address ]] &>/dev/null; then
+      if [[ ! -f "${DATA_DIR:?}"/masternode_address ]] &>/dev/null; then
         printf '%b' "[${R1:?}!!${N0:?}] No masternode ${CY:?}address${N0:?} found!\n"
         sleep 1
       else
 
         # keep masternode status updated
-        cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
+        cp "${DATA_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
 
         # get useable wallet balance
         WALLET_BALANCE=$(grep "amount:" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
         # get masternode address balance
-        MASTER_BALANCE=$(echo "$(grep -c "txhash" "${WALLET_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+        MASTER_BALANCE=$(echo "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
         if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
           # non responsive
@@ -1443,12 +1443,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
         if [[ ! "$MASTER_BALANCE" -eq "$MASTERNODECO" ]] &>/dev/null; then
           if [[ "$WALLET_BALANCE" -gt "$MASTERNODECO" ]] &>/dev/null; then
-            if [[ -f "${WALLET_DIR:?}"/masternode_address ]] &>/dev/null; then
+            if [[ -f "${DATA_DIR:?}"/masternode_address ]] &>/dev/null; then
               read -r -p "[YN] Send ${MASTERNODECO:?} coins to ${MASTERNODE_ADDRESS:?}? y/n " -n 1 -r
               echo
               if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
                 # this is your PATRIOTNODE DEPOSIT ADDRESS, where you will deposit ${masternodeco:?} coins to create a patriotnode
-                "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" sendtoaddress "${MASTERNODE_ADDRESS:?}" "${MASTERNODECO:?}"
+                "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" sendtoaddress "${MASTERNODE_ADDRESS:?}" "${MASTERNODECO:?}"
               fi
             fi
           else
@@ -1461,18 +1461,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
           printf '%b' "[${G1:?}Ok${N0:?}] Masternode ${CY:?}address${N0:?} has enough coins.\n"
         fi
 
-        if [[ ! -f "${WALLET_DIR:?}"/masternode_key ]] &>/dev/null; then
+        if [[ ! -f "${DATA_DIR:?}"/masternode_key ]] &>/dev/null; then
           read -r -p "[YN] Create new masternode key? y/n " -n 1 -r
           echo
           if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
             # in the fonsole debug window enter createpatriotnodekey - this is your PATRIOTNODE PRIVKEY.
-            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" createpatriotnodekey >"${WALLET_DIR:?}"/masternode_key
+            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" createpatriotnodekey >"${DATA_DIR:?}"/masternode_key
           fi
         else
-          printf '%b' "[${G1:?}Ok${N0:?}] ${CY:?}$(cat "${WALLET_DIR:?}"/masternode_key 2>/dev/null)${N0:?} Key\n"
+          printf '%b' "[${G1:?}Ok${N0:?}] ${CY:?}$(cat "${DATA_DIR:?}"/masternode_key 2>/dev/null)${N0:?} Key\n"
         fi
 
-        MASTERNODE_KEY="$(cat "${WALLET_DIR:?}"/masternode_key 2>/dev/null)"
+        MASTERNODE_KEY="$(cat "${DATA_DIR:?}"/masternode_key 2>/dev/null)"
 
         # create tor_wan script
         echo "curl -s https://api.myip.com >${WALLET_DIR:?}/tor_wan 2>&1" >"${LOG_DIR:?}"/wan_curl 2>&1
@@ -1496,8 +1496,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
             if [[ "$(grep ".onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
               EXTERNALIP=$(echo "$(grep "Got service" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1).onion" 2>&1)
             fi
-            if [[ "$(grep ".onion" "${WALLET_DIR:?}"/getonion 2>&1)" ]] &>/dev/null; then
-              EXTERNALIP=$(cat "${WALLET_DIR:?}"/getonion 2>/dev/null)
+            if [[ "$(grep ".onion" "${DATA_DIR:?}"/getonion 2>&1)" ]] &>/dev/null; then
+              EXTERNALIP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
             fi
 
             if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
@@ -1525,7 +1525,7 @@ server=1
 # masternode
 patriotnode=1
 
-patriotnodeaddr=$(cat "${WALLET_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?}
+patriotnodeaddr=$(cat "${DATA_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?}
 
 # masternode private key
 patriotnodeprivkey=${MASTERNODE_KEY:?}
@@ -1559,27 +1559,27 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
           read -r -p "[YN] Save new configuration? y/n " -n 1 -r
           echo
           if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-            mv "${LOG_DIR:?}"/wallet.conf.tmp "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" &>/dev/null
+            mv "${LOG_DIR:?}"/wallet.conf.tmp "${DATA_DIR:?}"/"${WALLET_CONFIG:?}" &>/dev/null
           fi
         fi
 
         read -t 2 -r -p "[YN] Get masternode outputs? y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          rm "${WALLET_DIR:?}"/masternode_outputs &>/dev/null
+          rm "${DATA_DIR:?}"/masternode_outputs &>/dev/null
         fi
 
-        if [[ ! -f "${WALLET_DIR:?}"/masternode_outputs ]] &>/dev/null; then
+        if [[ ! -f "${DATA_DIR:?}"/masternode_outputs ]] &>/dev/null; then
           # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${WALLET_DIR:?}"/masternode_outputs
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
         else
-          WALLET_TXHASH=$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
-          OUTPUT_IDX=$(cat "${WALLET_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
+          WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
+          OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
           printf '%b' "[${G1:?}Ok${N0:?}] txhash ${CY:?}$WALLET_TXHASH${N0:?}\n"
           printf '%b' "[${G1:?}Ok${N0:?}] outputidx ${CY:?}$OUTPUT_IDX${N0:?}\n"
         fi
 
-        if [[ ! -f "${WALLET_DIR:?}"/"${WALLET_MASTER:?}" ]] &>/dev/null; then
+        if [[ ! -f "${DATA_DIR:?}"/"${WALLET_MASTER:?}" ]] &>/dev/null; then
           read -r -p "[YN] Create new patriotnode configuration (overwriting)? y/n " -n 1 -r
           echo
           if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -1587,7 +1587,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
             echo
             if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
               # patriotnodename yourpublicip:${port:?} yourprivatekeygeneratedearlier txhash outputidx and replace patriotname, yourpublicip, yourprivatekeygeneratedearlier, txhash and outputidx.
-              echo "MN $(cat "${WALLET_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?} ${MASTERNODE_KEY:?} ${WALLET_TXHASH:?} ${OUTPUT_IDX:?}" >>"${WALLET_DIR:?}"/"${WALLET_MASTER:?}"
+              echo "MN $(cat "${DATA_DIR:?}"/tor_wan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?} ${MASTERNODE_KEY:?} ${WALLET_TXHASH:?} ${OUTPUT_IDX:?}" >>"${DATA_DIR:?}"/"${WALLET_MASTER:?}"
             fi
           fi
         fi
@@ -1598,7 +1598,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
           # stop wallet daemon
-          printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+          printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
           killall "${WALLET_DAEMON:?}" &>/dev/null
           printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
 
@@ -1606,14 +1606,14 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
           touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
           # remove old files
           rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
-          rm "${WALLET_DIR:?}"/getonion &>/dev/null
-          rm "${WALLET_DIR:?}"/getwan &>/dev/null
+          rm "${DATA_DIR:?}"/getonion &>/dev/null
+          rm "${DATA_DIR:?}"/getwan &>/dev/null
 
           truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
           sleep 1
           # start node (daemon)
           printf '%b' "[${G1:?}Ok${N0:?}] "
-          "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
+          "${DATA_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
           printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
         fi
         read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -1627,7 +1627,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
       printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
       read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
       clear
-      nano "${WALLET_DIR:?}"/"${WALLET_MASTER:?}"
+      nano "${DATA_DIR:?}"/"${WALLET_MASTER:?}"
 
       ;;
 
@@ -1638,9 +1638,9 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
         # greater than n seconds, continue
         if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
 
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${WALLET_DIR:?}"/masternode_status 2>/dev/null
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${DATA_DIR:?}"/masternode_status 2>/dev/null
           # keep masternode status updated
-          cp "${WALLET_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
+          cp "${DATA_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
 
           display_result() {
             dialog --title " TXHash $(grep "txhash" "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)" \
@@ -1652,7 +1652,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
             printf '%b' "Address $(grep "addr" "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus 2>&1 | grep -v "netaddr" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d ',|"' 2>&1)
 Message $(grep "message" "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2,$3,$4 }' 2>&1)
 Address $(grep "netaddr" "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }')
-Updated $(ls -l "${WALLET_DIR:?}"/masternode_status 2>&1 | awk '{ print $6,$7,$8 }' 2>&1 | tr -d '.' 2>&1)
+Updated $(ls -l "${DATA_DIR:?}"/masternode_status 2>&1 | awk '{ print $6,$7,$8 }' 2>&1 | tr -d '.' 2>&1)
 Outputidx $(grep "outputidx" "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)
 Status $(grep "status" "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus 2>&1 | tr -d ',|"' 2>&1 | awk '{ print $2 }' 2>&1)
 Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
@@ -1674,10 +1674,10 @@ Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ 
 
     "4")
 
-      MASTERNODECO="$(cat "${WALLET_DIR:?}"/masternode_collateral 2>/dev/null)" # masternode collateral
+      MASTERNODECO="$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" # masternode collateral
 
       display_result() {
-        dialog --title " Count $(egrep -c "[aA0-zZ9]+" "${WALLET_DIR:?}"/masternode_lock 2>&1) Collateral $(echo "$(egrep -c "[aA0-zZ9]+" "${WALLET_DIR:?}"/masternode_lock 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" \
+        dialog --title " Count $(egrep -c "[aA0-zZ9]+" "${DATA_DIR:?}"/masternode_lock 2>&1) Collateral $(echo "$(egrep -c "[aA0-zZ9]+" "${DATA_DIR:?}"/masternode_lock 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" \
           --no-collapse \
           --msgbox "$RESULT" 0 0
       }
@@ -1860,7 +1860,7 @@ Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ 
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-        mkdir "${WALLET_DIR:?}" &>/dev/null
+        mkdir "${DATA_DIR:?}" &>/dev/null
 
         # create random rpcuser & rpcpassword
         RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
@@ -1875,8 +1875,8 @@ Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ 
           if [[ "$(grep ".onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
             EXTERNALIP=$(echo "$(grep "Got service" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1).onion" 2>&1)
           fi
-          if [[ "$(grep ".onion" "${WALLET_DIR:?}"/getonion 2>&1)" ]] &>/dev/null; then
-            EXTERNALIP=$(cat "${WALLET_DIR:?}"/getonion 2>/dev/null)
+          if [[ "$(grep ".onion" "${DATA_DIR:?}"/getonion 2>&1)" ]] &>/dev/null; then
+            EXTERNALIP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
           fi
 
           if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
@@ -1919,9 +1919,9 @@ discover=1
 listenonion=1
 
 # Maximum number of inbound+outbound connections. (default: 125)
-maxconnections=${MAX_P2P:?}" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
+maxconnections=${MAX_P2P:?}" >"${DATA_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
 
-        mv "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp "${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" 2>&1
+        mv "${DATA_DIR:?}"/"${WALLET_CONFIG:?}".tmp "${DATA_DIR:?}"/"${WALLET_CONFIG:?}" 2>&1
         echo "[Ok] Installed new wallet configuration! -> ${WALLET_DIR:?}/${WALLET_CONFIG:?}"
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -1967,10 +1967,10 @@ maxconnections=${MAX_P2P:?}" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
         # get wallet port, do this once
-        if [[ ! -f "${WALLET_DIR:?}"/wallet_port ]] &>/dev/null; then
+        if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
           printf '%b' "[??] Enter wallet Port ${G1:?}> ${N0:?}"
           read -r PORT
-          echo "${PORT:?}" >"${WALLET_DIR:?}"/wallet_port 2>&1
+          echo "${PORT:?}" >"${DATA_DIR:?}"/wallet_port 2>&1
           if [[ -z "$PORT" ]] &>/dev/null; then
             # empty, exit
             printf '%b' "[${R1:?}!!${N0:?}] Empty, try again\n"
@@ -1979,7 +1979,7 @@ maxconnections=${MAX_P2P:?}" >"${WALLET_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
         fi
 
         sudo rm -R /var/lib/tor/"${WALLET_DAEMON:?}"-service/ &>/dev/null
-        sudo rm -R "${WALLET_DIR:?}"/getonion* &>/dev/null
+        sudo rm -R "${DATA_DIR:?}"/getonion* &>/dev/null
 
         # tor group, user configuration
         TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>/dev/null)
@@ -2040,12 +2040,12 @@ ${HIDDEN_SERVICE:?}
         printf '%b' "NEW=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)\n"
         printf '%b' "FILE=$(ls -lh /home/"$(whoami)"/addnodes 2>&1)\n"
         echo
-        printf '%b' "OLD=$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) - Wallet addnodes (backup)\n"
-        printf '%b' "FILE=$(ls -lh "${WALLET_DIR:?}"/addnodes 2>&1)\n"
-        truncate -s 0 "${WALLET_DIR:?}"/addnodes &>/dev/null
+        printf '%b' "OLD=$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) - Wallet addnodes (backup)\n"
+        printf '%b' "FILE=$(ls -lh "${DATA_DIR:?}"/addnodes 2>&1)\n"
+        truncate -s 0 "${DATA_DIR:?}"/addnodes &>/dev/null
         echo
-        printf '%b' "NEW=$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)\n"
-        printf '%b' "FILE=$(ls -lh "${WALLET_DIR:?}"/addnodes 2>&1)\n"
+        printf '%b' "NEW=$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)\n"
+        printf '%b' "FILE=$(ls -lh "${DATA_DIR:?}"/addnodes 2>&1)\n"
         echo
         printf '%b' "OLD=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | awk '{ print $1 }' 2>&1) - Peers failed\n"
         printf '%b' "FILE=$(ls -lh "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1)\n"
@@ -2132,8 +2132,8 @@ ${HIDDEN_SERVICE:?}
     if [[ "$(grep ".onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
       EXTERNALIP=$(echo "$(grep "Got service" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1).onion" 2>&1)
     fi
-    if [[ "$(grep ".onion" "${WALLET_DIR:?}"/getonion 2>&1)" ]] &>/dev/null; then
-      EXTERNALIP=$(cat "${WALLET_DIR:?}"/getonion 2>/dev/null)
+    if [[ "$(grep ".onion" "${DATA_DIR:?}"/getonion 2>&1)" ]] &>/dev/null; then
+      EXTERNALIP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
     fi
 
     read -r -p "[YN] Raw format (without dialog)? y/n " -n 1 -r
@@ -2145,7 +2145,7 @@ ${HIDDEN_SERVICE:?}
       clear
       # get proxy (tor) hostname with root
       sudo nano /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null
-      echo "$(cat "${WALLET_DIR:?}"/getonion 2>/dev/null)"
+      echo "$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)"
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
       echo
@@ -2185,15 +2185,15 @@ ${HIDDEN_SERVICE:?}
 
       # backup with wallet, backupwallet
       printf '%b' "[${Y1:?}!!${N0:?}] backupwallet, please wait!\n"
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" backupwallet "${WALLET_DIR:?}"/backups
-      printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh "${WALLET_DIR:?}"/backups/wallet.dat 2>/dev/null)\n"
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" backupwallet "${DATA_DIR:?}"/backups
+      printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh "${DATA_DIR:?}"/backups/wallet.dat 2>/dev/null)\n"
 
       # zip backups directory
       printf '%b' "[${Y1:?}!!${N0:?}] Zipping backup, please wait!\n"
       if [[ -f /home/"$(whoami)"/backup.zip ]] &>/dev/null; then
-        zip -r /home/"$(whoami)"/backup.zip "${WALLET_DIR:?}"/backups/*
+        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/backups/*
       else
-        zip -r /home/"$(whoami)"/backup.zip "${WALLET_DIR:?}"/backups/*
+        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/backups/*
       fi
       printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh /home/"$(whoami)"/backup.zip 2>/dev/null)\n"
       echo
@@ -2212,16 +2212,16 @@ ${HIDDEN_SERVICE:?}
 "7")
 
   # get total physical system memory, do this once
-  if [[ ! -f "${WALLET_DIR:?}"/swapinfo ]] &>/dev/null; then
-    echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)" 2>&1 | bc >"${WALLET_DIR:?}"/swapinfo 2>&1
+  if [[ ! -f "${DATA_DIR:?}"/swapinfo ]] &>/dev/null; then
+    echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)" 2>&1 | bc >"${DATA_DIR:?}"/swapinfo 2>&1
   fi
 
   if [[ ! -f /swapfile ]] &>/dev/null; then
 
     # if physical memory greater than n megabytes, don't install
-    if [[ "$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
+    if [[ "$(cat "${DATA_DIR:?}"/swapinfo 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
       # system has enough memory
-      printf '%b' "[${G1:?}Ok${N0:?}] System has enough sufficient memory ${G1:?}$(cat "${WALLET_DIR:?}"/swapinfo 2>/dev/null)MB${N0:?}\n"
+      printf '%b' "[${G1:?}Ok${N0:?}] System has enough sufficient memory ${G1:?}$(cat "${DATA_DIR:?}"/swapinfo 2>/dev/null)MB${N0:?}\n"
       # output memory, swap info
       echo
       sudo free -h
@@ -2445,7 +2445,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           printf '%b' "[${R1:?}!!${N0:?}] "
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
           # wait on node (daemon) to stop
           until ! pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
             clear
