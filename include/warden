@@ -32,7 +32,7 @@ fi
 if [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
   if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
     # make sure masternode runs
-    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
     cp "${DATA_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     cat "${DATA_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
@@ -59,12 +59,12 @@ if [[ ! "$(egrep "Wallet.Warden: Locking addr with .*$(tail -1 "${DATA_DIR:?}"/m
 
         while IFS= read -r LOCK; do
           # lock inputs with txid from masternode_lock list
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" lockunspent false "[{\"txid\":\"${LOCK:?}\",\"vout\":1}]" 2>&1
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" lockunspent false "[{\"txid\":\"${LOCK:?}\",\"vout\":1}]" 2>&1
           printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Locking addr with ${CY:?}${LOCK:?}${N0:?} txid${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
         done <"${DATA_DIR:?}"/masternode_lock 2>&1
 
         # listlockunspent
-        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" listlockunspent >"${LOG_DIR:?}"/node_data/wallet/client/listlockunspent 2>&1
+        "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" listlockunspent >"${LOG_DIR:?}"/node_data/wallet/client/listlockunspent 2>&1
 
         cp "${DATA_DIR:?}"/masternode_lock "${DATA_DIR:?}"/masternode_check &>/dev/null
       fi
