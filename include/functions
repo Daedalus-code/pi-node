@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221303
-# 1.0.6.0
+# 1.0.3.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.6.0"
+VERSION="v1.0.3.7"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -468,31 +468,8 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 fi
 
-# wait on wallet w random quotes
-# random start number
-RANDOM_QUOTES=$((((RANDOM % 10) + 1)))
-# quotes - art of the deal
-if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
-  TIMELINE="${GR}Think big${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "2" ] &>/dev/null; then
-  TIMELINE="${GR}Maximize your options${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "3" ] &>/dev/null; then
-  TIMELINE="${GR}Know your market${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "4" ] &>/dev/null; then
-  TIMELINE="${GR}Use your leverage${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "5" ] &>/dev/null; then
-  TIMELINE="${GR}Enhance your location${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "6" ] &>/dev/null; then
-  TIMELINE="${GR}Get the word out${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "7" ] &>/dev/null; then
-  TIMELINE="${GR}Fight back${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "8" ] &>/dev/null; then
-  TIMELINE="${GR}Deliver the goods${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "9" ] &>/dev/null; then
-  TIMELINE="${GR}Contain the costs${N0:?}"
-elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
-  TIMELINE="${GR}Have fun${N0:?}"
-fi
+# run random quotes or system timeline
+source /usr/local/bin/include/pinode/timeline
 
 LAST_LOG=$(tail -n 10 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -v "Status()" 2>&1 | tail -n 1 2>&1)
 LOG_SIZE=$(ls -lS --block-size=M "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | tr -d 'M' 2>&1)
