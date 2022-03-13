@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221303
-# 0.2.0.0
+# 0.2.0.2
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -194,7 +194,9 @@ ls -lSh /usr/local/bin/ 2>&1 | egrep -o ".* pinode|.* update|total [0-9]+[Aa-Zz]
 rm "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null
 rm "${LOG_DIR:?}"/read_* &>/dev/null
 rm "${LOG_DIR:?}"/add_* &>/dev/null
-killall screen &>/dev/null
+screen -X -S read_mempool quit &>/dev/null
+screen -X -S run_data quit &>/dev/null
+screen -X -S add_peers quit &>/dev/null
 echo "${PLEASE:?}"
 
 # END
