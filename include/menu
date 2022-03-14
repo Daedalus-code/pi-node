@@ -499,7 +499,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 "3")
 
   printf '%b' "${GR:?}Please Wait${N0:?}\n"
-  clear
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
 
@@ -712,6 +711,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         --msgbox "$RESULT" 0 0
     }
 
+    clear
     RESULT=$(
       echo
       printline "System" "$(uname -o 2>&1)" "Kernel" "$(uname -r 2>&1)" "Hardware" "$(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1 | awk '{ print $1,$2,$3 }' 2>&1)"
