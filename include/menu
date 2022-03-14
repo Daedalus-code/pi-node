@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221403
-# 2.5.5.9
+# 2.5.5.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -586,10 +586,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     CPU_CTEMP=$(echo "${CPU_CTEMP:?} / 100 * 0.1" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     CPU_FTEMP=$(echo "(1.8 * ${CPU_CTEMP:?}) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
-    # save lscpu values to lscpu, do this once
-    lscpu >"${LOG_DIR:?}"/node_data/system/lscpu
-    # get cpu count
-    CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
+    # do this once (cpu speed, wait time)
+    if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
+      lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
+    fi
+    # get cpu speed
+    if [[ ! -f "${LOG_DIR:?}"/node_data/system/cpuspeed ]] &>/dev/null; then
+      cat "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' 2>&1 | awk -F, '{ print $1 }' >"${LOG_DIR:?}"/node_data/system/cpuspeed 2>&1
+    fi
 
     # get cpu count
     CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
@@ -677,12 +681,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     MEMPOOL_ACTIVITY_USAGE=$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmempoolinfo 2>/dev/null | grep "usage" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     MEMPOOL_ACTIVITY_POOL_MIN_FEE=$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmempoolinfo 2>/dev/null | grep "mempoolminfee" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
     MEMPOOL_ACTIVITY_MIN_RELAY_TX_FEE=$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmempoolinfo 2>/dev/null | grep "minrelaytxfee" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
-
-    # do this once (cpu speed, wait time)
-    if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
-      lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
-      cat "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' 2>&1 | awk -F, '{ print $1 }' >"${LOG_DIR:?}"/node_data/system/cpuspeed 2>&1
-    fi
 
     # communication port
     COM=$(awk '{ print $3 }' "${LOG_DIR:?}"/node_data/com 2>/dev/null)
