@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221503
-# 1.0.4.2
+# 1.0.4.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.4.2"
+VERSION="v1.0.4.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1016,7 +1016,17 @@ fi
 ### clean up ###################################################################
 
 if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/reward_count &>/dev/null
+  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/stake_count &>/dev/null
+  truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+  truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
+  truncate -s 0 "${DATA_DIR:?}"/rewards &>/dev/null
+  truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
+fi
 
+### restore failed list ########################################################
+
+if [[ ! "$(grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
   # use old failed list as a continuation to the next day, ruled by -lines above
   if [[ "$(wc -l "${DATA_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     # add failed peers (failed.tmp) back in to debug.log
@@ -1030,13 +1040,6 @@ if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/
     RANDOM_FAILED=$((((RANDOM % 1440) + 128)))
     echo "$(tail -"${RANDOM_FAILED:?}" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | grep -v "${DIS_LOCAL:?}" 2>&1)" 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/failed 2>&1
   fi
-
-  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/reward_count &>/dev/null
-  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/stake_count &>/dev/null
-  truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
-  truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
-  truncate -s 0 "${DATA_DIR:?}"/rewards &>/dev/null
-  truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
 fi
 
 # END
