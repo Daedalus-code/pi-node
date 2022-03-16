@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221503
-# 1.0.4.6
+# V20221603
+# 1.0.5.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.4.6"
+VERSION="v1.0.5.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -597,28 +597,34 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
 
   ### reward indicator #########################################################
 
-  if [[ "$(wc -l "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2369" ]] &>/dev/null; then
-    if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
-      if [[ "$(tail -120 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep "AddToWallet .*  new" 2>&1)" ]] &>/dev/null; then
-        if [[ ! "$(tail -60 "${WALLET_LOG_DIR:?}"/debug.log | grep -A20 -B20 "AddToWallet .*  new" 2>&1 | egrep "CreateCoinStake|CreateNewBlock|CPUMiner|BitcoinMiner|AutoCombineDust|CTransaction|generated|Proof-of-Stake" 2>&1)" ]] &>/dev/null; then
-          egrep "AddToWallet .*  new" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/rewards 2>&1
+  # max rewards a day
+  MAX_REWARDS=$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>&1)
+
+  if [[ "$MAX_REWARDS" -lt "$(grep -c "AddToWallet" "${DATA_DIR:?}"/rewards 2>&1)" ]] &>/dev/null; then
+
+    if [[ "$(wc -l "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2369" ]] &>/dev/null; then
+      if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
+        if [[ "$(tail -120 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep "AddToWallet .*  new" 2>&1)" ]] &>/dev/null; then
+          if [[ ! "$(tail -60 "${WALLET_LOG_DIR:?}"/debug.log | grep -A20 -B20 "AddToWallet .*  new" 2>&1 | egrep "CreateCoinStake|CreateNewBlock|CPUMiner|BitcoinMiner|AutoCombineDust|CTransaction|generated|Proof-of-Stake" 2>&1)" ]] &>/dev/null; then
+            egrep "AddToWallet .*  new" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/rewards 2>&1
+          fi
         fi
-      fi
 
-      cat "${DATA_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/data/rewards 2>/dev/null
-      if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/rewards)))")" -lt "5460" ]] &>/dev/null; then
-        WALLET_TXLAST="${C1:?}$(tail -1 "${DATA_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
-        CB="${C1:?}"
-        CBR_IND="1"
+        cat "${DATA_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/data/rewards 2>/dev/null
+        if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/rewards)))")" -lt "5460" ]] &>/dev/null; then
+          WALLET_TXLAST="${C1:?}$(tail -1 "${DATA_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
+          CB="${C1:?}"
+          CBR_IND="1"
 
-        # false positive
-        if [[ ! -s "${DATA_DIR:?}"/rewards ]] &>/dev/null; then
-          WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-          CB="${GR:?}"
+          # false positive
+          if [[ ! -s "${DATA_DIR:?}"/rewards ]] &>/dev/null; then
+            WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
+            CB="${GR:?}"
+            CBS_IND="3"
+          fi
+        else
           CBS_IND="3"
         fi
-      else
-        CBS_IND="3"
       fi
     fi
   fi
