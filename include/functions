@@ -477,7 +477,7 @@ fi
 # run random quotes or system timeline
 source /usr/local/bin/include/pinode/timeline
 
-LAST_LOG=$(tail -n 21 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -v "Status()" 2>&1 | tail -n 1 2>&1)
+LAST_LOG=$(tail -n 42 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -v "Status()" 2>&1 | tail -n 1 2>&1)
 LOG_SIZE=$(ls -lS --block-size=M "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | tr -d 'M' 2>&1)
 LAST_LOG="${N0:?}${LAST_LOG:0:188} log=${LOG_SIZE:?}M${N0:?}"
 
