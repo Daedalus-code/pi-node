@@ -598,7 +598,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
   ### reward indicator #########################################################
 
   # max rewards a day
-  MAX_REWARDS=$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>&1)
+  MAX_REWARDS=$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
   if [[ "$MAX_REWARDS" -lt "$(grep -c "AddToWallet" "${DATA_DIR:?}"/rewards 2>&1)" ]] &>/dev/null; then
 
