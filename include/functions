@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221603
+# V20221703
 # 1.0.5.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -600,7 +600,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
   # max rewards a day
   MAX_REWARDS=$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
-  if [[ "$MAX_REWARDS" -lt "$(grep -c "AddToWallet" "${DATA_DIR:?}"/rewards 2>&1)" ]] &>/dev/null; then
+  if [[ "$MAX_REWARDS" -gt "$(grep -c "AddToWallet" "${DATA_DIR:?}"/rewards 2>&1)" ]] &>/dev/null; then
 
     if [[ "$(wc -l "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2369" ]] &>/dev/null; then
       if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
