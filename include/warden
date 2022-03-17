@@ -2,7 +2,9 @@
 
 # By Rainman
 # V20221703
-# 0.1.6.6
+# 0.1.7.9
+
+# shellcheck disable=SC2034  # Unused variables left for readability
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -149,16 +151,27 @@ SCREEN_ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check 2>
 
 # kill time jump
 if [[ "$SCREEN_CALC_P2P" -gt "42" ]] &>/dev/null; then
-  rm "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null
-  screen -X -S add_peers quit &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script. (time jump)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  SESSION_NAME="add_peers"
+  screen -ls "${SESSION_NAME:?}" 2>&1 | (
+    IFS=$(printf '\t' 2>&1)
+    sed "s/^$IFS//" 2>&1 |
+      while read -r NAME stuff &>/dev/null; do
+        screen -S "${NAME:?}" -X quit &>/dev/null
+      done
+  )
 fi
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2" ]] &>/dev/null; then
   # kill old screen session (max 30 seconds on average for each connection attempt)
   if [[ "$SCREEN_CALC_P2P" -gt "$(echo "${SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-    rm "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null
-    screen -X -S add_peers quit &>/dev/null
+    SESSION_NAME="add_peers"
+    screen -ls "${SESSION_NAME:?}" 2>&1 | (
+      IFS=$(printf '\t' 2>&1)
+      sed "s/^$IFS//" 2>&1 |
+        while read -r NAME stuff &>/dev/null; do
+          screen -S "${NAME:?}" -X quit &>/dev/null
+        done
+    )
     printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
