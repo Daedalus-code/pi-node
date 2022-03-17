@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221703
-# 1.0.5.3
+# V20221803
+# 1.0.5.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.5.3"
+VERSION="v1.0.5.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -723,6 +723,10 @@ fi
 
 ### rrdtool graphs #############################################################
 
+if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+  truncate -s 0 "${DATA_DIR:?}"/diff.lock &>/dev/null
+fi
+
 if [[ "$GRAPH_STATS" -eq "1" ]] &>/dev/null; then
   source /usr/local/bin/include/pinode/stats
 fi
@@ -1031,7 +1035,6 @@ if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/
   truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/reward_count &>/dev/null
   truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/stake_count &>/dev/null
   truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
-  truncate -s 0 "${DATA_DIR:?}"/diff.lock &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/rewards &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
