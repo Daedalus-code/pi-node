@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221803
-# 1.0.5.6
+# V20221903
+# 1.0.4.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.5.6"
+VERSION="v1.0.4.4"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -48,18 +48,6 @@ until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1" &>/dev/null; do
   RANDOM_PID=$((((RANDOM % "${RANDOM_ID:?}") + 1)))
   clear
   printf '%b' "waiting on wallet (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..${N0:?}"
-  if [[ -f /usr/local/bin/"${WALLET_DAEMON:?}" ]] &>/dev/null; then
-    printf '%b' "[${G1:?}Ok${N0:?}] found daemon! \n"
-  else
-    printf '%b' "[${GR:?}??${N0:?}] no daemon installed! \n"
-    printf '%b' "[${R1:?}->${N0:?}] ${GR:?}/usr/local/bin/${CY:?}${WALLET_DAEMON:?}${GR:?}\n"
-  fi
-  if [[ -f /usr/local/bin/"${WALLET_CLIENT:?}" ]] &>/dev/null; then
-    printf '%b' "[${G1:?}Ok${N0:?}] found client! \n"
-  else
-    printf '%b' "[${GR:?}??${N0:?}] no client installed! \n"
-    printf '%b' "[${R1:?}->${N0:?}] ${GR:?}/usr/local/bin/${CY:?}${WALLET_CLIENT:?}${GR:?}\n"
-  fi
   sleep 2
 done
 
