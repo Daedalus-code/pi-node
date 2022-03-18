@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221903
-# 1.0.4.4
+# 1.0.4.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.0.4.4"
+VERSION="v1.0.4.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -506,6 +506,7 @@ if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1
   source /usr/local/bin/include/pinode/proc 2>&1
   if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
     SYNC_PROGRESS_BAR="${CY:?}       Loading${N0:?}"
+    grep "Sync has finished" "${WALLET_LOG_DIR:?}"/debug.log >"${LOG_DIR:?}"/node_data/wallet/synced 2>&1
   fi
   WALLET_TXLAST="${G0:?}${SYNC_PROGRESS_BAR:?}${N0:?}"
   loading
