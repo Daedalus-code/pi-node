@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221903
-# 2.5.5.7
+# 2.5.5.3
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -809,8 +809,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-        # old wallets
-        mkdir /home/"$(whoami)"/Wallet.old &>/dev/null
         # wallet directory
         mkdir /home/"$(whoami)"/Wallet &>/dev/null
 
@@ -834,8 +832,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         fi
 
         # setup node wallet
-        cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip &>/dev/null
-        yes "A" 2>&1 | sudo unzip -j /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /usr/local/bin 2>&1
+        yes "A" 2>&1 | sudo unzip -j /home/"$(whoami)"/"${UNAME_FILE:?}" -d /usr/local/bin 2>&1
         rm "${LOG_DIR:?}"/unzip &>/dev/null
       fi
     }
@@ -993,7 +990,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-      mkdir /home/"$(whoami)"/Wallet.old &>/dev/null
+      # wallet directory
       mkdir /home/"$(whoami)"/Wallet &>/dev/null
 
       function bootstrap() {
@@ -1059,8 +1056,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           # setup wallet daemon
-          cp /home/"$(whoami)"/"${UNAME_FILE:?}" /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip &>/dev/null
-          yes "A" 2>&1 | sudo unzip -j /home/"$(whoami)"/Wallet.old/"${LATEST_VERSION:?}"_"${UNAME_SYSTEM:?}".zip -d /usr/local/bin 2>&1
+          yes "A" 2>&1 | sudo unzip -j /home/"$(whoami)"/"${UNAME_FILE:?}" -d /usr/local/bin 2>&1
           rm "${LOG_DIR:?}"/unzip &>/dev/null
         fi
       }
