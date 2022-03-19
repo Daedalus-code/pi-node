@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221903
-# 1.0.4.9
+# 1.0.6.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -778,12 +778,27 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   rm "${LOG_DIR:?}"/addnodes.ipv6 &>/dev/null
   rm "${LOG_DIR:?}"/addnodes.dns &>/dev/null
 
+  # add extras from personal addnodes
+  cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.x >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null
+  # remove duplicates, sort
+  cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/peers.clean 2>&1
+  mv "${LOG_DIR:?}"/node_data/wallet/peers/peers.clean "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp &>/dev/null
+
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding personal +$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/peers.x 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  # remove file, now old
+  rm "${LOG_DIR:?}"/node_data/wallet/peers/peers.x* &>/dev/null
+
+  cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
+  # make sure addnodes is clean of successfully peers, as above as below
+  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success "${LOG_DIR:?}"/node_data/wallet/peers/add_peers >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
+  cp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
+
   # kill old session
-  screen -X -S run_data quit &>/dev/null
+  screen -X -S add_peers quit &>/dev/null
   # create screen session
-  screen -dmS run_data &>/dev/null
+  screen -dmS add_peers &>/dev/null
   # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
-  timeout 1800 screen -S run_data -X -p 0 stuff $'bash /usr/local/bin/include/pinode/data\n'
+  timeout 900 screen -S add_peers -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
 fi
 
 ### calculate average price and volume #########################################
