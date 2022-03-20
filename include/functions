@@ -721,7 +721,7 @@ if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/updates)))")" -lt 
   cat "${DATA_DIR:?}"/updates 2>/dev/null | awk '!a[$0]++' >"${DATA_DIR:?}"/updates.tmp 2>&1
   mv "${DATA_DIR:?}"/updates.tmp "${DATA_DIR:?}"/updates &>/dev/null
   WALLET_TXLAST="${Y1:?}$(cat "${DATA_DIR:?}"/updates 2>/dev/null | awk '{ print $3 }' 2>&1)${N0:?}"
-  if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+  if [[ ! -s "${DATA_DIR:?}"/updates ]] &>/dev/null; then
     WALLET_TXLAST="${Y1:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
   fi
   CB="${Y1:?}"
