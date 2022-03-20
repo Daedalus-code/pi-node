@@ -718,16 +718,16 @@ fi
 
 if [[ "$(tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "update" 2>&1)" ]] &>/dev/null; then
   tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "update" >>"${DATA_DIR:?}"/updates 2>&1
-  if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/updates)))")" -lt "5460" ]] &>/dev/null; then
-    cat "${DATA_DIR:?}"/updates 2>/dev/null | awk '!a[$0]++' >"${DATA_DIR:?}"/updates.tmp 2>&1
-    mv "${DATA_DIR:?}"/updates.tmp "${DATA_DIR:?}"/updates &>/dev/null
-    if [[ ! "$(grep "update" "${DATA_DIR:?}"/updates 2>&1)" ]] &>/dev/null; then
-      WALLET_TXLAST="${Y1:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
-    else
-      WALLET_TXLAST="${Y1:?}$(cat "${DATA_DIR:?}"/updates 2>/dev/null | awk '{ print $3 }' 2>&1)${N0:?}"
-    fi
-    CB="${Y1:?}"
+fi
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/updates)))")" -lt "5460" ]] &>/dev/null; then
+  cat "${DATA_DIR:?}"/updates 2>/dev/null | awk '!a[$0]++' >"${DATA_DIR:?}"/updates.tmp 2>&1
+  mv "${DATA_DIR:?}"/updates.tmp "${DATA_DIR:?}"/updates &>/dev/null
+  if [[ ! "$(grep "update" "${DATA_DIR:?}"/updates 2>&1)" ]] &>/dev/null; then
+    WALLET_TXLAST="${Y1:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
+  else
+    WALLET_TXLAST="${Y1:?}$(cat "${DATA_DIR:?}"/updates 2>/dev/null | awk '{ print $3 }' 2>&1)${N0:?}"
   fi
+  CB="${Y1:?}"
 fi
 
 ### rrdtool graphs #############################################################
