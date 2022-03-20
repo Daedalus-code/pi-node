@@ -721,7 +721,7 @@ if [[ "$(tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "update" 2>&1)" ]
   cat "${DATA_DIR:?}"/updates 2>/dev/null | awk '!a[$0]++' 2>&1 | sed -e '/^$/d' >"${DATA_DIR:?}"/updates.tmp 2>&1
   mv "${DATA_DIR:?}"/updates.tmp "${DATA_DIR:?}"/updates &>/dev/null
 fi
-if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/updates)))")" -lt "210" ]] &>/dev/null; then
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/updates)))")" -lt "360" ]] &>/dev/null; then
   if [[ ! "$(grep "update" "${DATA_DIR:?}"/updates 2>&1)" ]] &>/dev/null; then
     WALLET_TXLAST="${Y1:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
   else
