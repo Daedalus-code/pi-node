@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222003
-# 1.1.1.2
+# 1.1.1.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.1.2"
+VERSION="v1.1.1.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -721,7 +721,7 @@ if [[ "$(tail -100 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "update" 2>&1)" ]
   cat "${DATA_DIR:?}"/updates 2>/dev/null | awk '!a[$0]++' 2>&1 | sed -e '/^$/d' >"${DATA_DIR:?}"/updates.tmp 2>&1
   mv "${DATA_DIR:?}"/updates.tmp "${DATA_DIR:?}"/updates &>/dev/null
 fi
-if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/updates)))")" -lt "360" ]] &>/dev/null; then
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/updates)))")" -lt "600" ]] &>/dev/null; then
   if [[ ! "$(grep "update" "${DATA_DIR:?}"/updates 2>&1)" ]] &>/dev/null; then
     WALLET_TXLAST="${Y1:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
   else
@@ -1078,25 +1078,14 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/requests* &>/dev/null
 fi
 
-### clean up ###################################################################
+### restore failed list ########################################################
 
 if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
-
   DIS_LOCAL=$(echo "$(cat "${LOG_DIR:?}"/node_data/system/ip_address 2>/dev/null)" 2>&1 | egrep -o "[0-9]+" 2>&1 | head -1 2>&1)
   # keep last n of failed connections
   RANDOM_FAILED=$((((RANDOM % 1440) + 128)))
   echo "$(tail -"${RANDOM_FAILED:?}" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | grep -v "${DIS_LOCAL:?}" 2>&1)" 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/failed 2>&1
-
-  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/reward_count &>/dev/null
-  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/stake_count &>/dev/null
-  truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
-  truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
-  truncate -s 0 "${DATA_DIR:?}"/rewards &>/dev/null
-  truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
-  truncate -s 0 "${DATA_DIR:?}"/updates &>/dev/null
 fi
-
-### restore failed list ########################################################
 
 if [[ ! "$(grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
   # use old failed list as a continuation to the next day, ruled by -lines above
@@ -1104,9 +1093,21 @@ if [[ ! "$(grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>
     # add failed peers (failed.tmp) back in to debug.log
     while IFS= read -r ADDS; do
       echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    done <"${DATA_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -R 2>&1
+    done <"${DATA_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1
     printf '%b' "${LOG_DATE:?} Status() Clean.Backup() Restoring old failed list, failed.tmp +$(wc -l "${DATA_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
+fi
+
+### clean up ###################################################################
+
+if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/reward_count &>/dev/null
+  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/stake_count &>/dev/null
+  truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+  truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
+  truncate -s 0 "${DATA_DIR:?}"/updates &>/dev/null
+  truncate -s 0 "${DATA_DIR:?}"/rewards &>/dev/null
+  truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
 fi
 
 # END
