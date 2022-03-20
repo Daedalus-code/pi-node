@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221103
-# 0.5.2.5
+# V20222003
+# 0.5.2.7
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
@@ -168,10 +168,12 @@ if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/d
     --end now --start end-"${GRAPH_TIME:?}" \
     DEF:rewards=/home/"$(whoami)"/stats/rewards.rrd:rewards:MAX \
     DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
+    DEF:paycount=/home/"$(whoami)"/stats/masternode_pay.rrd:paycount:MAX \
     GPRINT:rewards:LAST:%.0lf\ "${REW_GPRINT:?}" \
     GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
     AREA:rewards#779CFF:"Rewards" \
-    LINE2:stakes#FFDC77:"Stakes"
+    LINE2:stakes#FFDC77:"Stakes" \
+    LINE2:rewards#779CFF
 else
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
     -w 400 -h 160 -a PNG \
