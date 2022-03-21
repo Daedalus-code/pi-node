@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222003
+# V20222103
 # 0.5.2.7
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
@@ -173,7 +173,7 @@ if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/d
     GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
     AREA:rewards#779CFF:"Rewards" \
     LINE2:stakes#FFDC77:"Stakes" \
-    LINE2:rewards#779CFF
+    LINE2:paycount#779CFF
 else
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
     -w 400 -h 160 -a PNG \
