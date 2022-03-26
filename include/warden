@@ -33,7 +33,7 @@ fi
 
 if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &>/dev/null; then
   if [[ ! "$(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-    if [[ "$(grep "Masternode shuccessfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+    if [[ ! "$(grep "Masternode shuccessfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
       cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
       cat "${DATA_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
