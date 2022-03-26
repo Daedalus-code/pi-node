@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222603
-# 0.1.9.3
+# 0.1.9.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -35,6 +35,7 @@ if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &
   if [[ ! "$(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
     if [[ ! "$(grep "Masternode successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
       cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
+      grep "started" "${DATA_DIR:?}"/masternode_status >"${DATA_DIR:?}"/masternode_started 2>&1
       cat "${DATA_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
