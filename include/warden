@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222603
-# 0.1.8.9
+# 0.1.9.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -33,14 +33,18 @@ fi
 
 if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &>/dev/null; then
   if [[ ! "$(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-    if [[ ! "$(grep "Masternode shuccessfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+    if [[ ! "$(grep "Masternode successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
       cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
       cat "${DATA_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 
+  if [[ "$(grep "started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
+  fi
+
   if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/masternode_status)))")" -gt "369" ]] &>/dev/null; then
-    if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log) ]] &>/dev/null; then
+    if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1) ]] &>/dev/null; then
       # make sure masternode runs
       printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
