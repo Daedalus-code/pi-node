@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222603
-# 1.1.2.8
+# 1.2.0.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.2.8"
+VERSION="v1.2.0.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -749,6 +749,83 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 
   # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
   timeout 1800 screen -S run_data -X -p 0 stuff $'bash /usr/local/bin/include/pinode/data\n'
 fi
+
+### coingecko price, volume ####################################################
+
+cat >"${LOG_DIR:?}"/add_cg <<'EOF'
+#!/bin/bash
+
+# By Rainman
+# V20221103
+# 0.0.3.3
+
+source /usr/local/bin/include/pinode/pinode.conf
+source /usr/local/bin/include/pinode/color
+
+# date for logs
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
+
+printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Fetching CoinGecko API data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+# remove requests
+truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cg
+
+for (( ; ; )); do # loop until success
+
+  clear
+  torify curl -o "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'${COING_API:?}'/market_chart?vs_currency='${EXCHA_API:?}'&days='$days'' -H 'accept: application/json' &>/dev/null
+
+  sleep 2
+  echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
+
+  if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko &>/dev/null; then
+    echo "success" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cg 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} requests\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    killall curl &>/dev/null
+    exit
+  fi
+
+done
+EOF
+
+### coinmarketcap price, volume, rank, watchlist ###############################
+
+cat >"${LOG_DIR:?}"/add_cmc <<'EOF'
+#!/bin/bash
+
+# By Rainman
+# V20221103
+# 0.0.3.4
+
+source /usr/local/bin/include/pinode/pinode.conf
+source /usr/local/bin/include/pinode/color
+
+# date for logs
+LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
+
+printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Fetching CoinMarketCap API data!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+# remove requests
+truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cmc
+
+for (( ; ; )); do # loop until success
+
+  clear
+  URL="https://coinmarketcap.com/currencies/${COINM_API:?}/"
+  torify curl -s -L "$URL" 2>&1 | html2text >"${LOG_DIR:?}"/node_data/wallet/data/raw.coinmcap 2>&1
+
+  sleep 2
+  echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
+
+  if grep "freed" "${LOG_DIR:?}"/node_data/wallet/data/raw.coinmcap &>/dev/null; then
+    echo "success" >>"${LOG_DIR:?}"/node_data/requests.cmc 2>&1
+    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cmc 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} requests\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    killall curl &>/dev/null
+    exit
+  fi
+
+done
+EOF
 
 ### personal addnodes ##########################################################
 
