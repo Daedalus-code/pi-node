@@ -231,7 +231,7 @@ else # use existing data without any errors
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/listunspent "${LOG_DIR:?}"/node_data/wallet/client/listunspent &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getpeerinfo "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/listbanned "${LOG_DIR:?}"/node_data/wallet/client/listbanned &>/dev/null
-  cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodestatus "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null && cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
+  cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodestatus "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount &>/dev/null
 fi
 
