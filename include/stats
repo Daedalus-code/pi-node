@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222303
-# 0.6.0.4
+# V20222603
+# 0.6.0.8
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -362,6 +362,10 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
   rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.* | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>&1)" 2>/dev/null
 
   ### auto pos grinding #################################################### ###
+
+  if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+    rm "${DATA_DIR:?}"/diff.lock &>/dev/null
+  fi
 
   if [[ "${AUTO_POS:?}" -gt "0" ]] &>/dev/null; then
     # get average difficulty value with auto pos config
