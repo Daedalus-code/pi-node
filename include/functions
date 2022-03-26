@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222603
-# 1.1.2.6
+# 1.1.3.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.2.6"
+VERSION="v1.1.3.0"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -840,6 +840,10 @@ echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/dat
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1 | awk '{ print $1 }' 2>&1)" -gt "3600" ]] &>/dev/null; then
   echo "$(tail -900 "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1
+fi
+
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1 | awk '{ print $1 }' 2>&1)" -gt "3600" ]] &>/dev/null; then
+  echo "$(tail -900 "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1
 fi
 
 ### backup values coingecko ####################################################
