@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222603
-# 0.1.8.8
+# 0.1.9.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -32,9 +32,11 @@ fi
 ## masternode status ###########################################################
 
 if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &>/dev/null; then
-  if [[ ! "$(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log)" ]] &>/dev/null; then
-    cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
-    cat "${DATA_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  if [[ ! "$(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+    if [[ "$(grep "Masternode shuccessfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+      cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
+      cat "${DATA_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    fi
   fi
 
   if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/masternode_status)))")" -gt "369" ]] &>/dev/null; then
