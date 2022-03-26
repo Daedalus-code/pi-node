@@ -838,12 +838,12 @@ VOLUME_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1 | awk 
 echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1)/${TICKER_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
 echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1)/${VOLUME_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
 
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1 | awk '{ print $1 }' 2>&1)" -gt "3600" ]] &>/dev/null; then
-  echo "$(tail -900 "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1 | awk '{ print $1 }' 2>&1)" -gt "360" ]] &>/dev/null; then
+  echo "$(tail -90 "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1
 fi
 
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1 | awk '{ print $1 }' 2>&1)" -gt "3600" ]] &>/dev/null; then
-  echo "$(tail -900 "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1 | awk '{ print $1 }' 2>&1)" -gt "360" ]] &>/dev/null; then
+  echo "$(tail -90 "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1
 fi
 
 ### backup values coingecko ####################################################
