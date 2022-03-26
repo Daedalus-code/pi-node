@@ -32,7 +32,7 @@ fi
 ## masternode status ###########################################################
 
 if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &>/dev/null; then
-  if [[ ! "$(grep "Masternode successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+  if [[ ! "$(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
     echo "${LOG_DATE:?} $(grep "started" "${DATA_DIR:?}"/masternode_status 2>&1)" 2>&1 | xargs >"${DATA_DIR:?}"/masternode_started 2>&1
     cat "${DATA_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
