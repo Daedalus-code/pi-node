@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222603
-# 1.1.3.0
+# 1.1.2.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.3.0"
+VERSION="v1.1.2.8"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -808,12 +808,10 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success "${LOG_DIR:?}"/node_data/wallet/peers/add_peers >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
   cp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
 
-  # kill old session
-  screen -X -S add_peers quit &>/dev/null
   # create screen session
-  screen -dmS add_peers &>/dev/null
+  screen -dmS add_peers_extra &>/dev/null
   # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
-  timeout 900 screen -S add_peers -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
+  timeout 900 screen -S add_peers_extra -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
 fi
 
 ### calculate average price and volume #########################################
