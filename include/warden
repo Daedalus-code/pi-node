@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222603
-# 0.1.9.0
+# 0.1.8.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -44,9 +44,8 @@ if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &
       # make sure masternode runs
       printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-      cat "${DATA_DIR:?}"/masternode_status >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
       printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      cp "${DATA_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
+      cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
     fi
   fi
 fi
