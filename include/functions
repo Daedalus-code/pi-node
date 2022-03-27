@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222703
-# 1.2.6.6
+# 1.2.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.6.6"
+VERSION="v1.2.6.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -471,10 +471,6 @@ source /usr/local/bin/include/pinode/timeline
 LAST_LOG=$(tail -n 42 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep -v "Status()" 2>&1 | tail -n 1 2>&1)
 LOG_SIZE=$(ls -lS --block-size=M "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | tr -d 'M' 2>&1)
 LAST_LOG="${N0:?}${LAST_LOG:0:188} log=${LOG_SIZE:?}M${N0:?}"
-
-if [[ "$LOG_SIZE" -gt "10" ]] &>/dev/null; then
-  truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
-fi
 
 ### wallet boot/sync progress ##################################################
 
