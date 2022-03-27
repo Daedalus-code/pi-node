@@ -776,7 +776,7 @@ LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&
 
 while IFS= read -r ADDS; do
   cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" addnode "$ADDS" onetry 2>&1
-done <"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | shuf 2>&1 | grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | egrep -v "127." 2>&1 | awk '!a[$0]++' 2>&1
+done <"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | shuf 2>&1 | grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | egrep -v "127.|::1|::128" 2>&1 | awk '!a[$0]++' 2>&1
 
 P2P=$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | egrep "[0-9]+" 2>&1 | tail -1 2>&1)
 FAILED=$(grep " to $(cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check 2>/dev/null) failed" "$WALLET_LOG_DIR"/debug.log 2>&1 | egrep -o " to .*. failed" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
