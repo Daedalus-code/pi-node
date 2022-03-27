@@ -927,7 +927,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   rm "${LOG_DIR:?}"/addnodes.dns &>/dev/null
 
   # add extras from personal addnodes
-  cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.x >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null
+  cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.x 2>/dev/null | egrep -v "127.|::1|::128" >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null
   # remove duplicates, sort
   cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/peers.clean 2>&1
   mv "${LOG_DIR:?}"/node_data/wallet/peers/peers.clean "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp &>/dev/null
@@ -936,10 +936,10 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   # remove file, now old
   rm "${LOG_DIR:?}"/node_data/wallet/peers/peers.x* &>/dev/null
 
-  cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
+  cp "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
   # make sure addnodes is clean of successfully peers, as above as below
   grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success "${LOG_DIR:?}"/node_data/wallet/peers/add_peers >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
-  cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>/dev/null | egrep -v "127.|::1|::128" >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
+  mv "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null
 
   # create screen session
   screen -dmS add_peers_extra &>/dev/null
