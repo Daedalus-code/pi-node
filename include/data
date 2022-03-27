@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222603
-# 0.4.0.1
+# V20222703
+# 0.4.0.3
 
 # shellcheck disable=SC2154
 
@@ -392,7 +392,9 @@ truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr &>/dev/null
 screen -dmS add_peers &>/dev/null
 
 # create temp and backup list for connection check
-cp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check &>/dev/null
+cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | egrep -v "127.|::1|::128" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
+mv "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check &>/dev/null
+cp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
 
 # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
 # start adding nodes, inside screen session (timeout n seconds)

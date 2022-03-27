@@ -939,7 +939,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
   # make sure addnodes is clean of successfully peers, as above as below
   grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success "${LOG_DIR:?}"/node_data/wallet/peers/add_peers >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
-  cp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
+  cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>/dev/null | egrep -v "127.|::1|::128" >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
 
   # create screen session
   screen -dmS add_peers_extra &>/dev/null
