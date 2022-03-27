@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222703
-# 0.2.1.0
+# 0.2.0.8
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -166,10 +166,8 @@ sudo cp -R /home/"$(whoami)"/pi-node/include/helpme /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/menu /usr/local/bin/ &>/dev/null
 echo "# wait on node (daemon) to start
 until pidof ${WALLET_DAEMON:?} 2>&1 | wc -w 2>&1 | egrep 1 &>/dev/null; do
-  RANDOM_ID=$((((RANDOM % 9999) + 1)))
-  RANDOM_PID=$((((RANDOM % ${RANDOM_ID:?}) + 1)))
   clear
-  printf '%b' waiting on wallet (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..${N0:?}
+  printf '%b' waiting on wallet daemon..
   sleep 2
 done
 clear && tail -f ${WALLET_LOG_DIR:?}/debug.log" >/tmp/log.tmp 2>/dev/null
