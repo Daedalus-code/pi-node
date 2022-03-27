@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221303
-# 0.2.0.2
+# V20222703
+# 0.2.1.0
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -164,7 +164,15 @@ sudo cp -R /home/"$(whoami)"/pi-node/pinode /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/update /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/helpme /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/menu /usr/local/bin/ &>/dev/null
-echo "clear && tail -f ${WALLET_LOG_DIR:?}/debug.log" >/tmp/log.tmp 2>/dev/null
+echo "# wait on node (daemon) to start
+until pidof ${WALLET_DAEMON:?} 2>&1 | wc -w 2>&1 | egrep 1 &>/dev/null; do
+  RANDOM_ID=$((((RANDOM % 9999) + 1)))
+  RANDOM_PID=$((((RANDOM % ${RANDOM_ID:?}) + 1)))
+  clear
+  printf '%b' waiting on wallet (${GR:?}${RANDOM_PID:?}${N0:?}) daemon..${N0:?}
+  sleep 2
+done
+clear && tail -f ${WALLET_LOG_DIR:?}/debug.log" >/tmp/log.tmp 2>/dev/null
 sudo mv /tmp/log.tmp /usr/local/bin/log &>/dev/null
 
 sudo chmod +x /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/helpme /usr/local/bin/menu /usr/local/bin/log 2>&1
