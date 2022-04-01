@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220104
-# 0.5.0.6
+# 0.5.1.1
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -366,6 +366,7 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
     else
       POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
     fi
+
     if [[ -z "$POS_LIMIT" ]] &>/dev/null; then
       # non responsive
       POS_LIMIT="1440"
@@ -394,6 +395,10 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
 
     # continue if lock is missing
     if [ ! -f "${DATA_DIR:?}"/diff.lock ] &>/dev/null; then
+
+      if [[ -z "$DIFF_AVG" ]] &>/dev/null; then
+        DIFF_AVG="0"
+      fi
 
       printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
