@@ -382,15 +382,15 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
     # get total confirmations from inputs that are above the con_diff
     TOTAL_CONF_ABOVE=$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1)
 
-    # update total confirmations above threshold
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"${TOTAL_CONF_ABOVE:?}" 2>/dev/null
-    # get total average confirmations
-    CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-
     if [[ -z "$TOTAL_CONF_ABOVE" ]] &>/dev/null; then
       # no inputs below config
       TOTAL_CONF_ABOVE="0"
     fi
+
+    # update total confirmations above threshold
+    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"${TOTAL_CONF_ABOVE:?}" 2>/dev/null
+    # get total average confirmations
+    CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     # continue if lock is missing
     if [ ! -f "${DATA_DIR:?}"/diff.lock ] &>/dev/null; then
