@@ -845,7 +845,7 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   timeout 900 screen -S add_peers_extra -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
 fi
 
-### make backup of successfully connections ####################################
+### create list of connected peers #############################################
 
 if [ ! -f "${WALLET_DIR:?}"/addnodes ] &>/dev/null; then
   # make sure addnodes file exist
