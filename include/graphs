@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220104
-# 0.5.2.2
+# 0.4.8.9
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
@@ -431,32 +431,6 @@ function avgconfirmation_auto_one() {
     LINE1:set_auto_con#FFFFFF
 }
 
-function avgconfirmation_auto_two() {
-  # total avg confirmations
-  rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 160 -a PNG \
-    --slope-mode \
-    --vertical-label "Wallet Total AVG TX" \
-    --alt-autoscale-max --lower-limit=1 \
-    --color BACK#565875 \
-    --color FONT#FFFFFF \
-    --color CANVAS#42445F \
-    --color GRID#565875 \
-    --color FRAME#565875 \
-    --color SHADEA#565875 \
-    --color SHADEB#565875 \
-    --end now --start end-"${GRAPH_TIME:?}" \
-    DEF:total_tx=/home/"$(whoami)"/stats/total_tx.rrd:total_tx:MAX \
-    DEF:set_auto_con=/home/"$(whoami)"/stats/set_auto_con.rrd:set_auto_con:MAX \
-    GPRINT:total_tx:LAST:%.0lf\ Now \
-    GPRINT:set_auto_con:LAST:%.0lf\ APL \
-    GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
-    GPRINT:total_tx:MAX:%.0lf\ Max \
-    GPRINT:total_tx:MIN:%.0lf\ Min \
-    AREA:total_tx#3C79A9 \
-    LINE1:set_auto_con#FFFFFF
-}
-
 function difficulty_normal() {
   # difficulty
   rrdtool graph /var/www/html/difficulty_graph.png \
@@ -504,16 +478,9 @@ function avgconfirmation_normal() {
 }
 
 # auto proof-of-stake config
-if [[ "$AUTO_POS" -gt "0" ]] &>/dev/null; then
+if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
+  avgconfirmation_auto_one
   difficulty_auto
-  # auto proof-of-stake config, normal
-  if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
-    avgconfirmation_auto_one
-  fi
-  # auto proof-of-stake config, extra
-  if [[ "$AUTO_POS" -eq "2" ]] &>/dev/null; then
-    avgconfirmation_auto_two
-  fi
 else # no auto proof-of-stake config
   difficulty_normal
   avgconfirmation_normal
