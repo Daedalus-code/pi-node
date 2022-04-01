@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220104
-# 1.2.2.0
+# 1.2.2.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.2.0"
+VERSION="v1.2.2.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -431,6 +431,7 @@ echo "${WALLET_VALUE:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2
 echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1 | awk '{ print $1 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 >"${LOG_DIR:?}"/node_data/wallet/data/balance_value 2>&1
 # keep average
 cat "${LOG_DIR:?}"/node_data/wallet/data/balance_value >>"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
+echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>/dev/null | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }')" >"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1 | awk '{ print $1 }' 2>&1)" -gt "420" ]] &>/dev/null; then
   echo "$(tail -180 "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
