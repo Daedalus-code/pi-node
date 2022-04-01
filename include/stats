@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220104
-# 0.5.8.7
+# 0.5.0.7
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -341,8 +341,8 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
   rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/coingecko.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/coinmarketcap.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/price_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.* | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.* | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/price_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>&1 | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>&1 | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>&1)" 2>/dev/null
 
   ### auto pos grinding #################################################### ###
 
@@ -350,147 +350,16 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
     rm "${DATA_DIR:?}"/diff.lock &>/dev/null
   fi
 
-  if [[ "${AUTO_POS:?}" -gt "0" ]] &>/dev/null; then
-    # get average difficulty value with auto pos config
-    rrdtool info /home/"$(whoami)"/stats/difficulty.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>&1
-  else
-    # get average difficulty value normally
-    echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>&1
-  fi
-
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "600" ]] &>/dev/null; then
 
-    # get difficulty average
-    DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
+      # get average difficulty value with auto pos config
+      rrdtool info /home/"$(whoami)"/stats/difficulty.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>&1
 
-    echo "${POS_LIMIT:?}" >"${LOG_DIR:?}"/node_data/wallet/client/pos_limit 2>&1
-
-    if [[ "${AUTO_POS:?}" -gt "0" ]] &>/dev/null; then
-
-      # get total average confirmations
-      CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }')
-      # get autocombine threshold (apc)
-      CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }')
-
-      # get total confirmations from inputs that are above the con_diff
-      TOTAL_CONF_ABOVE=$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1)
-
-      function save_auto_pos_values() {
-        # save auto proof-of-stake values
-        echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)
-Auto PoS Configuration
-ConfirmationsAVG.: $CONF_AVG
-ConfigThreshold..: $CON_DIFF
-DifficultyAVG....: $(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1)
-$(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)" >"${DATA_DIR:?}"/auto_pos 2>&1
-      }
-
-      if [[ ! -f "${DATA_DIR:?}"/auto_pos ]] &>/dev/null; then
-        # make sure auto_pos exist
-        save_auto_pos_values
-      fi
-
-      # interval reading with date:time
-      if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0001" 2>&1)" ]] &>/dev/null; then
-        save_auto_pos_values
-      fi
-
-      if [[ -z "$TOTAL_CONF_ABOVE" ]] &>/dev/null; then
-        # no inputs below config
-        TOTAL_CONF_ABOVE="0"
-      fi
-
-      # continue if lock is missing
-      if [ ! -f "${DATA_DIR:?}"/diff.lock ] &>/dev/null; then
-
-        printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
-        # calculate an indicater for var pos_limit
-        echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>&1
-
-        if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
-          # got inputs (high enough to make several)
-          # get new pos limit (apl)
-          # ruled by configuration (default 1440)
-          POS_LIMIT="${POS_LIMIT:?}"
-        else
-          # got input (too low to make several)
-          # get new pos limit (apl)
-          # ruled by input size + average difficulty (disregard configuration)
-          echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null)/$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/ind_pos.tmp 2>&1
-          # do
-          echo "1/$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos.tmp 2>/dev/null)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/lim_pos.tmp
-          # some
-          echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos.tmp 2>/dev/null)*${POS_LIMIT:?}" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/lim_pos
-          # mental gymnastics (calculations)
-          # get new pos limit that works better for the small solo input
-          # will be higher than 1440 (1day) if average difficulty is bigger than the input itself
-          POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos 2>/dev/null)
-          # remove old files
-          rm "${LOG_DIR:?}"/node_data/wallet/data/*.tmp &>/dev/null
-        fi
-
-        # total average confirmations greater than limit set, continue
-        if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
-
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${R1:?}High!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script New Input count with new config -> ${G1:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          sleep 1
-
-          # set when synced 100%
-          if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
-
-            # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
-            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold true "$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" &>/dev/null
-            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold "$(echo "$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" &>/dev/null
-
-          fi
-
-          sleep 1
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold -> ${G1:?}$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold -> ${G1:?}$(echo "$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        else
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${G1:?}OK!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-        fi
-        # create lock file
-        echo "${CON_DIFF:?}" >"${DATA_DIR:?}"/diff.lock
-      fi
+      # get difficulty average
+      DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     fi
-  else # non responsive, use backup values
-
-    function save_auto_pos_values() {
-      # save auto proof-of-stake values
-      echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)
-Auto PoS Configuration
-ConfirmationsAVG.: $CONF_AVG
-ConfigThreshold..: $CON_DIFF
-DifficultyAVG....: $(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1)
-$(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)" >"${DATA_DIR:?}"/auto_pos 2>&1
-    }
-
-    if [[ -f "${DATA_DIR:?}"/auto_pos ]] &>/dev/null; then
-      CONF_AVG="$(grep "ConfirmationsAVG" "${DATA_DIR:?}"/auto_pos 2>&1 | awk '{ print $2 }' 2>&1)"
-      CON_DIFF="$(grep "ConfigThreshold" "${DATA_DIR:?}"/auto_pos 2>&1 | awk '{ print $2 }' 2>&1)"
-      DIFF_AVG="$(grep "DifficultyAVG" "${DATA_DIR:?}"/auto_pos 2>&1 | awk '{ print $2 }' 2>&1)"
-      TOTAL_CONF_ABOVE="0"
-    else # non responsive
-      CONF_AVG="0"
-      CON_DIFF="0"
-      DIFF_AVG="0"
-      TOTAL_CONF_ABOVE="0"
-      save_auto_pos_values
-    fi
-  fi
-
-  if [[ -z "$CON_DIFF" ]] &>/dev/null; then
-    # non responsive
-    CON_DIFF="0"
-  fi
-
-  ### auto pos config 2 #################################################### ###
-
-  if [[ "$AUTO_POS" -eq "2" ]] &>/dev/null; then
 
     if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
       POS_LIMIT="$(cat "${LOG_DIR:?}"/node_data/wallet/client/pos_limit 2>/dev/null | awk -F. '{ print $1 }' 2>&1)"
@@ -502,31 +371,82 @@ $(LC_ALL=de_US.utf8 date +%s 2>&1)$(LC_ALL=de_US.utf8 date +%s 2>&1 | rev 2>&1)"
       POS_LIMIT="1440"
     fi
 
-    # get amount of inputs, disregard with var not_pos_input value, disregard negative symbol
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"${TOTAL_CONF_ABOVE:?}" 2>/dev/null
+    # update pos limit
     rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}" 2>/dev/null
-  fi
 
-  ### auto pos config 1 #################################################### ###
+    # save pos_limit
+    echo "${POS_LIMIT:?}" >"${LOG_DIR:?}"/node_data/wallet/client/pos_limit 2>&1
 
-  if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
+    # get total confirmations from inputs that are above the con_diff
+    TOTAL_CONF_ABOVE=$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1)
 
-    if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
-      POS_LIMIT="$(cat "${LOG_DIR:?}"/node_data/wallet/client/pos_limit 2>/dev/null)"
-    else
-      POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos 2>/dev/null)
+    # update total confirmations above threshold
+    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"${TOTAL_CONF_ABOVE:?}" 2>/dev/null
+    # get total average confirmations
+    CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+    # get autocombine threshold (apc)
+    CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }')
+
+    if [[ -z "$TOTAL_CONF_ABOVE" ]] &>/dev/null; then
+      # no inputs below config
+      TOTAL_CONF_ABOVE="0"
     fi
 
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_confirmations 2>/dev/null)" 2>&1 | bc 2>&1)/$(echo "$(grep "address" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
-  fi
+    # continue if lock is missing
+    if [ ! -f "${DATA_DIR:?}"/diff.lock ] &>/dev/null; then
 
-  if [[ "$AUTO_POS" -eq "0" ]] &>/dev/null; then
-    # original normal values
-    rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_confirmations 2>/dev/null)/$(grep "address" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | wc -l 2>&1)" 2>&1 | bc 2>&1)" 2>/dev/null
-  fi
+      printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-  rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}" 2>/dev/null
+      # calculate an indicater for var pos_limit
+      echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>&1
+
+      if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
+        # got inputs (high enough to make several)
+        # get new pos limit (apl)
+        # ruled by configuration (default 1440)
+        POS_LIMIT="${POS_LIMIT:?}"
+      else
+        # got input (too low to make several)
+        # get new pos limit (apl)
+        # ruled by input size + average difficulty (disregard configuration)
+        echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null)/$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/ind_pos.tmp 2>&1
+        # do
+        echo "1/$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos.tmp 2>/dev/null)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/lim_pos.tmp
+        # some
+        echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos.tmp 2>/dev/null)*${POS_LIMIT:?}" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/lim_pos
+        # mental gymnastics (calculations)
+        # get new pos limit that works better for the small solo input
+        # will be higher than 1440 (1day) if average difficulty is bigger than the input itself
+        POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos 2>/dev/null)
+        # remove old files
+        rm "${LOG_DIR:?}"/node_data/wallet/data/*.tmp &>/dev/null
+      fi
+
+      # total average confirmations greater than limit set, continue
+      if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
+
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${R1:?}High!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script New Input count with new config -> ${G1:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        sleep 1
+
+        # set when synced 100%
+        if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
+          # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold true "$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" &>/dev/null
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold "$(echo "$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" &>/dev/null
+        fi
+
+        sleep 1
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold -> ${G1:?}$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold -> ${G1:?}$(echo "$(echo "${DIFF_AVG:?}*0.70" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      else
+        printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${G1:?}OK!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      fi
+      # create lock file
+      echo "${CON_DIFF:?}" >"${DATA_DIR:?}"/diff.lock
+    fi
+  fi
 fi
 
 #### create index.php ##########################################################

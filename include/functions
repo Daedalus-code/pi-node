@@ -30,7 +30,7 @@ mkdir "${LOG_DIR:?}"/node_data/wallet/client/tmp &>/dev/null
 
 ### configuration version ###################################################### <- config check
 
-CONFIG_DATE="1647648101" # configuration latest date (date '+%s')
+CONFIG_DATE="1648818142" # configuration latest date (date '+%s')
 
 if [[ ! "$(grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode/pinode.conf 2>&1)" ]] &>/dev/null; then
   until grep "${CONFIG_DATE:?}" /usr/local/bin/include/pinode/pinode.conf &>/dev/null; do
