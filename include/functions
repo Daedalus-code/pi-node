@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222703
+# V20220104
 # 1.2.6.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -428,8 +428,8 @@ echo "${WALLET_VALUE:?}" >"${LOG_DIR:?}"/node_data/wallet/data/balance_value 2>&
 WALLET_POS_REWARDS="Stakes ${WALLET_POS:?}"
 WALLET_INPUTS_NODES="Inputs ${WALLET_INPUTS:?}"
 
-if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
-  WALLET_REW="$(cat "${DATA_DIR:?}"/rewards 2>&1 | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' | wc -l 2>&1)"
+if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+  WALLET_REW="$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>/dev/null)"
   WALLET_MAS_OUTPUT="$(grep -c "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)"
   WALLET_POS_REWARDS="PoS/R ${WALLET_POS:?} ${CY:?}${WALLET_REW:?}${N0:?}"
   WALLET_INPUTS_NODES="I/MN ${WALLET_INPUTS:?} ${CY:?}${WALLET_MAS_OUTPUT:?}${N0:?}"
