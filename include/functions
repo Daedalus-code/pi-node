@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220104
-# 1.2.1.8
+# 1.2.2.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.1.8"
+VERSION="v1.2.2.0"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -429,9 +429,11 @@ WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 |
 echo "${WALLET_VALUE:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
 # calculate average wallet value
 echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1 | awk '{ print $1 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 >"${LOG_DIR:?}"/node_data/wallet/data/balance_value 2>&1
+# keep average
+cat "${LOG_DIR:?}"/node_data/wallet/data/balance_value >>"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1 | awk '{ print $1 }' 2>&1)" -gt "420" ]] &>/dev/null; then
-  echo "$(tail -369 "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
+  echo "$(tail -180 "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
 fi
 
 WALLET_POS_REWARDS="Stakes ${WALLET_POS:?}"
