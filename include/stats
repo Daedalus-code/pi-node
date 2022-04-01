@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220104
-# 0.5.1.7
+# 0.5.1.9
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -374,7 +374,9 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
           POS_LIMIT="1440"
         fi
 
-        # update pos limit
+        # update proof-of-stake threshold
+        rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" 2>/dev/null
+        # update proof-of-stake limit
         rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}" 2>/dev/null
 
         # save pos_limit
