@@ -170,8 +170,8 @@ if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/d
     DEF:paycount=/home/"$(whoami)"/stats/masternode_pay.rrd:paycount:MAX \
     GPRINT:paycount:LAST:%.2lf\ "${REW_GPRINT:?}" \
     GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
-    LINE2:stakes#FFDC77:"Stakes" \
-    LINE1:paycount#779CFF
+    AREA:paycount#779CFF \
+    LINE2:stakes#FFDC77:"Stakes"
 else
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
     -w 400 -h 160 -a PNG \
