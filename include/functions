@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220104
-# 1.2.0.9
+# 1.2.1.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.0.9"
+VERSION="v1.2.1.0"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -625,6 +625,7 @@ fi
 
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
+  loading
 fi
 
 ### wallet starting ############################################################
