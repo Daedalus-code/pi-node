@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222603
-# 0.6.0.8
+# V20220104
+# 0.5.9.9
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -169,14 +169,6 @@ if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ] &>/dev/null; then
   rrdtool create /home/"$(whoami)"/stats/stakes.rrd \
     --step=60 \
     DS:stakes:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
-fi
-# rewards
-if [ ! -f "/home/$(whoami)/stats/rewards.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating rewards.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  rrdtool create /home/"$(whoami)"/stats/rewards.rrd \
-    --step=60 \
-    DS:rewards:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
 # inputs
@@ -348,7 +340,6 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
   rrdtool update /home/"$(whoami)"/stats/watchlist.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/value.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/balance_value 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(cat "${DATA_DIR:?}"/staking 2>&1 | grep "BitcoinMiner" 2>&1 | awk '!a[$0]++' | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/rewards.rrd N:"$(cat "${DATA_DIR:?}"/rewards 2>&1 | grep "AddToWallet" 2>&1 | awk '!a[$0]++' | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | tail -1 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/peers_proto.rrd N:"$(grep "addr:" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | egrep -v "getaddr|onion|127" 2>&1 | awk '{ print $2 }' 2>&1 | egrep -v "[a-z]+" 2>&1 | wc -l 2>&1)":"$(egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | sed -r '/^.{,8}$/d' 2>&1 | wc -l 2>&1)":"$(grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | grep -v ".onion" 2>&1 | wc -l 2>&1)":"$(egrep -o "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | wc -l 2>&1)":"$(grep "127.0.0.1" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | wc -l 2>&1)" 2>/dev/null

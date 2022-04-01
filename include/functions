@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220104
-# 1.2.6.9
+# 1.1.5.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.6.9"
+VERSION="v1.1.5.8"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -554,158 +554,47 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
   echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_payout)*$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/masternode_payvalue 2>&1
 fi
 
-### masternode rewards #########################################################
+### staking ####################################################################
 
-if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
-
-  if [[ ! -s "${LOG_DIR:?}"/node_data/wallet/data/reward_count ]] &>/dev/null; then
-    echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/reward_count 2>&1
-  fi
-
-  if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
-    if [[ "$(egrep "AddToWallet .*  new" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-      if [[ "$(grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent)" ]] &>/dev/null; then
-        if grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent &>/dev/null; then
-          grep -A2 "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/data/masternode_confirmations 2>&1
-        fi
-      fi
-    else
-      echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/masternode_confirmations &>/dev/null
-    fi
-
-    WALLET_REWARDS=$(cat "${DATA_DIR:?}"/rewards 2>&1 | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    SAVED_REWARDS=$(cat "${LOG_DIR:?}"/node_data/wallet/data/rewards 2>&1 | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-
-    if [[ "$(cat "${DATA_DIR:?}"/rewards 2>&1 | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' | wc -l 2>&1)" -gt "$(cat "${LOG_DIR:?}"/node_data/wallet/data/reward_count 2>/dev/null)" ]] &>/dev/null; then
-      egrep "AddToWallet .*  new" "${DATA_DIR:?}"/rewards 2>&1 | awk '!a[$0]++' 2>&1 | wc -l >"${LOG_DIR:?}"/node_data/wallet/data/reward_count 2>&1
-    fi
-
-    if [[ "$WALLET_REWARDS" -gt "$SAVED_REWARDS" ]] &>/dev/null; then
-      cat "${DATA_DIR:?}"/rewards 2>/dev/null | egrep "AddToWallet .*  new" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/data/rewards 2>&1
-      printf '%b' "${LOG_DATE:?} Status() Saved - - - -> ${G1:?}${WALLET_REWARDS:?}${GR:?} :: ${N0:?}Reward Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
-  fi
-
-  ### reward indicator #########################################################
-
-  # max rewards a day
-  MAX_REWARDS=$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>&1 | awk -F. '{ print $1 }' 2>&1)
-
-  if [[ "$MAX_REWARDS" -gt "$(grep -c "AddToWallet" "${DATA_DIR:?}"/rewards 2>&1)" ]] &>/dev/null; then
-
-    if [[ "$(wc -l "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2369" ]] &>/dev/null; then
-      if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
-        if [[ "$(tail -120 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep "AddToWallet .*  new" 2>&1)" ]] &>/dev/null; then
-          if [[ ! "$(tail -420 "${WALLET_LOG_DIR:?}"/debug.log | grep -A20 -B20 "AddToWallet .*  new" 2>&1 | egrep "CreateCoinStake|CreateNewBlock|CPUMiner|BitcoinMiner|AutoCombineDust|CTransaction|generated|Proof-of-Stake" 2>&1)" ]] &>/dev/null; then
-            egrep "AddToWallet .*  new" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/rewards 2>&1
-          fi
-        fi
-
-        cat "${DATA_DIR:?}"/rewards 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/data/rewards 2>/dev/null
-        if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/rewards)))")" -lt "5460" ]] &>/dev/null; then
-          WALLET_TXLAST="${C1:?}$(tail -1 "${DATA_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
-          CB="${C1:?}"
-          CBR_IND="1"
-
-          # false positive
-          if [[ ! -s "${DATA_DIR:?}"/rewards ]] &>/dev/null; then
-            WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-            CB="${GR:?}"
-            CBS_IND="3"
-          fi
-        else
-          CBS_IND="3"
-        fi
-      fi
-    fi
-  fi
-
-  ### staking rewards ##########################################################
-
-  if [[ ! -s "${LOG_DIR:?}"/node_data/wallet/data/stake_count ]] &>/dev/null; then
-    echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/stake_count 2>&1
-  fi
-
-  if [[ -z "$WALLET_POS" ]] &>/dev/null; then
-    WALLET_POS="0"
-  fi
-
-  if [ ! -f "${DATA_DIR:?}"/staking ] &>/dev/null; then
-    touch "${DATA_DIR:?}"/staking &>/dev/null
-  fi
-
-  if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/staking ]] &>/dev/null; then
-    touch "${LOG_DIR:?}"/node_data/wallet/data/staking &>/dev/null
-  fi
-
-  WALLET_POS=$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
-  SAVED_POS=$(grep -c "BitcoinMiner" "${DATA_DIR:?}"/staking 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  echo "${WALLET_POS:?}" >"${LOG_DIR:?}"/node_data/wallet/data/stake_count 2>&1
-
-  if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
-    grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/staking 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Saved - - - -> ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-
-  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/staking 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep -c "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1)" ]] &>/dev/null; then
-    grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/data/staking 2>&1
-  fi
-
-  ### proof of stake indicator #################################################
-
-  if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/staking)))")" -lt "5460" ]] &>/dev/null; then
-    WALLET_TXLAST="${G1:?}$(tail -1 "${DATA_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
-    CB="${G1:?}"
-    CBS_IND="1"
-
-    # false positive
-    if [[ ! -s "${DATA_DIR:?}"/staking ]] &>/dev/null; then
-      WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-      CB="${GR:?}"
-      CBS_IND="4"
-    fi
-  else
-    CBS_IND="4"
-  fi
-
-  ### stake and reward indicator ###############################################
-
-  if [[ "$CBR_IND" -eq "$CBS_IND" ]] &>/dev/null; then
-
-    RANDOM_CB=$((((RANDOM % 2) + 1)))
-
-    if [[ "$RANDOM_CB" -eq "1" ]] &>/dev/null; then
-      WALLET_TXLAST="${G1:?}$(tail -1 "${DATA_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
-      CB="${G1:?}"
-
-      # false positive
-      if [[ ! -s "${DATA_DIR:?}"/staking ]] &>/dev/null; then
-        WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-        CB="${GR:?}"
-      fi
-    fi
-    if [[ "$RANDOM_CB" -eq "2" ]] &>/dev/null; then
-      WALLET_TXLAST="${C1:?}$(tail -1 "${DATA_DIR:?}"/rewards 2>/dev/null | awk '{ print $3 }' 2>/dev/null)${N0:?}"
-      CB="${C1:?}"
-
-      # false positive
-      if [[ ! -s "${DATA_DIR:?}"/rewards ]] &>/dev/null; then
-        WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
-        CB="${GR:?}"
-      fi
-    fi
-  fi
+if [[ ! -s "${LOG_DIR:?}"/node_data/wallet/data/stake_count ]] &>/dev/null; then
+  echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/stake_count 2>&1
 fi
 
-if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
-  WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
+if [[ -z "$WALLET_POS" ]] &>/dev/null; then
+  WALLET_POS="0"
 fi
 
-# clean up rewards
-if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/rewards)))")" -lt "1" ]] &>/dev/null; then
-  cat "${DATA_DIR:?}"/rewards 2>&1 | grep -v "update" >"${DATA_DIR:?}"/rewards.tmp 2>&1
-  mv "${DATA_DIR:?}"/rewards.tmp "${DATA_DIR:?}"/rewards &>/dev/null
+if [ ! -f "${DATA_DIR:?}"/staking ] &>/dev/null; then
+  touch "${DATA_DIR:?}"/staking &>/dev/null
 fi
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/staking ]] &>/dev/null; then
+  touch "${LOG_DIR:?}"/node_data/wallet/data/staking &>/dev/null
+fi
+
+WALLET_POS=$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
+SAVED_POS=$(grep -c "BitcoinMiner" "${DATA_DIR:?}"/staking 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+echo "${WALLET_POS:?}" >"${LOG_DIR:?}"/node_data/wallet/data/stake_count 2>&1
+
+if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
+  grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/staking 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Saved - - - -> ${G1:?}${WALLET_POS:?}${GR:?} :: ${N0:?}Proof-of-Stake Data!${GR:?} :: ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
+
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/staking 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(grep -c "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1)" ]] &>/dev/null; then
+  grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/data/staking 2>&1
+fi
+
+### proof of stake indicator ###################################################
+
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/staking)))")" -lt "5460" ]] &>/dev/null; then
+  WALLET_TXLAST="${G1:?}$(tail -1 "${DATA_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
+  CB="${G1:?}"
+  CBS_IND="1"
+else
+  CBS_IND="4"
+fi
+
 # clean up staking
 if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/staking)))")" -lt "1" ]] &>/dev/null; then
   cat "${DATA_DIR:?}"/staking 2>&1 | grep -v "update" >"${DATA_DIR:?}"/staking.tmp 2>&1
@@ -1252,7 +1141,7 @@ if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/
   truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/updates &>/dev/null
-  truncate -s 0 "${DATA_DIR:?}"/rewards &>/dev/null
+  rm "${DATA_DIR:?}"/rewards &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
 fi
 
