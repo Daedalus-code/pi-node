@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220104
-# 1.1.9.2
+# 1.2.0.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.1.9.2"
+VERSION="v1.2.0.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -646,6 +646,43 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 
   timeout 1800 screen -S run_data -X -p 0 stuff $'bash /usr/local/bin/include/pinode/data\n'
 fi
 
+# make sure everyone is connected ##############################################
+
+if [[ "$WALLET_PEERS_TOTAL" -lt "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+  cat "${DATA_DIR:?}"/addnodes >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
+fi
+
+### create list of connected peers #############################################
+
+if [ ! -f "${DATA_DIR:?}"/addnodes ] &>/dev/null; then
+  # make sure addnodes file exist
+  touch "${DATA_DIR:?}"/addnodes &>/dev/null
+fi
+
+if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
+
+  # add addnodes backup if backup is greater
+  if [[ "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+    # note: don't overwrite this (peers.tmp) created by data
+    cat "${DATA_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/peers.tmp 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # disregard failed peers (failed list)
+    grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${DATA_DIR:?}"/addnodes >"${DATA_DIR:?}"/addnodes.tmp 2>&1
+    mv "${DATA_DIR:?}"/addnodes.tmp "${DATA_DIR:?}"/addnodes 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after adding! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+
+  # create addnodes backup if backup is less
+  if [[ "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+    cp "${LOG_DIR:?}"/node_data/wallet/peers/success "${DATA_DIR:?}"/addnodes &>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}<<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    # disregard failed peers (failed list)
+    grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${DATA_DIR:?}"/addnodes >"${DATA_DIR:?}"/addnodes.tmp 2>&1
+    mv "${DATA_DIR:?}"/addnodes.tmp "${DATA_DIR:?}"/addnodes 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after backup! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  fi
+fi
+
 ### addnodes script ############################################################
 
 cat >"${LOG_DIR:?}"/add_peers <<'EOF'
@@ -781,7 +818,7 @@ EOF
 
 ### personal addnodes ##########################################################
 
-if [ ! -f "${DATA_DIR:?}"/addnodes ] &>/dev/null; then
+if [ ! -f /home/"$(whoami)"/addnodes ] &>/dev/null; then
   # make sure personal addnodes exist
   touch /home/"$(whoami)"/addnodes &>/dev/null
 fi
@@ -843,34 +880,6 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   screen -dmS add_peers_extra &>/dev/null
   # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
   timeout 900 screen -S add_peers_extra -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
-fi
-
-### create list of connected peers #############################################
-
-if [ ! -f "${DATA_DIR:?}"/addnodes ] &>/dev/null; then
-  # make sure addnodes file exist
-  touch "${DATA_DIR:?}"/addnodes &>/dev/null
-fi
-
-# add addnodes backup if backup is greater
-if [[ "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-  # note: don't overwrite this (peers.tmp) created by data
-  cat "${DATA_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/peers.tmp 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # disregard failed peers (failed list)
-  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${DATA_DIR:?}"/addnodes >"${DATA_DIR:?}"/addnodes.tmp 2>&1
-  mv "${DATA_DIR:?}"/addnodes.tmp "${DATA_DIR:?}"/addnodes 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after adding! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-fi
-
-# create addnodes backup if backup is less
-if [[ "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/wallet/peers/success "${DATA_DIR:?}"/addnodes &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}<<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  # disregard failed peers (failed list)
-  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${DATA_DIR:?}"/addnodes >"${DATA_DIR:?}"/addnodes.tmp 2>&1
-  mv "${DATA_DIR:?}"/addnodes.tmp "${DATA_DIR:?}"/addnodes 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after backup! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### calculate average price and volume #########################################
