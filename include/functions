@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220104
-# 1.2.0.4
+# 1.2.0.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.0.4"
+VERSION="v1.2.0.9"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -432,6 +432,11 @@ WALLET_INPUTS_NODES="Inputs ${WALLET_INPUTS:?}"
 if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
   WALLET_REW="$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>/dev/null)"
   WALLET_MAS_OUTPUT="$(grep -c "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)"
+
+  if [[ -z "$WALLET_REW" ]] &>/dev/null; then
+    WALLET_REW="0"
+  fi
+
   WALLET_POS_REWARDS="PoS/R ${WALLET_POS:?} ${CY:?}${WALLET_REW:?}${N0:?}"
   WALLET_INPUTS_NODES="I/MN ${WALLET_INPUTS:?} ${CY:?}${WALLET_MAS_OUTPUT:?}${N0:?}"
 fi
