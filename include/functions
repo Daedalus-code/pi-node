@@ -781,7 +781,7 @@ EOF
 
 ### personal addnodes ##########################################################
 
-if [ ! -f "${WALLET_DIR:?}"/addnodes ] &>/dev/null; then
+if [ ! -f "${DATA_DIR:?}"/addnodes ] &>/dev/null; then
   # make sure personal addnodes exist
   touch /home/"$(whoami)"/addnodes &>/dev/null
 fi
@@ -847,30 +847,30 @@ fi
 
 ### create list of connected peers #############################################
 
-if [ ! -f "${WALLET_DIR:?}"/addnodes ] &>/dev/null; then
+if [ ! -f "${DATA_DIR:?}"/addnodes ] &>/dev/null; then
   # make sure addnodes file exist
-  touch "${WALLET_DIR:?}"/addnodes &>/dev/null
+  touch "${DATA_DIR:?}"/addnodes &>/dev/null
 fi
 
 # add addnodes backup if backup is greater
-if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+if [[ "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
   # note: don't overwrite this (peers.tmp) created by data
-  cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/peers.tmp 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  cat "${DATA_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/peers.tmp 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # disregard failed peers (failed list)
-  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${WALLET_DIR:?}"/addnodes >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
-  mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after adding! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${DATA_DIR:?}"/addnodes >"${DATA_DIR:?}"/addnodes.tmp 2>&1
+  mv "${DATA_DIR:?}"/addnodes.tmp "${DATA_DIR:?}"/addnodes 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after adding! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # create addnodes backup if backup is less
-if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/wallet/peers/success "${WALLET_DIR:?}"/addnodes &>/dev/null
+if [[ "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/wallet/peers/success "${DATA_DIR:?}"/addnodes &>/dev/null
   printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}<<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # disregard failed peers (failed list)
-  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${WALLET_DIR:?}"/addnodes >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
-  mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after backup! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${DATA_DIR:?}"/addnodes >"${DATA_DIR:?}"/addnodes.tmp 2>&1
+  mv "${DATA_DIR:?}"/addnodes.tmp "${DATA_DIR:?}"/addnodes 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after backup! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### calculate average price and volume #########################################
