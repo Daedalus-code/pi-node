@@ -382,7 +382,7 @@ rrdtool graph /var/www/html/temp_graph.png \
 # auto proof-of-stake config
 if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
 
-  # difficulty
+  # difficulty + auto pos
   rrdtool graph /var/www/html/difficulty_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
@@ -406,7 +406,7 @@ if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
     AREA:difficulty#C99999 \
     LINE1:set_auto_pos#FFFFFF
 
-  # total avg confirmations
+  # total avg confirmations + auto pos
   rrdtool graph /var/www/html/total_tx_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
@@ -432,11 +432,11 @@ if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
 
 else
 
-  # difficulty
+  # difficulty normal
   rrdtool graph /var/www/html/difficulty_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
-    --vertical-label "Network Difficulty+APC" \
+    --vertical-label "Network Difficulty" \
     --alt-autoscale-max --lower-limit=1 \
     --color BACK#565875 \
     --color FONT#FFFFFF \
@@ -453,7 +453,7 @@ else
     GPRINT:difficulty:MIN:%.0lf\ Min \
     AREA:difficulty#C99999:"Network Difficulty"
 
-  # total avg confirmations
+  # total avg confirmations normal
   rrdtool graph /var/www/html/total_tx_graph.png \
     -w 400 -h 160 -a PNG \
     --slope-mode \
