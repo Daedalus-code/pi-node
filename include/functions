@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220104
-# 1.2.1.0
+# 1.2.1.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.1.0"
+VERSION="v1.2.1.8"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -423,8 +423,16 @@ if [[ "$PROOF_OF_STAKE" -eq "1" ]] &>/dev/null; then
   WALLET_INPUTS="${G1:?}$WALLET_INPUTS${N0:?}"
 fi
 
+# get wallet value
 WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
-echo "${WALLET_VALUE:?}" >"${LOG_DIR:?}"/node_data/wallet/data/balance_value 2>&1
+# save wallet values
+echo "${WALLET_VALUE:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
+# calculate average wallet value
+echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1 | awk '{ print $1 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 >"${LOG_DIR:?}"/node_data/wallet/data/balance_value 2>&1
+
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1 | awk '{ print $1 }' 2>&1)" -gt "420" ]] &>/dev/null; then
+  echo "$(tail -369 "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
+fi
 
 WALLET_POS_REWARDS="Stakes ${WALLET_POS:?}"
 WALLET_INPUTS_NODES="Inputs ${WALLET_INPUTS:?}"
