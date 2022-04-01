@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220104
-# 0.4.8.9
+# 0.4.7.8
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
@@ -379,7 +379,9 @@ rrdtool graph /var/www/html/temp_graph.png \
   GPRINT:temp:MIN:%.2lf\°C\ Min \
   AREA:temp#F15A3A:"CPUTemp"
 
-function difficulty_auto() {
+# auto proof-of-stake config
+if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
+
   # difficulty
   rrdtool graph /var/www/html/difficulty_graph.png \
     -w 400 -h 160 -a PNG \
@@ -403,9 +405,7 @@ function difficulty_auto() {
     GPRINT:difficulty:MIN:%.0lf\ Min \
     AREA:difficulty#C99999 \
     LINE1:set_auto_pos#FFFFFF
-}
 
-function avgconfirmation_auto_one() {
   # total avg confirmations
   rrdtool graph /var/www/html/total_tx_graph.png \
     -w 400 -h 160 -a PNG \
@@ -429,9 +429,9 @@ function avgconfirmation_auto_one() {
     GPRINT:total_tx:MIN:%.0lf\ Min \
     AREA:total_tx#3C79A9 \
     LINE1:set_auto_con#FFFFFF
-}
 
-function difficulty_normal() {
+else
+
   # difficulty
   rrdtool graph /var/www/html/difficulty_graph.png \
     -w 400 -h 160 -a PNG \
@@ -452,9 +452,7 @@ function difficulty_normal() {
     GPRINT:difficulty:MAX:%.0lf\ Max \
     GPRINT:difficulty:MIN:%.0lf\ Min \
     AREA:difficulty#C99999:"Network Difficulty"
-}
 
-function avgconfirmation_normal() {
   # total avg confirmations
   rrdtool graph /var/www/html/total_tx_graph.png \
     -w 400 -h 160 -a PNG \
@@ -475,15 +473,6 @@ function avgconfirmation_normal() {
     GPRINT:total_tx:MAX:%.0lf\ Max \
     GPRINT:total_tx:MIN:%.0lf\ Min \
     AREA:total_tx#3C79A9
-}
-
-# auto proof-of-stake config
-if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
-  avgconfirmation_auto_one
-  difficulty_auto
-else # no auto proof-of-stake config
-  difficulty_normal
-  avgconfirmation_normal
 fi
 
 # END
