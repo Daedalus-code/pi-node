@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220304
-# 0.1.9.9
+# 0.2.1.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -119,6 +119,22 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/system/load ]] &>/dev/null; then
 fi
 SYSTEM_LOAD=$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null)
 
+if [[ "$(grep "read_mempool" "${LOG_DIR:?}"/node_data/wallet/data/screens)" ]] &>/dev/null; then
+  M_IND="${G1:?}N${N0:?}"
+else
+  M_IND="${GR:?}N${N0:?}"
+fi
+if [[ "$(grep "add_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens)" ]] &>/dev/null; then
+  AP_IND="${G1:?}N${N0:?}"
+else
+  AP_IND="${GR:?}N${N0:?}"
+fi
+if [[ "$(grep "add_peers_extra" "${LOG_DIR:?}"/node_data/wallet/data/screens)" ]] &>/dev/null; then
+  APX_IND="${G1:?}N${N0:?}"
+else
+  APX_IND="${GR:?}N${N0:?}"
+fi
+
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/func.lock ]] &>/dev/null; then
@@ -136,7 +152,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/
         rm "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord &>/dev/null
         printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} ${M_IND:?}${AP_IND:?}${APX_IND:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove lock file
       rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
 
@@ -152,7 +168,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/
         run_functions
         DETACH="${CY:?}<<${N0:?} [ ${CY:?}Data Swap${N0:?} ] ${GR:?}${FUNC_LIMIT:?}${N0:?}"
       fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} ${M_IND:?}${AP_IND:?}${APX_IND:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove lock file
       rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
     fi
