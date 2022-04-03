@@ -130,9 +130,9 @@ else
   AP_IND="${GR:?}N${N0:?}"
 fi
 if grep -o "extra_add_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  APX_IND="${G1:?}E${N0:?}"
+  APX_IND="${G1:?}+${N0:?}"
 else
-  APX_IND="${GR:?}N${N0:?}"
+  APX_IND="${N0:?}"
 fi
 
 # get wallet connections
