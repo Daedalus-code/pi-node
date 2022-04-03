@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220304
-# 0.2.1.0
+# 0.2.1.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -130,6 +130,13 @@ else
   AP_IND="${GR:?}N${N0:?}"
 fi
 
+# get wallet connections
+if [[ -f "${LOG_DIR:?}"/node_data/wallet/data/connections ]] &>/dev/null; then
+  WALLET_P2P="${G1:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null)${N0:?}"
+else
+  WALLET_P2P="${GR:?}0${N0:?}"
+fi
+
 # greater than n seconds, continue
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/func.lock ]] &>/dev/null; then
@@ -147,7 +154,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/
         rm "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord &>/dev/null
         printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} ${M_IND:?}${AP_IND:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} ${M_IND:?}${AP_IND:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove lock file
       rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
 
@@ -163,7 +170,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/
         run_functions
         DETACH="${CY:?}<<${N0:?} [ ${CY:?}Data Swap${N0:?} ] ${GR:?}${FUNC_LIMIT:?}${N0:?}"
       fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} ${M_IND:?}${AP_IND:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G0:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} ${M_IND:?}${AP_IND:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove lock file
       rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
     fi
