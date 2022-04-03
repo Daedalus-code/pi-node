@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220104
-# 0.5.1.9
+# V20220304
+# 0.5.2.3
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -387,7 +387,11 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
         # get total confirmations from inputs that are above the con_diff
         TOTAL_CONF_ABOVE=$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)
         TOTAL_CONF_ABOVE_CALC="$(echo "${TOTAL_CONF_ABOVE:?}/$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" | wc -l 2>&1)" | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
-        TOTAL_CONF_ABOVE="${TOTAL_CONF_ABOVE_CALC:?}"
+        echo "${TOTAL_CONF_ABOVE_CALC:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/pos_confirmations 2>&1
+        if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/pos_confirmations | awk '{ print $1 }')" -gt "420" ]] &>/dev/null; then
+          echo "$(tail -369 "${LOG_DIR:?}"/node_data/wallet/data/pos_confirmations 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/pos_confirmations 2>&1
+        fi
+        TOTAL_CONF_ABOVE="$(cat "${LOG_DIR:?}"/node_data/wallet/data/pos_confirmations 2>/dev/null)"
 
         if [[ -z "$TOTAL_CONF_ABOVE" ]] &>/dev/null; then
           # no inputs below config
