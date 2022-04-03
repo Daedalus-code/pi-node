@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222703
-# 0.2.0.8
+# 0.2.0.9
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -204,5 +204,6 @@ screen -X -S read_mempool quit &>/dev/null
 screen -X -S run_data quit &>/dev/null
 screen -X -S add_peers quit &>/dev/null
 echo "${PLEASE:?}"
+killall screen &>/dev/null
 
 # END
