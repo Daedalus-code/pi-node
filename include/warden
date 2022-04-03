@@ -120,12 +120,12 @@ fi
 SYSTEM_LOAD=$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null)
 
 if grep -o "read_mempool" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  M_IND="${G1:?}N${N0:?}"
+  M_IND="${G1:?}R${N0:?}"
 else
   M_IND="${GR:?}N${N0:?}"
 fi
 if grep -o "add_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  AP_IND="${G1:?}N${N0:?}"
+  AP_IND="${G1:?}A${N0:?}"
 else
   AP_IND="${GR:?}N${N0:?}"
 fi
