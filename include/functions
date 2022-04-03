@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220104
+# V20220304
 # 1.2.2.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -242,7 +242,7 @@ REPO_VERSION="${N0:?}${VERSION:?}${GR:?}"
 
 SYSTEM_CLOCK="${N0:?}$(cat "${LOG_DIR:?}"/node_data/system/clock 2>/dev/null)${N0:?}"
 
-if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
+if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
   MASTER_STATUS="${CY:?}M${N0:?}"
 else
   MASTER_STATUS="${GR:?}M${N0:?}"

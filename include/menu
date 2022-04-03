@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220304
-# 2.6.4.4
+# 2.6.4.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -2275,17 +2275,21 @@ ${HIDDEN_SERVICE:?}
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
       # backup with wallet, backupwallet
-      printf '%b' "[${Y1:?}!!${N0:?}] backupwallet, please wait!\n"
+      printf '%b' "[${Y1:?}!!${N0:?}] ${CY:?}backupwallet${N0:?}, please wait!\n"
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" backupwallet "${DATA_DIR:?}"/backups
       printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh "${DATA_DIR:?}"/backups/wallet.dat 2>/dev/null)\n"
 
-      # zip backups directory
-      printf '%b' "[${Y1:?}!!${N0:?}] Zipping backup, please wait!\n"
+      # zip backups directory, masternode data
+      printf '%b' "[${G1:?}Ok${N0:?}] Zipping backup, please wait!\n"
       zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/backups/* 2>/dev/null
-      zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_key 2>/dev/null
-      zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_status 2>/dev/null
-      zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_address 2>/dev/null
-      zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_outputs 2>/dev/null
+      if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+        printf '%b' "[${G1:?}Ok${N0:?}] Zipping masternode data, please wait!\n"
+        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_key 2>/dev/null
+        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_status 2>/dev/null
+        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_address 2>/dev/null
+        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_outputs 2>/dev/null
+      fi
+
       printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh /home/"$(whoami)"/backup.zip 2>/dev/null)\n"
       echo
       read -r -p "[Ok] Backups is done! Press Enter to continue" </dev/tty
