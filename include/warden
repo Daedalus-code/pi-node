@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220304
-# 0.1.9.4
+# 0.1.9.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -112,6 +112,11 @@ if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/func.lock 2>&1)" -l
   rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
 fi
 
+if [[ ! -f "${LOG_DIR:?}"/node_data/system/load ]] &>/dev/null; then
+  # system users, uptime and load
+  uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/system/uptime 2>&1
+  egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/system/uptime 2>&1 | sed 's/\([0-9]\),/\1./g' >"${LOG_DIR:?}"/node_data/system/load
+fi
 SYSTEM_LOAD=$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null)
 
 # greater than n seconds, continue
