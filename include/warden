@@ -119,17 +119,17 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/system/load ]] &>/dev/null; then
 fi
 SYSTEM_LOAD=$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null)
 
-if [[ "$(grep "read_mempool" "${LOG_DIR:?}"/node_data/wallet/data/screens)" ]] &>/dev/null; then
+if grep "read_mempool" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
   M_IND="${G1:?}N${N0:?}"
 else
   M_IND="${GR:?}N${N0:?}"
 fi
-if [[ "$(grep "add_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens)" ]] &>/dev/null; then
+if grep "add_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
   AP_IND="${G1:?}N${N0:?}"
 else
   AP_IND="${GR:?}N${N0:?}"
 fi
-if [[ "$(grep "add_peers_extra" "${LOG_DIR:?}"/node_data/wallet/data/screens)" ]] &>/dev/null; then
+if grep "add_peers_extra" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
   APX_IND="${G1:?}N${N0:?}"
 else
   APX_IND="${GR:?}N${N0:?}"
