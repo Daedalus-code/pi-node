@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220404
-# 0.2.5.7
+# 0.2.5.9
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -66,8 +66,8 @@ function timeline_stats() {
     TIMELINE_WALLET_IMMATURE_VALUE=$(echo "$TIMELINE_WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     TIMELINE="Immature $TIMELINE_WALLET_IMMATURE ${GR:?}$TIMELINE_WALLET_IMMATURE_VALUE USD${N0:?}"
 
-  elif [ "$TIMELINE_RANDOM" -eq "6" ] &>/dev/null; then
     # lowest confirmation
+  elif [ "$TIMELINE_RANDOM" -eq "6" ] &>/dev/null; then
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
@@ -82,8 +82,8 @@ function timeline_stats() {
     fi
     TIMELINE="New Input $TIMELINE_CONF (${TIMELINE_INPUT_AGE_D:?}d) ${GR:?}$TIMELINE_INPUT_AGE${N0:?}"
 
-  elif [ "$TIMELINE_RANDOM" -eq "7" ] &>/dev/null; then
     # highest confirmation
+  elif [ "$TIMELINE_RANDOM" -eq "7" ] &>/dev/null; then
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
@@ -209,7 +209,6 @@ function timeline_stats() {
       TIMELINE="${GR:?}Unknown${N0:?}"
     fi
     TIMELINE="${TIMELINE_MODEL:?}"
-
   fi
 }
 
@@ -245,6 +244,9 @@ if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1
   timeline_quotes
 else
   TIMELINE_RANDOM=$((((RANDOM % 2) + 1)))
+  if [[ -z "$TIMELINE_RANDOM" ]] &>/dev/null; then
+    TIMELINE="${CY}Please wait.${N0:?}"
+  fi
   if [[ "$TIMELINE_RANDOM" -eq "1" ]] &>/dev/null; then
     timeline_quotes
     TIMELINE="$(echo "${TIMELINE:?}" 2>&1 | tail -1 2>&1)"

@@ -498,7 +498,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
 "3")
 
-  printf '%b' "${GR:?}Please Wait${N0:?}\n"
+  printf '%b' "${GR:?}Please wait.${N0:?}\n"
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
 
@@ -2275,15 +2275,15 @@ ${HIDDEN_SERVICE:?}
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
       # backup with wallet, backupwallet
-      printf '%b' "[${Y1:?}!!${N0:?}] ${CY:?}backupwallet${N0:?}, please wait!\n"
+      printf '%b' "[${Y1:?}!!${N0:?}] ${CY:?}backupwallet${N0:?}, please wait.\n"
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" backupwallet "${DATA_DIR:?}"/backups
       printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh "${DATA_DIR:?}"/backups/wallet.dat 2>/dev/null)\n"
 
       # zip backups directory, masternode data
-      printf '%b' "[${G1:?}Ok${N0:?}] Zipping backup, please wait!\n"
+      printf '%b' "[${G1:?}Ok${N0:?}] Zipping backup, please wait.\n"
       zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/backups/* 2>/dev/null
       if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] Zipping masternode data, please wait!\n"
+        printf '%b' "[${G1:?}Ok${N0:?}] Zipping masternode data, please wait.\n"
         zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_key 2>/dev/null
         zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_status 2>/dev/null
         zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_address 2>/dev/null
