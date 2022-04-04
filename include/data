@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222703
-# 0.4.0.3
+# V20220404
+# 0.4.0.6
 
 # shellcheck disable=SC2154
 
@@ -384,6 +384,9 @@ fi
 CIDR_DATED=$(ls -l "${LOG_DIR:?}"/node_data/wallet/peers/total.cidr 2>&1 | awk '{ print $6,$7,$8 }' 2>&1)
 
 printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?}/${TOT_INV_CIDR:?} Invalid pattern ${CIDRC:?} @ ${CIDR_DATED:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+# kill old add_peers session
+screen -X -S add_peers quit &>/dev/null
 
 # clean up cidr files
 truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr &>/dev/null

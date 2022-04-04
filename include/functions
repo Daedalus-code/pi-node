@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220304
-# 1.2.2.2
+# 1.2.2.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.2.2"
+VERSION="v1.2.2.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -844,6 +844,9 @@ fi
 
 # use personal addnodes if any data
 if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
+
+  # kill old extra_add_peers session
+  screen -X -S extra_add_peers quit &>/dev/null
 
   # get ipv4 address from addnodes, disregard 127.
   egrep -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" /home/"$(whoami)"/addnodes 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/addnodes.ipv4 2>&1
