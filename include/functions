@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220404
-# 1.2.2.9
+# 1.2.6.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.2.9"
+VERSION="v1.2.6.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -94,6 +94,26 @@ egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/
 echo "$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)/100*0.1" | bc -l | awk '{ printf "%.1f\n", $1 }' >"${LOG_DIR:?}"/node_data/system/cpu_ctemp 2>&1
 # system cpu temperature (fahrenheit)
 echo "scale=2;((9/5) * $(echo "$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)/100*0.1" | bc -l | awk '{ printf "%.1f\n", $1 }' 2>&1)) + 32" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' >"${LOG_DIR:?}"/node_data/system/cpu_ftemp 2>&1
+
+# do this once (lscpu values)
+if [[ ! -f "${LOG_DIR:?}"/node_data/system/cpuinfo ]] &>/dev/null; then
+
+  # do this once (cpu speed, wait time)
+  if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
+    lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
+    cat "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | grep "CPU max" 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ print $4 }' 2>&1 | awk -F, '{ print $1 }' >"${LOG_DIR:?}"/node_data/system/cpuspeed 2>&1
+  fi
+
+  # get cpu count, threads, cores, vendor id, model and speed
+  CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
+  THREADS=$(grep "Thread(s) per core:" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $4 }' 2>&1)
+  CORES=$(grep "Core(s) per socket:" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $4 }' 2>&1)
+  VENDORID=$(grep "Vendor ID:" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
+  MODEL=$(grep "Model name:" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $3 }' 2>&1)
+  SPEED=$(echo "$(grep "CPU max MHz:" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $4 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk -F, '{ print $1 }' 2>&1)/1000" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+  # create cpu information
+  echo "CPU ($CPUS) ${GR:?}$THREADS/$CORES${N0:?} - $VENDORID ${GR:?}$MODEL${N0:?} ${SPEED:?}GHz" >"${LOG_DIR:?}"/node_data/system/cpuinfo 2>&1
+fi
 
 # system free memory
 echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $7 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' >"${LOG_DIR:?}"/node_data/system/mem_free 2>&1
@@ -390,7 +410,11 @@ if [[ -z "$WALLET_PEERS_OTHER" ]] &>/dev/null; then
   WALLET_PEERS_OTHER="${GR:?}0${N0:?}"
 fi
 
-echo "$(grep "connections" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1
+echo "$(grep "connections" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)" >>"${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1
+
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
+  echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/connections
+fi
 
 WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 WALLET_UNCONFIRMED=$(grep "unconfirmed_balance" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
@@ -438,7 +462,7 @@ fi
 WALLET_POS_REWARDS="Stakes ${WALLET_POS:?}"
 WALLET_INPUTS_NODES="Inputs ${WALLET_INPUTS:?}"
 
-if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+if [[ "$(grep -c "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" -gt "0" ]] &>/dev/null; then
   WALLET_REW="$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>/dev/null)"
   WALLET_MAS_OUTPUT="$(grep -c "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)"
 
@@ -545,10 +569,18 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
     WALLET_NODES_STABLE=$(grep "stable" "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>&1 | awk '{ print $2 }' 2>&1)
     WALLET_NODES_ENABLED=$(grep "enabled" "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>&1 | awk '{ print $2 }' 2>&1)
     WALLET_NODES_INQUEUE=$(grep "inqueue" "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>&1 | awk '{ print $2 }' 2>&1)
-  else
+  fi
+
+  if [[ -z "$WALLET_NODES_TOTAL" ]] &>/dev/null; then
     WALLET_NODES_TOTAL="0"
+  fi
+  if [[ -z "$WALLET_NODES_STABLE" ]] &>/dev/null; then
     WALLET_NODES_STABLE="0"
+  fi
+  if [[ -z "$WALLET_NODES_ENABLED" ]] &>/dev/null; then
     WALLET_NODES_ENABLED="0"
+  fi
+  if [[ -z "$WALLET_NODES_INQUEUE" ]] &>/dev/null; then
     WALLET_NODES_INQUEUE="0"
   fi
 
