@@ -1258,9 +1258,9 @@ fi
 ### random quotes or system timeline ###########################################
 
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
-  source /usr/local/bin/include/pinode/timeline
-else
   TIMELINE="${CY:?}Updating data, please wait!${N0:?}"
+else
+  source /usr/local/bin/include/pinode/timeline
 fi
 
 # END
