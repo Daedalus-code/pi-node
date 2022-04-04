@@ -204,11 +204,11 @@ function timeline_stats() {
     if [[ ! -f "${LOG_DIR:?}"/node_data/system/model ]] &>/dev/null; then
       cat /proc/device-tree/model 2>/dev/null | tr -d '\0' >"${LOG_DIR:?}"/node_data/system/model 2>&1
     fi
-    TIMELINE_MODEL=$(cat "${LOG_DIR:?}"/node_data/stats/model 2>/dev/null)
-    TIMELINE="${TIMELINE_MODEL:?}"
+    TIMELINE_MODEL=$(cat "${LOG_DIR:?}"/node_data/system/model 2>/dev/null)
     if [[ -z "$TIMELINE_MODEL" ]] &>/dev/null; then
       TIMELINE="${GR:?}Unknown${N0:?}"
     fi
+    TIMELINE="${TIMELINE_MODEL:?}"
 
   fi
 }
