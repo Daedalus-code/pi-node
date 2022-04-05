@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220304
-# 0.5.2.7
+# V20220504
+# 0.5.2.4
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -357,9 +357,6 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
 
       # greater than n seconds, continue
       if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "600" ]] &>/dev/null; then
-        # get average difficulty value with auto pos config
-        rrdtool info /home/"$(whoami)"/stats/difficulty.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>&1
-
         # get difficulty average
         DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
