@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220404
-# 1.2.6.6
+# V20220504
+# 1.2.6.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.6.6"
+VERSION="v1.2.6.9"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -251,6 +251,9 @@ else # use existing data without any errors
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodestatus "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
   cp "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount &>/dev/null
 fi
+
+# get average difficulty value with auto pos config
+grep "difficulty" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' >>"${LOG_DIR:?}"/node_data/wallet/data/difficulty
 
 ### dashbord variables #########################################################
 
