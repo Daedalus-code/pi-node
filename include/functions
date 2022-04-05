@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220504
-# 1.2.6.9
+# 1.2.6.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.6.9"
+VERSION="v1.2.6.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -607,10 +607,6 @@ fi
 
 ### staking ####################################################################
 
-if [[ ! -s "${LOG_DIR:?}"/node_data/wallet/data/stake_count ]] &>/dev/null; then
-  echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/stake_count 2>&1
-fi
-
 if [[ -z "$WALLET_POS" ]] &>/dev/null; then
   WALLET_POS="0"
 fi
@@ -623,9 +619,10 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/staking ]] &>/dev/null; then
   touch "${LOG_DIR:?}"/node_data/wallet/data/staking &>/dev/null
 fi
 
+# get wallet proof-of-stake
 WALLET_POS=$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
+# count saved lines
 SAVED_POS=$(grep -c "BitcoinMiner" "${DATA_DIR:?}"/staking 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-echo "${WALLET_POS:?}" >"${LOG_DIR:?}"/node_data/wallet/data/stake_count 2>&1
 
 if [[ "$WALLET_POS" -gt "$SAVED_POS" ]] &>/dev/null; then
   grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' >"${DATA_DIR:?}"/staking 2>&1
@@ -1237,15 +1234,10 @@ fi
 ### clean up ###################################################################
 
 if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
-  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/reward_count &>/dev/null
-  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/stake_count &>/dev/null
   truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/updates &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
-  # remove updated files (temporary)
-  rm "${DATA_DIR:?}"/rewards &>/dev/null
-  rm /home/"$(whoami)"/stats/total_tx_q.rrd &>/dev/null
 fi
 
 ### update repository ##########################################################
