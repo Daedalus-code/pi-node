@@ -671,7 +671,7 @@ if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/updates)))")" -lt 
 fi
 
 if [[ "$(egrep -c "[a-z]" "${DATA_DIR:?}"/staking)" -eq "0" ]] &>/dev/null; then
-  WALLET_TXLAST=$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/last_tx 2>&1)
+  WALLET_TXLAST=$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/last_tx 2>&1 | awk '{ print $3 }' 2>&1)
 fi
 
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
@@ -684,18 +684,18 @@ fi
 
 ### wallet starting ############################################################
 
-function dashbord_status() {
+function dashbord_grey() {
   RC="${GR:?}"
   CB="${GR:?}"
   TX="${GR:?}"
 }
 
 if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
-  dashbord_status
+  dashbord_grey
 fi
 
 if [[ "$(egrep -c "[a-z]" "${DATA_DIR:?}"/staking)" -eq "0" ]] &>/dev/null; then
-  dashbord_status
+  dashbord_grey
 fi
 
 ### rrdtool graphs #############################################################
