@@ -254,7 +254,7 @@ fi
 
 # get average difficulty value with auto pos config
 grep "difficulty" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' >>"${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1
-echo "$(tail -100 "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1 | awk '{ SUM += $2} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>&1
+echo "$(tail -100 "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>&1
 
 ### dashbord variables #########################################################
 
