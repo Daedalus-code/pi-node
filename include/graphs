@@ -170,7 +170,7 @@ if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/d
     DEF:paycount=/home/"$(whoami)"/stats/masternode_pay.rrd:paycount:MAX \
     GPRINT:paycount:LAST:%.2lf\ "${REW_GPRINT:?}" \
     GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
-    GPRINT:stakes:AVERAGE:%.0lf\ "${POS_GPRINT:?}"\ AVG \
+    GPRINT:stakes:AVERAGE:%.0lf\ PoS\ AVG \
     AREA:paycount#779CFF \
     LINE2:stakes#FFDC77:"Stakes"
 else
@@ -189,7 +189,7 @@ else
     --end now --start end-"${GRAPH_TIME:?}" \
     DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
     GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
-    GPRINT:stakes:AVERAGE:%.0lf\ "${POS_GPRINT:?}"\ AVG \
+    GPRINT:stakes:AVERAGE:%.0lf\ PoS\ AVG \
     LINE2:stakes#FFDC77:"Stakes"
 fi
 
