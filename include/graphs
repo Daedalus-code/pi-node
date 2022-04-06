@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220104
-# 0.4.7.8
+# V20220604
+# 0.4.8.0
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
@@ -170,6 +170,7 @@ if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/d
     DEF:paycount=/home/"$(whoami)"/stats/masternode_pay.rrd:paycount:MAX \
     GPRINT:paycount:LAST:%.2lf\ "${REW_GPRINT:?}" \
     GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
+    GPRINT:stakes:AVERAGE:%.0lf\ "${POS_GPRINT:?}"\ AVG \
     AREA:paycount#779CFF \
     LINE2:stakes#FFDC77:"Stakes"
 else
@@ -188,6 +189,7 @@ else
     --end now --start end-"${GRAPH_TIME:?}" \
     DEF:stakes=/home/"$(whoami)"/stats/stakes.rrd:stakes:MAX \
     GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
+    GPRINT:stakes:AVERAGE:%.0lf\ "${POS_GPRINT:?}"\ AVG \
     LINE2:stakes#FFDC77:"Stakes"
 fi
 
