@@ -124,9 +124,9 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
   GPRINT:enabled:LAST:%.0lf\ Enabled \
   GPRINT:inqueue:LAST:%.0lf\ Inqueue \
   LINE2:total#F4F4F4:"Total" \
-  LINE2:stable#3BE536:"Stable" \
-  LINE2:enabled#3bbb33:"Enabled" \
-  LINE2:inqueue#828282:"Inqueue"
+  LINE1:stable#3BE536:"Stable" \
+  LINE1:enabled#3bbb33:"Enabled" \
+  LINE1:inqueue#828282:"Inqueue"
 
 # masternode pay
 rrdtool graph /var/www/html/masternode_pay_graph.png \
@@ -145,11 +145,11 @@ rrdtool graph /var/www/html/masternode_pay_graph.png \
   DEF:paycount=/home/"$(whoami)"/stats/masternode_pay.rrd:paycount:MAX \
   DEF:payout=/home/"$(whoami)"/stats/masternode_pay.rrd:payout:MAX \
   DEF:payvalue=/home/"$(whoami)"/stats/masternode_pay.rrd:payvalue:MAX \
-  GPRINT:paycount:LAST:%.2lf\ R\ Daily \
-  GPRINT:payout:LAST:%.2lf\ Coins \
+  GPRINT:paycount:LAST:%.2lf\ Rewards\ Daily \
+  GPRINT:payout:LAST:%.2lf\ Rewards\ Coins \
   GPRINT:payvalue:LAST:%.2lf\ USD \
-  LINE2:paycount#FFDC77:"R Daily" \
-  LINE2:payout#85bb65:"Coins" \
+  LINE1:paycount#FFDC77:"Rewards Daily" \
+  LINE1:payout#85bb65:"Coins Daily" \
   LINE2:payvalue#668163:"USD"
 
 # plural
