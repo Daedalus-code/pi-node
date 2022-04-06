@@ -259,7 +259,7 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1 | awk '{ pri
   echo "$(tail -180 "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1
 fi
 
-echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>&1
+echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>/dev/null | tail -360 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>/dev/null | tail -360 2>&1 | wc -l 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>&1
 
 ### dashbord variables #########################################################
 
