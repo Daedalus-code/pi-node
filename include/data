@@ -366,7 +366,7 @@ mv "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr.tmp "${LOG_DIR:?}"/node_data
 # count all invalid patterns
 INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
 
-cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | egrep -v "127.|::1|::128" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.sorted 2>&1
+cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | egrep -v "127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.sorted 2>&1
 mv "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.sorted "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
 
 # create total cidr list
@@ -395,7 +395,7 @@ truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr &>/dev/null
 screen -dmS add_peers &>/dev/null
 
 # create temp and backup list for connection check
-cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | egrep -v "127.|::1|::128" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
+cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | egrep -v "127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check &>/dev/null
 cp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
 
