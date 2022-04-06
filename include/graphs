@@ -146,7 +146,7 @@ rrdtool graph /var/www/html/masternode_pay_graph.png \
   DEF:payout=/home/"$(whoami)"/stats/masternode_pay.rrd:payout:MAX \
   DEF:payvalue=/home/"$(whoami)"/stats/masternode_pay.rrd:payvalue:MAX \
   GPRINT:paycount:LAST:%.2lf\ Rewards\ Daily \
-  GPRINT:payout:LAST:%.2lf\ Rewards\ Coins \
+  GPRINT:payout:LAST:%.2lf\ Coins\ Daily \
   GPRINT:payvalue:LAST:%.2lf\ USD \
   LINE1:paycount#FFDC77:"Rewards Daily" \
   LINE1:payout#85bb65:"Coins Daily" \
