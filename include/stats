@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220604
-# 0.5.2.5
+# 0.5.2.6
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -494,6 +494,7 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<img src='market_price_graph.png' alt='Market Price' />";
   echo "<img src='market_volume_graph.png' alt='Market Volume' />";
   echo "<img src='masternode_count_graph.png' alt='Masternodes' />";
+  echo "<img src='masternode_pay_graph.png' alt='Masternodes' />";
 
 EOF
 

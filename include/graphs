@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220604
-# 0.4.8.0
+# 0.4.9.5
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
@@ -119,23 +119,38 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
   DEF:stable=/home/"$(whoami)"/stats/masternodes.rrd:stable:MAX \
   DEF:enabled=/home/"$(whoami)"/stats/masternodes.rrd:enabled:MAX \
   DEF:inqueue=/home/"$(whoami)"/stats/masternodes.rrd:inqueue:MAX \
-  DEF:paycount=/home/"$(whoami)"/stats/masternode_pay.rrd:paycount:MAX \
-  DEF:payout=/home/"$(whoami)"/stats/masternode_pay.rrd:payout:MAX \
-  DEF:payvalue=/home/"$(whoami)"/stats/masternode_pay.rrd:payvalue:MAX \
   GPRINT:total:LAST:%.0lf\ Total \
-  GPRINT:paycount:LAST:%.2lf\ R\ Daily \
-  GPRINT:payout:LAST:%.2lf\ Coins \
-  GPRINT:payvalue:LAST:%.2lf\ USD \
   GPRINT:stable:LAST:%.0lf\ Stable \
   GPRINT:enabled:LAST:%.0lf\ Enabled \
   GPRINT:inqueue:LAST:%.0lf\ Inqueue \
   LINE2:total#F4F4F4:"Total" \
-  LINE2:paycount#FFDC77:"R Daily" \
-  LINE2:payout#85bb65:"Coins" \
-  LINE2:payvalue#668163:"USD" \
   LINE2:stable#3BE536:"Stable" \
   LINE2:enabled#3bbb33:"Enabled" \
   LINE2:inqueue#828282:"Inqueue"
+
+# masternode pay
+rrdtool graph /var/www/html/masternode_pay_graph.png \
+  -w 1394 -h 160 -a PNG \
+  --slope-mode \
+  --vertical-label "Masternode Earnings" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-"${GRAPH_TIME:?}" \
+  DEF:paycount=/home/"$(whoami)"/stats/masternode_pay.rrd:paycount:MAX \
+  DEF:payout=/home/"$(whoami)"/stats/masternode_pay.rrd:payout:MAX \
+  DEF:payvalue=/home/"$(whoami)"/stats/masternode_pay.rrd:payvalue:MAX \
+  GPRINT:paycount:LAST:%.2lf\ R\ Daily \
+  GPRINT:payout:LAST:%.2lf\ Coins \
+  GPRINT:payvalue:LAST:%.2lf\ USD \
+  LINE2:paycount#FFDC77:"R Daily" \
+  LINE2:payout#85bb65:"Coins" \
+  LINE2:payvalue#668163:"USD"
 
 # plural
 REW_GPRINT="Rewards"
