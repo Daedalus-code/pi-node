@@ -408,8 +408,6 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
           DIFF_AVG="0"
         fi
 
-        printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-
         # calculate an indicater for var pos_limit
         echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>&1
 
@@ -437,6 +435,8 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
 
         # continue if lock is missing
         if [ ! -f "${DATA_DIR:?}"/diff.lock ] &>/dev/null; then
+
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
           # total average confirmations greater than limit set, continue
           if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
