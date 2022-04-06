@@ -360,7 +360,7 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
         # get difficulty average
         DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
-        if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
+        if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>/dev/null | tail -1 2>&1)" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
           POS_LIMIT="$(cat "${LOG_DIR:?}"/node_data/wallet/client/pos_limit 2>/dev/null | awk -F. '{ print $1 }' 2>&1)"
         else
           POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
