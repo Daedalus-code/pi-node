@@ -752,7 +752,7 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 
   # add addnodes backup if backup is greater
   if [[ "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
     # note: don't overwrite this (peers.tmp) created by data
-    cat "${DATA_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/peers.tmp 2>&1
+    cat "${DATA_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>&1
     printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     # disregard failed peers (failed list)
     grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${DATA_DIR:?}"/addnodes >"${DATA_DIR:?}"/addnodes.tmp 2>&1
