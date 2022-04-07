@@ -79,10 +79,10 @@ OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   4 "Download Menu    Wallet, bootstrap, display"
   5 "Configs & Tools  Configurations & tools"
   6 "System Space     Disk space utilized"
-  7 "SWAP Menu        Swap space options"
+  7 "SWAP Menu        SWAP, DTR options"
   8 "Firewall Menu    Uncomplicated firewall"
   9 "Proxy Menu       Proxy options (tor)"
-  10 "Quit            Exit menu")
+  10 "Quit             Exit menu")
 
 CHOICE=$(dialog --clear \
   --nocancel \
