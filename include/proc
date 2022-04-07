@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221103
-# 0.3.6.3
+# V20220704
+# 0.3.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -48,7 +48,6 @@ if ! grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | grep
       if [ "$SYNCING_REPLACE_TX" -ge "100" ] &>/dev/null; then
         echo "100" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>&1
         cp "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/sync.log &>/dev/null
-        truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
         echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ ${SYNCING:?}% \\r"
         WALLET_SYNC="${G1:?}100%${N0:?}" # wallet blockchain is synced 100%
         SYNCING="${G1:?}100%${N0:?}"
