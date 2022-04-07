@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220404
+# V20220704
 # 2.6.4.8
 
 # dialog, ncurses no utf8 acs
@@ -74,15 +74,15 @@ TITLE="$(hostname 2>/dev/null) ($(grep "inet" "${LOG_DIR:?}"/node_data/system/if
 MENU=" $(LC_ALL=de_US.utf8 date 2>/dev/null) ${CPU_CTEMP:?}C ${CPU_FTEMP:?}F P2P $(grep "connections" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' 2>/dev/null)"
 
 OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
-  2 "Keys Menu        Dump/Import keys PoS"
-  3 "Information      Pi node status"
+  2 "Keys Menu        Dump/Import keys, inputs"
+  3 "Information      Node information"
   4 "Download Menu    Wallet, bootstrap, display"
   5 "Configs & Tools  Configurations & tools"
   6 "System Space     Disk space utilized"
-  7 "Swap Menu        Swap space options"
-  8 "UFW Menu         Uncomplicated firewall"
-  9 "Tor Menu         Proxy options (tor)"
-  10 "Quit             Exit menu")
+  7 "SWAP Menu        Swap space options"
+  8 "Firewall Menu    Uncomplicated firewall"
+  9 "Proxy Menu       Proxy options (tor)"
+  10 "Quit            Exit menu")
 
 CHOICE=$(dialog --clear \
   --nocancel \
