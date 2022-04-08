@@ -1298,7 +1298,7 @@ fi
 
 ### hiding balance, ruled by configuration #####################################
 if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-  RANDOM_BALANCE=$((((RANDOM % 5) + 1)))
+  RANDOM_BALANCE=$((((RANDOM % 4) + 1)))
   WALLET_BALANCES="${GR:?}$(tr -dc '1-9' </dev/urandom 2>&1 | head -c "${RANDOM_BALANCE:?}" 2>&1 | rev 2>&1).$(tr -dc '1-9' </dev/urandom 2>&1 | head -c 2 2>&1 | rev 2>&1)${N0:?}"
 fi
 
