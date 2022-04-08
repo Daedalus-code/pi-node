@@ -1395,9 +1395,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
 
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        torify speedtest-cli --share --bytes >/tmp/speedtest_torify 2>/dev/null
+        timeout 60 torify speedtest-cli --share --bytes >/tmp/speedtest_torify 2>/dev/null
       else
-        torify speedtest-cli --bytes >/tmp/speedtest_torify 2>/dev/null
+        timeout 60 torify speedtest-cli --bytes >/tmp/speedtest_torify 2>/dev/null
       fi
 
     else
@@ -1408,9 +1408,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
 
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        speedtest-cli --share --bytes >/tmp/speedtest_normal 2>/dev/null
+        timeout 60 speedtest-cli --share --bytes >/tmp/speedtest_normal 2>/dev/null
       else
-        speedtest-cli --bytes >/tmp/speedtest_normal 2>/dev/null
+        timeout 60 speedtest-cli --bytes >/tmp/speedtest_normal 2>/dev/null
       fi
 
     fi
