@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220804
-# 2.6.9.0
+# 2.7.0.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1383,30 +1383,48 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     if ! [ -x "$(command -v speedtest-cli)" ] &>/dev/null; then
       sudo apt-get install speedtest-cli -y
     fi
+
     read -r -p "[YN] Run with proxy? y/n " -n 1 -r
     echo
-    clear
+
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
       rm /tmp/speedtest* &>/dev/null
-      set -e
-      printf '%b' "${GR:?}Selecting best server based on ping with proxy...${N0:?}\n"
-      torify speedtest-cli --bytes >/tmp/speedtest_torify 2>/dev/null
+      read -r -p "[YN] Share results? y/n " -n 1 -r
+      echo
+      printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
+
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        torify speedtest-cli --share --bytes >/tmp/speedtest_torify 2>/dev/null
+      else
+        torify speedtest-cli --bytes >/tmp/speedtest_torify 2>/dev/null
+      fi
+
     else
+
       rm /tmp/speedtest* &>/dev/null
-      printf '%b' "${GR:?}Selecting best server based on ping without proxy...${N0:?}\n"
-      speedtest-cli --bytes >/tmp/speedtest_normal 2>/dev/null
+      read -r -p "[YN] Share results? y/n " -n 1 -r
+      echo
+      printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
+
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        speedtest-cli --share --bytes >/tmp/speedtest_normal 2>/dev/null
+      else
+        speedtest-cli --bytes >/tmp/speedtest_normal 2>/dev/null
+      fi
+
     fi
+
     clear
-    printf '%b' "Internet speed result:
+    printf '%b' "Speedtest.net results
 
 Download${GR:?}.: ${G1:?}$(grep "Download" /tmp/speedtest* 2>&1 | awk '{ print $2,$3 }' 2>&1)${N0:?}
 Upload${GR:?}...: ${R1:?}$(grep "Upload" /tmp/speedtest* 2>&1 | awk '{ print $2,$3 }' 2>&1)${N0:?}
-Node${GR:?}.....: ${C1:?}Testing $(grep "Testing from" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6 }' 2>&1)${N0:?}
-Host${GR:?}.....: ${CY:?}Hosted $(grep "Hosted" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6,$7,$8,$9,$10 }' 2>&1)${N0:?}
+Node${GR:?}.....: ${C1:?}Testing $(grep "Testing from" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6,$7,$8,$9 }' 2>&1)${N0:?}
+Host${GR:?}.....: ${CY:?}Hosted $(grep "Hosted" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13 }' 2>&1)${N0:?}
 \n"
     read -r -p "[YN] Save result? y/n " -n 1 -r
     echo
-    clear
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       cat /tmp/speedtest* >/home/"$(whoami)"/speedtest_result
       rm /tmp/speedtest* &>/dev/null
