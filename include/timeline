@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220804
-# 0.2.6.2
+# 0.2.6.6
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -257,6 +257,10 @@ else
     timeline_stats
     TIMELINE="$(echo "${TIMELINE:?}" 2>&1 | tail -1 2>&1)"
   fi
+fi
+
+if [[ ! "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+  timeline_quotes
 fi
 
 # END

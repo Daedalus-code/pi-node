@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220804
-# 2.7.0.8
+# 2.6.9.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -11,15 +11,6 @@ export NCURSES_NO_UTF8_ACS=1
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
-
-# make sure dialog exist
-if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
-  sudo apt-get install dialog -y
-fi
-
-if ! [ -x "$(command -v unzip)" ] &>/dev/null; then
-  sudo apt-get install unzip -y
-fi
 
 if [[ ! -s "${LOG_DIR:?}"/node_data/wallet/client/listunspent ]] &>/dev/null; then
   # non responsive

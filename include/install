@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220304
-# 0.2.0.9
+# V20220804
+# 0.2.2.8
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -75,6 +75,25 @@ if [[ ! -f "${DATA_DIR:?}"/masternode_collateral ]] &>/dev/null; then
   if [[ -z "$WALLET_COLLATERAL" ]] &>/dev/null; then
     exit
   fi
+fi
+
+# make sure dialog exist
+if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
+  sudo apt-get install dialog -y
+fi
+
+# make sure unzip exist
+if ! [ -x "$(command -v unzip)" ] &>/dev/null; then
+  sudo apt-get install unzip -y
+fi
+
+# make sure html2text is installed
+if ! [ -x "$(command -v html2text)" ] &>/dev/null; then
+  echo "Installing html2text"
+  sudo apt-get install html2text -y
+  echo
+  read -t 1 -r -p "[Ok] html2text installed!" </dev/tty
+  echo
 fi
 
 # make sure screen is installed

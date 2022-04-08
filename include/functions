@@ -391,6 +391,11 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/wall
   fi
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 fi
+# hiding wan address, ruled by configuration
+if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
+  PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
+  PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+fi
 
 LATEST_RELEASE=$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)
 if [[ -z "$LATEST_RELEASE" ]] &>/dev/null; then
@@ -558,6 +563,12 @@ if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1
   fi
   WALLET_TXLAST="${G0:?}${SYNC_PROGRESS_BAR:?}${N0:?}"
   loading
+fi
+
+# hiding balance, ruled by configuration
+if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+  RANDOM_BALANCE=$((((RANDOM % 10) + 1)))
+  WALLET_BALANCES="${GR:?}$(tr -dc '1-9' </dev/urandom 2>&1 | head -c "${RANDOM_BALANCE:?}" 2>&1 | rev 2>&1).$(tr -dc '1-9' </dev/urandom 2>&1 | head -c 2 2>&1 | rev 2>&1)${N0:?}"
 fi
 
 ### theme ######################################################################

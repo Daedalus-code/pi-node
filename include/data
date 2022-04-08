@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220604
-# 0.4.0.6
+# V20220804
+# 0.3.9.8
 
 # shellcheck disable=SC2154
 
@@ -13,33 +13,6 @@ source /usr/local/bin/include/pinode/color 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/wallet/system/date 2>/dev/null)
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
   LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>&1)
-fi
-
-### data dependencies ##########################################################
-
-# make sure screen is installed
-if ! [ -x "$(command -v curl)" ] &>/dev/null; then
-  echo "Installing curl"
-  sudo apt-get install curl -y
-  echo
-  read -t 1 -r -p "[Ok] curl installed!" </dev/tty
-  echo
-fi
-# make sure rrdtool is installed
-if ! [ -x "$(command -v rrdtool)" ] &>/dev/null; then
-  echo "Installing rrdtool"
-  sudo apt-get install rrdtool -y
-  echo
-  read -t 1 -r -p "[Ok] rrdtool installed!" </dev/tty
-  echo
-fi
-# make sure html2text is installed
-if ! [ -x "$(command -v html2text)" ] &>/dev/null; then
-  echo "Installing html2text"
-  sudo apt-get install html2text -y
-  echo
-  read -t 1 -r -p "[Ok] html2text installed!" </dev/tty
-  echo
 fi
 
 ### arp -a intranet - local network ############################################
