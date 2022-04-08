@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220704
+# V20220804
 # 2.6.4.8
 
 # dialog, ncurses no utf8 acs
@@ -78,10 +78,10 @@ OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
   3 "Information      Node information"
   4 "Download Menu    Wallet, bootstrap, display"
   5 "Configs & Tools  Configurations & tools"
-  6 "System Space     Disk space utilized"
-  7 "Swap Menu        Swap, DTR options"
-  8 "Firewall Menu    Uncomplicated firewall"
-  9 "Proxy Menu       Proxy options (tor)"
+  6 "Firewall Menu    Uncomplicated firewall"
+  7 "System Space     Disk space utilized"
+  8 "Proxy Menu       Proxy options (tor)"
+  9 "Swap Menu        Swap, DTR options"
   10 "Quit             Exit menu")
 
 CHOICE=$(dialog --clear \
@@ -306,7 +306,7 @@ Then the importprivkey can be used with this output
 
   ;;
 
-"8")
+"6")
 
   HEIGHT=14
   WIDTH=50
@@ -742,7 +742,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   ;;
 
-"6")
+"7")
 
   if [ -x "$(command -v ncdu)" ] &>/dev/null; then
     ncdu -v
@@ -2304,7 +2304,7 @@ ${HIDDEN_SERVICE:?}
 
   # swap options
 
-"7")
+"9")
 
   # get total physical system memory, do this once
   if [[ ! -f "${DATA_DIR:?}"/swapinfo ]] &>/dev/null; then
@@ -2565,7 +2565,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
   # proxy (tor) menu
 
-"9")
+"8")
 
   HEIGHT=10
   WIDTH=47
