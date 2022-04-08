@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220704
-# 1.2.9.9
+# V20220804
+# 1.3.1.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.2.9.9"
+VERSION="v1.3.1.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -391,11 +391,6 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/wall
   fi
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 fi
-# hiding wan address, ruled by configuration
-if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
-  PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
-  PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
-fi
 
 LATEST_RELEASE=$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)
 if [[ -z "$LATEST_RELEASE" ]] &>/dev/null; then
@@ -563,12 +558,6 @@ if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1
   fi
   WALLET_TXLAST="${G0:?}${SYNC_PROGRESS_BAR:?}${N0:?}"
   loading
-fi
-
-# hiding balance, ruled by configuration
-if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
-  RANDOM_BALANCE=$((((RANDOM % 10) + 1)))
-  WALLET_BALANCES="${GR:?}$(tr -dc '1-9' </dev/urandom 2>&1 | head -c "${RANDOM_BALANCE:?}" 2>&1 | rev 2>&1).$(tr -dc '1-9' </dev/urandom 2>&1 | head -c 2 2>&1 | rev 2>&1)${N0:?}"
 fi
 
 ### theme ######################################################################
@@ -1305,6 +1294,18 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 
   TIMELINE="${GR:?}Getting data.${N0:?}"
 else
   source /usr/local/bin/include/pinode/timeline
+fi
+
+### hiding balance, ruled by configuration #####################################
+if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
+  RANDOM_BALANCE=$((((RANDOM % 5) + 1)))
+  WALLET_BALANCES="${GR:?}$(tr -dc '1-9' </dev/urandom 2>&1 | head -c "${RANDOM_BALANCE:?}" 2>&1 | rev 2>&1).$(tr -dc '1-9' </dev/urandom 2>&1 | head -c 2 2>&1 | rev 2>&1)${N0:?}"
+fi
+
+### hiding wan address, ruled by configuration #################################
+if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
+  PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
+  PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 fi
 
 # END
