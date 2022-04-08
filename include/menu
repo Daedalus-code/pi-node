@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220804
-# 2.6.4.8
+# 2.6.9.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -73,7 +73,7 @@ BACKTITLE="Pi-Node - ${OLD_HEAD:?} ${LATEST_DATE:?}"
 TITLE="$(hostname 2>/dev/null) ($(grep "inet" "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep -v "inet6|127.0.0.1" 2>/dev/null | awk '{ print $2 }' 2>/dev/null | xargs 2>/dev/null | awk '{ print $1 }' 2>/dev/null))"
 MENU=" $(LC_ALL=de_US.utf8 date 2>/dev/null) ${CPU_CTEMP:?}C ${CPU_FTEMP:?}F P2P $(grep "connections" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' 2>/dev/null)"
 
-OPTIONS=(1 "Wallet Menu      Shutdown, Re/Start node"
+OPTIONS=(1 "Node Menu        Shutdown, Re/Start node"
   2 "Keys Menu        Dump/Import keys, inputs"
   3 "Information      Node information"
   4 "Download Menu    Wallet, bootstrap, display"
@@ -770,9 +770,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
 "4")
 
-  HEIGHT=12
+  HEIGHT=13
   WIDTH=68
-  CHOICE_HEIGHT=5
+  CHOICE_HEIGHT=6
   BACKTITLE="Download, Install & Compile"
   TITLE="Download wallets, bootstrap, drivers, compiler"
   MENU="Choose one option:"
@@ -781,7 +781,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     2 "Download         Download wallet, bootstrap automatically"
     3 "Bootstrap        Download and Install bootstrap"
     4 "Display          Setup display (HyperPixel4) drivers"
-    5 "Compiler         Compile new wallet")
+    5 "Compiler         Compile new wallet from source"
+    6 "Speedtest        Test internet speed (bytes)")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -1372,6 +1373,47 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     echo
     read -r -p "[Ok] Nothing was built, press Enter to continue" </dev/tty
     echo
+
+    ;;
+
+    # speedtest
+
+  "6")
+
+    if ! [ -x "$(command -v speedtest-cli)" ] &>/dev/null; then
+      sudo apt-get install speedtest-cli -y
+    fi
+    read -r -p "[YN] Run with proxy? y/n " -n 1 -r
+    echo
+    clear
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      rm /tmp/speedtest* &>/dev/null
+      set -e
+      printf '%b' "${GR:?}Selecting best server based on ping with proxy...${N0:?}\n"
+      torify speedtest-cli --bytes >/tmp/speedtest_torify 2>/dev/null
+    else
+      rm /tmp/speedtest* &>/dev/null
+      printf '%b' "${GR:?}Selecting best server based on ping without proxy...${N0:?}\n"
+      speedtest-cli --bytes >/tmp/speedtest_normal 2>/dev/null
+    fi
+    clear
+    printf '%b' "Internet speed result:
+
+Download${GR:?}.: ${G1:?}$(grep "Download" /tmp/speedtest* 2>&1 | awk '{ print $2,$3 }' 2>&1)${N0:?}
+Upload${GR:?}...: ${R1:?}$(grep "Upload" /tmp/speedtest* 2>&1 | awk '{ print $2,$3 }' 2>&1)${N0:?}
+Node${GR:?}.....: ${C1:?}Testing $(grep "Testing from" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6 }' 2>&1)${N0:?}
+Host${GR:?}.....: ${CY:?}Hosted $(grep "Hosted" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6,$7,$8,$9,$10 }' 2>&1)${N0:?}
+\n"
+    read -r -p "[YN] Save result? y/n " -n 1 -r
+    echo
+    clear
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      cat /tmp/speedtest* >/home/"$(whoami)"/speedtest_result
+      rm /tmp/speedtest* &>/dev/null
+      read -r -p "[Ok] Saved! (speedtest_result) Press Enter to continue" </dev/tty
+      echo
+    fi
+    rm /tmp/speedtest* &>/dev/null
 
     ;;
 
