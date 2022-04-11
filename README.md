@@ -1,3 +1,7 @@
+![GitHub Maintained](https://img.shields.io/badge/Open%20Source-Yes-green)
+![GitHub repo size](https://img.shields.io/github/repo-size/daedalus-code/pi-node)
+![GitHub last activity](https://img.shields.io/github/last-commit/daedalus-code/pi-node)
+
 # Pi-Node
 Crypto RaspberryPi Node - RaspberryPi with LCD monitoring  
 
