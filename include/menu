@@ -1386,11 +1386,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
 
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        SHARE="${P1:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
         timeout 90 torify speedtest-cli --share --bytes >/tmp/speedtest_torify 2>/dev/null
+        SHARE="${P1:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
       else
-        SHARE="${GR:?}Nothing to share${N0:?}"
         timeout 90 torify speedtest-cli --bytes >/tmp/speedtest_torify 2>/dev/null
+        SHARE="${GR:?}Nothing to share${N0:?}"
       fi
 
     else
@@ -1401,11 +1401,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
 
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        SHARE="${P1:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
         timeout 90 speedtest-cli --share --bytes >/tmp/speedtest_normal 2>/dev/null
+        SHARE="${P1:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
       else
-        SHARE="${GR:?}Nothing to share${N0:?}"
         timeout 90 speedtest-cli --bytes >/tmp/speedtest_normal 2>/dev/null
+        SHARE="${GR:?}Nothing to share${N0:?}"
       fi
 
     fi
