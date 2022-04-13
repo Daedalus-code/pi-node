@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221104
-# 1.3.1.9
+# V20221304
+# 1.3.3.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -1272,7 +1272,18 @@ fi
 ### clean up ###################################################################
 
 if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
-  truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+
+  if [[ "$KEEP_DEBUG" -eq "1" ]] &>/dev/null; then
+    cp "${WALLET_LOG_DIR:?}"/debug.log "${DATA_DIR:?}"/debug.log &>/dev/null
+    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+  else
+    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+  fi
+
+  if [[ "$KEEP_BACKUPS" -eq "0" ]] &>/dev/null; then
+    rm -r "${DATA_DIR:?}"/backups &>/dev/null
+  fi
+
   truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/updates &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
