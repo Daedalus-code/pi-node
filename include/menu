@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221304
-# 2.7.0.8
+# 2.7.1.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1386,9 +1386,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
 
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        BOOT=$SECONDS
         timeout 90 torify speedtest-cli --share --bytes >/tmp/speedtest_torify 2>/dev/null
-        SHARE="${P1:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
+        SHARE="${P0:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
       else
+        BOOT=$SECONDS
         timeout 90 torify speedtest-cli --bytes >/tmp/speedtest_torify 2>/dev/null
         SHARE="${GR:?}Nothing to share${N0:?}"
       fi
@@ -1401,9 +1403,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
 
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        BOOT=$SECONDS
         timeout 90 speedtest-cli --share --bytes >/tmp/speedtest_normal 2>/dev/null
-        SHARE="${P1:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
+        SHARE="${P0:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
       else
+        BOOT=$SECONDS
         timeout 90 speedtest-cli --bytes >/tmp/speedtest_normal 2>/dev/null
         SHARE="${GR:?}Nothing to share${N0:?}"
       fi
@@ -1414,6 +1418,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       SHARE="${GR:?}404${N0:?}"
     fi
 
+    DURATION=$((SECONDS - BOOT))
+    SPEED_AGE=$(printf '%dh:%dm:%ds\n' $(("$(echo "${DURATION:?}" 2>&1)/3600")) $(("$(echo "${DURATION:?}" 2>&1)%3600/60")) $(("$(echo "${DURATION:?}" 2>&1)%60")))
+
     clear
     printf '%b' "Speedtest.net results
 
@@ -1422,6 +1429,7 @@ Upload${GR:?}...: ${R1:?}$(grep "Upload" /tmp/speedtest* 2>&1 | awk '{ print $2,
 Node${GR:?}.....: ${C1:?}Testing $(grep "Testing from" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6,$7,$8,$9 }' 2>&1)${N0:?}
 Host${GR:?}.....: ${CY:?}Hosted $(grep "Hosted" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13 }' 2>&1)${N0:?}
 Results${GR:?}..: ${SHARE:?}${N0:?}
+Time${GR:?}.....: ${SPEED_AGE:?}${N0:?}
 \n"
     read -r -p "[YN] Save result? y/n " -n 1 -r
     echo
