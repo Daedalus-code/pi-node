@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221304
-# 2.7.0.2
+# 2.7.0.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1386,8 +1386,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
 
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        SHARE="${P1:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
         timeout 90 torify speedtest-cli --share --bytes >/tmp/speedtest_torify 2>/dev/null
       else
+        SHARE="${GR:?}Nothing to share${N0:?}"
         timeout 90 torify speedtest-cli --bytes >/tmp/speedtest_torify 2>/dev/null
       fi
 
@@ -1406,6 +1408,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         timeout 90 speedtest-cli --bytes >/tmp/speedtest_normal 2>/dev/null
       fi
 
+    fi
+
+    if [[ -z "$SHARE" ]] &>/dev/null; then
+      SHARE="${GR:?}404${N0:?}"
     fi
 
     clear
