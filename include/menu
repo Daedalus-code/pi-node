@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220804
-# 2.6.9.9
+# V20221304
+# 2.7.0.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1399,8 +1399,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Please wait...${N0:?}\n"
 
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        SHARE="${P1:?}$(grep "Share" /tmp/speedtest* 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
         timeout 90 speedtest-cli --share --bytes >/tmp/speedtest_normal 2>/dev/null
       else
+        SHARE="${GR:?}Nothing to share${N0:?}"
         timeout 90 speedtest-cli --bytes >/tmp/speedtest_normal 2>/dev/null
       fi
 
@@ -1413,6 +1415,7 @@ Download${GR:?}.: ${G1:?}$(grep "Download" /tmp/speedtest* 2>&1 | awk '{ print $
 Upload${GR:?}...: ${R1:?}$(grep "Upload" /tmp/speedtest* 2>&1 | awk '{ print $2,$3 }' 2>&1)${N0:?}
 Node${GR:?}.....: ${C1:?}Testing $(grep "Testing from" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6,$7,$8,$9 }' 2>&1)${N0:?}
 Host${GR:?}.....: ${CY:?}Hosted $(grep "Hosted" /tmp/speedtest* 2>&1 | awk '{ print $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13 }' 2>&1)${N0:?}
+Results${GR:?}..: ${SHARE:?}${N0:?}
 \n"
     read -r -p "[YN] Save result? y/n " -n 1 -r
     echo
