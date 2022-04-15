@@ -706,7 +706,7 @@ fi
 ### wallet starting ############################################################
 
 function dashbord_grey() {
-  WALLET_TXLAST="${GR:?}${WALLET_TXLAST:?}${N0:?}"
+  WALLET_TXLAST="${N0:?}       Loading${N0:?}"
   RC="${GR:?}"
   CB="${GR:?}"
   TX="${GR:?}"
