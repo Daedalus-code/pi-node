@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221304
-# 1.3.3.0
+# V20221504
+# 1.3.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.3.1.9"
+VERSION="v1.3.3.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -706,6 +706,7 @@ fi
 ### wallet starting ############################################################
 
 function dashbord_grey() {
+  WALLET_TXLAST="${GR:?}${WALLET_TXLAST:?}${N0:?}"
   RC="${GR:?}"
   CB="${GR:?}"
   TX="${GR:?}"
