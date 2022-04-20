@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221504
-# 1.3.2.7
+# V20222004
+# 1.3.3.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.3.2.7"
+VERSION="v1.3.3.7"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -714,6 +714,16 @@ function dashbord_grey() {
 
 if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
   dashbord_grey
+fi
+
+### wallet daily reset #########################################################
+
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/staking)))")" -lt "5460" ]] &>/dev/null; then
+  # empty file
+  if [[ "$(wc -l "${DATA_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)" -eq "0" ]] &>/dev/null; then
+    CB="${C1:?}"
+    TX="${C1:?}"
+  fi
 fi
 
 ### rrdtool graphs #############################################################
