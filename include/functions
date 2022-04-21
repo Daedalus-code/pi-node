@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222104
-# 1.3.4.0
+# 1.3.4.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.3.4.0"
+VERSION="v1.3.4.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1269,12 +1269,18 @@ if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/
 fi
 
 if [[ ! "$(grep "Never connected()" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
+
   # use old failed list as a continuation to the next day, ruled by -lines above
   if [[ "$(wc -l "${DATA_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+
+    # add system ip address to failed list
+    echo "${IP_ADDRESS_NR:?}" >>"${DATA_DIR:?}"/failed 2>&1
+
     # add failed peers (failed.tmp) back in to debug.log
     while IFS= read -r ADDS; do
       echo "${LOG_DATE:?} Status() connect to ${ADDS:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     done <"${DATA_DIR:?}"/failed 2>&1 | awk '!a[$0]++' 2>&1 | sort -n 2>&1
+
     printf '%b' "${LOG_DATE:?} Status() Clean.Backup() Restoring old failed list, failed.tmp +$(wc -l "${DATA_DIR:?}"/failed 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
