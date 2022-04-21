@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222104
-# 0.3.7.8
+# 0.3.8.1
 
 # shellcheck disable=SC2154
 
@@ -254,6 +254,9 @@ function failed_peers() {
 failed_peers
 
 IP_ADDRESS_NR="$(cat "${LOG_DIR:?}"/node_data/system/ip_address 2>/dev/null)"
+if [[ ! "$(grep "${IP_ADDRESS_NR:?} failed" "${WALLET_LOG_DIR:?}"/debug.log)" ]] &>/dev/null; then
+  echo "${LOG_DATE:?} Status() connect to ${IP_ADDRESS_NR:?} failed -> Never connected()" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+fi
 
 # create "connected/working" ipv4, domain, onion success list, sort, remove duplicates
 if [ -f "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo ] &>/dev/null; then
