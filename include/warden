@@ -1,13 +1,27 @@
 #!/bin/bash
 
 # By Rainman
-# V20220404
-# 0.2.5.9
+# V20222204
+# 0.2.7.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
+
+### directories ################################################################
+
+if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" ]] &>/dev/null; then
+
+  # create temp directories, ruled by configuration
+  mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/system &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet/peers &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet/data &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet/client &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet/client/tmp &>/dev/null
+fi
 
 echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/time.warden 2>&1 # save warden time
 
