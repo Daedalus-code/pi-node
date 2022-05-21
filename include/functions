@@ -243,6 +243,11 @@ if [[ "$(grep "error" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodeco
   echo "1" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/overlap
   "${WALLET_DIR:?}"/./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount 2>&1
 fi
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount 2>&1 | awk '{ print $1 }' 2>&1)" -eq "0" ]] &>/dev/null; then
+  # continue doing this
+  echo "1" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/overlap
+  "${WALLET_DIR:?}"/./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodecount 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodecount 2>&1
+fi
 
 # masternodestatus
 if [[ ! "$(grep "1" "${LOG_DIR:?}"/node_data/wallet/client/tmp/overlap 2>&1)" ]] &>/dev/null; then
@@ -250,6 +255,11 @@ if [[ ! "$(grep "1" "${LOG_DIR:?}"/node_data/wallet/client/tmp/overlap 2>&1)" ]]
 fi
 # masternodestatus (getpatriotnodestatus)
 if [[ "$(grep "error" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodestatus 2>&1)" ]] &>/dev/null; then
+  # continue doing this
+  echo "1" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/overlap
+  cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodestatus 2>/dev/null
+fi
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodestatus 2>&1 | awk '{ print $1 }' 2>&1)" -eq "0" ]] &>/dev/null; then
   # continue doing this
   echo "1" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/overlap
   cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getmasternodestatus 2>/dev/null
