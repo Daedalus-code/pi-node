@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222215
-# 1.3.7.3
+# V20222205
+# 1.3.8.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.3.7.3"
+VERSION="v1.3.8.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -629,10 +629,13 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
     WALLET_NODES_INQUEUE="0"
   fi
 
-  # get masternode reward count, ruled by the masternode count
-  WALLET_REWARD_COUNT=$(echo "${POS_LIMIT:?}/${WALLET_NODES_INQUEUE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  # save pay count
-  echo "${WALLET_REWARD_COUNT:?}" >"${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>&1
+  if [[ ! "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+
+    # get masternode reward count, ruled by the masternode count
+    WALLET_REWARD_COUNT=$(echo "${POS_LIMIT:?}/${WALLET_NODES_INQUEUE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    # save pay count
+    echo "${WALLET_REWARD_COUNT:?}" >"${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>&1
+  fi
 
   # calculate average masternode payout with pn|mn input amounts
   echo "$(egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(egrep -A3 "MN|PN" "${LOG_DIR:?}"/node_data/client/listunspent 2>&1 | grep "amount" 2>&1 | wc -l 2>&1)" 2>&1 | bc -l 2>&1 | grep -v "syntax" 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/masternode_payment 2>&1
