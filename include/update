@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # By Rainman
-# V20221103
+# V20222605
 # 0.0.1.2
 
 touch /tmp/updating &>/dev/null
 clear
 # update repo
-cd /home/"$(whoami)"/pi-node 2>/dev/null || exit && git pull -q 2>/dev/null && bash include/install 2>/dev/null
+cd /home/"$(whoami)"/pi-node 2>/dev/null || exit && git pull -q 2>/dev/null && bash /home/"$(whoami)"/pi-node/include/install 2>/dev/null
 
 # END
