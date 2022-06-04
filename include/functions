@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220406
-# 1.4.6.1
+# 1.4.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.6.1"
+VERSION="v1.4.6.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -857,8 +857,8 @@ cat >"${LOG_DIR:?}"/add_peers <<'EOF'
 #!/bin/bash
 
 # By Rainman
-# V20222104
-# 0.0.5.3
+# V20220406
+# 0.0.5.4
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -906,6 +906,7 @@ printf '%b' "${LOG_DATE:?} Status() Addnode.Script Stopping adding nodes! ${GR:?
 
 screen -X -S add_peers quit &>/dev/null
 LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&1
+cd || exit
 exit
 EOF
 
