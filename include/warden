@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222204
-# 0.2.7.3
+# V20220406
+# 0.2.7.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -146,7 +146,12 @@ fi
 if grep -o "extra_add_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
   APX_IND="${G1:?}+${N0:?}"
 else
-  APX_IND="${N0:?}"
+  APX_IND="${GR:?}+${N0:?}"
+fi
+if grep -o "add_lost_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
+  APL_IND="${Y1:?}+${N0:?}"
+else
+  APL_IND="${GR:?}+${N0:?}"
 fi
 
 # get wallet connections
@@ -173,7 +178,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/
         rm "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord &>/dev/null
         printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} ${M_IND:?}${AP_IND:?}${APX_IND:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} ${M_IND:?}${AP_IND:?}${APX_IND:?}${APL_IND:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove lock file
       rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
 

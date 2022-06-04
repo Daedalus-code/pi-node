@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222104
-# 0.3.7.8
+# V20220406
+# 0.3.8.1
 
 # shellcheck disable=SC2154
 
@@ -272,6 +272,9 @@ LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&
 
 # kill when too many screens appears (all of them)
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -c "add_peers" 2>&1)" -gt "1" ]] &>/dev/null; then
+  killall screen &>/dev/null
+fi
+if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -c "add_lost_peers" 2>&1)" -gt "1" ]] &>/dev/null; then
   killall screen &>/dev/null
 fi
 
