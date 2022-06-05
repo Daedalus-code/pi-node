@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220506
-# 1.4.6.3
+# 1.4.6.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.6.3"
+VERSION="v1.4.6.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -887,8 +887,6 @@ LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&
 exit
 EOF
 
-cp "${LOG_DIR:?}"/add_peers "${LOG_DIR:?}"/add_lost_peers &>/dev/null
-
 ### coingecko price, volume ####################################################
 
 cat >"${LOG_DIR:?}"/add_cg <<'EOF'
@@ -981,7 +979,7 @@ if [[ ! "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+
         # create screen session
         screen -dmS add_lost_peers &>/dev/null
         # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
-        timeout 900 screen -S add_lost_peers -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_lost_peers\n'
+        timeout 900 screen -S add_lost_peers -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
         printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding lost peers! ${GR:?}< ${P2P_THEN:?}${N0:?} $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
     fi
