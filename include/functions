@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220606
-# 1.4.6.1
+# 1.4.6.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.6.1"
+VERSION="v1.4.6.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1448,6 +1448,10 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
     PUBLIC_IP="${GR:?}$(cat "${DATA_DIR:?}"/getproxy 2>/dev/null | grep "ID" 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
   else
     PUBLIC_IP="${P1:?}$(cat "${DATA_DIR:?}"/getproxy 2>/dev/null | awk -F, '{ print $1 }' 2>&1 | awk -F: '{ print $2 }' 2>&1 | tr -d '"' 2>&1)${N0:?}"
+  fi
+
+  if [[ "$(grep "Unable" "${DATA_DIR:?}"/getproxy 2>&1)" ]] &>/dev/null; then
+    PUBLIC_IP="${GR:?}Unable to resolve.${N0:?}"
   fi
 fi
 
