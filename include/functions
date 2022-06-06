@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220606
-# 1.4.5.8
+# 1.4.3.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.5.8"
+VERSION="v1.4.3.0"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1410,7 +1410,7 @@ fi
 
 ### display wan, onion and tor address #########################################
 
-RANDOM_WAN=$((((RANDOM % 3) + 1)))
+RANDOM_WAN=$((((RANDOM % 2) + 1)))
 
 if [[ "$RANDOM_WAN" -eq "1" ]] &>/dev/null; then
   PUBLIC_IP="${C1:?}$(cat "${DATA_DIR:?}"/getwan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 2>&1)${N0:?}"
@@ -1418,34 +1418,6 @@ if [[ "$RANDOM_WAN" -eq "1" ]] &>/dev/null; then
 elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
   PUBLIC_IP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
-
-elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
-  # create myip script
-  if [[ ! -f /tmp/wan_curl ]] &>/dev/null; then
-    echo "curl -s https://api.myip.com 2>&1 | html2text" >/tmp/wan_curl 2>&1
-  fi
-
-  # truncate old proxy data
-  if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/getproxy)))")" -gt "5460" ]] &>/dev/null; then
-    truncate -s 0 "${DATA_DIR:?}"/getproxy &>/dev/null
-  fi
-
-  # truncate cloudflare data
-  if [[ "$(grep "Cloudflare" "${DATA_DIR:?}"/getproxy 2>&1)" ]] &>/dev/null; then
-    truncate -s 0 "${DATA_DIR:?}"/getproxy &>/dev/null
-  fi
-
-  if [[ "$(grep "Cloudflare" "${DATA_DIR:?}"/getproxy 2>&1)" ]] &>/dev/null; then
-    PUBLIC_IP="${GR:?}$(cat "${DATA_DIR:?}"/getproxy 2>/dev/null | grep "ID" 2>&1 | awk '{ print $3 }' 2>&1)${N0:?}"
-  else
-    PUBLIC_IP="${P1:?}$(cat "${DATA_DIR:?}"/getproxy 2>/dev/null | awk -F, '{ print $1 }' 2>&1 | awk -F: '{ print $2 }' 2>&1 | tr -d '"' 2>&1)${N0:?}"
-  fi
-
-  if [[ "$(grep "Unable" "${DATA_DIR:?}"/getproxy 2>&1)" ]] &>/dev/null; then
-    PUBLIC_IP="${P1:?}Unable to resolve.${N0:?}"
-  elif [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-    PUBLIC_IP="${GR:?}Unable to resolve.${N0:?}"
-  fi
 fi
 
 ### hiding wan address, ruled by configuration #################################
