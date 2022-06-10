@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221006
-# 1.4.4.2
+# V20221106
+# 1.4.4.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.4.2"
+VERSION="v1.4.4.8"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1414,22 +1414,28 @@ fi
 
 ### display wan, onion and tor address #########################################
 
+function empty_ip() {
+  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+    PUBLIC_IP="${GR:?}...${N0:?}"
+  fi
+}
+
 RANDOM_WAN=$((((RANDOM % 3) + 1)))
 
 if [[ "$RANDOM_WAN" -eq "1" ]] &>/dev/null; then
   PUBLIC_IP="${C1:?}$(cat "${DATA_DIR:?}"/getwan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 2>&1)${N0:?}"
+  empty_ip
 
 elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
   PUBLIC_IP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+  empty_ip
 
 elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
   # create advertiselocal list
   grep "AdvertiseLocal" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 >"${DATA_DIR:?}"/getproxy 2>&1
   PUBLIC_IP="${P1:?}$(cat "${DATA_DIR:?}"/getproxy 2>/dev/null | tail -1 2>&1)${N0:?}"
-  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-    PUBLIC_IP="${GR:?}...${N0:?}"
-  fi
+  empty_ip
 fi
 
 ### hiding wan address, ruled by configuration #################################
