@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221006
-# 1.4.3.7
+# 1.4.4.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.3.7"
+VERSION="v1.4.4.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -436,6 +436,11 @@ fi
 
 # get peers w latest version
 WALLET_PEERS_LATEST=$(grep ":$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest | grep -Po "[0-9]+\.[0-9]+\.[0-9]+")" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | wc -l)
+
+if [[ -z "$WALLET_PEERS_LATEST" ]] &>/dev/null; then
+  WALLET_PEERS_LATEST="$(cat "${LOG_DIR:?}"/node_data/wallet/client/version 2>/dev/null | grep -Po "[0-9]+\.[0-9]+\.[0-9]+.[0-9]+" 2>&1)"
+fi
+
 # get peers w other version than latest
 WALLET_PEERS_OTHER=$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | grep "connections" 2>&1 | awk '{ print $2 }' 2>&1)-${WALLET_PEERS_LATEST:?}" 2>&1 | bc 2>&1)
 # calculate total peers
