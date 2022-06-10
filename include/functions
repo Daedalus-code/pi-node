@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221106
-# 1.4.4.8
+# 1.4.4.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.4.8"
+VERSION="v1.4.4.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -406,12 +406,13 @@ if [ ! -s "${DATA_DIR:?}"/getwan ] &>/dev/null; then
   curl -s https://api.myip.com 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${DATA_DIR:?}"/getwan 2>&1
 fi
 
+function empty_ip() {
+  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+    PUBLIC_IP="${GR:?}...${N0:?}"
+  fi
+}
+
 PUBLIC_IP=$(cat "${DATA_DIR:?}"/getwan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 2>&1)
-
-if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-  PUBLIC_IP="${GR:?}...${N0:?}"
-fi
-
 PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
 
 if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/wallet/client/getinfo &>/dev/null; then
@@ -429,6 +430,7 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/wall
   fi
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 fi
+empty_ip
 
 if [[ -z "$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)" ]] &>/dev/null; then
   curl -s -L "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" 2>&1 | grep -Pv '\d{2}' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
@@ -1414,12 +1416,6 @@ fi
 
 ### display wan, onion and tor address #########################################
 
-function empty_ip() {
-  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-    PUBLIC_IP="${GR:?}...${N0:?}"
-  fi
-}
-
 RANDOM_WAN=$((((RANDOM % 3) + 1)))
 
 if [[ "$RANDOM_WAN" -eq "1" ]] &>/dev/null; then
@@ -1443,6 +1439,7 @@ fi
 if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
   PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
   PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+  empty_ip
 fi
 
 # END
