@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220806
-# 1.4.3.8
+# V20221006
+# 1.4.3.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.3.8"
+VERSION="v1.4.3.7"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -430,10 +430,8 @@ if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/wall
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 fi
 
-if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${LOG_DIR:?}"/node_data/wallet/client/latest)))")" -gt "5460" ]] &>/dev/null; then
-  if [[ -z "$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)" ]] &>/dev/null; then
-    curl -s -L "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" 2>&1 | grep -Pv '\d{2}' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
-  fi
+if [[ -z "$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)" ]] &>/dev/null; then
+  curl -s -L "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" 2>&1 | grep -Pv '\d{2}' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
 fi
 
 # get peers w latest version
@@ -1373,6 +1371,7 @@ if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/
   truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/updates &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
+  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/client/latest &>/dev/null
 fi
 
 ### auto update repository #####################################################
