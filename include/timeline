@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220804
-# 0.2.6.6
+# V20221006
+# 0.2.7.0
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -13,7 +13,7 @@ source /usr/local/bin/include/pinode/color 2>&1
 
 function timeline_stats() {
   # random start number
-  TIMELINE_RANDOM=$((((RANDOM % 18) + 1)))
+  TIMELINE_RANDOM=$((((RANDOM % 19) + 1)))
 
   if [[ -z "$TIMELINE_RANDOM" ]] &>/dev/null; then
     # non responsive, go with difficulty
@@ -212,6 +212,10 @@ function timeline_stats() {
       TIMELINE="${GR:?}Unknown${N0:?}"
     fi
     TIMELINE="${TIMELINE_MODEL:?}"
+
+  # uname - print system information
+  elif [ "$TIMELINE_RANDOM" -eq "19" ] &>/dev/null; then
+    TIMELINE="$(uname -a 2>&1 | awk '{ print $1,$2,$3 }' 2>&1)"
   fi
 }
 
