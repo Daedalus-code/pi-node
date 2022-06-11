@@ -1346,7 +1346,7 @@ fi
 
 ### restore failed list ########################################################
 
-if [[ -f "${DATA_DIR:?}"/system_ip ]] &>/dev/null; then
+if [[ ! -f "${DATA_DIR:?}"/system_ip ]] &>/dev/null; then
   echo "$(cat "${LOG_DIR:?}"/node_data/system/ip_address 2>/dev/null)" 2>&1 | egrep -o "[0-9]+" 2>&1 | head -1 >"${DATA_DIR:?}"/system_ip
 fi
 SYSTEM_IP=$(cat "${DATA_DIR:?}"/system_ip 2>/dev/null)
