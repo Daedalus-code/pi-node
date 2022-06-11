@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220604
+# V20221106
 # 0.5.2.6
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
@@ -450,7 +450,7 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
             if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
               # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
               "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold true "$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" &>/dev/null
-              "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold "$(echo "$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)-100" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" &>/dev/null
+              "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold "$(echo "$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)/2" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" &>/dev/null
             fi
 
             sleep 1
