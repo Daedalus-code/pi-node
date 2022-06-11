@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221106
-# 1.4.6.0
+# 1.4.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.6.0"
+VERSION="v1.4.6.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1442,8 +1442,10 @@ elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
 
 elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
   # create advertiselocal list
-  grep "AdvertiseLocal" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 >"${DATA_DIR:?}"/getproxy 2>&1
-  PUBLIC_IP="${P1:?}$(cat "${DATA_DIR:?}"/getproxy 2>/dev/null | tail -1 2>&1)${N0:?}"
+  grep "AdvertiseLocal" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 >>"${DATA_DIR:?}"/getproxy 2>&1
+  # keep last three
+  echo "$(tail -3 "${DATA_DIR:?}"/getproxy 2>&1)" >"${DATA_DIR:?}"/getproxy 2>&1
+  PUBLIC_IP="${P1:?}$(tail -1 "${DATA_DIR:?}"/getproxy 2>&1)${N0:?}"
 fi
 
 ### hiding wan address, ruled by configuration #################################
