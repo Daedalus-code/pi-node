@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221106
-# 1.4.4.5
+# 1.4.5.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.4.5"
+VERSION="v1.4.5.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -406,31 +406,37 @@ if [ ! -s "${DATA_DIR:?}"/getwan ] &>/dev/null; then
   curl -s https://api.myip.com 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${DATA_DIR:?}"/getwan 2>&1
 fi
 
-function empty_ip() {
-  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-    PUBLIC_IP="${GR:?}...${N0:?}"
-  fi
-}
+### public ip address ##########################################################
 
 PUBLIC_IP=$(cat "${DATA_DIR:?}"/getwan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 2>&1)
 PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
 
+# look for working proxy
 if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/wallet/client/getinfo &>/dev/null; then
+
   if [[ ! -f "${DATA_DIR:?}"/getonion ]] &>/dev/null; then
     PUBLIC_IP="$(grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1)"
     PUBLIC_IP="$(egrep "AdvertiseLocal: .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $5 }' 2>&1)"
+
     if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
       PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
       PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
     else
       echo "${PUBLIC_IP:?}" >"${DATA_DIR:?}"/getonion 2>&1
     fi
+
   else
     PUBLIC_IP="$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)"
   fi
+
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 fi
-empty_ip
+
+if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+  PUBLIC_IP="${GR:?}...${N0:?}"
+fi
+
+### wallet peers, connections ##################################################
 
 if [[ -z "$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)" ]] &>/dev/null; then
   curl -s -L "${WALLET_RELEASE:?}" 2>&1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" 2>&1 | grep -Pv '\d{2}' 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
@@ -475,6 +481,8 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1 | awk '{ pr
   echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/connections
 fi
 
+### wallet balance, value ######################################################
+
 WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 WALLET_UNCONFIRMED=$(grep "unconfirmed_balance" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 WALLET_IMMATURE=$(grep "immature_balance" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
@@ -518,6 +526,8 @@ echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>/dev/null | aw
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1 | awk '{ print $1 }' 2>&1)" -gt "420" ]] &>/dev/null; then
   echo "$(tail -180 "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
 fi
+
+### wallet stakes, inputs, masternode, tx ######################################
 
 WALLET_POS_REWARDS="Stakes ${WALLET_POS:?}"
 WALLET_INPUTS_NODES="Inputs ${WALLET_INPUTS:?}"
@@ -1420,18 +1430,15 @@ RANDOM_WAN=$((((RANDOM % 3) + 1)))
 
 if [[ "$RANDOM_WAN" -eq "1" ]] &>/dev/null; then
   PUBLIC_IP="${C1:?}$(cat "${DATA_DIR:?}"/getwan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 2>&1)${N0:?}"
-  empty_ip
 
 elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
   PUBLIC_IP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
-  empty_ip
 
 elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
   # create advertiselocal list
   grep "AdvertiseLocal" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 >"${DATA_DIR:?}"/getproxy 2>&1
   PUBLIC_IP="${P1:?}$(cat "${DATA_DIR:?}"/getproxy 2>/dev/null | tail -1 2>&1)${N0:?}"
-  empty_ip
 fi
 
 ### hiding wan address, ruled by configuration #################################
@@ -1439,7 +1446,10 @@ fi
 if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
   PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
   PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
-  empty_ip
+fi
+
+if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+  PUBLIC_IP="${GR:?}...${N0:?}"
 fi
 
 # END
