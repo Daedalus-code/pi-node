@@ -120,7 +120,7 @@ rrdtool graph /var/www/html/blockchain_activity.png \
   GPRINT:activity:AVERAGE:%.0lf\ AVG \
   GPRINT:activity:MAX:%.0lf\ Max \
   GPRINT:activity:MIN:%.0lf\ Min \
-  AREA:activity#71E75E
+  AREA:activity#71E75E:"Activity"
 
 # masternodes
 rrdtool graph /var/www/html/masternode_count_graph.png \
