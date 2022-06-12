@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220804
-# 0.4.9.5
+# V20221206
+# 0.5.1.6
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
@@ -100,6 +100,27 @@ rrdtool graph /var/www/html/peers_graph.png \
   LINE1:peers_dns#2C69CC \
   LINE1:peers_onion#A02CCC \
   LINE1:peers_proxy#C26EE2
+
+# blockchain activity
+rrdtool graph /var/www/html/blockchain_activity.png \
+  -w 1394 -h 100 -a PNG \
+  --slope-mode \
+  --vertical-label "Activity" \
+  --alt-autoscale-max --lower-limit=1 \
+  --color BACK#565875 \
+  --color FONT#FFFFFF \
+  --color CANVAS#42445F \
+  --color GRID#565875 \
+  --color FRAME#565875 \
+  --color SHADEA#565875 \
+  --color SHADEB#565875 \
+  --end now --start end-"${GRAPH_TIME:?}" \
+  DEF:activity=/home/"$(whoami)"/stats/block_activity.rrd:activity:MAX \
+  GPRINT:activity:LAST:%.0lf\ Now \
+  GPRINT:activity:AVERAGE:%.0lf\ AVG \
+  GPRINT:activity:MAX:%.0lf\ Max \
+  GPRINT:activity:MIN:%.0lf\ Min \
+  AREA:activity#71E75E
 
 # masternodes
 rrdtool graph /var/www/html/masternode_count_graph.png \

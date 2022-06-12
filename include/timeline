@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221006
-# 0.2.7.0
+# V20221206
+# 0.2.6.3
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -158,14 +158,7 @@ function timeline_stats() {
 
     # mempool activity
   elif [ "$TIMELINE_RANDOM" -eq "14" ] &>/dev/null; then
-    TIMELINE_LINES=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)
-    TIMELINE_ACTIVE=$(grep "1" "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | wc -l 2>&1)
-    TIMELINE_NOACTIVE=$(grep "0" "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | wc -l 2>&1)
-    TIMELINE_PERC_ACTIVE=$(echo "100/$TIMELINE_LINES*$TIMELINE_ACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE_PERC_NOACTIVE=$(echo "100/$TIMELINE_LINES*$TIMELINE_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE_PERC_ACTIVE="${TIMELINE_PERC_ACTIVE:?}%"
-    TIMELINE_PERC_NOACTIVE="${TIMELINE_PERC_NOACTIVE:?}%"
-    TIMELINE="${N0:?}Alive ${TIMELINE_PERC_ACTIVE:?} Dead ${TIMELINE_PERC_NOACTIVE:?}${N0:?}"
+    TIMELINE="${N0:?}Alive $(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | awk '{ print $2 }' 2>&1) Dead $(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | awk '{ print $4 }' 2>&1)${N0:?}"
 
   # network interface and speed
   elif [ "$TIMELINE_RANDOM" -eq "15" ] &>/dev/null; then
