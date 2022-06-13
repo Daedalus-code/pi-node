@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221306
-# 0.3.1.5
+# 0.3.1.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -134,24 +134,24 @@ fi
 SYSTEM_LOAD=$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null)
 
 if grep -o "read_mempool" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  M_IND="${G1:?}M${N0:?}"
+  M_IND="${G1:?}read_mempool${N0:?}"
 else
-  M_IND="${GR:?}M${N0:?}"
+  M_IND="${GR:?}read_mempool${N0:?}"
 fi
 if grep -o "add_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  AP_IND="${G1:?}P${N0:?}"
+  AP_IND="${G1:?}add_peers${N0:?}"
 else
-  AP_IND="${GR:?}P${N0:?}"
+  AP_IND="${GR:?}add_peers${N0:?}"
 fi
 if grep -o "add_extra_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  APX_IND="${G1:?}P+${N0:?}"
+  APX_IND="${G1:?}add_extra_peers${N0:?}"
 else
-  APX_IND="${GR:?}P+${N0:?}"
+  APX_IND="${GR:?}add_extra_peers${N0:?}"
 fi
 if grep -o "add_lost_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  APL_IND="${Y1:?}LP${N0:?}"
+  APL_IND="${Y1:?}add_lost_peers${N0:?}"
 else
-  APL_IND="${GR:?}LP${N0:?}"
+  APL_IND="${GR:?}add_lost_peers${N0:?}"
 fi
 
 # get wallet connections
@@ -178,7 +178,8 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/
         rm "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord &>/dev/null
         printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} ${M_IND:?}${AP_IND:?}${APX_IND:?}${APL_IND:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() ${M_IND:?} ${AP_IND:?} ${APX_IND:?} ${APL_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove lock file
       rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
 
