@@ -148,11 +148,11 @@ LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&
 
 # backup mempool data
 if [[ ! -f "${WALLET_DIR:?}"/mempool ]] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity "${WALLET_DIR:?}"/mempool &>/dev/null
+  cp "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity "${DATA_DIR:?}"/mempool &>/dev/null
 fi
 # update mempool data
-if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${WALLET_DIR:?}"/mempool)))")" -gt "5460" ]] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity "${WALLET_DIR:?}"/mempool &>/dev/null
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/mempool)))")" -gt "5460" ]] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity "${DATA_DIR:?}"/mempool &>/dev/null
 fi
 # restore mempool data
 if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity ]] &>/dev/null; then
