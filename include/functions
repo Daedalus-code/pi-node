@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221306
-# 1.4.8.4
+# 1.4.8.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.8.4"
+VERSION="v1.4.8.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -173,7 +173,8 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_average | awk '{ pri
   echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1
 fi
 
-echo "A $(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)% D $(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $2 }' 2>&1)%" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
+MEMPOOL_AVG_LINES=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)
+echo "A $(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)/${MEMPOOL_AVG_LINES:?}" | bc -l)% D $(echo "$(awk '{ SUM += $2} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)/${MEMPOOL_AVG_LINES:?}" | bc -l)%" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
 
 MEMPOOL_PERC_ACTIVE="${MEMPOOL_PERC_ACTIVE:?}%"
 MEMPOOL_PERC_NOACTIVE="${MEMPOOL_PERC_NOACTIVE:?}%"
