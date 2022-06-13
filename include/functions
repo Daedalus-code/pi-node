@@ -169,8 +169,8 @@ MEMPOOL_PERC_NOACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_NOACTIVE" 2>&1 | bc -l
 echo "A ${MEMPOOL_PERC_ACTIVE:?}% D ${MEMPOOL_PERC_NOACTIVE:?}%" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
 echo "${MEMPOOL_PERC_ACTIVE:?} ${MEMPOOL_PERC_NOACTIVE:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1
 
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)" -gt "10" ]] &>/dev/null; then
-  echo "$(tail -2 "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)" -gt "15" ]] &>/dev/null; then
+  echo "$(tail -5 "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1
 fi
 
 MEMPOOL_AVG_LINES=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)
@@ -216,7 +216,7 @@ if [[ "$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/getmempoolinfo 2>&1 
 else # save no activity values (0) to mempool.activity
   echo "0" >>"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
 fi
-sleep 9
+sleep 6
 done
 EOF
   fi
@@ -226,9 +226,9 @@ EOF
 fi
 
 # reset mempool after n lines
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "720" ]] &>/dev/null; then
   # keep log at n lines
-  echo "$(tail -720 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
+  echo "$(tail -360 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
 fi
 
 ### wallet information #########################################################
