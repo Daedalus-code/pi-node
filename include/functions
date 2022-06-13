@@ -170,7 +170,7 @@ echo "A ${MEMPOOL_PERC_ACTIVE:?}% D ${MEMPOOL_PERC_NOACTIVE:?}%" >"${LOG_DIR:?}"
 echo "${MEMPOOL_PERC_ACTIVE:?} ${MEMPOOL_PERC_NOACTIVE:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)" -gt "10" ]] &>/dev/null; then
-  echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1
+  echo "$(tail -2 "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1
 fi
 
 MEMPOOL_AVG_LINES=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)
