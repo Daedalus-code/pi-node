@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220506
+# V20221306
 # 0.3.1.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -134,24 +134,24 @@ fi
 SYSTEM_LOAD=$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null)
 
 if grep -o "read_mempool" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  M_IND="${G1:?}R${N0:?}"
+  M_IND="${G1:?}M${N0:?}"
 else
-  M_IND="${GR:?}N${N0:?}"
+  M_IND="${GR:?}M${N0:?}"
 fi
 if grep -o "add_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  AP_IND="${G1:?}A${N0:?}"
+  AP_IND="${G1:?}P${N0:?}"
 else
-  AP_IND="${GR:?}N${N0:?}"
+  AP_IND="${GR:?}P${N0:?}"
 fi
 if grep -o "add_extra_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  APX_IND="${G1:?}+${N0:?}"
+  APX_IND="${G1:?}P+${N0:?}"
 else
-  APX_IND="${GR:?}+${N0:?}"
+  APX_IND="${GR:?}P+${N0:?}"
 fi
 if grep -o "add_lost_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  APL_IND="${Y1:?}+${N0:?}"
+  APL_IND="${Y1:?}LP${N0:?}"
 else
-  APL_IND="${GR:?}+${N0:?}"
+  APL_IND="${GR:?}LP${N0:?}"
 fi
 
 # get wallet connections
