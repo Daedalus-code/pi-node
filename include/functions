@@ -226,9 +226,9 @@ EOF
 fi
 
 # reset mempool after n lines
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "720" ]] &>/dev/null; then
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
   # keep log at n lines
-  echo "$(tail -360 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
+  echo "$(tail -720 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
 fi
 
 ### wallet information #########################################################
@@ -677,7 +677,6 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
   fi
 
   if [[ ! "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
-
     # get masternode reward count, ruled by the masternode count
     WALLET_REWARD_COUNT=$(echo "${POS_LIMIT:?}/${WALLET_NODES_INQUEUE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     # save pay count
@@ -1418,6 +1417,7 @@ if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/
   truncate -s 0 "${DATA_DIR:?}"/updates &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
   truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/client/latest &>/dev/null
+  echo "$(tail -720 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
 fi
 
 ### auto update repository #####################################################
