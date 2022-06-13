@@ -166,8 +166,8 @@ MEMPOOL_NOACTIVE=$(grep "0" "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | 
 MEMPOOL_PERC_ACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_ACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 MEMPOOL_PERC_NOACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 # mempool average
-MEMPOOL_PERC_ACTIVE="$(echo "$(awk '{ print $2 }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | tr -d '%' | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | awk '{ print $1 }' 2>&1)" | bc -l 2>&1)%"
-MEMPOOL_PERC_NOACTIVE="$(echo "$(awk '{ print $4 }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | tr -d '%' | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | awk '{ print $1 }' 2>&1)" | bc -l 2>&1)%"
+MEMPOOL_PERC_ACTIVE="$(echo "$(awk '{ print $2 }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | tr -d '%' | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | awk '{ print $1 }' 2>&1)" | bc -l 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)%"
+MEMPOOL_PERC_NOACTIVE="$(echo "$(awk '{ print $4 }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | tr -d '%' | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | awk '{ print $1 }' 2>&1)" | bc -l 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)%"
 
 echo "A ${MEMPOOL_PERC_ACTIVE:?}% D ${MEMPOOL_PERC_NOACTIVE:?}%" >>"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
 
@@ -219,9 +219,9 @@ EOF
 fi
 
 # reset mempool after n lines
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2160" ]] &>/dev/null; then
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
   # keep log at n lines
-  echo "$(tail -1080 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
+  echo "$(tail -720 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
 fi
 
 ### wallet information #########################################################
