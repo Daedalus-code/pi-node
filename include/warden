@@ -149,7 +149,7 @@ else
   APX_IND="${GR:?}add_extra_peers${N0:?}"
 fi
 if grep -o "add_lost_peers" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
-  APL_IND="${Y1:?}add_lost_peers${N0:?}"
+  APL_IND="${G1:?}add_lost_peers${N0:?}"
 else
   APL_IND="${GR:?}add_lost_peers${N0:?}"
 fi
