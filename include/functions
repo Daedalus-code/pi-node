@@ -215,9 +215,9 @@ EOF
 fi
 
 # reset mempool after n lines
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "4242" ]] &>/dev/null; then
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2160" ]] &>/dev/null; then
   # keep log at n lines
-  echo "$(tail -2121 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
+  echo "$(tail -1080 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
 fi
 
 ### wallet information #########################################################
