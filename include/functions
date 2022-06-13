@@ -212,7 +212,7 @@ if [[ "$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo 2
     printf '%b' "${LOG_DATE:?} Status() Read.mempool() Memory pool ${G0:?}$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1) ${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null) ${N0:?}$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo 2>&1 | awk '{ print $2 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else
-  if [[ ! "$(tail -10 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Read.mempool()" 2>&1)" ]] &>/dev/null; then
+  if [[ ! "$(tail -15 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Read.mempool()" 2>&1)" ]] &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() Read.mempool() Memory pool ${G0:?}$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1) ${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null) ${N0:?}$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo 2>&1 | awk '{ print $2 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
