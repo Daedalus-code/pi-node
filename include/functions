@@ -185,7 +185,7 @@ MEMPOOL_PERC_NOACTIVE="${MEMPOOL_PERC_NOACTIVE:?}%"
 # look for screen session, if not found, run this block
 if ! cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
 
-  # collect mempool two times a loop (time_fix time)
+  # collect mempool n times a loop (time_fix time)
 
   # kill old session
   screen -X -S read_mempool quit &>/dev/null
