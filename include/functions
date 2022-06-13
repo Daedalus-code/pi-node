@@ -169,7 +169,7 @@ MEMPOOL_PERC_NOACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_NOACTIVE" 2>&1 | bc -l
 echo "A ${MEMPOOL_PERC_ACTIVE:?}% D ${MEMPOOL_PERC_NOACTIVE:?}%" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
 echo "${MEMPOOL_PERC_ACTIVE:?} ${MEMPOOL_PERC_NOACTIVE:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1
 
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)" -gt "30" ]] &>/dev/null; then
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1 | awk '{ print $1 }' 2>&1)" -gt "60" ]] &>/dev/null; then
   echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_average 2>&1
 fi
 
