@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221306
-# 1.4.8.1
+# 1.4.8.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.8.1"
+VERSION="v1.4.8.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -165,15 +165,16 @@ MEMPOOL_ACTIVE=$(grep "1" "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | wc
 MEMPOOL_NOACTIVE=$(grep "0" "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 MEMPOOL_PERC_ACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_ACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
 MEMPOOL_PERC_NOACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_NOACTIVE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-# mempool average
-MEMPOOL_PERC_ACTIVE="$(echo "$(awk '{ print $2 }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | tr -d '%' | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | awk '{ print $1 }' 2>&1)" | bc -l 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)"
-MEMPOOL_PERC_NOACTIVE="$(echo "$(awk '{ print $4 }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | tr -d '%' | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | awk '{ print $1 }' 2>&1)" | bc -l 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)"
 
 echo "A ${MEMPOOL_PERC_ACTIVE:?}% D ${MEMPOOL_PERC_NOACTIVE:?}%" >>"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | awk '{ print $1 }' 2>&1)" -gt "10" ]] &>/dev/null; then
   echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
 fi
+
+# mempool average
+MEMPOOL_PERC_ACTIVE="$(echo "$(awk '{ print $2 }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | tr -d '%' | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | awk '{ print $1 }' 2>&1)" | bc -l 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)"
+MEMPOOL_PERC_NOACTIVE="$(echo "$(awk '{ print $4 }' "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | tr -d '%' | awk '{ SUM += $1} END { print SUM }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1 | awk '{ print $1 }' 2>&1)" | bc -l 2>&1 | awk '{ printf "%.3f\n", $1 }' 2>&1)"
 
 # look for screen session, if not found, run this block
 if ! cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "read_mempool" &>/dev/null; then
