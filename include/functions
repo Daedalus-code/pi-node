@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221206
-# 1.4.6.4
+# V20221306
+# 1.4.7.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.6.4"
+VERSION="v1.4.7.7"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -145,6 +145,19 @@ UPLOAD=$(egrep "TX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/system
 LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&1
 
 ### mempool activity ###########################################################
+
+# backup mempool data
+if [[ ! -f "${WALLET_DIR:?}"/mempool ]] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity "${WALLET_DIR:?}"/mempool &>/dev/null
+fi
+# update mempool data
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${WALLET_DIR:?}"/mempool)))")" -gt "5460" ]] &>/dev/null; then
+  cp "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity "${WALLET_DIR:?}"/mempool &>/dev/null
+fi
+# restore mempool data
+if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity ]] &>/dev/null; then
+  cp "${WALLET_DIR:?}"/mempool "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity &>/dev/null
+fi
 
 # mempool activity
 MEMPOOL_LINES=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1)
