@@ -216,7 +216,7 @@ if [[ "$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/getmempoolinfo 2>&1 
 else # save no activity values (0) to mempool.activity
   echo "0" >>"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
 fi
-sleep 21
+sleep 9
 done
 EOF
   fi
