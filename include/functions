@@ -199,7 +199,7 @@ if ! cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "rea
 #!/bin/bash
 # By Rainman
 # V20221306
-# 0.0.2.8
+# 0.0.3.0
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
