@@ -147,7 +147,7 @@ LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&
 ### mempool activity ###########################################################
 
 # backup mempool data
-if [[ ! -f "${WALLET_DIR:?}"/mempool ]] &>/dev/null; then
+if [[ ! -f "${DATA_DIR:?}"/mempool ]] &>/dev/null; then
   cp "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity "${DATA_DIR:?}"/mempool &>/dev/null
 fi
 # update mempool data
