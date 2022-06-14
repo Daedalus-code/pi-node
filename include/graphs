@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221206
+# V20221406
 # 0.5.1.6
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
@@ -93,7 +93,7 @@ rrdtool graph /var/www/html/peers_graph.png \
   GPRINT:banned_peers:LAST:%.0lf\ Bans \
   GPRINT:peers:MAX:%.0lf\ Max \
   GPRINT:peers:MIN:%.0lf\ Min \
-  LINE2:peers#A28DB8:"Peers" \
+  LINE2:peers#82FE82:"Peers" \
   LINE1:banned_peers#CC2C4B:"Bans" \
   LINE1:peers_ipv4#FFFFFF \
   LINE1:peers_ipv6#2CCC8D \
