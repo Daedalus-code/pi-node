@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221406
-# 1.4.9.9
+# V20221506
+# 1.5.0.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.4.9.9"
+VERSION="v1.5.0.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1019,8 +1019,10 @@ if [[ ! "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+
   if [[ ! "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -c "add_lost_peers" 2>&1)" -eq "1" ]] &>/dev/null; then
     if [[ -s "${LOG_DIR:?}"/node_data/wallet/data/connections ]] &>/dev/null; then
 
+      # connections now
       P2P_NOW="$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | tail -1 2>&1)"
-      P2P_THEN="$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | sort -n 2>&1 | tail -1 2>&1)-5" 2>&1 | bc 2>&1)"
+      # max connected, w limit calculation
+      P2P_THEN="$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | sort -n 2>&1 | tail -1 2>&1)-$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | sort -n 2>&1 | tail -1 2>&1)*0.20" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)"
 
       screen -X -S add_lost_peers quit &>/dev/null
 
