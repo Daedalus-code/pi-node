@@ -1022,16 +1022,16 @@ if [[ ! "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+
       # connections now
       P2P_NOW="$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | tail -1 2>&1)"
       # max connected, w limit calculation
-      P2P_THEN="$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | sort -n 2>&1 | tail -1 2>&1)-$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | sort -n 2>&1 | tail -1 2>&1)*0.20" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)"
+      P2P_LIMIT="$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | sort -n 2>&1 | tail -1 2>&1)-$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | sort -n 2>&1 | tail -1 2>&1)*0.20" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)"
 
       screen -X -S add_lost_peers quit &>/dev/null
 
-      if [[ "$P2P_NOW" -lt "$P2P_THEN" ]] &>/dev/null; then
+      if [[ "$P2P_NOW" -lt "$P2P_LIMIT" ]] &>/dev/null; then
         # create screen session
         screen -dmS add_lost_peers &>/dev/null
         # 60s 90s 120s 240s 300s 600s, 900s, 1800s = 30 minutes
         timeout 900 screen -S add_lost_peers -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
-        printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding lost peers! ${GR:?}< ${P2P_THEN:?}${N0:?} $(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${Y1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+        printf '%b' "${LOG_DATE:?} Status() Addnode.Script Reconnect lost connections! Limit ${GR:?}${P2P_LIMIT:?}${N0:?} Reconnect ${G1:?}$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${G1:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
     fi
   fi
