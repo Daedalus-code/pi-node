@@ -847,12 +847,12 @@ if [[ "$WALLET_PEERS_TOTAL_NR" -lt "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk 
   cat "${DATA_DIR:?}"/addnodes 2>/dev/null | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
 fi
 
-### keep proxy around ##########################################################
+### keep proxy (onion) around ##################################################
 
 if [[ ! -s "${DATA_DIR:?}"/onion_addnodes ]] &>/dev/null; then
-  # create proxy list
+  # create proxy (onion) list
   grep "addr:" /tmp/node_data/wallet/client/getpeerinfo 2>&1 | egrep "*.onion" 2>&1 | awk -F: '{ print $2 }' 2>&1 | tr -d ' ' >"${DATA_DIR:?}"/onion_addnodes 2>&1
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding proxy (onion) peers! $(wc -l "${DATA_DIR:?}"/onion_addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating proxy (onion) list! $(wc -l "${DATA_DIR:?}"/onion_addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # include missing proxy (onion) address
