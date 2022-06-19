@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20221906
-# 1.5.0.3
+# 1.5.1.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.0.3"
+VERSION="v1.5.1.4"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -847,6 +847,16 @@ if [[ "$WALLET_PEERS_TOTAL_NR" -lt "$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk 
   cat "${DATA_DIR:?}"/addnodes 2>/dev/null | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
 fi
 
+### keep proxy around ##########################################################
+
+if [[ ! -s "${DATA_DIR:?}"/onion_addnodes ]] &>/dev/null; then
+  # create proxy list
+  grep "addr:" /tmp/node_data/wallet/client/getpeerinfo 2>&1 | egrep "*.onion" 2>&1 | awk -F: '{ print $2 }' 2>&1 | tr -d ' ' >"${DATA_DIR:?}"/onion_addnodes 2>&1
+fi
+
+# include missing proxy (onion) address
+cat "${DATA_DIR:?}"/onion_addnodes 2>/dev/null | grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
+
 ### create list of connected peers #############################################
 
 if [ ! -f "${DATA_DIR:?}"/addnodes ] &>/dev/null; then
@@ -1431,8 +1441,9 @@ if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/
   truncate -s 0 "${DATA_DIR:?}"/staking &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/updates &>/dev/null
   truncate -s 0 "${DATA_DIR:?}"/getwan &>/dev/null
+  truncate -s 0 "${DATA_DIR:?}"/onion_addnodes &>/dev/null
   truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/client/latest &>/dev/null
-  echo "$(tail -3360 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
+  echo "$(tail -2520 "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1
 fi
 
 ### auto update repository #####################################################
