@@ -1098,13 +1098,13 @@ if [[ "$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "
   rm "${LOG_DIR:?}"/addnodes.ipv6 &>/dev/null
   rm "${LOG_DIR:?}"/addnodes.dns &>/dev/null
 
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding personal $(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)+$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/peers.x 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
   # add extras from personal addnodes
   cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.x 2>/dev/null | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null
   # remove duplicates, sort
   cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/peers.clean 2>&1
   mv "${LOG_DIR:?}"/node_data/wallet/peers/peers.clean "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp &>/dev/null
-
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding personal +$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/peers.x 2>&1 | awk '{ print $1 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # remove file, now old
   rm "${LOG_DIR:?}"/node_data/wallet/peers/peers.x* &>/dev/null
 
