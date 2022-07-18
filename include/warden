@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221306
+# V20221807
 # 0.3.1.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -46,6 +46,7 @@ fi
 ## masternode status ###########################################################
 
 if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &>/dev/null; then
+
   if [[ ! "$(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
     echo "${LOG_DATE:?} $(grep "started" "${DATA_DIR:?}"/masternode_status 2>&1)" 2>&1 | xargs >"${DATA_DIR:?}"/masternode_started 2>&1
@@ -56,14 +57,13 @@ if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &
     cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
   fi
 
-  if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/masternode_status)))")" -gt "369" ]] &>/dev/null; then
-    if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1) ]] &>/dev/null; then
-      # make sure masternode runs
-      printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-      printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-      cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
-    fi
+  if [[ ! $(grep "successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1) ]] &>/dev/null; then
+
+    # make sure masternode runs
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
   fi
 fi
 
