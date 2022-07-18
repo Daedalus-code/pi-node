@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221807
-# 0.3.1.7
+# 0.3.2.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -45,6 +45,10 @@ fi
 
 ## masternode status ###########################################################
 
+function start_masternode() {
+  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+}
+
 if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &>/dev/null; then
 
   if [[ ! "$(grep "Successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
@@ -61,10 +65,14 @@ if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &
 
     # make sure masternode runs
     printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    start_masternode
     printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
   fi
+fi
+
+if [[ "$(tail -21 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "ManageStatus - not capable" 2>&1)" ]] &>/dev/null; then
+  start_masternode
 fi
 
 # make sure inputs with masternode collateral is locked #################### ###
