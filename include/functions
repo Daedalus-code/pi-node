@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222012
-# 1.5.1.5
+# V20221807
+# 1.5.2.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.1.5"
+VERSION="v1.5.2.0"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1032,6 +1032,11 @@ if [[ ! "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+
 
       # connections now
       P2P_NOW="$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | tail -1 2>&1)"
+
+      if [[ -z "$P2P_NOW" || "$P2P_NOW" -eq "0" ]] &>/dev/null; then
+        P2P_NOW="0"
+      fi
+
       # connection percentage
       P2P_PERC=$(echo "100/${P2P_NOW:?}*$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
       # max connected, w limit calculation
