@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222407
-# 1.5.3.7
+# 1.5.3.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.3.7"
+VERSION="v1.5.3.9"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1450,11 +1450,13 @@ fi
 
 if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
 
-  if [[ "$KEEP_DEBUG" -eq "1" ]] &>/dev/null; then
-    cp "${WALLET_LOG_DIR:?}"/debug.log "${DATA_DIR:?}"/debug.log &>/dev/null
-    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
-  else
-    truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+  if [[ "$(cat /tmp/node_data/wallet/uptime)" -gt "1800" ]] &>/dev/null; then
+    if [[ "$KEEP_DEBUG" -eq "1" ]] &>/dev/null; then
+      cp "${WALLET_LOG_DIR:?}"/debug.log "${DATA_DIR:?}"/debug.log &>/dev/null
+      truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+    else
+      truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+    fi
   fi
 
   if [[ "$KEEP_BACKUPS" -eq "0" ]] &>/dev/null; then
