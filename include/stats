@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221306
-# 0.5.3.6
+# V20222407
+# 0.5.4.3
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -468,6 +468,13 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
           else
             printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${G1:?}OK!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
           fi
+          # save data to file
+          echo "$(date)
+
+Auto combine threshold.: $(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+Stake split threshold..: $(echo "$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)/2" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)
+
+$(date)" >"${DATA_DIR:?}"/auto_pos
           # create lock file
           echo "${CON_DIFF:?}" >"${DATA_DIR:?}"/diff.lock
         fi
