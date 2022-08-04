@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222407
-# 1.5.3.9
+# V20220408
+# 1.5.3.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.3.9"
+VERSION="v1.5.3.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -103,9 +103,8 @@ LC_ALL=de_US.utf8 date '+%H:%M:%S' >"${LOG_DIR:?}"/node_data/system/clock 2>&1
 # system user
 whoami 2>&1 | awk '{ print $1 }' >"${LOG_DIR:?}"/node_data/system/user 2>&1
 
-# system users, uptime and load
-uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/system/uptime 2>&1
-egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/system/uptime 2>&1 | sed 's/\([0-9]\),/\1./g' >"${LOG_DIR:?}"/node_data/system/load
+# loadavg
+cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }' >"${LOG_DIR:?}"/node_data/system/load 2>&1
 
 # system cpu temperature (celcius)
 echo "$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)/100*0.1" | bc -l | awk '{ printf "%.1f\n", $1 }' >"${LOG_DIR:?}"/node_data/system/cpu_ctemp 2>&1
@@ -133,9 +132,9 @@ if [[ ! -f "${LOG_DIR:?}"/node_data/system/cpuinfo ]] &>/dev/null; then
 fi
 
 # system free memory
-echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $7 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' >"${LOG_DIR:?}"/node_data/system/mem_free 2>&1
+echo "$(cat /proc/meminfo 2>/dev/null | grep "MemFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_free 2>&1
 # system total memory
-echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' >"${LOG_DIR:?}"/node_data/system/mem_total 2>&1
+echo "$(cat /proc/meminfo 2>/dev/null | grep "MemTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_total 2>&1
 
 # system used space
 numfmt --to iec --format "%8.3f" "$(echo "$(df -k 2>&1 | sort -n 2>&1 | grep -v "boot" 2>&1 | head -1 2>&1 | awk '{ print $3 }' 2>&1)*1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>&1 | xargs >"${LOG_DIR:?}"/node_data/system/hd_used 2>/dev/null
@@ -263,25 +262,18 @@ fi
 
 # getinfo
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo 2>&1
-
 # wallet version
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -version 2>&1 | egrep -o "v[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/version 2>&1
-
 # getblockchaininfo
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getblockchaininfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getblockchaininfo 2>&1
-
 # getmempoolinfo
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getmempoolinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo 2>&1
-
 # getwalletinfo
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getwalletinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getwalletinfo 2>&1
-
 # listunspent
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" listunspent 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/listunspent 2>&1
-
 # getpeerinfo
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpeerinfo 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/getpeerinfo 2>&1
-
 # listbanned
 cd "${WALLET_DIR:?}" || exit && ./"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" listbanned 2>&1 | tr -d '"|,' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/listbanned 2>&1
 

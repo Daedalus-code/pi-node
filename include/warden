@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221807
+# V20220408
 # 0.3.2.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -136,10 +136,10 @@ if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/func.lock 2>&1)" -l
 fi
 
 if [[ ! -f "${LOG_DIR:?}"/node_data/system/load ]] &>/dev/null; then
-  # system users, uptime and load
-  uptime 2>&1 | xargs >"${LOG_DIR:?}"/node_data/system/uptime 2>&1
-  egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/system/uptime 2>&1 | sed 's/\([0-9]\),/\1./g' >"${LOG_DIR:?}"/node_data/system/load
+  # loadavg
+  cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }' >"${LOG_DIR:?}"/node_data/system/load 2>&1
 fi
+
 SYSTEM_LOAD=$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null)
 
 if grep -o "read_mempool" "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null; then
