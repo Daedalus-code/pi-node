@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220408
-# 1.5.3.1
+# V20220508
+# 1.5.3.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.3.1"
+VERSION="v1.5.3.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -135,6 +135,10 @@ fi
 echo "$(cat /proc/meminfo 2>/dev/null | grep "MemFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_free 2>&1
 # system total memory
 echo "$(cat /proc/meminfo 2>/dev/null | grep "MemTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_total 2>&1
+# system free swap
+echo "$(cat /proc/meminfo 2>/dev/null | grep "SwapFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/swap_free 2>&1
+# system total swap
+echo "$(cat /proc/meminfo 2>/dev/null | grep "SwapTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/swap_total 2>&1
 
 # system used space
 numfmt --to iec --format "%8.3f" "$(echo "$(df -k 2>&1 | sort -n 2>&1 | grep -v "boot" 2>&1 | head -1 2>&1 | awk '{ print $3 }' 2>&1)*1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>&1 | xargs >"${LOG_DIR:?}"/node_data/system/hd_used 2>/dev/null
@@ -413,8 +417,8 @@ fi
 SYSTEM_LOAD="$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null | egrep -o "[0-9]+.[0-9]+" 2>&1 | xargs 2>&1)"
 CPU_CTEMP="$(cat "${LOG_DIR:?}"/node_data/system/cpu_ctemp 2>/dev/null)"
 CPU_FTEMP="$(cat "${LOG_DIR:?}"/node_data/system/cpu_ftemp 2>/dev/null)"
-FREE_MEM="${G1:?}$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null)${N0:?}"
-TOTAL_MEM="${G0:?}$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null)${N0:?}"
+FREE_MEM="${G1:?}$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_free 2>/dev/null)" | bc)${N0:?}"
+TOTAL_MEM="${G0:?}$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)" | bc)${N0:?}"
 USED_HDD="${G1:?}$(cat "${LOG_DIR:?}"/node_data/system/hd_used 2>/dev/null)${N0:?}"
 USED_HDD_P="$(cat "${LOG_DIR:?}"/node_data/system/hd_used_percentage 2>/dev/null)"
 SYSTEM_USER="$(cat "${LOG_DIR:?}"/node_data/system/user 2>/dev/null)"
