@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222407
+# V20220508
 # 0.5.4.3
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
@@ -330,8 +330,8 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
   rrdtool update /home/"$(whoami)"/stats/load5.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null | awk '{ print $2 }' 2>&1 | sed 's/\,/./' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/load15.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null | awk '{ print $3 }' 2>&1 | sed 's/\,/./' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/memory_free.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/memory_total.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/memory_free.rrd N:"$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_free 2>/dev/null)" | bc)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/memory_total.rrd N:"$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)" | bc)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/hdd.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/hdd_total.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $2 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/network.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/rxbytes 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/system/txbytes 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>/dev/null
