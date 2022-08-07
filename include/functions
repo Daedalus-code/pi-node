@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220508
-# 1.5.3.5
+# V20220708
+# 1.5.3.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.3.5"
+VERSION="v1.5.3.9"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -628,14 +628,6 @@ LAST_LOG="${N0:?}${LAST_LOG:0:188} log=${LOG_SIZE:?}M${N0:?}"
 
 ### wallet boot/sync progress ##################################################
 
-function loading() {
-  WALLET_BALANCES="${GR:?}0${N0:?}"
-  WALLET_POS_REWARDS="Stakes ${GR:?}0${N0:?}"
-  WALLET_INPUTS_NODES="Inputs ${GR:?}0${N0:?}"
-  WALLET_TXCOUNT="${GR:?}0${N0:?}"
-  WALLET_MEMPOOL="${GR:?}0${N0:?}"
-}
-
 if [[ ! "$(grep "OK" "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing)" ]] &>/dev/null; then
   if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/synced 2>/dev/null | grep "progress=1.00" 2>&1)" ]] &>/dev/null; then
     if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
@@ -651,12 +643,20 @@ fi
 
 if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
   WALLET_SYNC="${GR:?}loading${N0:?}"
-  loading
+  WALLET_BALANCES="${GR:?}0${N0:?}"
+  WALLET_POS_REWARDS="Stakes ${GR:?}0${N0:?}"
+  WALLET_INPUTS_NODES="Inputs ${GR:?}0${N0:?}"
+  WALLET_TXCOUNT="${GR:?}0${N0:?}"
+  WALLET_MEMPOOL="${GR:?}0${N0:?}"
 fi
 
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "120" ]] &>/dev/null; then
   WALLET_TXLAST="${N0:?}       Loading${N0:?}"
-  loading
+  WALLET_BALANCES="${GR:?}0${N0:?}"
+  WALLET_POS_REWARDS="Stakes ${GR:?}0${N0:?}"
+  WALLET_INPUTS_NODES="Inputs ${GR:?}0${N0:?}"
+  WALLET_TXCOUNT="${GR:?}0${N0:?}"
+  WALLET_MEMPOOL="${GR:?}0${N0:?}"
 fi
 
 if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
@@ -666,7 +666,11 @@ if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1
     grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log | tail -1 >"${LOG_DIR:?}"/node_data/wallet/synced 2>&1
   fi
   WALLET_TXLAST="${G0:?}${SYNC_PROGRESS_BAR:?}${N0:?}"
-  loading
+  WALLET_BALANCES="${GR:?}0${N0:?}"
+  WALLET_POS_REWARDS="Stakes ${GR:?}0${N0:?}"
+  WALLET_INPUTS_NODES="Inputs ${GR:?}0${N0:?}"
+  WALLET_TXCOUNT="${GR:?}0${N0:?}"
+  WALLET_MEMPOOL="${GR:?}0${N0:?}"
 fi
 
 ### theme ######################################################################
