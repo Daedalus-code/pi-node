@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220708
-# 1.5.3.9
+# 1.5.4.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.3.9"
+VERSION="v1.5.4.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -426,6 +426,10 @@ IP_ADDRESS="${CY:?}$(cat "${LOG_DIR:?}"/node_data/system/ip_address 2>/dev/null)
 IP_ADDRESS_NR="$(cat "${LOG_DIR:?}"/node_data/system/ip_address 2>/dev/null)"
 DOWNLOAD=$(numfmt --to iec --format "%8.3f" "${DOWNLOAD:?}" 2>&1 | xargs 2>/dev/null)
 UPLOAD=$(numfmt --to iec --format "%8.3f" "${UPLOAD:?}" 2>&1 | xargs 2>/dev/null)
+
+if [[ -z "$CPU_FTEMP" ]] &>/dev/null; then
+  CPU_FTEMP="?"
+fi
 
 ### wallet #####################################################################
 
