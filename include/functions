@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220708
-# 1.5.4.3
+# 1.5.4.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.4.3"
+VERSION="v1.5.4.7"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -63,6 +63,10 @@ function uptime_daemon() {
 }
 # daemon uptime
 echo "$(uptime_daemon 2>&1)" 2>&1 | tr -d '-' >"${LOG_DIR:?}"/node_data/wallet/uptime 2>&1
+
+if [[ "$(df -h /tmp/ | awk '{ print $5 }' | tail -1 | tr -d '%')" -gt "10" || "$(ls -lah "${LOG_DIR:?}"/debug.log | awk '{ print $5 }' | tr -d 'M')" -gt "50" ]] &>/dev/null; then
+  egrep -v "Status()|UpdateTip|ProcessNewBlock|skipped on sync" /tmp/debug.log >"${LOG_DIR:?}"/debug.log
+fi
 
 LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
