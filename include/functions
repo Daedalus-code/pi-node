@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220708
-# 1.5.3.4
+# 1.5.3.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.3.4"
+VERSION="v1.5.3.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -758,12 +758,14 @@ fi
 
 ### proof of stake indicator ###################################################
 
-if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/staking)))")" -lt "5460" ]] &>/dev/null; then
-  WALLET_TXLAST="${G1:?}$(tail -1 "${DATA_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
-  CB="${G1:?}"
-  CBS_IND="1"
-else
-  CBS_IND="4"
+if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
+  if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/staking)))")" -lt "5460" ]] &>/dev/null; then
+    WALLET_TXLAST="${G1:?}$(tail -1 "${DATA_DIR:?}"/staking 2>/dev/null | awk '{ print $8 }' 2>/dev/null)${N0:?}"
+    CB="${G1:?}"
+    CBS_IND="1"
+  else
+    CBS_IND="4"
+  fi
 fi
 
 # clean up staking
