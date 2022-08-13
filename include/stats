@@ -273,7 +273,7 @@ if [ ! -f "/home/$(whoami)/stats/coin_supply.rrd" ] &>/dev/null; then
   printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coin_supply.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   rrdtool create /home/"$(whoami)"/stats/coin_supply.rrd \
     --step=60 \
-    DS:activity:GAUGE:300:U:U \
+    DS:coin_supply:GAUGE:300:U:U \
     RRA:AVERAGE:0.5:1:315360
 fi
 
