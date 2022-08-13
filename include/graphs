@@ -123,7 +123,7 @@ rrdtool graph /var/www/html/blockchain_activity.png \
   AREA:activity#71E75E:"Activity"
 
 # blockchain coin supply
-rrdtool graph /var/www/html/blockchain_activity.png \
+rrdtool graph /var/www/html/coin_supply.png \
   -w 1394 -h 100 -a PNG \
   --slope-mode \
   --vertical-label "Coin Supply" \
