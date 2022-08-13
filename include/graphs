@@ -136,7 +136,7 @@ rrdtool graph /var/www/html/blockchain_activity.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:activity=/home/"$(whoami)"/stats/coin_supply.rrd:coin_supply:MAX \
+  DEF:coin_supply=/home/"$(whoami)"/stats/coin_supply.rrd:coin_supply:MAX \
   GPRINT:coin_supply:LAST:%.2lf\ Now \
   GPRINT:coin_supply:AVERAGE:%.2lf\ AVG \
   GPRINT:coin_supply:MAX:%.2lf\ Max \
