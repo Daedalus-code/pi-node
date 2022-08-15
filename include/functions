@@ -537,7 +537,7 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1 | awk '{ pr
   echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/connections
 fi
 
-### blockchain activity ########################################################
+### blockchain moneysupply activity ############################################
 
 grep "moneysupply" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' >>"${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1
 echo "$(tail -2 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply
