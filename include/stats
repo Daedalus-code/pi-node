@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221308
+# V20221408
 # 0.5.5.3
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
@@ -360,7 +360,7 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
   rrdtool update /home/"$(whoami)"/stats/price_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>&1 | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>&1 | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/block_activity.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | awk '{ print $2 }' 2>&1 | tr -d '%' 2>&1 | tail -1 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/coin_supply.rrd N:"$(grep "moneysupply" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/coin_supply.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff)" 2>/dev/null
 
   ### auto pos grinding #################################################### ###
 
