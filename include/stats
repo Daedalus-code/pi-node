@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221408
-# 0.5.5.3
+# V20221608
+# 0.5.5.5
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -361,6 +361,8 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
   rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>&1 | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/block_activity.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | awk '{ print $2 }' 2>&1 | tr -d '%' 2>&1 | tail -1 2>&1)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/coin_supply.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>/dev/null)" 2>/dev/null
+  echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
+  echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
 
   ### auto pos grinding #################################################### ###
 
