@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20221408
-# 1.5.5.4
+# V20221608
+# 1.5.5.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.5.4"
+VERSION="v1.5.5.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -539,8 +539,10 @@ fi
 
 ### blockchain moneysupply activity ############################################
 
-grep "moneysupply" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' >>"${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1
-echo "$(tail -2 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply
+grep "moneysupply" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' >>"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
+
+echo "$(tail -1440 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1 | awk '!a[$0]++')" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
+echo "$(tail -2 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1
 # get difference
 echo "$(head -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)-$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
 
