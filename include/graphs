@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221308
+# V20221708
 # 0.5.3.7
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
@@ -141,7 +141,7 @@ rrdtool graph /var/www/html/coin_supply.png \
   GPRINT:coin_supply:AVERAGE:%.2lf\ AVG \
   GPRINT:coin_supply:MAX:%.2lf\ Max \
   GPRINT:coin_supply:MIN:%.2lf\ Min \
-  AREA:coin_supply#5EE7E3:"Coin supply"
+  LINE1:coin_supply#5EE7E3:"Coin supply"
 
 # masternodes
 rrdtool graph /var/www/html/masternode_count_graph.png \
