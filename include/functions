@@ -550,7 +550,7 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1 | awk '
 fi
 
 # get difference
-echo "$(head -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)-$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
+echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)-$(head -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
 
 ### wallet balance, value ######################################################
 
