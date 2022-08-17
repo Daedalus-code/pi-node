@@ -545,7 +545,7 @@ grep "moneysupply" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ 
 
 echo "$(tail -1440 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1 | awk '!a[$0]++')" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
 
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp)" -gt "1" ]] &>/dev/null; then
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
   echo "$(tail -2 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1
 fi
 
