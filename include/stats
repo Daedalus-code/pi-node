@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221608
-# 0.5.5.5
+# V20221708
+# 0.5.6.0
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -37,10 +37,12 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
   LOCAL=$(ifconfig 2>&1 | grep "inet" 2>&1 | head -1 2>&1 | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' 2>&1)
   # installing on a osmc, openelec, kodi system, with port 80 already in use
   uname -a >"${LOG_DIR:?}"/node_data/uname 2>&1
+
   if egrep -o "osmc" "${LOG_DIR:?}"/node_data/uname &>/dev/null; then
     # apache2 port already used
     echo "Port 80 already in use, using Port 8080 instead."
     PORT="8080"
+
     echo "<VirtualHost *:8080>
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html
@@ -48,6 +50,7 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>" >"${LOG_DIR:?}"/000-default.conf.tmp
     sudo mv "${LOG_DIR:?}"/000-default.conf.tmp /etc/apache2/sites-enabled/000-default.conf 2>&1
+
     echo "Listen 8080
 <IfModule ssl_module>
         Listen 443
@@ -56,6 +59,7 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
         Listen 443
 </IfModule>" >"${LOG_DIR:?}"/ports.conf.tmp
     sudo mv "${LOG_DIR:?}"/ports.conf.tmp /etc/apache2/sites-enabled/ports.conf 2>&1
+
     # make sure ufw opens up port 8080
     sudo ufw allow 8080 comment "${WALLET_NAME:?} Graphs"
     sudo ufw status
@@ -64,6 +68,7 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
   else # port free for use
     PORT="80"
   fi
+
   echo "[!!] Try your ${LOCAL:?}:${PORT:?} IP Address"
   echo "Will continue in 10 seconds."
   sleep 10
@@ -521,7 +526,7 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<img src='market_price_graph.png' alt='Market Price' />";
   echo "<img src='market_volume_graph.png' alt='Market Volume' />";
   echo "<img src='masternode_count_graph.png' alt='Masternodes' />";
-  echo "<img src='masternode_pay_graph.png' alt='Masternodes' />";
+  echo "<img src='masternode_pay_graph.png' alt='Masternode Pay' />";
   echo "<img src='blockchain_activity.png' alt='Block Activity' />";
   echo "<img src='coin_supply.png' alt='Blockchain Coin Supply' />";
 
