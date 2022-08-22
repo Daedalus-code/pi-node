@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220808
-# 2.7.1.6
+# V20222208
+# 2.7.2.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -617,6 +617,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # get wallet version
     WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/wallet/client/version 2>/dev/null)
+
+    if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
+      # non responsive
+      WALLET_VERSION="${GR:?}vLoading${N0:?}"
+    fi
+
     # get wallet balance
     WALLET_BALANCE=$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
