@@ -501,7 +501,7 @@ fi
 ### wallet peers, connections ##################################################
 
 if [[ -z "$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)" ]] &>/dev/null; then
-  curl -s -L "${WALLET_RELEASE:?}" 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
+  curl -s -L "${WALLET_RELEASE:?}" 2>&1 | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
 fi
 
 # get peers w latest version
