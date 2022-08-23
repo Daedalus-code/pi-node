@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.8.1.8
+# 2.8.1.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1401,9 +1401,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         unzip "${LATEST_VERSION:?}".zip
       fi
 
-      echo "Changing directory (${LATEST_VERSION:?})"
-      cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-
       if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
         lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
       fi
@@ -1433,6 +1430,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
         # armv7l
 
+        echo "Changing directory (${LATEST_VERSION:?})"
         cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
         make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
@@ -1447,6 +1445,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
         # aarch64
 
+        echo "Changing directory (${LATEST_VERSION:?})"
         cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
         make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
