@@ -62,7 +62,7 @@ if [[ -z "$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)" ]] &
 fi
 
 # get latest release
-LATEST_VERSION=$(curl -s "$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest)" 2>/dev/null)
+LATEST_VERSION="$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)"
 
 HEIGHT=17
 WIDTH=55
