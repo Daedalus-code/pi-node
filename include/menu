@@ -1407,14 +1407,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo "autogen.sh"
         ./autogen.sh
         echo "Configure"
-        ./configure --prefix=/home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends/aarch64-linux-gnu --disable-tests --disable-bench
+        ./configure --prefix="$(pwd)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
       fi
       if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
         make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         echo "autogen.sh"
         ./autogen.sh
         echo "Configure"
-        ./configure --prefix=/home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends --disable-tests --disable-bench
+        ./configure --prefix="$(pwd)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
       fi
 
       cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
