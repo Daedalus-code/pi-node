@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.7.4.6
+# 2.7.6.5
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -874,9 +874,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
     }
 
-    HEIGHT=16
+    HEIGHT=17
     WIDTH=42
-    CHOICE_HEIGHT=9
+    CHOICE_HEIGHT=10
     BACKTITLE="Download manually"
     TITLE="Download Menu"
     MENU="Choose one option:"
@@ -885,11 +885,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       2 "Wallet.aarch64-linux-gnu.zip"
       3 "Wallet.arm-linux-gnueabihf.zip"
       4 "Wallet.Linux.zip"
-      5 "Wallet.Mac.dmg"
-      6 "Wallet.Mac.zip"
+      5 "Wallet-aarch64.zip"
+      6 "Wallet-arm.zip"
       7 "Wallet.Ubuntu16.zip"
       8 "Source code (zip)"
-      9 "Source code (tar.gz)")
+      9 "Source code (tar.gz)"
+      10 "Wallet-Linux.zip")
 
     CHOICE=$(dialog --clear \
       --backtitle "$BACKTITLE" \
@@ -946,10 +947,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "5")
 
-      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Mac.dmg${N0:?}\n"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet-aarch64.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Mac.dmg
-      UNAME_SYSTEM="${WALLET_NAME:?}.Mac.dmg"
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".aarch64.zip
+      UNAME_SYSTEM="${WALLET_NAME:?}.aarch64.zip"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
       echo
@@ -958,10 +959,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     "6")
 
-      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Mac.zip${N0:?}\n"
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet-arm.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Mac.zip
-      UNAME_SYSTEM="${WALLET_NAME:?}.Mac.zip"
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".arm.zip
+      UNAME_SYSTEM="${WALLET_NAME:?}.arm.zip"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
       echo
@@ -996,6 +997,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       URL="${WALLET_SOURCE:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".tar.gz
       UNAME_SYSTEM="${LATEST_VERSION:?}.tar.gz"
+      echo
+      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      echo
+
+      ;;
+
+    "10")
+
+      printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet-Linux.zip${N0:?}\n"
+      URL="${WALLET_SOURCE:?}/${LATEST_VERSION:?}"
+      cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}-Linux.zip"
+      UNAME_SYSTEM="${LATEST_VERSION:?}-Linux.zip"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
       echo
@@ -1393,6 +1406,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --disable-tests --disable-bench
       make -j 4
       make install
+
+      read -r -p "[YN] Remove old files? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        rm /home/"$(whoami)"/"${LATEST_VERSION:?}".zip &>/dev/null
+      fi
     fi
 
     ;;
