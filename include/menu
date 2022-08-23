@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.7.7.8
+# 2.7.7.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1396,7 +1396,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
 
       echo "Changing directory (${LATEST_VERSION:?})"
-      cd "${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"/depends || exit
+      cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
 
       if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
         lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
@@ -1407,16 +1407,17 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo "autogen.sh"
         ./autogen.sh
         echo "Configure"
-        ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --disable-tests --disable-bench
+        ./configure --prefix=/home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends/aarch64-linux-gnu --disable-tests --disable-bench
       fi
       if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
         make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         echo "autogen.sh"
         ./autogen.sh
         echo "Configure"
-        ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --disable-tests --disable-bench
+        ./configure --prefix=/home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends --disable-tests --disable-bench
       fi
 
+      cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
       make -j 4
       make install
 
