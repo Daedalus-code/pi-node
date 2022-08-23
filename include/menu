@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.7.3.9
+# 2.7.4.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1370,6 +1370,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     read -r -p "[YN] Compile wallet from source? (arm-linux-gnueabihf) y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+      sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo libdb4.8-dev libdb4.8++-dev -y 2>/dev/null
 
       echo "Downloading source"
       cd || exit && wget https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
