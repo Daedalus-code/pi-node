@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.7.7.9
+# 2.8.2.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1383,6 +1383,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
+      if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
+        CPU_ARCHITECTURE="aarch64"
+      fi
+      if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
+        CPU_ARCHITECTURE="armv7l"
+      fi
+
       sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo -y 2>/dev/null
 
       if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
@@ -1401,7 +1408,33 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
       fi
 
-      if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
+      HEIGHT=2
+      WIDTH=25
+      CHOICE_HEIGHT=2
+      BACKTITLE="CPU Architecture"
+      TITLE="This system: ${CPU_ARCHITECTURE:?}"
+      MENU="Choose one option:"
+
+      OPTIONS=(1 "aarch64-linux-gnu"
+        2 "arm-linux-gnueabihf")
+
+      CHOICE=$(dialog --clear \
+        --backtitle "$BACKTITLE" \
+        --title "$TITLE" \
+        --menu "$MENU" \
+        $HEIGHT $WIDTH $CHOICE_HEIGHT \
+        "${OPTIONS[@]}" \
+        2>&1 >/dev/tty)
+
+      clear
+      case $CHOICE in
+
+      # install display
+
+      "1")
+
+        # aarch64
+
         cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
         make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
@@ -1409,8 +1442,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --disable-tests --disable-bench --with-incompatible-bdb --disable-wallet
         make -j 4
         make install
-      fi
-      if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
+
+        ;;
+
+      "2")
+
+        # armv7l
+
         cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
         make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
@@ -1418,7 +1456,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --disable-tests --disable-bench --with-incompatible-bdb --disable-wallet
         make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         make install
-      fi
+
+        ;;
+
+      esac
 
       read -r -p "[YN] Remove old files? y/n " -n 1 -r
       echo
