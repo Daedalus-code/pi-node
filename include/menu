@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.7.8.0
+# 2.7.7.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1389,7 +1389,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo "Downloading source"
         cd || exit && wget https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
       fi
-
       if [[ ! -f "/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
         echo "Unzip source.zip"
         unzip "${LATEST_VERSION:?}".zip
@@ -1404,7 +1403,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
         cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-        make HOST=aarch64-linux-gnu -j 4
+        make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
         ./autogen.sh
         ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --disable-tests --disable-bench --with-incompatible-bdb --disable-wallet
@@ -1413,11 +1412,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
       if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
         cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-        make HOST=arm-linux-gnueabihf -j 4
+        make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
         ./autogen.sh
         ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --disable-tests --disable-bench --with-incompatible-bdb --disable-wallet
-        make -j 4
+        make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         make install
       fi
 
