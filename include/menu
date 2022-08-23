@@ -2,12 +2,13 @@
 
 # By Rainman
 # V20222308
-# 2.7.3.9
+# 2.7.4.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
+# shellcheck disable=SC2140  #
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1371,12 +1372,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo libdb4.8-dev libdb4.8++-dev -y 2>/dev/null
 
-      echo "Downloading source"
-      cd || exit && wget https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
-      echo "Unzip source.zip"
-      unzip "${LATEST_VERSION:?}".zip
+      if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
+        echo "Downloading source"
+        cd || exit && wget https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
+      fi
+
+      if [[ ! -f "/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
+        echo "Unzip source.zip"
+        unzip "${LATEST_VERSION:?}".zip
+      fi
+
       echo "Changing directory (${LATEST_VERSION:?})"
-      cd "${LATEST_VERSION:?}" || exit
+      cd "${WALLET_NAME:?}-Core-${LATEST_VERSION:?}" || exit
       echo "building depends"
       cd depends || exit
       make HOST=arm-linux-gnueabihf -j 4
