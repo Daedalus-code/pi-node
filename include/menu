@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.7.8.0
+# 2.7.8.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1403,11 +1403,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
 
       if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
+        sudo apt-get install g++-aarch64-linux-gnu -y 2>/dev/null
         cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
         make HOST=aarch64-linux-gnu -j 4
         cd ..
         ./autogen.sh
-        ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --disable-tests --disable-bench
+        ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --disable-tests --disable-bench --with-incompatible-bdb --disable-wallet
         make -j 4
         make install
       fi
@@ -1416,7 +1417,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         make HOST=arm-linux-gnueabihf -j 4
         cd ..
         ./autogen.sh
-        ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --disable-tests --disable-bench
+        ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --disable-tests --disable-bench --with-incompatible-bdb --disable-wallet
         make -j 4
         make install
       fi
