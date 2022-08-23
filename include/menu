@@ -1383,7 +1383,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-      sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo libdb4.8-dev libdb4.8++-dev -y 2>/dev/null
+      sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo -y 2>/dev/null
 
       if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
         echo "Downloading source"
