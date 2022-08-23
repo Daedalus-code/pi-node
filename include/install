@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220804
-# 0.2.2.8
+# V20222308
+# 0.2.2.9
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -15,6 +15,7 @@ fi
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
 # create temp directories, ruled by configuration
+mkdir "${DATA_DIR:?}" &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/system &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/wallet &>/dev/null
