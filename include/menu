@@ -1435,7 +1435,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
         ./autogen.sh
-        ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --disable-tests --disable-bench --with-incompatible-bdb --disable-wallet
+        ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --disable-online-rust --with-incompatible-bdb --disable-wallet
         make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         make install
 
@@ -1450,7 +1450,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
         ./autogen.sh
-        ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --disable-tests --disable-bench --with-incompatible-bdb --disable-wallet
+        ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --disable-online-rust --with-incompatible-bdb --disable-wallet
         make -j 4
         make install
 
