@@ -1405,8 +1405,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
       fi
 
-      HEIGHT=2
-      WIDTH=25
+      HEIGHT=9
+      WIDTH=31
       CHOICE_HEIGHT=2
       BACKTITLE="CPU Architecture"
       TITLE="System CPU: ${CPU_ARCHITECTURE:?}"
