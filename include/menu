@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.7.6.5
+# 2.7.7.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1379,7 +1379,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "5")
 
-    read -r -p "[YN] Compile wallet from source? (arm-linux-gnueabihf) y/n " -n 1 -r
+    read -r -p "[YN] Compile wallet from source? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
@@ -1396,14 +1396,23 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
 
       echo "Changing directory (${LATEST_VERSION:?})"
-      cd "${WALLET_NAME:?}-Core-${LATEST_VERSION:?}" || exit
-      echo "building depends"
-      cd depends || exit
-      make HOST=arm-linux-gnueabihf -j 4
-      echo "autogen.sh"
-      ./autogen.sh
-      echo "Configure"
-      ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --disable-tests --disable-bench
+      cd "${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"/depends || exit
+
+      if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
+        make HOST=aarch64-linux-gnu -j 4
+        echo "autogen.sh"
+        ./autogen.sh
+        echo "Configure"
+        ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --disable-tests --disable-bench
+      fi
+      if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
+        make HOST=arm-linux-gnueabihf -j 4
+        echo "autogen.sh"
+        ./autogen.sh
+        echo "Configure"
+        ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --disable-tests --disable-bench
+      fi
+
       make -j 4
       make install
 
