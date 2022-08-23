@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.7.8.1
+# 2.7.8.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1403,30 +1403,29 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
 
       if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
-        make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
-        echo "autogen.sh"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
+        make HOST=aarch64-linux-gnu -j 4
+        cd ..
         ./autogen.sh
-        echo "Configure"
-        ./configure --prefix="$(pwd)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
+        ./configure --prefix=$PWD/depends/aarch64-linux-gnu --disable-tests --disable-bench
+        make -j 4
+        make install
       fi
       if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
-        make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
-        echo "autogen.sh"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
+        make HOST=arm-linux-gnueabihf -j 4
+        cd ..
         ./autogen.sh
-        echo "Configure"
-        ./configure --prefix="$(pwd)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
+        ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --disable-tests --disable-bench
+        make -j 4
+        make install
       fi
-
-      cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
-      make -j 4
-      make install
 
       read -r -p "[YN] Remove old files? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
         rm /home/"$(whoami)"/"${LATEST_VERSION:?}".zip &>/dev/null
+        sudo rm -r /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
       fi
     fi
 
