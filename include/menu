@@ -1007,7 +1007,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet-Linux.zip${N0:?}\n"
       URL="${WALLET_SOURCE:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}-Linux.zip"
+      cd || exit && wget -c "${URL:?}/${LATEST_VERSION:?}-Linux.zip"
       UNAME_SYSTEM="${LATEST_VERSION:?}-Linux.zip"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
