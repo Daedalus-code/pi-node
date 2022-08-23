@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222208
-# 2.7.2.2
+# V20222308
+# 2.7.3.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1367,9 +1367,26 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "5")
 
+    read -r -p "[YN] Compile wallet from source? (arm-linux-gnueabihf) y/n " -n 1 -r
     echo
-    read -r -p "[Ok] Nothing was built, press Enter to continue" </dev/tty
-    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+      echo "Downloading source"
+      cd || exit && wget https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
+      echo "Unzip source.zip"
+      unzip "${LATEST_VERSION:?}".zip
+      echo "Changing directory (${LATEST_VERSION:?})"
+      cd "${LATEST_VERSION:?}" || exit
+      echo "building depends"
+      cd depends || exit
+      make HOST=arm-linux-gnueabihf -j 4
+      echo "autogen.sh"
+      ./autogen.sh
+      echo "Configure"
+      ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --disable-tests --disable-bench
+      make -j 4
+      make install
+    fi
 
     ;;
 
