@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222308
-# 2.7.7.9
+# 2.7.8.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1404,6 +1404,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
         make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
         echo "autogen.sh"
         ./autogen.sh
         echo "Configure"
@@ -1411,6 +1412,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
       if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
         make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
         echo "autogen.sh"
         ./autogen.sh
         echo "Configure"
