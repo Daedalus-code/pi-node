@@ -1399,14 +1399,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd "${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"/depends || exit
 
       if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
-        make HOST=aarch64-linux-gnu -j 4
+        make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         echo "autogen.sh"
         ./autogen.sh
         echo "Configure"
         ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --disable-tests --disable-bench
       fi
       if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
-        make HOST=arm-linux-gnueabihf -j 4
+        make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         echo "autogen.sh"
         ./autogen.sh
         echo "Configure"
