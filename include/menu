@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222408
-# 2.8.1.7
+# 2.8.7.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -908,9 +908,16 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading libs.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/libs.zip
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="libs.zip"
+
       echo
-      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      read -r -p "Press Enter to continue" </dev/tty
       echo
 
       ;;
@@ -920,6 +927,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.aarch64-linux-gnu.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
       setup_zip
 
@@ -930,6 +943,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.arm-linux-gnueabihf.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".arm-linux-gnueabihf.zip
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
       setup_zip
 
@@ -940,6 +959,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Linux.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Linux.zip
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="${WALLET_NAME:?}.Linux.zip"
       setup_zip
 
@@ -950,6 +975,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet-aarch64.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".aarch64.zip
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="${WALLET_NAME:?}.aarch64.zip"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
@@ -962,6 +993,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet-arm.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".arm.zip
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="${WALLET_NAME:?}.arm.zip"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
@@ -974,6 +1011,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Ubuntu16.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Ubuntu16.zip
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="${WALLET_NAME:?}.Ubuntu16.zip"
       setup_zip
 
@@ -984,6 +1027,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Source code (zip)${N0:?}\n"
       URL="${WALLET_SOURCE:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
@@ -996,6 +1045,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Source code (tar.gz)${N0:?}\n"
       URL="${WALLET_SOURCE:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".tar.gz
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="${LATEST_VERSION:?}.tar.gz"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
@@ -1008,6 +1063,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet-Linux.zip${N0:?}\n"
       URL="${WALLET_SOURCE:?}/${LATEST_VERSION:?}"
       cd || exit && wget -c "${URL:?}/${LATEST_VERSION:?}-Linux.zip"
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] success"
+      else
+        echo "[!!] failed"
+      fi
       UNAME_SYSTEM="${LATEST_VERSION:?}-Linux.zip"
       echo
       read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
