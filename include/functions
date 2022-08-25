@@ -733,7 +733,7 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
     WALLET_NODES_INQUEUE="0"
   fi
 
-  if [[ ! "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+  if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount ]] &>/dev/null; then
     # get masternode reward count, ruled by the masternode count
     WALLET_REWARD_COUNT=$(echo "${POS_LIMIT:?}/${WALLET_NODES_INQUEUE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
     # save pay count
