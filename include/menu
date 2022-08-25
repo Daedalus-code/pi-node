@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222508
-# 2.8.8.9
+# 2.6.6.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -783,11 +783,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Download         Download a specific wallet manually"
-    2 "Download         Download wallet, bootstrap automatically"
-    3 "Bootstrap        Download and Install bootstrap"
-    4 "Display          Setup display (HyperPixel4) drivers"
-    5 "Compiler         Compile new wallet from source"
-    6 "Speedtest        Test internet speed (bytes)")
+    2 "Display          Setup display (HyperPixel4) drivers"
+    3 "Compiler         Compile new wallet from source"
+    4 "Speedtest        Test internet speed (bytes)")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -816,15 +814,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         mkdir /home/"$(whoami)"/Wallet &>/dev/null
 
         if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "armv7l" &>/dev/null; then
-          UNAME_SYSTEM="armv7l"
           UNAME_FILE="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
         fi
         if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
-          UNAME_SYSTEM="aarch64"
           UNAME_FILE="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
         fi
         if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
-          UNAME_SYSTEM="x86_64"
           UNAME_FILE="${WALLET_NAME:?}.Linux.zip"
         fi
 
@@ -914,7 +909,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="libs.zip"
       echo
       read -r -p "Press Enter to continue" </dev/tty
       echo
@@ -929,7 +923,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
-        UNAME_SYSTEM="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
         setup_zip
       else
         echo "[!!] failed"
@@ -948,7 +941,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
-        UNAME_SYSTEM="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
         setup_zip
       else
         echo "[!!] failed"
@@ -967,7 +959,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
-        UNAME_SYSTEM="${WALLET_NAME:?}.Linux.zip"
         setup_zip
       else
         echo "[!!] failed"
@@ -989,7 +980,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="${WALLET_NAME:?}.aarch64.zip"
       echo
       read -r -p "Press Enter to continue" </dev/tty
       echo
@@ -1007,7 +997,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="${WALLET_NAME:?}.arm.zip"
       echo
       read -r -p "Press Enter to continue" </dev/tty
       echo
@@ -1022,7 +1011,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
-        UNAME_SYSTEM="${WALLET_NAME:?}.Ubuntu16.zip"
         setup_zip
       else
         echo "[!!] failed"
@@ -1044,7 +1032,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
       echo
       read -r -p "Press Enter to continue" </dev/tty
       echo
@@ -1062,7 +1049,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="${LATEST_VERSION:?}.tar.gz"
       echo
       read -r -p "Press Enter to continue" </dev/tty
       echo
@@ -1080,7 +1066,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="${LATEST_VERSION:?}-Linux.zip"
       echo
       read -r -p "Press Enter to continue" </dev/tty
       echo
@@ -1091,221 +1076,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     ;;
 
-    # install wallet & bootstrap automatically
-
-  "2")
-
-    # get wallet version
-    WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/wallet/client/version 2>/dev/null)
-
-    if [[ -z "$WALLET_VERSION" ]] &>/dev/null; then
-      # non responsive
-      WALLET_VERSION="${GR:?}vLoading${N0:?}"
-    fi
-
-    printf '%b' "Latest....: ${G0:?}v${LATEST_VERSION:?}${N0:?}\n"
-    printf '%b' "Installed.: ${G1:?}${WALLET_VERSION:?}${N0:?}\n"
-    echo
-    read -r -p "[YN] Install automatically? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-      # wallet directory
-      mkdir /home/"$(whoami)"/Wallet &>/dev/null
-
-      function bootstrap() {
-        printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
-        cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".bootstrap.zip
-        read -r -p "[YN] Unzip bootstrap.zip? -> (${WALLET_DIR:?}) y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-          printf '%b' "[${R1:?}!!${N0:?}] "
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
-          # wait on node (daemon) to stop
-          until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
-            clear
-            printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
-            sleep 10
-            kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
-          done
-          printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
-          yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${DATA_DIR:?}" 2>&1
-          rm "${LOG_DIR:?}"/unzip &>/dev/null
-
-          # create lock file
-          echo "Bootstrap installed $(LC_ALL=de_US.utf8 date 2>&1)" >"${DATA_DIR:?}"/boot
-          read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
-          echo
-          if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-            rm /home/"$(whoami)"/*.bootstrap.zip &>/dev/null
-          else
-            ls -lSh /home/"$(whoami)"/*.bootstrap.zip 2>&1
-          fi
-        fi
-      }
-
-      function setup() {
-        if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
-          UNAME_SYSTEM="armv7l"
-          UNAME_FILE="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
-        fi
-        if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
-          UNAME_SYSTEM="aarch64"
-          UNAME_FILE="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
-        fi
-        if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
-          UNAME_SYSTEM="x86_64"
-          UNAME_FILE="${WALLET_NAME:?}.Linux.zip"
-        fi
-      }
-
-      if [[ -z "$UNAME_FILE" ]] &>/dev/null; then
-        # non responsive
-        UNAME_FILE=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
-      fi
-      if [[ -z "$UNAME_SYSTEM" ]] &>/dev/null; then
-        # non responsive
-        UNAME_SYSTEM=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
-      fi
-
-      function setup_zip() {
-        read -r -p "[YN] Install new wallet? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-          # wallet directory
-          mkdir /home/"$(whoami)"/Wallet &>/dev/null
-
-          if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "armv7l" &>/dev/null; then
-            UNAME_SYSTEM="armv7l"
-            UNAME_FILE="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
-          fi
-          if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
-            UNAME_SYSTEM="aarch64"
-            UNAME_FILE="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
-          fi
-          if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
-            UNAME_SYSTEM="x86_64"
-            UNAME_FILE="${WALLET_NAME:?}.Linux.zip"
-          fi
-
-          read -r -p "[YN] Different system? y/n " -n 1 -r
-          echo
-          if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-            HEIGHT=10
-            WIDTH=28
-            CHOICE_HEIGHT=4
-            BACKTITLE="Install another system wallet"
-            TITLE="System"
-            MENU="Choose one options:"
-
-            OPTIONS=(1 "armv7l"
-              2 "aarch64"
-              3 "x86_64")
-
-            CHOICE=$(dialog --clear \
-              --backtitle "$BACKTITLE" \
-              --title "$TITLE" \
-              --menu "$MENU" \
-              $HEIGHT $WIDTH $CHOICE_HEIGHT \
-              "${OPTIONS[@]}" \
-              2>&1 >/dev/tty)
-
-            clear
-            case $CHOICE in
-            "1")
-              UNAME_FILE="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
-              ;;
-
-            "2")
-              UNAME_FILE="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
-              ;;
-
-            "3")
-              UNAME_FILE="${WALLET_NAME:?}.Linux.zip"
-              ;;
-
-            esac
-          fi
-
-          # setup node wallet
-          yes "A" 2>&1 | sudo unzip -j /home/"$(whoami)"/"${UNAME_FILE:?}" -d /usr/local/bin 2>&1
-          rm "${LOG_DIR:?}"/unzip &>/dev/null
-        fi
-      }
-
-      # armv7l
-      if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | egrep "armv7l" &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] armv7l System\n"
-        if [[ ! -f /home/"$(whoami)"/"${WALLET_NAME:?}".arm-linux-gnueabihf.zip ]] &>/dev/null; then
-          # download arm-linux-gnueabihf.zip
-          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".arm-linux-gnueabihf.zip
-        fi
-      fi
-
-      # aarch64
-      if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "aarch64" &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] aarch64 System\n"
-        if [[ ! -f /home/"$(whoami)"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip ]] &>/dev/null; then
-          # download $wallet_name.aarch64-linux-gnu.zip
-          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip
-        fi
-      fi
-
-      # x86_64
-      if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | grep "x86_64" &>/dev/null; then
-        printf '%b' "[${G1:?}Ok${N0:?}] x86_64 System\n"
-        if [[ ! -f /home/"$(whoami)"/"${WALLET_NAME:?}".Linux.zip ]] &>/dev/null; then
-          # download $wallet_name.linux.zip
-          cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".Linux.zip
-        fi
-      fi
-
-      setup
-      setup_zip
-      bootstrap # install bootstrap
-
-      echo
-      read -r -p "[Ok] Wallet installed! Press Enter to continue" </dev/tty
-      echo
-    fi
-
-    ;;
-
-    # download/install bootstrap
-
-  "3")
-
-    printf '%b' "[${R1:?}!!${N0:?}] Downloading bootstrap.zip!\n"
-    cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/"${WALLET_NAME:?}".bootstrap.zip
-    read -r -p "[YN] Unzip bootstrap? -> (${WALLET_DIR:?}) y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-      printf '%b' "[${R1:?}!!${N0:?}] "
-      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5
-      # wait on node (daemon) to stop
-      until pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "0" &>/dev/null; do
-        clear
-        printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
-        sleep 10
-        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
-      done
-      printf '%b' "[${G1:?}!?${N0:?}] Extracting from bootstrap.zip!\n"
-      yes "A" 2>&1 | unzip /home/"$(whoami)"/*bootstrap.zip -d "${DATA_DIR:?}" 2>&1
-      rm "${LOG_DIR:?}"/unzip &>/dev/null
-      echo
-      read -r -p "[Ok] Bootstrap installed! Press Enter to continue" </dev/tty
-      echo
-    fi
-
-    ;;
-
     # setup display (hyperpixel4)
 
-  "4")
+  "2")
 
     HEIGHT=13
     WIDTH=51
@@ -1449,7 +1222,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # compiler
 
-  "5")
+  "3")
 
     read -r -p "[YN] Compile wallet from source? y/n " -n 1 -r
     echo
@@ -1542,7 +1315,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # speedtest
 
-  "6")
+  "4")
 
     if ! [ -x "$(command -v speedtest-cli)" ] &>/dev/null; then
       sudo apt-get install speedtest-cli -y
