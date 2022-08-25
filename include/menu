@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222508
-# 2.6.0.6
+# 2.6.2.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -858,7 +858,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-aarch64-linux-gnu.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-aarch64-linux-gnu && sudo cp "${WALLET_NAME:?}"-aarch64-linux-gnu/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-aarch64-linux-gnu || exit
+        sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd || exit
       else
         echo "[!!] Download failed"
       fi
@@ -877,7 +879,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-arm-linux-gnueabihf.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-arm-linux-gnueabihf && sudo cp "${WALLET_NAME:?}"-arm-linux-gnueabihf/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-arm-linux-gnueabihf || exit
+        sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd || exit
       else
         echo "[!!] Download failed"
       fi
@@ -896,7 +900,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-Linux.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Linux && sudo cp "${WALLET_NAME:?}"-Linux/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Linux || exit
+        sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd || exit
       else
         echo "[!!] Download failed"
       fi
@@ -915,7 +921,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-aarch64.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-aarch64 && sudo cp "${WALLET_NAME:?}"-aarch64/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-aarch64 || exit
+        sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd || exit
       else
         echo "[!!] Download failed"
       fi
@@ -932,9 +940,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-arm.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        unzip "${WALLET_NAME:?}"-arm.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-arm && sudo cp "${WALLET_NAME:?}"-arm/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
         echo "[Ok] Download success"
+        unzip "${WALLET_NAME:?}"-arm.zip
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-arm || exit
+        sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd || exit
       else
         echo "[!!] Download failed"
       fi
@@ -953,7 +963,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-Ubuntu16.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Ubuntu16 && sudo cp "${WALLET_NAME:?}"-Ubuntu16/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Ubuntu16 || exit
+        sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd || exit
       else
         echo "[!!] Download failed"
       fi
@@ -1006,7 +1018,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-Linux.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Linux && sudo cp "${WALLET_NAME:?}"-Linux/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Linux || exit
+        sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd || exit
       else
         echo "[!!] Download failed"
       fi
