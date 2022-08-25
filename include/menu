@@ -917,7 +917,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.aarch64-linux-gnu.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".aarch64-linux-gnu.zip
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-aarch64-linux-gnu.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
@@ -935,7 +935,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.arm-linux-gnueabihf.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".arm-linux-gnueabihf.zip
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-arm-linux-gnueabihf.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
@@ -953,7 +953,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Linux.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Linux.zip
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-Linux.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
@@ -971,7 +971,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet-aarch64.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".aarch64.zip
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-aarch64.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
@@ -988,7 +988,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet-arm.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".arm.zip
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-arm.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
@@ -1005,7 +1005,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       printf '%b' "[${GR:?}Ok${N0:?}] Downloading Wallet.Ubuntu16.zip${N0:?}\n"
       URL="${WALLET_DOWNLOAD:?}/${LATEST_VERSION:?}"
-      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}".Ubuntu16.zip
+      cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-Ubuntu16.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
