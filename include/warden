@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20220408
-# 0.3.2.6
+# 0.3.2.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
@@ -32,14 +32,16 @@ if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" ]] &>/dev/
   mv "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/debug.log.old &>/dev/null
   touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
   printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  cd "${WALLET_DIR:?}" || exit && yes "y" | ./"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
+  cd "${WALLET_DIR:?}" || exit &&
+    yes "y" | ./"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
   mv "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/debug.log.old &>/dev/null
   touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
-  cd "${WALLET_DIR:?}" || exit && yes "" | ./"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon
+  cd "${WALLET_DIR:?}" || exit &&
+    yes "" | ./"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
@@ -124,7 +126,8 @@ function run_functions() {
       # where are we now?
       PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin/include/pinode/functions
       # get data from functions
-      cd || exit && source /usr/local/bin/include/pinode/functions
+      cd || exit &&
+        source /usr/local/bin/include/pinode/functions
       printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: functions run by warden!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
