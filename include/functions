@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222508
-# 1.5.7.1
+# 1.5.7.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.7.1"
+VERSION="v1.5.7.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -548,6 +548,7 @@ fi
 if [[ "$(rrdtool info stats/coin_supply.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
   echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
   echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
+  source /usr/local/bin/include/pinode/stats
 fi
 
 grep "moneysupply" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' >>"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
