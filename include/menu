@@ -1163,91 +1163,91 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "3")
 
-    read -r -p "[YN] Compile wallet from source? y/n " -n 1 -r
+    if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
+      CPU_ARCHITECTURE="aarch64"
+    fi
+    if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
+      CPU_ARCHITECTURE="armv7l"
+    fi
+
+    sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo libdb++-dev -y 2>/dev/null
+
+    if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
+      echo "Downloading source"
+      cd || exit && wget https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
+    fi
+    if [[ ! -f "/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
+      echo "Unzip source.zip"
+      unzip "${LATEST_VERSION:?}".zip
+    fi
+
+    if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
+      lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
+    fi
+
+    HEIGHT=9
+    WIDTH=31
+    CHOICE_HEIGHT=2
+    BACKTITLE="CPU Architecture"
+    TITLE="System CPU: ${CPU_ARCHITECTURE:?}"
+    MENU="Choose one option:"
+
+    OPTIONS=(1 "arm-linux-gnueabihf"
+      2 "aarch64-linux-gnu")
+
+    CHOICE=$(dialog --clear \
+      --backtitle "$BACKTITLE" \
+      --title "$TITLE" \
+      --menu "$MENU" \
+      $HEIGHT $WIDTH $CHOICE_HEIGHT \
+      "${OPTIONS[@]}" \
+      2>&1 >/dev/tty)
+
+    clear
+    case $CHOICE in
+
+    # ./autogen.sh
+    # ./configure
+    # make
+    # make install # optional
+
+    "1")
+
+      # armv7l
+
+      echo "Changing directory (${LATEST_VERSION:?}-armv7l-linux-gnueabihf)"
+      cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
+      make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
+      cd ..
+      ./autogen.sh
+      ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
+      make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
+      make install
+
+      ;;
+
+    "2")
+
+      # aarch64
+
+      echo "Changing directory (${LATEST_VERSION:?}-aarch64-linux-gnu)"
+      cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
+      make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
+      cd ..
+      ./autogen.sh
+      ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
+      make -j 4
+      make install
+
+      ;;
+
+    esac
+
+    read -r -p "[YN] Remove old files? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-
-      if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
-        CPU_ARCHITECTURE="aarch64"
-      fi
-      if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
-        CPU_ARCHITECTURE="armv7l"
-      fi
-
-      sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo libdb++-dev -y 2>/dev/null
-
-      if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
-        echo "Downloading source"
-        cd || exit && wget https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
-      fi
-      if [[ ! -f "/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
-        echo "Unzip source.zip"
-        unzip "${LATEST_VERSION:?}".zip
-      fi
-
-      if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
-        lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
-      fi
-
-      HEIGHT=9
-      WIDTH=31
-      CHOICE_HEIGHT=2
-      BACKTITLE="CPU Architecture"
-      TITLE="System CPU: ${CPU_ARCHITECTURE:?}"
-      MENU="Choose one option:"
-
-      OPTIONS=(1 "aarch64-linux-gnu"
-        2 "arm-linux-gnueabihf")
-
-      CHOICE=$(dialog --clear \
-        --backtitle "$BACKTITLE" \
-        --title "$TITLE" \
-        --menu "$MENU" \
-        $HEIGHT $WIDTH $CHOICE_HEIGHT \
-        "${OPTIONS[@]}" \
-        2>&1 >/dev/tty)
-
-      clear
-      case $CHOICE in
-
-      "1")
-
-        # armv7l
-
-        echo "Changing directory (${LATEST_VERSION:?})"
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-        make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-        cd ..
-        ./autogen.sh
-        ./configure --prefix=/home/"$(whoami)"/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --disable-online-rust --with-incompatible-bdb --disable-wallet
-        make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-        make install
-
-        ;;
-
-      "2")
-
-        # aarch64
-
-        echo "Changing directory (${LATEST_VERSION:?})"
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-        make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-        cd ..
-        ./autogen.sh
-        ./configure --prefix=/home/"$(whoami)"/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --disable-online-rust --with-incompatible-bdb --disable-wallet
-        make -j 4
-        make install
-
-        ;;
-
-      esac
-
-      read -r -p "[YN] Remove old files? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        rm /home/"$(whoami)"/"${LATEST_VERSION:?}".zip &>/dev/null
-        sudo rm -r /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
-      fi
+      rm /home/"$(whoami)"/"${LATEST_VERSION:?}".zip &>/dev/null
+      sudo rm -r /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
     fi
 
     ;;
