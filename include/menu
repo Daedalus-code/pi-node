@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222408
-# 2.8.7.8
+# V20222508
+# 2.8.8.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -915,7 +915,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo "[!!] failed"
       fi
       UNAME_SYSTEM="libs.zip"
-
       echo
       read -r -p "Press Enter to continue" </dev/tty
       echo
@@ -930,11 +929,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
+        UNAME_SYSTEM="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
+        setup_zip
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="${WALLET_NAME:?}.aarch64-linux-gnu.zip"
-      setup_zip
+      echo
+      read -r -p "Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
@@ -946,11 +948,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
+        UNAME_SYSTEM="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
+        setup_zip
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="${WALLET_NAME:?}.arm-linux-gnueabihf.zip"
-      setup_zip
+      echo
+      read -r -p "Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
@@ -962,11 +967,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
+        UNAME_SYSTEM="${WALLET_NAME:?}.Linux.zip"
+        setup_zip
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="${WALLET_NAME:?}.Linux.zip"
-      setup_zip
+      echo
+      read -r -p "Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
@@ -983,7 +991,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
       UNAME_SYSTEM="${WALLET_NAME:?}.aarch64.zip"
       echo
-      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      read -r -p "Press Enter to continue" </dev/tty
       echo
 
       ;;
@@ -1001,7 +1009,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
       UNAME_SYSTEM="${WALLET_NAME:?}.arm.zip"
       echo
-      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      read -r -p "Press Enter to continue" </dev/tty
       echo
 
       ;;
@@ -1014,11 +1022,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] success"
+        UNAME_SYSTEM="${WALLET_NAME:?}.Ubuntu16.zip"
+        setup_zip
       else
         echo "[!!] failed"
       fi
-      UNAME_SYSTEM="${WALLET_NAME:?}.Ubuntu16.zip"
-      setup_zip
+      echo
+      read -r -p "Press Enter to continue" </dev/tty
+      echo
 
       ;;
 
@@ -1035,7 +1046,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
       UNAME_SYSTEM="${LATEST_VERSION:?}.zip"
       echo
-      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      read -r -p "Press Enter to continue" </dev/tty
       echo
 
       ;;
@@ -1053,7 +1064,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
       UNAME_SYSTEM="${LATEST_VERSION:?}.tar.gz"
       echo
-      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      read -r -p "Press Enter to continue" </dev/tty
       echo
 
       ;;
@@ -1071,7 +1082,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       fi
       UNAME_SYSTEM="${LATEST_VERSION:?}-Linux.zip"
       echo
-      read -r -p "[Ok] ${UNAME_SYSTEM:?} downloaded! Press Enter to continue" </dev/tty
+      read -r -p "Press Enter to continue" </dev/tty
       echo
 
       ;;
