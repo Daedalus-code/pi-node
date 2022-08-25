@@ -858,7 +858,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-aarch64-linux-gnu.zip
-        cd "${WALLET_NAME:?}"-aarch64-linux-gnu && sudo cp "${WALLET_NAME:?}"-aarch64-linux-gnu/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-aarch64-linux-gnu && sudo cp "${WALLET_NAME:?}"-aarch64-linux-gnu/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
       else
         echo "[!!] Download failed"
       fi
@@ -877,7 +877,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-arm-linux-gnueabihf.zip
-        cd "${WALLET_NAME:?}"-arm-linux-gnueabihf && sudo cp "${WALLET_NAME:?}"-arm-linux-gnueabihf/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-arm-linux-gnueabihf && sudo cp "${WALLET_NAME:?}"-arm-linux-gnueabihf/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
       else
         echo "[!!] Download failed"
       fi
@@ -896,7 +896,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-Linux.zip
-        cd "${WALLET_NAME:?}"-Linux && sudo cp "${WALLET_NAME:?}"-Linux/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Linux && sudo cp "${WALLET_NAME:?}"-Linux/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
       else
         echo "[!!] Download failed"
       fi
@@ -915,7 +915,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-aarch64.zip
-        cd "${WALLET_NAME:?}"-aarch64 && sudo cp "${WALLET_NAME:?}"-aarch64/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-aarch64 && sudo cp "${WALLET_NAME:?}"-aarch64/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
       else
         echo "[!!] Download failed"
       fi
@@ -933,7 +933,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
         unzip "${WALLET_NAME:?}"-arm.zip
-        cd "${WALLET_NAME:?}"-arm && sudo cp "${WALLET_NAME:?}"-arm/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-arm && sudo cp "${WALLET_NAME:?}"-arm/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
         echo "[Ok] Download success"
       else
         echo "[!!] Download failed"
@@ -953,7 +953,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-Ubuntu16.zip
-        cd "${WALLET_NAME:?}"-Ubuntu16 && sudo cp "${WALLET_NAME:?}"-Ubuntu16/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Ubuntu16 && sudo cp "${WALLET_NAME:?}"-Ubuntu16/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
       else
         echo "[!!] Download failed"
       fi
@@ -1006,7 +1006,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-Linux.zip
-        cd "${WALLET_NAME:?}"-Linux && sudo cp "${WALLET_NAME:?}"-Linux/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
+        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Linux && sudo cp "${WALLET_NAME:?}"-Linux/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
       else
         echo "[!!] Download failed"
       fi
