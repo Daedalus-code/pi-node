@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222508
-# 2.6.2.0
+# 2.6.2.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1663,7 +1663,6 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
           # stop wallet daemon
           printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
           killall "${WALLET_DAEMON:?}" &>/dev/null
-          printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
 
           # make sure debug.log exist
           touch "${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -1677,7 +1676,15 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
           # start node (daemon)
           printf '%b' "[${G1:?}Ok${N0:?}] "
           cd "${WALLET_DIR:?}" || exit && yes "y" | ./"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
-          printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+
+          RESULT=$?
+          if [ $RESULT -eq "0" ] &>/dev/null; then
+            printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
+            printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          else
+            echo "[!!] Re/start failed"
+          fi
+
         fi
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
