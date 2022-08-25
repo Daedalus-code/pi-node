@@ -775,9 +775,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
 "4")
 
-  HEIGHT=13
+  HEIGHT=11
   WIDTH=68
-  CHOICE_HEIGHT=6
+  CHOICE_HEIGHT=4
   BACKTITLE="Download, Install & Compile"
   TITLE="Download wallets, bootstrap, drivers, compiler"
   MENU="Choose one option:"
