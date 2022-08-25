@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222308
+# V20222508
 # 1.5.7.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -546,9 +546,6 @@ fi
 ### blockchain moneysupply activity ############################################
 
 if [[ "$(rrdtool info stats/coin_supply.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
-  # get difference
-  echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)-$(head -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
-  source /usr/local/bin/include/pinode/stats
   echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
   echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
 fi
@@ -559,6 +556,9 @@ echo "$(tail -1440 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1 | a
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
   echo "$(tail -2 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1
+  # get difference
+  echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)-$(head -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
+  source /usr/local/bin/include/pinode/stats
 fi
 
 ### wallet balance, value ######################################################
