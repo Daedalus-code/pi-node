@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221708
-# 0.5.3.7
+# V20222508
+# 0.5.1.6
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
@@ -121,27 +121,6 @@ rrdtool graph /var/www/html/blockchain_activity.png \
   GPRINT:activity:MAX:%.2lf\ Max \
   GPRINT:activity:MIN:%.2lf\ Min \
   AREA:activity#71E75E:"Activity"
-
-# blockchain coin supply
-rrdtool graph /var/www/html/coin_supply.png \
-  -w 1394 -h 100 -a PNG \
-  --slope-mode \
-  --vertical-label "Coin Supply" \
-  --alt-autoscale-max --lower-limit=1 \
-  --color BACK#565875 \
-  --color FONT#FFFFFF \
-  --color CANVAS#42445F \
-  --color GRID#565875 \
-  --color FRAME#565875 \
-  --color SHADEA#565875 \
-  --color SHADEB#565875 \
-  --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:coin_supply=/home/"$(whoami)"/stats/coin_supply.rrd:coin_supply:MAX \
-  GPRINT:coin_supply:LAST:%.2lf\ Now \
-  GPRINT:coin_supply:AVERAGE:%.2lf\ AVG \
-  GPRINT:coin_supply:MAX:%.2lf\ Max \
-  GPRINT:coin_supply:MIN:%.2lf\ Min \
-  LINE1:coin_supply#5EE7E3:"Coin supply"
 
 # masternodes
 rrdtool graph /var/www/html/masternode_count_graph.png \

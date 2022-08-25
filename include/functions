@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222508
-# 1.5.7.3
+# 1.5.5.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.7.3"
+VERSION="v1.5.5.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -541,26 +541,6 @@ echo "$(grep "connections" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 |
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1440" ]] &>/dev/null; then
   echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/connections 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/connections
-fi
-
-### blockchain moneysupply activity ############################################
-
-if [[ "$(rrdtool info stats/coin_supply.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk -F. '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
-  echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
-  truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp &>/dev/null
-  echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
-  source /usr/local/bin/include/pinode/stats
-fi
-
-grep "moneysupply" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' >>"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
-
-echo "$(tail -1440 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1 | awk '!a[$0]++')" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1
-
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1 | awk '{ print $1 }' 2>&1)" -gt "1" ]] &>/dev/null; then
-  echo "$(tail -2 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply.tmp 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1
-  # get difference
-  echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)-$(head -1 "${LOG_DIR:?}"/node_data/wallet/data/moneysupply 2>&1)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/moneysupply_diff 2>&1
-  source /usr/local/bin/include/pinode/stats
 fi
 
 ### wallet balance, value ######################################################
