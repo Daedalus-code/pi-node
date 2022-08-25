@@ -1011,7 +1011,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     esac
 
     # cleanup macos compilers
-    sudo rm __MACOSX &>/dev/null
+    sudo rm -R __MACOSX &>/dev/null
 
     ;;
 
