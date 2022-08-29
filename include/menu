@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222908
-# 2.6.2.3
+# 2.6.4.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -818,7 +818,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       6 "Wallet-arm.zip"
       7 "Wallet.Ubuntu16.zip"
       8 "Source code (zip)"
-      9 "Source code (tar.gz)")
+      9 "Source code (tar.gz)"
+      10 "Bootstrap (zip)")
 
     CHOICE=$(dialog --clear \
       --backtitle "$BACKTITLE" \
@@ -1008,10 +1009,33 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       ;;
 
+    "10")
+
+      cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/bootstrap.zip
+      RESULT=$?
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] Download success"
+        read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          unzip bootstrap.zip
+          cp -R bootstrap/* "${DATA_DIR:?}"
+        fi
+      else
+        echo "[!!] Download failed"
+      fi
+      read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        rm -R bootstrap bootstrap.zip &>/dev/null
+      fi
+
+      ;;
+
     esac
 
     # cleanup macos compilers
-    sudo rm -R __MACOSX &>/dev/null
+    sudo rm -R __MACOSX "${DATA_DIR:?}"/__MACOSX &>/dev/null
 
     ;;
 
@@ -1167,7 +1191,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
       echo "Downloading source"
-      cd || exit && wget https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
+      cd || exit && wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
     fi
     if [[ ! -f "/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
       echo "Unzip source.zip"
