@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222908
-# 2.6.4.6
+# 2.6.4.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -2084,6 +2084,8 @@ maxconnections=${MAX_P2P:?}" >"${DATA_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
           else
             HIDDEN_SERVICE="#HiddenServicePort 80 127.0.0.1:80"
           fi
+
+          PORT="$(cat "${DATA_DIR:?}"/wallet_port 2>/dev/null)"
 
           echo "RunAsDaemon 1
 

@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222908
-# 0.2.7.5
+# 0.3.0.4
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -35,6 +35,35 @@ LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
 
 if [[ "$(wc -l "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf | awk '{ print $1 }')" -lt "2" ]]; then
   rm "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf &>/dev/null
+fi
+
+# if data missing, add values
+if ! grep "${WALLET_NAME:?}" /etc/tor/torrc &>/dev/null; then
+
+  read -r -p "[YN] Public .onion web server? y/n " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    HIDDEN_SERVICE="HiddenServicePort 80 127.0.0.1:80"
+  else
+    HIDDEN_SERVICE="#HiddenServicePort 80 127.0.0.1:80"
+  fi
+
+  PORT="$(cat "${DATA_DIR:?}"/wallet_port 2>/dev/null)"
+
+  echo "RunAsDaemon 1
+
+ControlPort 9051
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
+
+HiddenServiceDir /var/lib/tor/${WALLET_NAME:?}-service/
+HiddenServicePort ${PORT:?} 127.0.0.1:${PORT:?}
+${HIDDEN_SERVICE:?}
+" >"${LOG_DIR:?}"/torrc 2>&1
+
+  cat "${LOG_DIR:?}"/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
+  # remove old files
+  rm "${LOG_DIR:?}"/torrc &>/dev/null
 fi
 
 if [[ ! -f "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf ]] &>/dev/null; then
