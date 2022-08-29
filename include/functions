@@ -1547,15 +1547,15 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
   PUBLIC_IP="${P1:?}$(tail -1 "${DATA_DIR:?}"/getproxy 2>&1)${N0:?}"
 fi
 
+if [[ ! "$(echo "${PUBLIC_IP:?}" 2>&1 | egrep -c "[0-9]+" 2>&1)" -gt "0" ]] &>/dev/null; then
+  PUBLIC_IP="${GR:?}...${N0:?}"
+fi
+
 ### hiding wan address, ruled by configuration #################################
 
 if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
   PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
   PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
-fi
-
-if [[ ! "$(echo "${PUBLIC_IP:?}" 2>&1 | egrep -o "[0-9]+" 2>&1)" || -z "$PUBLIC_IP" ]] &>/dev/null; then
-  PUBLIC_IP="${GR:?}...${N0:?}"
 fi
 
 # END
