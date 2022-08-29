@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222908
-# 1.5.6.1
+# 1.5.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.6.1"
+VERSION="v1.5.6.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1547,7 +1547,8 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
   PUBLIC_IP="${P1:?}$(tail -1 "${DATA_DIR:?}"/getproxy 2>&1)${N0:?}"
 fi
 
-if [[ ! "$(echo "${PUBLIC_IP:?}" 2>&1 | egrep -c "[0-9]+" 2>&1)" -gt "0" ]] &>/dev/null; then
+if [[ "$(echo "${PUBLIC_IP:?}" 2>&1 | egrep -c "[0-9]+" 2>&1)" -lt "1" || -z "${PUBLIC_IP:?}" ]] &>/dev/null; then
+  torify curl -s https://api.myip.com 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${DATA_DIR:?}"/getproxy 2>&1
   PUBLIC_IP="${GR:?}...${N0:?}"
 fi
 
