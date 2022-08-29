@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222508
-# 1.5.5.3
+# V20222908
+# 1.5.5.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.5.3"
+VERSION="v1.5.5.7"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -358,13 +358,17 @@ REPO_VERSION="${N0:?}${VERSION:?}${GR:?}"
 
 SYSTEM_CLOCK="${N0:?}$(cat "${LOG_DIR:?}"/node_data/system/clock 2>/dev/null)${N0:?}"
 
-if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
-  MASTER_STATUS="${CY:?}M${N0:?}"
-else
-  MASTER_STATUS="${GR:?}M${N0:?}"
-fi
+if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
+  if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+    MASTER_STATUS="${CY:?}M${N0:?}"
+  else
+    MASTER_STATUS="${GR:?}M${N0:?}"
+  fi
 
-if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
+  if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
+    MASTER_STATUS="${GR:?}M${N0:?}"
+  fi
+else
   MASTER_STATUS="${GR:?}M${N0:?}"
 fi
 
