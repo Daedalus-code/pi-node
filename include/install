@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222308
-# 0.2.2.9
+# V20222908
+# 0.2.3.4
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -81,6 +81,11 @@ fi
 # make sure dialog exist
 if ! [ -x "$(command -v dialog)" ] &>/dev/null; then
   sudo apt-get install dialog -y
+fi
+
+# make sure grepcidr exist
+if ! [ -x "$(command -v grepcidr)" ] &>/dev/null; then
+  sudo apt-get install grepcidr -y
 fi
 
 # make sure unzip exist
