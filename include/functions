@@ -359,7 +359,7 @@ REPO_VERSION="${N0:?}${VERSION:?}${GR:?}"
 SYSTEM_CLOCK="${N0:?}$(cat "${LOG_DIR:?}"/node_data/system/clock 2>/dev/null)${N0:?}"
 
 if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
-  if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+  if [[ "$(grep -c "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" -gt "0" ]] &>/dev/null; then
     MASTER_STATUS="${CY:?}M${N0:?}"
   else
     MASTER_STATUS="${GR:?}M${N0:?}"
