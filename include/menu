@@ -1191,8 +1191,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       make HOST="${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?}" -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
       cd ..
       ./autogen.sh
-      ./configure --prefix="/home/$(whoami)/depends/${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?} --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb CXXFLAGS=--param ggc-min-expand=1 --param ggc-min-heapsize=32768"
-      make "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
+      ./configure --prefix="/home/$(whoami)/depends/${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?} --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb"
       make install
     else
 
@@ -1235,7 +1234,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
         ./autogen.sh
-        ./configure --prefix="/home/$(whoami)/depends/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb CXXFLAGS=--param ggc-min-expand=1 --param ggc-min-heapsize=32768"
+        ./configure --prefix="/home/$(whoami)/depends/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb"
         make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         make install
 
@@ -1250,7 +1249,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
         ./autogen.sh
-        ./configure --prefix="/home/$(whoami)/depends/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb CXXFLAGS=--param ggc-min-expand=1 --param ggc-min-heapsize=32768"
+        ./configure --prefix="/home/$(whoami)/depends/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb"
         make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         make install
 
