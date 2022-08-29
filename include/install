@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222908
-# 0.2.7.1
+# 0.2.7.5
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
@@ -32,6 +32,10 @@ source /usr/local/bin/include/pinode/color 2>&1
 
 LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
+
+if [[ "$(wc -l "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf | awk '{ print $1 }')" -lt "2" ]]; then
+  rm "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf &>/dev/null
+fi
 
 if [[ ! -f "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf ]] &>/dev/null; then
   echo "
