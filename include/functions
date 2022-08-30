@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222908
-# 1.5.6.2
+# V20223008
+# 1.5.6.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.6.2"
+VERSION="v1.5.6.4"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -481,8 +481,10 @@ PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
 if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/wallet/client/getinfo &>/dev/null; then
 
   if [[ ! -f "${DATA_DIR:?}"/getonion ]] &>/dev/null; then
+
     PUBLIC_IP="$(grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1)"
     PUBLIC_IP="$(egrep "AdvertiseLocal: .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $5 }' 2>&1)"
+    PUBLIC_IP="$(sudo cat /var/lib/tor/"${WALLET_NAME:?}"-service/hostname)"
 
     if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
       PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
