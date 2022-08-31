@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # By Rainman
-# V20222908
-# 2.6.4.8
+# V20223108
+# 2.6.2.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
-# shellcheck disable=SC2140  #
+# shellcheck disable=SC2140  # Give me a break
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1439,22 +1439,12 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
     "1")
 
-      if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
+      if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>&1 | wc -l)" -eq "1" ]] &>/dev/null; then
         # already setup and running
         echo
         printf '%b' "[${G1:?}!?${N0:?}] Already setup and running!\n"
         read -r -p "[!!] Press Enter to continue!" </dev/tty
         clear
-      fi
-
-      if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | grep "autocombine_enabled" 2>&1 | grep -o "true" 2>&1)" ]] &>/dev/null; then
-        read -r -p "[YN] You should turn off auto combine & stake split !? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          # disable setautocombinethreshold & setstakesplitthreshold
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold false
-          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold 0
-        fi
       fi
 
       # get wallet port, do this once
