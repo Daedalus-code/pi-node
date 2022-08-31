@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223108
-# 2.6.2.3
+# 2.6.2.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1547,10 +1547,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
         MASTERNODE_KEY="$(cat "${DATA_DIR:?}"/masternode_key 2>/dev/null)"
 
-        # create tor_wan script
-        echo "curl -s https://api.myip.com >${WALLET_DIR:?}/tor_wan 2>&1" >"${LOG_DIR:?}"/wan_curl 2>&1
-        # get onion wan address (torify bash)
-        torify bash "${LOG_DIR:?}"/wan_curl && rm "${LOG_DIR:?}"/wan_curl 2>&1
+        curl -s https://api.myip.com >${WALLET_DIR:?}/tor_wan 2>&1 >"${LOG_DIR:?}"/wan_curl 2>&1
 
         read -r -p "[YN] Create new wallet configuration (overwriting)? y/n " -n 1 -r
         echo
