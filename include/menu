@@ -1416,7 +1416,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
   "2")
 
     HEIGHT=10
-    WIDTH=56
+    WIDTH=51
     CHOICE_HEIGHT=3
     BACKTITLE="Masternode menu"
     TITLE="Masternode Options"
