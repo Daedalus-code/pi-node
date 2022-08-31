@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223108
-# 0.5.6.4
+# 0.5.6.7
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -432,6 +432,9 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
         # get total confirmations from inputs that are above the con_diff
         egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/client/total_confirmations 2>&1
         TOTAL_CONF_ABOVE=$(cat "${LOG_DIR:?}"/node_data/wallet/client/total_confirmations 2>/dev/null)
+        if [[ -z "$TOTAL_CONF_ABOVE" ]] &>/dev/null; then
+          TOTAL_CONF_ABOVE="0"
+        fi
         # calculate total average confirmations between inputs
         TOTAL_CONF_ABOVE_CALC="$(echo "${TOTAL_CONF_ABOVE:?}/$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" | wc -l 2>&1)" | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
 
