@@ -1415,17 +1415,16 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
   "2")
 
-    HEIGHT=11
+    HEIGHT=10
     WIDTH=56
-    CHOICE_HEIGHT=4
+    CHOICE_HEIGHT=3
     BACKTITLE="Masternode menu"
     TITLE="Masternode Options"
     MENU="Choose one option:"
 
     OPTIONS=(1 "Install          Setup Masternode"
       2 "Config           Edit $(echo "${WALLET_MASTER:?}" 2>&1 | awk -F. '{ print $1 }' 2>&1)"
-      3 "Status           Masternode information"
-      4 "Locked           Locked Masternode collateral")
+      3 "Status           Masternode information")
 
     CHOICE=$(dialog --clear \
       --backtitle "$BACKTITLE" \
@@ -1758,22 +1757,6 @@ Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ 
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
       fi
-
-      ;;
-
-    "4")
-
-      MASTERNODECO="$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" # masternode collateral
-
-      display_result() {
-        dialog --title " Count $(egrep -c "[aA0-zZ9]+" "${DATA_DIR:?}"/masternode_lock 2>&1) Collateral $(echo "$(egrep -c "[aA0-zZ9]+" "${DATA_DIR:?}"/masternode_lock 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)" \
-          --no-collapse \
-          --msgbox "$RESULT" 0 0
-      }
-
-      RESULT=$(printf '%b' "$(cat "$WALLET_DIR"/masternode_lock 2>/dev/null)\n")
-      display_result "Lock Status"
-      clear
 
       ;;
 
