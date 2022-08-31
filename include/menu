@@ -1546,7 +1546,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
         MASTERNODE_KEY="$(cat "${DATA_DIR:?}"/masternode_key 2>/dev/null)"
 
-        curl -s https://api.myip.com >"${LOG_DIR:?}"/wan_curl 2>&1
+        curl -s https://api.myip.com >"${DATA_DIR:?}"/wan_curl 2>&1
 
         read -r -p "[YN] Create new wallet configuration (overwriting)? y/n " -n 1 -r
         echo
