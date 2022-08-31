@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223108
-# 2.6.2.1
+# 2.6.2.3
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1494,6 +1494,8 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         printf '%b' "[${R1:?}!!${N0:?}] No masternode ${CY:?}address${N0:?} found!\n"
         sleep 1
       else
+
+        MASTERNODE_ADDRESS=$(cat "${DATA_DIR:?}"/masternode_address 2>/dev/null)
 
         # keep masternode status updated
         cp "${DATA_DIR:?}"/masternode_status "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus &>/dev/null
