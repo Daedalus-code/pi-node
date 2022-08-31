@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222508
-# 0.5.6.3
+# V20223108
+# 0.5.6.4
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -430,7 +430,8 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
         # get autocombine threshold (apc)
         CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }')
         # get total confirmations from inputs that are above the con_diff
-        TOTAL_CONF_ABOVE=$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1)
+        egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/client/total_confirmations 2>&1
+        TOTAL_CONF_ABOVE=$(cat "${LOG_DIR:?}"/node_data/wallet/client/total_confirmations 2>/dev/null)
         # calculate total average confirmations between inputs
         TOTAL_CONF_ABOVE_CALC="$(echo "${TOTAL_CONF_ABOVE:?}/$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" | wc -l 2>&1)" | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
 

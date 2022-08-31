@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20223008
-# 1.5.6.4
+# V20223108
+# 1.5.6.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.6.4"
+VERSION="v1.5.6.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -819,6 +819,7 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
         WALLET_TXLAST="${Y1:?}$(tail -1 "${DATA_DIR:?}"/updates 2>/dev/null | awk '{ print $3 }' 2>&1)${N0:?}"
       fi
       CB="${Y1:?}"
+      TX="${Y1:?}"
     fi
   fi
 
