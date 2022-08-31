@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20223108
-# 2.6.2.0
+# 2.6.1.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1527,8 +1527,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
           else
             WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
             printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
-            read -r -p "[Ok] Press Enter to exit" </dev/tty
-            exit
+            read -r -p "[Ok] Press Enter to continue" </dev/tty
           fi
         else
           printf '%b' "[${G1:?}Ok${N0:?}] Masternode ${CY:?}address${N0:?} has enough coins.\n"
