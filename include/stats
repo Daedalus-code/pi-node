@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20223108
-# 0.5.6.7
+# V20220209
+# 0.5.7.3
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -421,6 +421,12 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
 
         # update proof-of-stake threshold
         rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" 2>/dev/null
+
+        if [[ "$POS_LIMIT" -gt "1440" ]] &>/dev/null; then
+          # too big for graph
+          POS_LIMIT="1440"
+        fi
+
         # update proof-of-stake limit
         rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}" 2>/dev/null
 
