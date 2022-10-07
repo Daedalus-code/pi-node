@@ -515,6 +515,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     else
       UFW_INSTALLED="Already installed! - $(ufw --version | xargs)"
       echo "$UFW_INSTALLED"
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
     fi
 
     ;;
