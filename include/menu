@@ -317,7 +317,7 @@ Then the importprivkey can be used with this output
   WIDTH=50
   CHOICE_HEIGHT=8
   BACKTITLE="Pi-Node"
-  TITLE="UFW Menu - $UFW_INSTALLED"
+  TITLE="$UFW_INSTALLED"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Status           Show firewall status"
