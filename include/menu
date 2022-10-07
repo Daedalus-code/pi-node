@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20223108
-# 2.6.2.8
+# V20220710
+# 2.6.5.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -307,11 +307,17 @@ Then the importprivkey can be used with this output
 
 "6")
 
-  HEIGHT=14
+  if ! [ -x "$(command -v ufw)" ] &>/dev/null; then
+    UFW_INSTALLED="Firewall not installed (ufw)!"
+  else
+    UFW_INSTALLED="$(ufw -v)"
+  fi
+
+  HEIGHT=15
   WIDTH=50
-  CHOICE_HEIGHT=7
+  CHOICE_HEIGHT=8
   BACKTITLE="Pi-Node"
-  TITLE="Uncomplicated firewall Menu"
+  TITLE="UFW Menu - $UFW_INSTALLED"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Status           Show firewall status"
@@ -320,7 +326,8 @@ Then the importprivkey can be used with this output
     4 "Allow            Add allow rule"
     5 "Deny             Add deny rule"
     6 "Delete All       Delete all rules"
-    7 "Use Default      Set default rules")
+    7 "Use Default      Set default rules"
+    8 "Install UFW      Install firewall")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -488,6 +495,23 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
+
+    ;;
+
+  "8")
+
+    if ! [ -x "$(command -v ufw)" ] &>/dev/null; then
+      UFW_INSTALLED="Firewall not installed (ufw)!"
+      clear
+      echo "Installing firewall (ufw)"
+      sudo apt-get install ufw -y
+      echo
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+    else
+      UFW_INSTALLED="Already installed! - $(ufw -v)"
+      echo "$UFW_INSTALLED"
+    fi
 
     ;;
 
