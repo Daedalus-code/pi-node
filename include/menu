@@ -79,7 +79,7 @@ OPTIONS=(1 "Node Menu        Shutdown, Re/Start node"
   7 "System Space     Disk space utilized"
   8 "Proxy Menu       Proxy options (tor)"
   9 "Swap Menu        Swap, DTR options"
-  10 "Quit             Exit menu")
+  0 "Quit             Exit menu")
 
 CHOICE=$(dialog --clear \
   --nocancel \
@@ -1244,7 +1244,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       make HOST="${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?}" -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
       cd ..
       ./autogen.sh
-      ./configure --prefix=/home/"$(whoami)"/depends/${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?} --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
+      ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" --prefix=/home/"$(whoami)"/depends/${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?} --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
       make install
     else
 
@@ -1287,7 +1287,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
         ./autogen.sh
-        ./configure --prefix=/home/"$(whoami)"/depends/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
+        ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" --prefix=/home/"$(whoami)"/depends/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
         make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         make install
 
@@ -1302,7 +1302,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         cd ..
         ./autogen.sh
-        ./configure --prefix=/home/"$(whoami)"/depends/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
+        ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" --prefix=/home/"$(whoami)"/depends/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
         make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
         make install
 
@@ -2644,7 +2644,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
   ;;
 
-"10")
+"0")
 
   exit # exit menu
 
