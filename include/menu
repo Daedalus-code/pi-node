@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221710
-# 2.6.0.1
+# 2.5.9.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1257,9 +1257,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo ./autogen.sh
     sudo ./configure LDFLAGS="-L$BUILD/db4/lib/" CPPFLAGS="-I$(pwd)/db4/include/" --prefix=$BUILD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --with-incompatible-bdb --disable-wallet --without-gui LDFLAGS=-static-libstdc++
     sudo make -j4
-    echo "Remember to strip the daemon, cli, and tx files!"
-
-    make install
+    sudo make install
 
     ;;
 
