@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221410
-# 2.6.5.7
+# V20221710
+# 2.6.0.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1227,95 +1227,38 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       unzip "${LATEST_VERSION:?}".zip
     fi
 
-    if [[ "$(uname -a 2>&1 | grep "aarch64" 2>&1)" ]] &>/dev/null; then
-      CPU_ARCHITECTURE="aarch64"
-      LINUX_GNU="gnu"
-    fi
     if [[ "$(uname -a 2>&1 | grep "armv7l" 2>&1)" ]] &>/dev/null; then
       CPU_ARCHITECTURE="armv7l"
       LINUX_GNU="gnueabihf"
     fi
 
-    read -r -p "[YN] Try auto compile? (arm builds) y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "Changing directory (${LATEST_VERSION:?}-${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?})"
-      cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-      make HOST="${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?}" -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-      cd ..
-      ./autogen.sh
-      ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" --prefix=/home/"$(whoami)"/depends/${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?} --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
-      make install
-    else
+    echo "Changing directory (${LATEST_VERSION:?}-${CPU_ARCHITECTURE:?}-linux-${LINUX_GNU:?})"
+    cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
 
-      if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
-        lscpu >"${LOG_DIR:?}"/node_data/system/lscpu 2>&1
-      fi
+    sudo make -j4 HOST=arm-linux-gnueabihf
 
-      HEIGHT=9
-      WIDTH=31
-      CHOICE_HEIGHT=2
-      BACKTITLE="CPU Architecture"
-      TITLE="System CPU: ${CPU_ARCHITECTURE:?}"
-      MENU="Choose one option:"
+    cd ..
 
-      OPTIONS=(1 "arm-linux-gnueabihf"
-        2 "aarch64-linux-gnu")
+    sudo ./autogen.sh
+    sudo mkdir /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db4 || exit
+    sudo wget -c 'http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz'
+    sudo tar -xzvf db-4.8.30.NC.tar.gz
 
-      CHOICE=$(dialog --clear \
-        --backtitle "$BACKTITLE" \
-        --title "$TITLE" \
-        --menu "$MENU" \
-        $HEIGHT $WIDTH $CHOICE_HEIGHT \
-        "${OPTIONS[@]}" \
-        2>&1 >/dev/tty)
+    cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db-4.8.30.NC/build_unix/ || exit
 
-      clear
-      case $CHOICE in
+    sudo ../dist/configure --enable-cxx --disable-shared --with-pic --prefix="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/db4"
+    sudo make install
 
-      # ./autogen.sh
-      # ./configure
-      # make
-      # make install # optional
+    cd ../../
 
-      "1")
+    BUILD="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
 
-        # armv7l
+    sudo ./autogen.sh
+    sudo ./configure LDFLAGS="-L$BUILD/db4/lib/" CPPFLAGS="-I$(pwd)/db4/include/" --prefix=$BUILD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --with-incompatible-bdb --disable-wallet --without-gui LDFLAGS=-static-libstdc++
+    sudo make -j4
+    echo "Remember to strip the daemon, cli, and tx files!"
 
-        echo "Changing directory (${LATEST_VERSION:?}-armv7l-linux-gnueabihf)"
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-        make HOST=arm-linux-gnueabihf -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-        cd ..
-        ./autogen.sh
-        ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" --prefix=/home/"$(whoami)"/depends/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
-        make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-        make install
-
-        ;;
-
-      "2")
-
-        # aarch64
-
-        echo "Changing directory (${LATEST_VERSION:?}-aarch64-linux-gnu)"
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-        make HOST=aarch64-linux-gnu -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-        cd ..
-        ./autogen.sh
-        ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" --prefix=/home/"$(whoami)"/depends/depends/aarch64-linux-gnu --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust --disable-wallet --with-incompatible-bdb
-        make -j "$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)"
-        make install
-
-        ;;
-
-      esac
-    fi
-    read -r -p "[YN] Remove old files? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      rm /home/"$(whoami)"/"${LATEST_VERSION:?}".zip &>/dev/null
-      sudo rm -r /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
-    fi
+    make install
 
     ;;
 
