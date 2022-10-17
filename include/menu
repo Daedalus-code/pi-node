@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221710
-# 2.5.9.5
+# 2.5.9.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1216,7 +1216,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "3")
 
-    sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake autogen python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo libdb++-dev -y
+    sudo apt-get install autoconf autogen automake autotools-dev binutils-aarch64-linux-gnu binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential cargo cmake curl g++-4.8-aarch64-linux-gnu g++-4.8-arm-linux-gnueabihf g++-4.8-multilib g++-aarch64-linux-gnu g++-arm-linux-gnueabihf gcc-4.8-aarch64-linux-gnu gcc-4.8-arm-linux-gnueabihf gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3 -y
 
     if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
       echo "Downloading source"
@@ -1229,7 +1229,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
 
-    sudo make clean
     rm -r /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db4 &>/dev/null
     sudo make -j4 HOST=arm-linux-gnueabihf
 
