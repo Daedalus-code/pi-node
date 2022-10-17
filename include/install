@@ -12,7 +12,7 @@ if [[ ! -f /usr/local/bin/include/pinode/pinode.conf ]] &>/dev/null; then
   cp /home/"$(whoami)"/pi-node/pinode.conf /tmp/pinode.conf.tmp &>/dev/null
   sudo mv /tmp/pinode.conf.tmp /usr/local/bin/include/pinode/pinode.conf &>/dev/null
 fi
-source /usr/local/bin/include/pinode/pinode.conf 2>&1
+source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
 
 # create temp directories, ruled by configuration
 mkdir "${DATA_DIR:?}" &>/dev/null
@@ -28,7 +28,7 @@ if [[ ! -f /usr/local/bin/include/pinode/color ]] &>/dev/null; then
   cp /home/"$(whoami)"/pi-node/include/color /tmp/color.tmp &>/dev/null
   sudo mv /tmp/color.tmp /usr/local/bin/include/pinode/color &>/dev/null
 fi
-source /usr/local/bin/include/pinode/color 2>&1
+source /usr/local/bin/include/pinode/color 2>/dev/null
 
 # get wallet port, do this once
 if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
@@ -53,7 +53,7 @@ fi
 LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
 
-if [[ "$(wc -l "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf | awk '{ print $1 }')" -lt "2" ]]; then
+if [[ "$(wc -l "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf 2>/dev/null | awk '{ print $1 }')" -lt "2" ]]; then
   rm "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf &>/dev/null
 fi
 
@@ -88,7 +88,7 @@ fi
 
 if [[ ! -f "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf ]] &>/dev/null; then
   echo "
-## freedomcoin.conf configuration file.
+## configuration file.
 # Network-related settings:
 
 # Run on the test network instead of the real freedomcoin network.
@@ -120,7 +120,7 @@ discover=1
 maxconnections=125
 
 # can be commented out if you use the service script
-daemon=1" >"${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf
+daemon=1" >"${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf 2>/dev/null
 fi
 
 clear
