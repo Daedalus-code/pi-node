@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20221710
-# 2.5.9.4
+# 2.5.9.5
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1242,7 +1242,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db-4.8.30.NC/build_unix || exit
 
-    sudo /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db-4.8.30.NC/dist/configure --enable-cxx --disable-shared --with-pic --prefix="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/db4"
+    cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db-4.8.30.NC/dist/ || exit
+    sudo configure --enable-cxx --disable-shared --with-pic --prefix="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/db4"
     sudo make install
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
