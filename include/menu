@@ -1249,7 +1249,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     BUILD="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
 
     sudo ./autogen.sh
-    sudo ./configure LDFLAGS="-L$BUILD/db4/lib/" CPPFLAGS="-I$(pwd)/db4/include/" --prefix=$BUILD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --with-incompatible-bdb --disable-wallet --without-gui LDFLAGS=-static-libstdc++
+    sudo ./configure LDFLAGS="-L$BUILD/db4/lib/" CPPFLAGS="-I$BUILD/db4/include/" --prefix=$BUILD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --with-incompatible-bdb --disable-wallet --without-gui LDFLAGS=-static-libstdc++
     sudo make -j4
     sudo make install
 
