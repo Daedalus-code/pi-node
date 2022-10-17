@@ -1216,7 +1216,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "3")
 
-    sudo rm -r /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db4 &>/dev/null
+    read -r -p "[YN] Remove old build? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      sudo rm -r /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
+    fi
 
     sudo apt-get install autoconf autogen automake autotools-dev binutils-aarch64-linux-gnu binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential cargo cmake curl g++-4.8-aarch64-linux-gnu g++-4.8-arm-linux-gnueabihf g++-4.8-multilib g++-aarch64-linux-gnu g++-arm-linux-gnueabihf gcc-4.8-aarch64-linux-gnu gcc-4.8-arm-linux-gnueabihf gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3 -y
 
