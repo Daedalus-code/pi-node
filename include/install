@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222908
+# V20221710
 # 0.3.0.4
 
 # create script directories
@@ -29,6 +29,26 @@ if [[ ! -f /usr/local/bin/include/pinode/color ]] &>/dev/null; then
   sudo mv /tmp/color.tmp /usr/local/bin/include/pinode/color &>/dev/null
 fi
 source /usr/local/bin/include/pinode/color 2>&1
+
+# get wallet port, do this once
+if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
+  printf '%b' "[??] Enter Wallet Port ${G1:?}> ${N0:?}"
+  read -r WALLET_PORT
+  echo "${WALLET_PORT:?}" >"${DATA_DIR:?}"/wallet_port 2>&1
+  if [[ -z "$WALLET_PORT" ]] &>/dev/null; then
+    exit
+  fi
+fi
+
+# get masternode collateral, do this once
+if [[ ! -f "${DATA_DIR:?}"/masternode_collateral ]] &>/dev/null; then
+  printf '%b' "[??] Enter Masternode Collateral ${G1:?}> ${N0:?}"
+  read -r WALLET_COLLATERAL
+  echo "${WALLET_COLLATERAL:?}" >"${DATA_DIR:?}"/masternode_collateral 2>&1
+  if [[ -z "$WALLET_COLLATERAL" ]] &>/dev/null; then
+    exit
+  fi
+fi
 
 LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
@@ -126,26 +146,6 @@ sleep 1
 
 if [ ! -d /usr/local/bin/include/pinode ] &>/dev/null; then
   sudo mkdir /usr/local/bin/include/pinode &>/dev/null
-fi
-
-# get wallet port, do this once
-if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
-  printf '%b' "[??] Enter Wallet Port ${G1:?}> ${N0:?}"
-  read -r WALLET_PORT
-  echo "${WALLET_PORT:?}" >"${DATA_DIR:?}"/wallet_port 2>&1
-  if [[ -z "$WALLET_PORT" ]] &>/dev/null; then
-    exit
-  fi
-fi
-
-# get masternode collateral, do this once
-if [[ ! -f "${DATA_DIR:?}"/masternode_collateral ]] &>/dev/null; then
-  printf '%b' "[??] Enter Masternode Collateral ${G1:?}> ${N0:?}"
-  read -r WALLET_COLLATERAL
-  echo "${WALLET_COLLATERAL:?}" >"${DATA_DIR:?}"/masternode_collateral 2>&1
-  if [[ -z "$WALLET_COLLATERAL" ]] &>/dev/null; then
-    exit
-  fi
 fi
 
 # make sure dialog exist
