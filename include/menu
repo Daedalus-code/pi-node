@@ -1216,7 +1216,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "3")
 
-    sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake autogen python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo libdb++-dev -y 2>/dev/null
+    sudo apt-get install build-essential libtool bsdmainutils autotools-dev autoconf pkg-config automake autogen python3 libgmp-dev libevent-dev libboost-all-dev libsodium-dev cargo libdb++-dev -y
 
     if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
       echo "Downloading source"
