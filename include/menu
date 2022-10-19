@@ -1249,7 +1249,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db-4.8.30.NC/build_unix || exit
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db-4.8.30.NC/dist/ || exit
-    sudo configure --enable-cxx --disable-shared --with-pic --prefix="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/db4"
+    sudo configure --prefix="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/db4"
     sudo make install
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
