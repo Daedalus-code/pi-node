@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221710
+# V20221910
 # 2.6.0.1
 
 # dialog, ncurses no utf8 acs
@@ -1237,7 +1237,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
 
-    sudo make -j4 HOST=arm-linux-gnueabihf
+    sudo make -j"$(grep "cpu cores" /proc/cpuinfo | awk '{ print $4  }' | head -1)" HOST=arm-linux-gnueabihf
 
     cd ..
 
@@ -1257,8 +1257,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     BUILD="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
 
     sudo ./autogen.sh
-    sudo ./configure LDFLAGS="-L$BUILD/db4/lib/" CPPFLAGS="-I$BUILD/db4/include/" --prefix=$BUILD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports --with-incompatible-bdb --disable-wallet --without-gui LDFLAGS=-static-libstdc++
-    sudo make -j4
+    sudo ./configure LDFLAGS="-L$BUILD/db4/lib/" CPPFLAGS="-I$BUILD/db4/include/" --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
+    sudo make -j"$(grep "cpu cores" /proc/cpuinfo | awk '{ print $4  }' | head -1)"
     sudo make install
 
     ;;
