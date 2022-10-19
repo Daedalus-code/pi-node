@@ -1216,6 +1216,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "3")
 
+    CPU_CORES="$(grep "cpu cores" /proc/cpuinfo | awk '{ print $4  }' | head -1)"
+
     read -r -p "[YN] Remove old build? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -1223,7 +1225,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     echo "Please wait"
-    sudo apt-get install autoconf autogen automake autotools-dev binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential cargo cmake curl g++-4.8-arm-linux-gnueabihf g++-4.8-multilib g++-arm-linux-gnueabihf gcc-4.8-arm-linux-gnueabihf gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3 -y 2>/dev/null
+    sudo apt-get install binutils-aarch64-linux-gnu g++-aarch64-linux-gnu gcc-aarch64-linux-gnu -y 2>/dev/null
+    sudo apt-get install binutils-arm-linux-gnueabihf g++-4.8-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-4.8-arm-linux-gnueabihf -y 2>/dev/null
+    sudo apt-get install autoconf autogen automake autotools-dev binutils-gold bsdmainutils build-essential cargo make cmake curl g++-4.8-multilib gcc gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3 -y 2>/dev/null
     clear
 
     if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
@@ -1237,7 +1241,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
 
-    sudo make -j"$(grep "cpu cores" /proc/cpuinfo | awk '{ print $4  }' | head -1)" HOST=arm-linux-gnueabihf
+    sudo make -j"${CPU_CORES:?}" HOST=arm-linux-gnueabihf
 
     cd ..
 
@@ -1247,9 +1251,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo tar -xzvf db-4.8.30.NC.tar.gz
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db-4.8.30.NC/build_unix || exit
-
-    cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db-4.8.30.NC/dist/ || exit
-    sudo configure --prefix="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/db4"
+    sudo ../dist/configure --enable-cxx --disable-shared --with-pic --prefix="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/db4"
     sudo make install
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
@@ -1258,8 +1260,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     sudo ./autogen.sh
     sudo ./configure LDFLAGS="-L$BUILD/db4/lib/" CPPFLAGS="-I$BUILD/db4/include/" --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
-    sudo make -j"$(grep "cpu cores" /proc/cpuinfo | awk '{ print $4  }' | head -1)"
+    sudo make -j"${CPU_CORES:?}"
     sudo make install
+
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
 
     ;;
 
