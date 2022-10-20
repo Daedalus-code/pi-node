@@ -1235,6 +1235,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo apt-get install binutils-aarch64-linux-gnu g++-aarch64-linux-gnu gcc-aarch64-linux-gnu -y 2>/dev/null
     sudo apt-get install binutils-arm-linux-gnueabihf g++-4.8-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-4.8-arm-linux-gnueabihf -y 2>/dev/null
     sudo apt-get install autoconf autogen automake autotools-dev binutils-gold bsdmainutils build-essential cargo make cmake curl g++ g++-4.8-multilib gcc gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3 -y 2>/dev/null
+    sudo apt-get install git build-essential libtool autotools-dev autoconf pkg-config libssl-dev libcrypto++-dev libevent-dev libminiupnpc-dev libgmp-dev libboost-all-dev devscripts libdb++-dev libsodium-dev -y 2>/dev/null
+    sudo apt-get install libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools libprotobuf-dev protobuf-compiler libcrypto++-dev libminiupnpc-dev qt5-default -y 2>/dev/null
     clear
 
     if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
@@ -1252,7 +1254,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     cd ..
 
+    BUILD="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
+
     sudo ./autogen.sh
+    sudo ./configure --prefix=$BUILD/depends/arm-linux-gnueabihf
+    sudo make
+
     sudo mkdir /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db4 || exit
     sudo wget -c 'http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz'
     sudo tar -xzvf db-4.8.30.NC.tar.gz
@@ -1262,8 +1269,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo make install
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
-
-    BUILD="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
 
     sudo ./autogen.sh
     sudo ./configure LDFLAGS="-L$BUILD/db4/lib/" CPPFLAGS="-I$BUILD/db4/include/" --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --disable-wallet --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
