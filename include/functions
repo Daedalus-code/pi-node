@@ -595,7 +595,7 @@ if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1 | awk '{
   echo "$(tail -180 "${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
 fi
 
-if [[ -z "$WALLET_BALANCE" || "$WALLET_BALANCE" -eq "0" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance | awk -F. '{ print $1 }')" -eq "0" ]] &>/dev/null; then
   echo "0" >"${LOG_DIR:?}"/node_data/wallet/data/balance_values 2>&1
 fi
 
