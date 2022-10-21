@@ -683,7 +683,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "120" ]] &>/dev/null; then
   loading
 fi
 
-if [[ "$(grep "blocks:" "${LOG_DIR:?}"/node_data/wallet/getinfo | awk '{ print $2 }' | tr -d ':')" -eq "0" ]] &>/dev/null; then
+if [[ "$(grep "blocks:" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' | tr -d ':')" -eq "0" ]] &>/dev/null; then
   WALLET_TXLAST="${GR:?}       Loading${N0:?}"
 fi
 
