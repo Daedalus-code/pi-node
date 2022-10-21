@@ -65,7 +65,7 @@ function uptime_daemon() {
 echo "$(uptime_daemon 2>&1)" 2>&1 | tr -d '-' >"${LOG_DIR:?}"/node_data/wallet/uptime 2>&1
 
 if [[ "$(df -h "${LOG_DIR:?}" | awk '{ print $5 }' | tail -1 | tr -d '%')" -gt "10" || "$(ls -lah "${LOG_DIR:?}"/debug.log | awk '{ print $5 }' | tr -d 'M')" -gt "50" ]] &>/dev/null; then
-  egrep -v "Status()|UpdateTip|ProcessNewBlock|skipped on sync" /tmp/debug.log >"${LOG_DIR:?}"/debug.log
+  echo "$(egrep -v "Status()|UpdateTip|ProcessNewBlock|skipped on sync" "${LOG_DIR:?}"/debug.log)" >"${LOG_DIR:?}"/debug.log
 fi
 
 LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&1
