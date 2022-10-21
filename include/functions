@@ -694,7 +694,7 @@ if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1
 fi
 
 if [[ "$(grep "blocks:" "${LOG_DIR:?}"/node_data/wallet/getinfo | awk '{ print $2 }' | tr -d ':')" -eq "0" ]] &>/dev/null; then
-  WALLET_TXLAST="${Y1:?}       Loading${N0:?}"
+  WALLET_TXLAST="${GR:?}       Loading${N0:?}"
 fi
 
 ### theme ######################################################################
