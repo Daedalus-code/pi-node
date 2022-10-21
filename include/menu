@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222110
-# 2.6.3.7
+# 2.6.4.4
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -196,18 +196,25 @@ case $CHOICE in
 
   "3")
 
-    # stop wallet daemon
-    printf '%b' "[${R1:?}!!${N0:?}] ${GR:?}Disconnecting${N0:?} " 2>/dev/null
-    "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop 2>/dev/null
-    killall "${WALLET_DAEMON:?}" &>/dev/null
-    kill -9 "$(pidof "$WALLET_DAEMON")" &>/dev/null
-
-    # start node -resync (daemon)
-    printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Connecting${N0:?} "
-    "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -resync -daemon 2>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon (-resync)!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    read -r -p "[YN] Resync node (blockchain)? y/n " -n 1 -r
     echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+      truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+
+      # stop wallet daemon
+      printf '%b' "[${R1:?}!!${N0:?}] ${GR:?}Disconnecting${N0:?} " 2>/dev/null
+      "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop 2>/dev/null
+      killall "${WALLET_DAEMON:?}" &>/dev/null
+      kill -9 "$(pidof "$WALLET_DAEMON")" &>/dev/null
+
+      # start node -resync (daemon)
+      printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Connecting${N0:?} "
+      "${WALLET_DIR:?}"/"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -resync -daemon 2>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon (-resync)!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      read -r -p "[Ok] Press Enter to continue" </dev/tty
+      echo
+    fi
 
     ;;
 
