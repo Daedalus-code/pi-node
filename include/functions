@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20222010
-# 1.5.6.9
+# V20222110
+# 1.5.7.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.6.9"
+VERSION="v1.5.7.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -691,6 +691,10 @@ if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1
   fi
   WALLET_TXLAST="${G0:?}${SYNC_PROGRESS_BAR:?}${N0:?}"
   loading
+fi
+
+if [[ "$(grep "blocks:" "${LOG_DIR:?}"/node_data/wallet/getinfo | awk '{ print $2 }' | tr -d ':')" -eq "0" ]] &>/dev/null; then
+  WALLET_TXLAST="${Y1:?}       Loading${N0:?}"
 fi
 
 ### theme ######################################################################
