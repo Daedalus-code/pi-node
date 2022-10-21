@@ -170,7 +170,7 @@ case $CHOICE in
       truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
 
       # stop wallet daemon
-      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop)\n" 2>/dev/null
+      printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop 2>/dev/null)\n" 2>/dev/null
       killall "${WALLET_DAEMON:?}" &>/dev/null
       kill -9 "$(pidof "$WALLET_DAEMON")" &>/dev/null
       printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
@@ -1666,7 +1666,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
           # stop wallet daemon
-          printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop && sleep 5)\n"
+          printf '%b' "[${R1:?}!!${N0:?}] $("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop 2>/dev/null)\n"
           killall "${WALLET_DAEMON:?}" &>/dev/null
 
           # make sure debug.log exist
