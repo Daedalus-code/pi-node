@@ -387,7 +387,7 @@ else
   if [[ "$PROOF_STATUS" -lt "10" ]] &>/dev/null; then
     PROOF_PERC="%"
   else
-    PROOF_PERC=""
+    PROOF_PERC="$(echo "")"
   fi
 
   PROOF_STATUS="${GR:?}${PROOF_STATUS:?}${PROOF_PERC:?}${N0:?}"
