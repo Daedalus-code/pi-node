@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222110
-# 1.5.8.1
+# 1.5.8.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.8.1"
+VERSION="v1.5.8.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -377,18 +377,19 @@ PROOF_STATUS=$(echo "100/${WALLET_ACTIVE:?}*$(echo "$(grep "confirmations" "${LO
 if [[ "$PROOF_STATUS" -gt "99" ]] &>/dev/null; then
   PROOF_STATUS="${G0:?}OK${N0:?}"
 else
-  if [[ "$PROOF_STATUS" -eq "0" ]] &>/dev/null; then
-    PROOF_STATUS="${GR:?}0${N0:?}"
-  fi
-  if [[ -z "$PROOF_STATUS" ]] &>/dev/null; then
-    PROOF_STATUS="${GR:?}0${N0:?}"
-  fi
 
   if [[ "$PROOF_STATUS" -lt "10" ]] &>/dev/null; then
     PROOF_STATUS="${GR:?}${PROOF_STATUS:?}%${N0:?}"
   else
     PROOF_STATUS="${GR:?}${PROOF_STATUS:?}${N0:?}"
   fi
+  if [[ "$PROOF_STATUS" -eq "0" ]] &>/dev/null; then
+    PROOF_STATUS="${GR:?}0%${N0:?}"
+  fi
+  if [[ -z "$PROOF_STATUS" ]] &>/dev/null; then
+    PROOF_STATUS="${GR:?}0%${N0:?}"
+  fi
+
 fi
 
 if [[ "$(grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | egrep -v "txid|scriptPubKey|confirmations|address" 2>&1)" ]] &>/dev/null; then
