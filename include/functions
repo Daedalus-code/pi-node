@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222110
-# 1.5.8.0
+# 1.5.8.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.8.0"
+VERSION="v1.5.8.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -385,9 +385,12 @@ else
   fi
 
   if [[ "$PROOF_STATUS" -lt "10" ]] &>/dev/null; then
-    PERC="%"
+    PROOF_PERC="%"
+  else
+    PROOF_PERC=""
   fi
-  PROOF_STATUS="${GR:?}${PROOF_STATUS:?}${PERC:?}${N0:?}"
+
+  PROOF_STATUS="${GR:?}${PROOF_STATUS:?}${PROOF_PERC:?}${N0:?}"
 fi
 
 if [[ "$(grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | egrep -v "txid|scriptPubKey|confirmations|address" 2>&1)" ]] &>/dev/null; then
