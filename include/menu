@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222110
-# 2.6.4.4
+# 2.6.5.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -207,6 +207,13 @@ case $CHOICE in
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop 2>/dev/null
       killall "${WALLET_DAEMON:?}" &>/dev/null
       kill -9 "$(pidof "$WALLET_DAEMON")" &>/dev/null
+
+      # remove old files
+      rm "${LOG_DIR:?}"/node_data/wallet/client/tmp/proc &>/dev/null
+      rm "${LOG_DIR:?}"/node_data/synced &>/dev/null
+      rm "${DATA_DIR:?}"/getwan &>/dev/null
+      rm "${DATA_DIR:?}"/getonion &>/dev/null
+      rm "${DATA_DIR:?}"/wait &>/dev/null
 
       # start node -resync (daemon)
       printf '%b' "[${G1:?}Ok${N0:?}] ${GR:?}Connecting${N0:?} "
