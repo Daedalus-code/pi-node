@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222110
-# 1.5.7.3
+# 1.5.7.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.7.3"
+VERSION="v1.5.7.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -680,11 +680,10 @@ fi
 
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "120" ]] &>/dev/null; then
   WALLET_TXLAST="${N0:?}       Loading${N0:?}"
+  if [[ "$(grep "blocks:" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' | tr -d ':')" -eq "0" ]] &>/dev/null; then
+    WALLET_TXLAST="${GR:?}       Loading${N0:?}"
+  fi
   loading
-fi
-
-if [[ "$(grep "blocks:" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' | tr -d ':')" -eq "0" ]] &>/dev/null; then
-  WALLET_TXLAST="${GR:?}       Loading${N0:?}"
 fi
 
 if ! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
