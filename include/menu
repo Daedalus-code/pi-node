@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222110
-# 2.6.5.1
+# V20222310
+# 2.6.4.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1263,49 +1263,44 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       sudo rm -r /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
     fi
 
+    # start counting (seconds)
+    START="$SECONDS"
+
     echo "Please wait"
-    sudo apt-get install binutils-aarch64-linux-gnu g++-aarch64-linux-gnu gcc-aarch64-linux-gnu -y 2>/dev/null
-    sudo apt-get install binutils-arm-linux-gnueabihf g++-4.8-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-4.8-arm-linux-gnueabihf -y 2>/dev/null
-    sudo apt-get install autoconf autogen automake autotools-dev binutils-gold bsdmainutils build-essential cargo make cmake curl g++ g++-4.8-multilib gcc gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3 -y 2>/dev/null
-    sudo apt-get install git build-essential libtool autotools-dev autoconf pkg-config libssl-dev libcrypto++-dev libevent-dev libminiupnpc-dev libgmp-dev libboost-all-dev devscripts libdb++-dev libsodium-dev -y 2>/dev/null
-    sudo apt-get install libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools libprotobuf-dev protobuf-compiler libcrypto++-dev libminiupnpc-dev qt5-default -y 2>/dev/null
+    sudo apt-get install autoconf autogen automake autotools-dev binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential$
     clear
 
     if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
       echo "Downloading source"
-      cd || exit && wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
+      cd || exit && sudo wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
     fi
+
     if [[ ! -f "/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
       echo "Unzip source.zip"
-      unzip "${LATEST_VERSION:?}".zip
+      sudo unzip "${LATEST_VERSION:?}".zip
     fi
 
     cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-
     sudo make -j"${CPU_CORES:?}" HOST=arm-linux-gnueabihf
 
     cd ..
 
+    sudo make install
+    cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
+
     BUILD="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
 
     sudo ./autogen.sh
-    sudo ./configure --prefix=$BUILD/depends/arm-linux-gnueabihf
-    sudo make
-
-    sudo mkdir /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db4 || exit
-    sudo wget -c 'http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz'
-    sudo tar -xzvf db-4.8.30.NC.tar.gz
-
-    cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/db-4.8.30.NC/build_unix || exit
-    sudo ../dist/configure --enable-cxx --disable-shared --with-pic --prefix="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/db4"
-    sudo make install
-
-    cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
-
-    sudo ./autogen.sh
-    sudo ./configure LDFLAGS="-L$BUILD/db4/lib/" CPPFLAGS="-I$BUILD/db4/include/" --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --disable-wallet --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
+    sudo ./configure --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
     sudo make -j"${CPU_CORES:?}"
     sudo make install
+
+    # seconds since start
+    DURATION=$(echo "$SECONDS-$START" 2>&1 | bc 2>&1)
+    # convert seconds
+    TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
+    echo
+    printf '%b' "Build time: ${G1:?}$TIMER${N0:?}\n"
 
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
