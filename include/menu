@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222310
-# 2.6.5.8
+# 2.6.6.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -29,7 +29,9 @@ if [[ -z "$LOG_DATE" ]] &>/dev/null; then
 fi
 
 # create uname -a
-uname -a >"${LOG_DIR:?}"/node_data/system/uname
+if [[ ! -f "${LOG_DIR:?}"/node_data/system/uname ]] &>/dev/null; then
+  uname -a >"${LOG_DIR:?}"/node_data/system/uname
+fi
 
 # get system user
 USER=$(whoami 2>&1 | awk '{ print $1 }' 2>&1)
@@ -58,7 +60,9 @@ if [[ -z "$OLD_HEAD" ]] &>/dev/null; then
   OLD_HEAD="[fsociety]"
 fi
 
-curl -s -L "${WALLET_RELEASE:?}" 2>&1 | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
+if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/client/latest ]] &>/dev/null; then
+  curl -s -L "${WALLET_RELEASE:?}" 2>&1 | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
+fi
 
 # get latest release
 LATEST_VERSION="$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)"
