@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222310
-# 2.6.4.7
+# 2.6.5.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1302,6 +1302,17 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
     echo
     printf '%b' "Build time: ${G1:?}$TIMER${N0:?}\n"
+
+    # move build into home
+    sudo cp /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoind /home/"$(whoami)" &>/dev/null
+    sudo cp /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin-cli /home/"$(whoami)" &>/dev/null
+
+    echo
+    ls -lSah /home/"$(whoami)"/freedomcoin* | awk '{ print $NF }' 2>/dev/null
+    echo
+
+    # set user ownership
+    sudo chown "$(whoami)":"$(whoami)" /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin* &>/dev/null
 
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
