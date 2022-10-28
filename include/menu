@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222810
-# 2.6.6.9
+# 2.6.7.2
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1550,28 +1550,31 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
           MASTER_BALANCE="0"
         fi
 
-        if [[ ! "$MASTER_BALANCE" -eq "$MASTERNODECO" ]] &>/dev/null; then
-          if [[ "$WALLET_BALANCE" -gt "$MASTERNODECO" ]] &>/dev/null; then
-            if [[ -f "${DATA_DIR:?}"/masternode_address ]] &>/dev/null; then
-              read -r -p "[YN] Send ${MASTERNODECO:?} coins to ${MASTERNODE_ADDRESS:?}? y/n " -n 1 -r
-              echo
-              if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-                # this is your PATRIOTNODE DEPOSIT ADDRESS, where you will deposit ${masternodeco:?} coins to create a patriotnode
-                "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" sendtoaddress "${MASTERNODE_ADDRESS:?}" "${MASTERNODECO:?}"
+        if [[ ! "$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null | awk -F. '{ print $1 }')")" -eq "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null | awk -F. '{ print $1 }')" ]] &>/dev/null; then
+
+          if [[ ! "$MASTER_BALANCE" -eq "$MASTERNODECO" ]] &>/dev/null; then
+            if [[ "$WALLET_BALANCE" -gt "$MASTERNODECO" ]] &>/dev/null; then
+              if [[ -f "${DATA_DIR:?}"/masternode_address ]] &>/dev/null; then
+                read -r -p "[YN] Send ${MASTERNODECO:?} coins to ${MASTERNODE_ADDRESS:?}? y/n " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+                  # this is your PATRIOTNODE DEPOSIT ADDRESS, where you will deposit ${masternodeco:?} coins to create a patriotnode
+                  "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" sendtoaddress "${MASTERNODE_ADDRESS:?}" "${MASTERNODECO:?}"
+                fi
               fi
+            else
+              # missing node collateral (not enough balance)
+              WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+              printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
+              echo
+              ls -lSah "${DATA_DIR:?}"/masternode_* 2>/dev/null
+              echo
+              read -r -p "[Ok] Press Enter to exit" </dev/tty
+              exit
             fi
           else
-            # missing node collateral (not enough balance)
-            WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
-            printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
-            echo
-            ls -lSah "${DATA_DIR:?}"/masternode_* 2>/dev/null
-            echo
-            read -r -p "[Ok] Press Enter to exit" </dev/tty
-            exit
+            printf '%b' "[${G1:?}Ok${N0:?}] Masternode ${CY:?}address${N0:?} has enough coins.\n"
           fi
-        else
-          printf '%b' "[${G1:?}Ok${N0:?}] Masternode ${CY:?}address${N0:?} has enough coins.\n"
         fi
 
         if [[ ! -f "${DATA_DIR:?}"/masternode_key ]] &>/dev/null; then
@@ -1589,7 +1592,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
         curl -s https://api.myip.com >"${DATA_DIR:?}"/wan_curl 2>&1
 
-        if [[ -f "${DATA_DIR}"/masternode_outputs ]] &>/dev/null; then
+        if [[ -f "${DATA_DIR}"/masternode_outputs || ! -s "${DATA_DIR}"/masternode_outputs || "$(wc -l "${DATA_DIR}"/masternode_outputs | awk '{ print $1 }')" -lt "3" ]] &>/dev/null; then
           WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
           OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
