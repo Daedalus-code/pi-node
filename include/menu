@@ -1561,12 +1561,12 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
               fi
             fi
           else
-
             # missing node collateral (not enough balance)
             WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
             printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
-            printf '%b' "Address: ${G1:?}$(cat "${DATA_DIR:?}"/masternode_address 2>/dev/null)${N0:?} Amount: $(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)"
+            echo
             ls -lSah "${DATA_DIR:?}"/masternode_* 2>/dev/null
+            echo
             read -r -p "[Ok] Press Enter to exit" </dev/tty
             exit
           fi
