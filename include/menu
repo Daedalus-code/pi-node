@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20222310
-# 2.6.6.2
+# V20222810
+# 2.6.6.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1471,6 +1471,8 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
     clear
     case $CHOICE in
 
+    ### install masternode #####################################################
+
     "1")
 
       if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>/dev/null | wc -l)" -eq "1" ]] &>/dev/null; then
@@ -1559,9 +1561,14 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
               fi
             fi
           else
+
+            # missing node collateral (not enough balance)
             WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
             printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
-            read -r -p "[Ok] Press Enter to continue" </dev/tty
+            printf '%b' "Address: ${G1:?}$(cat "${DATA_DIR:?}"/masternode_address 2>/dev/null)${N0:?} Amount: $(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null)"
+            ls -lSah "${DATA_DIR:?}"/masternode_* 2>/dev/null
+            read -r -p "[Ok] Press Enter to exit" </dev/tty
+            exit
           fi
         else
           printf '%b' "[${G1:?}Ok${N0:?}] Masternode ${CY:?}address${N0:?} has enough coins.\n"
