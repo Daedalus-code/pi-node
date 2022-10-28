@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222810
-# 2.6.7.2
+# 2.6.7.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1593,6 +1593,10 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         curl -s https://api.myip.com >"${DATA_DIR:?}"/wan_curl 2>&1
 
         if [[ -f "${DATA_DIR}"/masternode_outputs || ! -s "${DATA_DIR}"/masternode_outputs || "$(wc -l "${DATA_DIR}"/masternode_outputs | awk '{ print $1 }')" -lt "3" ]] &>/dev/null; then
+
+          # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
+
           WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
           OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
