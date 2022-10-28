@@ -1550,7 +1550,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
           MASTER_BALANCE="0"
         fi
 
-        if [[ ! "$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null | awk -F. '{ print $1 }')")" -eq "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null | awk -F. '{ print $1 }')" ]] &>/dev/null; then
+        if [[ ! "$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | grep "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null | awk '{ print $1 }')" | awk '{ print $2 }' | awk -F. '{ print $1 }')" -eq "$(cat "${DATA_DIR:?}"/masternode_collateral 2>/dev/null | awk -F. '{ print $1 }')" ]] &>/dev/null; then
 
           if [[ ! "$MASTER_BALANCE" -eq "$MASTERNODECO" ]] &>/dev/null; then
             if [[ "$WALLET_BALANCE" -gt "$MASTERNODECO" ]] &>/dev/null; then
