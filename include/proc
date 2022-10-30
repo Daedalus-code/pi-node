@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220704
+# V20223010
 # 0.3.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -34,9 +34,9 @@ if ! grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | grep
       WALLET_SYNC_PROC="1"
     fi
 
-    echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>&1
+    echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>&1
     SYNCING="$(cat "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)"
-    SYNCING_REPLACE_TX=$(echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
+    SYNCING_REPLACE_TX=$(echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
     # something went wrong
     if [[ -z "$SYNCING_REPLACE_TX" ]] &>/dev/null; then

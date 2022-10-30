@@ -43,7 +43,7 @@ else
   CPU_RAW_TEMP="0"
 fi
 # calculate celcius and fahrenheit
-CELCIUS=$(echo "$CPU_RAW_TEMP/100*0.1" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1)
+CELCIUS=$(echo "$CPU_RAW_TEMP/100*0.1" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.1f\n", $1 }' 2>&1)
 FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1)
 
 CPU_CTEMP="${CELCIUS:?}"
@@ -664,7 +664,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # get free Space, mmc block device #0, partition #2, partition #2, dev/root
     USED_HDD=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)
     # get bytes from kilo
-    USED_HDD=$(echo "${USED_HDD:?}*1024" 2>&1 | bc -l 2>&1)
+    USED_HDD=$(echo "${USED_HDD:?}*1024" 2>&1 | bc -l 2>/dev/null)
     # human-readable format
     USED_HDD=$(numfmt --to iec --format "%8.3f" "${USED_HDD:?}" 2>&1 | xargs 2>&1)
     # get used hdd percentage
@@ -725,7 +725,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
       WALLET_SYNC="1"
     fi
-    WALLET_SYNC=$(echo "100/999990*${WALLET_SYNC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    WALLET_SYNC=$(echo "100/999990*${WALLET_SYNC:?}" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
     # if progress equals 1, then 100% synced
     if [[ $(grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced 2>&1) ]] &>/dev/null; then
       WALLET_SYNC="OK" # wallet blockchain is synced 100%
@@ -738,7 +738,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     LATEST_DATE=$(cd /home/"$(whoami)"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y')
 
     # get wallet value
-    WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+    WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     # get wallet inputs
     WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
@@ -1539,7 +1539,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         # get useable wallet balance
         WALLET_BALANCE=$(grep "amount:" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
         # get masternode address balance
-        MASTER_BALANCE=$(echo "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+        MASTER_BALANCE=$(echo "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
         if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
           # non responsive
@@ -1564,7 +1564,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
               fi
             else
               # missing node collateral (not enough balance)
-              WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+              WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)"
               printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
               echo
               ls -lSah "${DATA_DIR:?}"/masternode_* 2>/dev/null
