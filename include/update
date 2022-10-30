@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # By Rainman
-# V20222908
+# V20223010
 # 0.0.1.8
 
 if [[ ! -f /usr/local/bin/include/pinode/pinode.conf ]] &>/dev/null; then
   cp /home/"$(whoami)"/pi-node/pinode.conf /tmp/pinode.conf.tmp &>/dev/null
   sudo mv /tmp/pinode.conf.tmp /usr/local/bin/include/pinode/pinode.conf &>/dev/null
 fi
-source /usr/local/bin/include/pinode/pinode.conf 2>&1
+source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
 
 touch /tmp/updating &>/dev/null
 clear

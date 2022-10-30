@@ -4,13 +4,13 @@
 # V20223010
 # 0.5.7.3
 
-source /usr/local/bin/include/pinode/pinode.conf 2>&1
-source /usr/local/bin/include/pinode/color 2>&1
+source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
+source /usr/local/bin/include/pinode/color 2>/dev/null
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
-  LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>&1)
+  LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>/dev/null)
 fi
 
 if [ ! -d /home/"$(whoami)"/stats ] &>/dev/null; then
@@ -24,19 +24,19 @@ fi
 if ! [ -x "$(command -v rrdtool)" ] &>/dev/null; then
   sudo mkdir /var/lib/rrd &>/dev/null
   sudo chown -R "$(whoami)":"$(whoami)" /var/lib/rrd
-  sudo apt-get install librrds-perl rrdtool -y 2>&1
+  sudo apt-get install librrds-perl rrdtool -y 2>/dev/null
 fi
 
 # apache2 setup (webserver, php)
 if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
-  sudo apt-get install apache2 php libapache2-mod-php -y 2>&1
+  sudo apt-get install apache2 php libapache2-mod-php -y 2>/dev/null
   sudo chown -R "$(whoami)":"$(whoami)" /var/www/html
   rm /var/www/html/index.html &>/dev/null
   printf '%b' "[${G1:?}OK${N0:?}] Restarting Apache\n"
   sudo systemctl restart apache2 &>/dev/null
-  LOCAL=$(ifconfig 2>&1 | grep "inet" 2>&1 | head -1 2>&1 | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' 2>&1)
+  LOCAL=$(ifconfig 2>/dev/null | grep "inet" 2>/dev/null | head -1 2>/dev/null | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' 2>/dev/null)
   # installing on a osmc, openelec, kodi system, with port 80 already in use
-  uname -a >"${LOG_DIR:?}"/node_data/uname 2>&1
+  uname -a >"${LOG_DIR:?}"/node_data/uname 2>/dev/null
 
   if egrep -o "osmc" "${LOG_DIR:?}"/node_data/uname &>/dev/null; then
     # apache2 port already used
@@ -49,7 +49,7 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>" >"${LOG_DIR:?}"/000-default.conf.tmp
-    sudo mv "${LOG_DIR:?}"/000-default.conf.tmp /etc/apache2/sites-enabled/000-default.conf 2>&1
+    sudo mv "${LOG_DIR:?}"/000-default.conf.tmp /etc/apache2/sites-enabled/000-default.conf 2>/dev/null
 
     echo "Listen 8080
 <IfModule ssl_module>
@@ -58,13 +58,13 @@ if ! [ -x "$(command -v apache2)" ] &>/dev/null; then
 <IfModule mod_gnutls.c>
         Listen 443
 </IfModule>" >"${LOG_DIR:?}"/ports.conf.tmp
-    sudo mv "${LOG_DIR:?}"/ports.conf.tmp /etc/apache2/sites-enabled/ports.conf 2>&1
+    sudo mv "${LOG_DIR:?}"/ports.conf.tmp /etc/apache2/sites-enabled/ports.conf 2>/dev/null
 
     # make sure ufw opens up port 8080
     sudo ufw allow 8080 comment "${WALLET_NAME:?} Graphs"
     sudo ufw status
     printf '%b' "[${G1:?}OK${N0:?}] Restarting Apache\n"
-    sudo systemctl restart apache2 2>&1
+    sudo systemctl restart apache2 2>/dev/null
   else # port free for use
     PORT="80"
   fi
@@ -78,7 +78,7 @@ fi
 
 # load 1
 if [ ! -f "/home/$(whoami)/stats/load.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/load.rrd \
     --step=60 \
     DS:load:GAUGE:300:U:U \
@@ -86,7 +86,7 @@ if [ ! -f "/home/$(whoami)/stats/load.rrd" ] &>/dev/null; then
 fi
 # load 5
 if [ ! -f "/home/$(whoami)/stats/load5.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load5.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load5.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/load5.rrd \
     --step=60 \
     DS:load5:GAUGE:300:U:U \
@@ -94,7 +94,7 @@ if [ ! -f "/home/$(whoami)/stats/load5.rrd" ] &>/dev/null; then
 fi
 # load 15
 if [ ! -f "/home/$(whoami)/stats/load15.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load15.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating load15.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/load15.rrd \
     --step=60 \
     DS:load15:GAUGE:300:U:U \
@@ -102,7 +102,7 @@ if [ ! -f "/home/$(whoami)/stats/load15.rrd" ] &>/dev/null; then
 fi
 # cpu temperature
 if [ ! -f "/home/$(whoami)/stats/temp.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating temp.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating temp.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/temp.rrd \
     --step=60 \
     DS:temp:GAUGE:300:U:U \
@@ -110,7 +110,7 @@ if [ ! -f "/home/$(whoami)/stats/temp.rrd" ] &>/dev/null; then
 fi
 # memory available
 if [ ! -f "/home/$(whoami)/stats/memory_total.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating memory_total.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating memory_total.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/memory_total.rrd \
     --step=60 \
     DS:memory_total:GAUGE:300:U:U \
@@ -118,7 +118,7 @@ if [ ! -f "/home/$(whoami)/stats/memory_total.rrd" ] &>/dev/null; then
 fi
 # memory free
 if [ ! -f "/home/$(whoami)/stats/memory_free.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating memory_free.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating memory_free.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/memory_free.rrd \
     --step=60 \
     DS:memory_free:GAUGE:300:U:U \
@@ -126,7 +126,7 @@ if [ ! -f "/home/$(whoami)/stats/memory_free.rrd" ] &>/dev/null; then
 fi
 # hdd
 if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating hdd.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating hdd.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/hdd.rrd \
     --step=60 \
     DS:hdd:GAUGE:300:U:U \
@@ -134,7 +134,7 @@ if [ ! -f "/home/$(whoami)/stats/hdd.rrd" ] &>/dev/null; then
 fi
 # hdd total
 if [ ! -f "/home/$(whoami)/stats/hdd_total.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating hdd_total.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating hdd_total.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/hdd_total.rrd \
     --step=60 \
     DS:hdd_total:GAUGE:300:U:U \
@@ -142,7 +142,7 @@ if [ ! -f "/home/$(whoami)/stats/hdd_total.rrd" ] &>/dev/null; then
 fi
 # network
 if [ ! -f "/home/$(whoami)/stats/network.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating network.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating network.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/network.rrd \
     --step=60 \
     DS:rxbytes:DERIVE:300:U:U \
@@ -154,7 +154,7 @@ fi
 
 # balance
 if [ ! -f "/home/$(whoami)/stats/balance.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating balance.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating balance.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/balance.rrd \
     --step=60 \
     DS:balance:GAUGE:300:U:U \
@@ -162,7 +162,7 @@ if [ ! -f "/home/$(whoami)/stats/balance.rrd" ] &>/dev/null; then
 fi
 # balance value
 if [ ! -f "/home/$(whoami)/stats/value.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating value.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating value.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/value.rrd \
     --step=60 \
     DS:value:GAUGE:300:U:U \
@@ -170,7 +170,7 @@ if [ ! -f "/home/$(whoami)/stats/value.rrd" ] &>/dev/null; then
 fi
 # stakes
 if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating stakes.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating stakes.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/stakes.rrd \
     --step=60 \
     DS:stakes:GAUGE:300:U:U \
@@ -178,7 +178,7 @@ if [ ! -f "/home/$(whoami)/stats/stakes.rrd" ] &>/dev/null; then
 fi
 # inputs
 if [ ! -f "/home/$(whoami)/stats/inputs.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating inputs.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating inputs.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/inputs.rrd \
     --step=60 \
     DS:inputs:GAUGE:300:U:U \
@@ -186,7 +186,7 @@ if [ ! -f "/home/$(whoami)/stats/inputs.rrd" ] &>/dev/null; then
 fi
 # peers
 if [ ! -f "/home/$(whoami)/stats/peers.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating peers.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating peers.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/peers.rrd \
     --step=60 \
     DS:peers:GAUGE:300:U:U \
@@ -194,7 +194,7 @@ if [ ! -f "/home/$(whoami)/stats/peers.rrd" ] &>/dev/null; then
 fi
 # peers protocol
 if [ ! -f "/home/$(whoami)/stats/peers_proto.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating peers_proto.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating peers_proto.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/peers_proto.rrd \
     --step=60 \
     DS:peers_ipv4:GAUGE:300:U:U \
@@ -206,7 +206,7 @@ if [ ! -f "/home/$(whoami)/stats/peers_proto.rrd" ] &>/dev/null; then
 fi
 # banned peers
 if [ ! -f "/home/$(whoami)/stats/banned_peers.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating banned_peers.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating banned_peers.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/banned_peers.rrd \
     --step=60 \
     DS:banned_peers:GAUGE:300:U:U \
@@ -214,7 +214,7 @@ if [ ! -f "/home/$(whoami)/stats/banned_peers.rrd" ] &>/dev/null; then
 fi
 # masternode count
 if [ ! -f "/home/$(whoami)/stats/masternodes.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating masternodes.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating masternodes.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/masternodes.rrd \
     --step=60 \
     DS:total:GAUGE:300:U:U \
@@ -225,7 +225,7 @@ if [ ! -f "/home/$(whoami)/stats/masternodes.rrd" ] &>/dev/null; then
 fi
 # masternode pay, value
 if [ ! -f "/home/$(whoami)/stats/masternode_pay.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating masternode_pay.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating masternode_pay.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/masternode_pay.rrd \
     --step=60 \
     DS:paycount:GAUGE:300:U:U \
@@ -235,7 +235,7 @@ if [ ! -f "/home/$(whoami)/stats/masternode_pay.rrd" ] &>/dev/null; then
 fi
 # difficulty
 if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating difficulty.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating difficulty.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/difficulty.rrd \
     --step=60 \
     DS:difficulty:GAUGE:300:U:U \
@@ -243,7 +243,7 @@ if [ ! -f "/home/$(whoami)/stats/difficulty.rrd" ] &>/dev/null; then
 fi
 # set auto pos (difficulty)
 if [ ! -f "/home/$(whoami)/stats/set_auto_pos.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating set_auto_pos.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating set_auto_pos.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/set_auto_pos.rrd \
     --step=60 \
     DS:set_auto_pos:GAUGE:300:U:U \
@@ -251,7 +251,7 @@ if [ ! -f "/home/$(whoami)/stats/set_auto_pos.rrd" ] &>/dev/null; then
 fi
 # set auto con (confirmation)
 if [ ! -f "/home/$(whoami)/stats/set_auto_con.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating set_auto_con.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating set_auto_con.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/set_auto_con.rrd \
     --step=60 \
     DS:set_auto_con:GAUGE:300:U:U \
@@ -259,7 +259,7 @@ if [ ! -f "/home/$(whoami)/stats/set_auto_con.rrd" ] &>/dev/null; then
 fi
 # total confirmations
 if [ ! -f "/home/$(whoami)/stats/total_tx.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating total_tx.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating total_tx.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/total_tx.rrd \
     --step=60 \
     DS:total_tx:GAUGE:300:U:U \
@@ -267,7 +267,7 @@ if [ ! -f "/home/$(whoami)/stats/total_tx.rrd" ] &>/dev/null; then
 fi
 # blockchain activity
 if [ ! -f "/home/$(whoami)/stats/block_activity.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating block_activity.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating block_activity.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/block_activity.rrd \
     --step=60 \
     DS:activity:GAUGE:300:U:U \
@@ -275,7 +275,7 @@ if [ ! -f "/home/$(whoami)/stats/block_activity.rrd" ] &>/dev/null; then
 fi
 # blockchain coin supply
 if [ ! -f "/home/$(whoami)/stats/coin_supply.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coin_supply.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coin_supply.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/coin_supply.rrd \
     --step=60 \
     DS:coin_supply:GAUGE:300:U:U \
@@ -286,7 +286,7 @@ fi
 
 # rank coinmarketcap
 if [ ! -f "/home/$(whoami)/stats/rank.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating rank.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating rank.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/rank.rrd \
     --step=60 \
     DS:rank:GAUGE:300:U:U \
@@ -294,7 +294,7 @@ if [ ! -f "/home/$(whoami)/stats/rank.rrd" ] &>/dev/null; then
 fi
 # watchlist coinmarketcap
 if [ ! -f "/home/$(whoami)/stats/watchlist.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating watchlist.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating watchlist.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/watchlist.rrd \
     --step=60 \
     DS:watchlist:GAUGE:300:U:U \
@@ -302,7 +302,7 @@ if [ ! -f "/home/$(whoami)/stats/watchlist.rrd" ] &>/dev/null; then
 fi
 # price and volume coingecko
 if [ ! -f "/home/$(whoami)/stats/coingecko.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coingecko.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coingecko.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/coingecko.rrd \
     --step=60 \
     DS:price_cg:GAUGE:300:U:U \
@@ -311,7 +311,7 @@ if [ ! -f "/home/$(whoami)/stats/coingecko.rrd" ] &>/dev/null; then
 fi
 # price and volume coinmarketcap
 if [ ! -f "/home/$(whoami)/stats/coinmarketcap.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coinmarketcap.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating coinmarketcap.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/coinmarketcap.rrd \
     --step=60 \
     DS:price_cmc:GAUGE:300:U:U \
@@ -320,7 +320,7 @@ if [ ! -f "/home/$(whoami)/stats/coinmarketcap.rrd" ] &>/dev/null; then
 fi
 # price avg
 if [ ! -f "/home/$(whoami)/stats/price_avg.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating price_avg.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating price_avg.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/price_avg.rrd \
     --step=60 \
     DS:price_avg:GAUGE:300:U:U \
@@ -328,7 +328,7 @@ if [ ! -f "/home/$(whoami)/stats/price_avg.rrd" ] &>/dev/null; then
 fi
 # volume avg
 if [ ! -f "/home/$(whoami)/stats/volume_avg.rrd" ] &>/dev/null; then
-  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating volume_avg.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+  printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating volume_avg.rrd! ${CY:?}<>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   rrdtool create /home/"$(whoami)"/stats/volume_avg.rrd \
     --step=60 \
     DS:volume_avg:GAUGE:300:U:U \
@@ -339,53 +339,53 @@ fi
 
 if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] &>/dev/null; then
 
-  rrdtool update /home/"$(whoami)"/stats/load.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null | sed 's/\,/./' 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/load5.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null | awk '{ print $2 }' 2>&1 | sed 's/\,/./' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/load15.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null | awk '{ print $3 }' 2>&1 | sed 's/\,/./' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/load.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null | sed 's/\,/./' 2>/dev/null | awk '{ print $1 }' 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/load5.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null | awk '{ print $2 }' 2>/dev/null | sed 's/\,/./' 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/load15.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null | awk '{ print $3 }' 2>/dev/null | sed 's/\,/./' 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/temp.rrd N:"$(echo "$(</sys/class/thermal/thermal_zone0/temp) / 100 * 0.1" 2>/dev/null | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/memory_free.rrd N:"$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_free 2>/dev/null)" | bc)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/memory_total.rrd N:"$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)" | bc)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/hdd.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/hdd_total.rrd N:"$(echo "$(df 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $2 }' 2>&1)/1024/1024" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/network.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/rxbytes 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/system/txbytes 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/hdd.rrd N:"$(echo "$(df 2>/dev/null | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>/dev/null | awk '{ print $3 }' 2>/dev/null)/1024/1024" 2>/dev/null | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/hdd_total.rrd N:"$(echo "$(df 2>/dev/null | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>/dev/null | awk '{ print $2 }' 2>/dev/null)/1024/1024" 2>/dev/null | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/network.rrd N:"$(cat "${LOG_DIR:?}"/node_data/system/rxbytes 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/system/txbytes 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/balance.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/rank.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/rank.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/watchlist.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/value.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/balance_value 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(cat "${DATA_DIR:?}"/staking 2>&1 | grep "BitcoinMiner" 2>&1 | awk '!a[$0]++' | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | tail -1 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/peers_proto.rrd N:"$(grep "addr:" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | egrep -v "getaddr|onion|127" 2>&1 | awk '{ print $2 }' 2>&1 | egrep -v "[a-z]+" 2>&1 | wc -l 2>&1)":"$(egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | sed -r '/^.{,8}$/d' 2>&1 | wc -l 2>&1)":"$(grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | grep -v ".onion" 2>&1 | wc -l 2>&1)":"$(egrep -o "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | wc -l 2>&1)":"$(grep "127.0.0.1" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | wc -l 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/banned_peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/banlist 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/masternodes.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>/dev/null | grep "total" 2>&1 | awk '{ print $2 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>/dev/null | grep "stable" 2>&1 | awk '{ print $2 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>/dev/null | grep "enabled" 2>&1 | awk '{ print $2 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>/dev/null | grep "inqueue" 2>&1 | awk '{ print $2 }' 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/rank.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/rank.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/watchlist.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/value.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/balance_value 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/stakes.rrd N:"$(cat "${DATA_DIR:?}"/staking 2>/dev/null | grep "BitcoinMiner" 2>/dev/null | awk '!a[$0]++' | wc -l 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/inputs.rrd N:"$(grep "address" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | wc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | tail -1 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/peers_proto.rrd N:"$(grep "addr:" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>/dev/null | egrep -v "getaddr|onion|127" 2>/dev/null | awk '{ print $2 }' 2>/dev/null | egrep -v "[a-z]+" 2>/dev/null | wc -l 2>/dev/null)":"$(egrep -o '([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}' "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>/dev/null | sed -r '/^.{,8}$/d' 2>/dev/null | wc -l 2>/dev/null)":"$(grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>/dev/null | grep -v ".onion" 2>/dev/null | wc -l 2>/dev/null)":"$(egrep -o "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>/dev/null | wc -l 2>/dev/null)":"$(grep "127.0.0.1" "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>/dev/null | wc -l 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/banned_peers.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/banlist 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/masternodes.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>/dev/null | grep "total" 2>/dev/null | awk '{ print $2 }' 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>/dev/null | grep "stable" 2>/dev/null | awk '{ print $2 }' 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>/dev/null | grep "enabled" 2>/dev/null | awk '{ print $2 }' 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/wallet/client/getmasternodecount 2>/dev/null | grep "inqueue" 2>/dev/null | awk '{ print $2 }' 2>/dev/null)" 2>/dev/null
   rrdtool update /home/"$(whoami)"/stats/masternode_pay.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_payout 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/wallet/data/masternode_payvalue 2>/dev/null)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/coingecko.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/coinmarketcap.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)":"$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/price_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>&1 | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>/dev/null)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>&1 | grep "total" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)" | bc -l 2>/dev/null)" 2>/dev/null
-  rrdtool update /home/"$(whoami)"/stats/block_activity.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | awk '{ print $2 }' 2>&1 | tr -d '%' 2>&1 | tail -1 2>&1)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/difficulty.rrd N:"$(grep "difficulty" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/coingecko.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/coinmarketcap.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>/dev/null)":"$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/price_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>/dev/null | sed '/^$/d' 2>/dev/null | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>/dev/null | xargs 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>/dev/null | grep "total" 2>/dev/null | awk '{ print $1 }' 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)" | bc -l 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/volume_avg.rrd N:"$(echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | sed '/^$/d' 2>/dev/null | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>/dev/null | xargs 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>/dev/null)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | grep "total" 2>/dev/null | awk '{ print $1 }' 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)" | bc -l 2>/dev/null)" 2>/dev/null
+  rrdtool update /home/"$(whoami)"/stats/block_activity.rrd N:"$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | awk '{ print $2 }' 2>/dev/null | tr -d '%' 2>/dev/null | tail -1 2>/dev/null)" 2>/dev/null
 
   ### auto pos grinding #################################################### ###
 
   if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
 
-    WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    if [[ "$(echo "${WALLET_BALANCE:?}" 2>&1 | awk -F. '{ print $1 }' 2>&1)" -gt "0" ]] &>/dev/null; then
+    WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | egrep -o "[0-9]+.[0-9]+" 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>/dev/null)
+    if [[ "$(echo "${WALLET_BALANCE:?}" 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)" -gt "0" ]] &>/dev/null; then
 
-      if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>&1 | grep -Eo "0000" 2>&1)" ]] &>/dev/null; then
+      if [[ "$(LC_ALL=de_US.utf8 date '+%H%M' 2>/dev/null | grep -Eo "0000" 2>/dev/null)" ]] &>/dev/null; then
         rm "${DATA_DIR:?}"/diff.lock &>/dev/null
       fi
 
       # greater than n seconds, continue
       if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "600" ]] &>/dev/null; then
         # get difficulty average
-        DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+        DIFF_AVG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty_avg 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)
 
         # calculate an indicater for var pos_limit
-        echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>/dev/null)" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>&1
+        echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>/dev/null | bc -l 2>/dev/null)" 2>/dev/null | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null
 
-        if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
+        if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)" -ge "1" ]] &>/dev/null; then
           rm "${LOG_DIR:?}"/node_data/wallet/data/lim_pos &>/dev/null
           # got inputs (high enough to make several)
           # get new pos limit (apl)
@@ -395,11 +395,11 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
           # got input (too low to make several)
           # get new pos limit (apl)
           # ruled by input size + average difficulty (disregard configuration)
-          echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null)/$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>/dev/null)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/ind_pos.tmp 2>&1
+          echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null)/$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>/dev/null | bc -l 2>/dev/null)" 2>/dev/null | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/ind_pos.tmp 2>/dev/null
           # do
-          echo "1/$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos.tmp 2>/dev/null)" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/lim_pos.tmp
+          echo "1/$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos.tmp 2>/dev/null)" 2>/dev/null | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/lim_pos.tmp
           # some
-          echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos.tmp 2>/dev/null)*${POS_LIMIT:?}" 2>&1 | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/lim_pos
+          echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos.tmp 2>/dev/null)*${POS_LIMIT:?}" 2>/dev/null | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/lim_pos
           # mental gymnastics (calculations)
           # get new pos limit that works better for the small solo input
           # will be higher than 1440 (1day) if average difficulty is bigger than the input itself
@@ -408,10 +408,10 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
           rm "${LOG_DIR:?}"/node_data/wallet/data/*.tmp &>/dev/null
         fi
 
-        if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>/dev/null | tail -1 2>&1)" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" -ge "1" ]] &>/dev/null; then
-          POS_LIMIT="$(cat "${LOG_DIR:?}"/node_data/wallet/data/pos_limit 2>/dev/null | awk -F. '{ print $1 }' 2>&1)"
+        if [[ "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)/$(cat "${LOG_DIR:?}"/node_data/wallet/data/difficulty 2>/dev/null | tail -1 2>/dev/null)" 2>/dev/null | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)" -ge "1" ]] &>/dev/null; then
+          POS_LIMIT="$(cat "${LOG_DIR:?}"/node_data/wallet/data/pos_limit 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)"
         else
-          POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
+          POS_LIMIT=$(cat "${LOG_DIR:?}"/node_data/wallet/data/lim_pos 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)
         fi
 
         if [[ -z "$POS_LIMIT" ]] &>/dev/null; then
@@ -420,7 +420,7 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
         fi
 
         # update proof-of-stake threshold
-        rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)" 2>/dev/null
+        rrdtool update /home/"$(whoami)"/stats/set_auto_pos.rrd N:"$(grep "threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>/dev/null | awk '{ print $2 }' 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)" 2>/dev/null
 
         if [[ "$POS_LIMIT" -gt "1440" ]] &>/dev/null; then
           # too big for graph
@@ -431,23 +431,23 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
         rrdtool update /home/"$(whoami)"/stats/set_auto_con.rrd N:"${POS_LIMIT:?}" 2>/dev/null
 
         # save pos_limit
-        echo "${POS_LIMIT:?}" >"${LOG_DIR:?}"/node_data/wallet/data/pos_limit 2>&1
+        echo "${POS_LIMIT:?}" >"${LOG_DIR:?}"/node_data/wallet/data/pos_limit 2>/dev/null
 
         # get autocombine threshold (apc)
-        CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }')
+        CON_DIFF=$(grep "autocombine_threshold" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>/dev/null | awk '{ print $2 }' 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null | awk '{ printf "%.0f\n", $1 }')
         # get total confirmations from inputs that are above the con_diff
-        egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/client/total_confirmations 2>&1
+        egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | awk -F: '$2>='"${CON_DIFF:?}"'' 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | grep "confirmations" 2>/dev/null | awk '{ print $2 }' 2>/dev/null | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/client/total_confirmations 2>/dev/null
         TOTAL_CONF_ABOVE=$(cat "${LOG_DIR:?}"/node_data/wallet/client/total_confirmations 2>/dev/null)
         if [[ -z "$TOTAL_CONF_ABOVE" ]] &>/dev/null; then
           TOTAL_CONF_ABOVE="0"
         fi
         # calculate total average confirmations between inputs
-        TOTAL_CONF_ABOVE_CALC="$(echo "${TOTAL_CONF_ABOVE:?}/$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" | wc -l 2>&1)" | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1)"
+        TOTAL_CONF_ABOVE_CALC="$(echo "${TOTAL_CONF_ABOVE:?}/$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | awk -F: '$2>='"${CON_DIFF:?}"'' 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | grep "confirmations" | wc -l 2>/dev/null)" | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)"
 
         # continue if lock is found
         if [ -f "${DATA_DIR:?}"/diff.lock ] &>/dev/null; then
           # save value total average confirmations between inputs
-          echo "${TOTAL_CONF_ABOVE_CALC:?}" >"${LOG_DIR:?}"/node_data/wallet/data/pos_confirmations 2>&1
+          echo "${TOTAL_CONF_ABOVE_CALC:?}" >"${LOG_DIR:?}"/node_data/wallet/data/pos_confirmations 2>/dev/null
         fi
 
         TOTAL_CONF_ABOVE="$(cat "${LOG_DIR:?}"/node_data/wallet/data/pos_confirmations 2>/dev/null)"
@@ -460,7 +460,7 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
         # update total confirmations above threshold
         rrdtool update /home/"$(whoami)"/stats/total_tx.rrd N:"${TOTAL_CONF_ABOVE:?}" 2>/dev/null
         # get total average confirmations
-        CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '"' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+        CONF_AVG=$(rrdtool info /home/"$(whoami)"/stats/total_tx.rrd 2>/dev/null | grep "last_ds" 2>/dev/null | awk '{ print $3 }' 2>/dev/null | tr -d '"' 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)
 
         if [[ -z "$DIFF_AVG" ]] &>/dev/null; then
           DIFF_AVG="0"
@@ -470,38 +470,38 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
         if [ ! -f "${DATA_DIR:?}"/diff.lock ] &>/dev/null; then
 
           # setstakesplitthreshold, there are limits
-          STAKE_SPLIT="$(echo "$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1)/10" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1)"
+          STAKE_SPLIT="$(echo "$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>/dev/null | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)/10" 2>/dev/null | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)"
 
           if [[ "$STAKE_SPLIT" -lt "500" ]] &>/dev/null; then
             STAKE_SPLIT="500"
           fi
 
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
 
           # total average confirmations greater than limit set, continue
           if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
 
-            printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${N0:?}High!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-            printf '%b' "${LOG_DATE:?} Status() Staking.Script New Input count with new config -> ${G1:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>&1) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+            printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${N0:?}High!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+            printf '%b' "${LOG_DATE:?} Status() Staking.Script New Input count with new config -> ${G1:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/ind_pos 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null) ${CY:?}>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
             sleep 1
 
             # set when synced 100%
-            if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
+            if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>/dev/null | tail -1 2>/dev/null | grep -o "progress=1.00" &>/dev/null; then
               # set setautocombinethreshold & setstakesplitthreshold values automatically ruled by var diff_avg
-              "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold true "$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" &>/dev/null
+              "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setautocombinethreshold true "$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>/dev/null | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)" &>/dev/null
               "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" setstakesplitthreshold "${STAKE_SPLIT:?}" &>/dev/null
             fi
 
             sleep 1
-            printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold -> ${G1:?}$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-            printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold -> ${G1:?}${STAKE_SPLIT:?} ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+            printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold -> ${G1:?}$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>/dev/null | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+            printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold -> ${G1:?}${STAKE_SPLIT:?} ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
           else
-            printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${G1:?}OK!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+            printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${G1:?}OK!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
           fi
           # save data to file
           echo "$(date)
 
-Auto combine threshold.: $(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1)
+Auto combine threshold.: $(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>/dev/null | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)
 Stake split threshold..: ${STAKE_SPLIT:?}
 
 $(date)" >"${DATA_DIR:?}"/auto_pos
@@ -549,24 +549,24 @@ EOF
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
 
   # note: heavy reading, do interval reading with date:time
-  if [[ "$(LC_ALL=de_US.utf8 date '+%T' 2>&1 | egrep "[0-9]+:[0-9]+0:[0-9]+" 2>&1)" ]] &>/dev/null; then
+  if [[ "$(LC_ALL=de_US.utf8 date '+%T' 2>/dev/null | egrep "[0-9]+:[0-9]+0:[0-9]+" 2>/dev/null)" ]] &>/dev/null; then
     if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/graph.lock ]] &>/dev/null; then
       touch "${LOG_DIR:?}"/node_data/wallet/graph.lock &>/dev/null
       # run graphs script
-      printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating graphs.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Creating graphs.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
       source /usr/local/bin/include/pinode/graphs &>/dev/null && clear
     else
-      printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Skipping graphs! (already running!)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() Skipping graphs! (already running!)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
     fi
     rm "${LOG_DIR:?}"/node_data/wallet/graph.lock &>/dev/null
   else
-    if tail -4 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Saving data" &>/dev/null; then
+    if tail -4 "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | grep "Saving data" &>/dev/null; then
       # data feed overlapping (happens when pinode takes over the data feed, too close to warden data feed)
       SAVING_DATA="${CY:?}Saving data.${N0:?}"
     else # normal data feed, no overlapping
       SAVING_DATA="${N0:?}Saving data.${N0:?}"
     fi
-    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() ${SAVING_DATA:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() rrdtoolStats() ${SAVING_DATA:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
   fi
 fi
 

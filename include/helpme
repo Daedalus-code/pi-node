@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # By Rainman
-# V20221303
+# V20223010
 # 0.0.2.1
 
-source /usr/local/bin/include/pinode/color 2>&1
+source /usr/local/bin/include/pinode/color 2>/dev/null
 
 clear
 printf '%b' "$(uname -a)
-${G1:?}$(uptime 2>&1 | sed 's/\([0-9]\),/\1./g' 2>&1 | xargs 2>&1)${N0:?}
+${G1:?}$(uptime 2>/dev/null | sed 's/\([0-9]\),/\1./g' 2>/dev/null | xargs 2>/dev/null)${N0:?}
 ${GR:?}  -----==${Y0:?}=======${Y1:?}========== Commands FAQ ==========${Y0:?}=======${GR:?}==-----${N0:?}
 
 ${G1:?}pinode${N0:?} -> pinode display
