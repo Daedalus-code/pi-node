@@ -13,6 +13,6 @@ source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
 touch /tmp/updating &>/dev/null
 clear
 # update repo
-cd /home/"$(whoami)"/pi-node 2>/dev/null || exit && git pull -q 2>/dev/null && bash /home/"$(whoami)"/pi-node/include/install 2>/dev/null
+cd /home/"$(whoami)"/pi-node || exit && git pull -q 2>/dev/null && bash /home/"$(whoami)"/pi-node/include/install 2>/dev/null
 
 # END
