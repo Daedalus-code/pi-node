@@ -1,26 +1,26 @@
 #!/bin/bash
 
 # By Rainman
-# V20223010
+# V20220704
 # 0.3.6.2
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 ########## config ##############################################################
 
-source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
-source /usr/local/bin/include/pinode/color 2>/dev/null
+source /usr/local/bin/include/pinode/pinode.conf 2>&1
+source /usr/local/bin/include/pinode/color 2>&1
 
 ########## sync_progress_bar ###################################################
 
 # save progress
-grep -o "progress=........" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | egrep -o "[0-9]+.[0-9]+" 2>/dev/null | tail -1 >"${LOG_DIR:?}"/node_data/wallet/client/tmp/proc 2>/dev/null
+grep -o "progress=........" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | tail -1 >"${LOG_DIR:?}"/node_data/wallet/client/tmp/proc 2>&1
 
 # look for 'progress=1' line, save it there and then
-grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | tail -1 2>/dev/null | grep "progress=1.00" >"${LOG_DIR:?}"/node_data/wallet/synced 2>/dev/null
+grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | grep "progress=1.00" >"${LOG_DIR:?}"/node_data/wallet/synced 2>&1
 
 # when debug.log says wallet is synced, this stops here
-if ! grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | tail -1 2>/dev/null | grep "progress=1.00" &>/dev/null; then
+if ! grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | grep "progress=1.00" &>/dev/null; then
 
   # greater than n seconds, continue
   if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
@@ -28,15 +28,15 @@ if ! grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | tail -1 2>/d
     touch "${LOG_DIR:?}"/node_data/wallet/client/tmp/proc &>/dev/null
 
     # get blockchain sync
-    WALLET_SYNC_PROC=$(cat "${LOG_DIR:?}"/node_data/wallet/client/tmp/proc 2>/dev/null | awk -F. '{ print $2 }' 2>/dev/null)
+    WALLET_SYNC_PROC=$(cat "${LOG_DIR:?}"/node_data/wallet/client/tmp/proc 2>&1 | awk -F. '{ print $2 }' 2>&1)
 
     if [[ -z "$WALLET_SYNC_PROC" ]] &>/dev/null; then
       WALLET_SYNC_PROC="1"
     fi
 
-    echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>/dev/null | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>/dev/null
-    SYNCING="$(cat "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)"
-    SYNCING_REPLACE_TX=$(echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>/dev/null | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)
+    echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>&1
+    SYNCING="$(cat "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+    SYNCING_REPLACE_TX=$(echo "100/1000000*${WALLET_SYNC_PROC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
 
     # something went wrong
     if [[ -z "$SYNCING_REPLACE_TX" ]] &>/dev/null; then
@@ -46,13 +46,13 @@ if ! grep "progress=" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | tail -1 2>/d
     # syncing blockchain with progress bar
     SYNC_PROGRESS_BAR=$(
       if [ "$SYNCING_REPLACE_TX" -ge "100" ] &>/dev/null; then
-        echo "100" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>/dev/null
+        echo "100" >"${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>&1
         cp "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/sync.log &>/dev/null
         echo -ne "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ ${SYNCING:?}% \\r"
         WALLET_SYNC="${G1:?}100%${N0:?}" # wallet blockchain is synced 100%
         SYNCING="${G1:?}100%${N0:?}"
       else
-        if [[ "$(grep "100" "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>/dev/null)" ]] &>/dev/null; then
+        if [[ "$(grep "100" "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>&1)" ]] &>/dev/null; then
           rm "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing &>/dev/null
         fi
         # is equal to

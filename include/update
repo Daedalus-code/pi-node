@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # By Rainman
-# V20223010
+# V20222908
 # 0.0.1.8
 
 if [[ ! -f /usr/local/bin/include/pinode/pinode.conf ]] &>/dev/null; then
   cp /home/"$(whoami)"/pi-node/pinode.conf /tmp/pinode.conf.tmp &>/dev/null
   sudo mv /tmp/pinode.conf.tmp /usr/local/bin/include/pinode/pinode.conf &>/dev/null
 fi
-source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
+source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
 touch /tmp/updating &>/dev/null
 clear
 # update repo
-cd /home/"$(whoami)"/pi-node || exit && git pull -q 2>/dev/null && bash /home/"$(whoami)"/pi-node/include/install 2>/dev/null
+cd /home/"$(whoami)"/pi-node 2>/dev/null || exit && git pull -q 2>/dev/null && bash /home/"$(whoami)"/pi-node/include/install 2>/dev/null
 
 # END

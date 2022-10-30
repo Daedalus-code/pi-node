@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # By Rainman
-# V20223010
+# V20223108
 # 0.2.9.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
-source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
-source /usr/local/bin/include/pinode/color 2>/dev/null
+source /usr/local/bin/include/pinode/pinode.conf 2>&1
+source /usr/local/bin/include/pinode/color 2>&1
 
 ### directories ################################################################
 
-if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null | wc -w 2>/dev/null | egrep "1")" ]] &>/dev/null; then
+if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" ]] &>/dev/null; then
 
   # create temp directories, ruled by configuration
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
@@ -23,26 +23,26 @@ if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null | wc -w 2>/dev/null | egrep "1
   mkdir "${LOG_DIR:?}"/node_data/wallet/client/tmp &>/dev/null
 fi
 
-echo "$(LC_ALL=de_US.utf8 date +%s 2>/dev/null)" >"${LOG_DIR:?}"/node_data/wallet/data/time.warden 2>/dev/null # save warden time
+echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/time.warden 2>&1 # save warden time
 
-LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>/dev/null
+LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
 
-if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null | wc -w 2>/dev/null | egrep "1")" ]] &>/dev/null; then
+if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" ]] &>/dev/null; then
   mv "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/debug.log.old &>/dev/null
   touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>/dev/null)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+  printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   cd "${WALLET_DIR:?}" || exit &&
     yes "y" | ./"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
-if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null)" ]] &>/dev/null; then
+if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
   mv "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/debug.log.old &>/dev/null
   touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
   cd "${WALLET_DIR:?}" || exit &&
     yes "" | ./"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon
-  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+  printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ## masternode status ###########################################################
@@ -51,31 +51,31 @@ function start_masternode() {
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" startpatriotnode all false >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
 }
 
-if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>/dev/null)" -gt "0" ]] &>/dev/null; then
+if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &>/dev/null; then
 
-  if [[ ! "$(grep "Successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null)" ]] &>/dev/null; then
+  if [[ ! "$(grep "Successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
-    echo "${LOG_DATE:?} $(grep "started" "${DATA_DIR:?}"/masternode_status 2>/dev/null)" 2>/dev/null | xargs >"${DATA_DIR:?}"/masternode_started 2>/dev/null
-    cat "${DATA_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    echo "${LOG_DATE:?} $(grep "started" "${DATA_DIR:?}"/masternode_status 2>&1)" 2>&1 | xargs >"${DATA_DIR:?}"/masternode_started 2>&1
+    cat "${DATA_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
-  if [[ ! "$(grep "Successfully started" "${DATA_DIR:?}"/masternode_status 2>/dev/null)" ]] &>/dev/null; then
+  if [[ ! "$(grep "Successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
   fi
 
-  if [[ ! $(grep "Successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null) ]] &>/dev/null; then
+  if [[ ! $(grep "Successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1) ]] &>/dev/null; then
 
     # make sure masternode runs
-    printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     start_masternode
-    printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    printf '%b' "${GR:?}${LOG_DATE:?} Status() getmasternodestatus - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
   fi
 fi
 
-if [[ "$(tail -101 "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | grep "ManageStatus - not capable" 2>/dev/null)" ]] &>/dev/null; then
+if [[ "$(tail -101 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "ManageStatus - not capable" 2>&1)" ]] &>/dev/null; then
   start_masternode
-  printf '%b' "${Y1:?}${LOG_DATE:?} Status() getmasternodestatus UPDATE 'patriotnodeaddr' & REBOOT!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+  printf '%b' "${Y1:?}${LOG_DATE:?} Status() getmasternodestatus UPDATE 'patriotnodeaddr' & REBOOT!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 ### run with or without a display ##############################################
@@ -84,7 +84,7 @@ FUNC_LIMIT="0/2"
 function run_functions() {
   if [[ -f "${LOG_DIR:?}"/node_data/wallet/data/func.lock ]] &>/dev/null; then
     FUNC_LIMIT="1/2"
-    if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord 2>/dev/null)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/time.warden 2>/dev/null)" ]] &>/dev/null; then
+    if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/time.warden 2>&1)" ]] &>/dev/null; then
       # remove old file
       rm "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord &>/dev/null
     fi
@@ -96,19 +96,19 @@ function run_functions() {
       # get data from functions
       cd || exit &&
         source /usr/local/bin/include/pinode/functions
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: functions run by warden!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: functions run by warden!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 }
 
 # delete old time lock
-if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/func.lock 2>/dev/null)" -lt "$(LC_ALL=de_US.utf8 date +%s 2>/dev/null)" ]] &>/dev/null; then
+if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/func.lock 2>&1)" -lt "$(LC_ALL=de_US.utf8 date +%s 2>&1)" ]] &>/dev/null; then
   rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
 fi
 
 if [[ ! -f "${LOG_DIR:?}"/node_data/system/load ]] &>/dev/null; then
   # loadavg
-  cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }' >"${LOG_DIR:?}"/node_data/system/load 2>/dev/null
+  cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }' >"${LOG_DIR:?}"/node_data/system/load 2>&1
 fi
 
 SYSTEM_LOAD=$(cat "${LOG_DIR:?}"/node_data/system/load 2>/dev/null)
@@ -136,7 +136,7 @@ fi
 
 # get wallet connections
 if [[ -f "${LOG_DIR:?}"/node_data/wallet/data/connections ]] &>/dev/null; then
-  WALLET_P2P="${G1:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | tail -1 2>/dev/null)${N0:?}"
+  WALLET_P2P="${G1:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/connections 2>/dev/null | tail -1 2>&1)${N0:?}"
 else
   WALLET_P2P="${GR:?}0${N0:?}"
 fi
@@ -145,38 +145,38 @@ fi
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)" -gt "1" ]] &>/dev/null; then
   if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/func.lock ]] &>/dev/null; then
     # create time lock file
-    echo "$(LC_ALL=de_US.utf8 date +%s 2>/dev/null)" >"${LOG_DIR:?}"/node_data/wallet/data/func.lock 2>/dev/null # save lock time
+    echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/func.lock 2>&1 # save lock time
     # time.dashbord exist, continue
     if [[ -f "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord ]] &>/dev/null; then
       DETACH="${G1:?}<${N0:?} [ ${G1:?}Pinode${N0:?} ]"
       # communication port pinode
-      echo "COM > PiNode" >"${LOG_DIR:?}"/node_data/com 2>/dev/null
-      if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord 2>/dev/null)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/time.warden 2>/dev/null)" ]] &>/dev/null; then
+      echo "COM > PiNode" >"${LOG_DIR:?}"/node_data/com 2>&1
+      if [[ "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord 2>&1)" -lt "$(sed 's/.//10g' "${LOG_DIR:?}"/node_data/wallet/data/time.warden 2>&1)" ]] &>/dev/null; then
         run_functions
         DETACH="${CY:?}<<${N0:?} [ ${CY:?}Data Swap${N0:?} ] ${GR:?}${FUNC_LIMIT:?}${N0:?}"
         # remove old file
         rm "${LOG_DIR:?}"/node_data/wallet/data/time.dashbord &>/dev/null
-        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+        printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Removing old file! -> ${GR:?}time.dashbord${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Scripts ${M_IND:?} ${AP_IND:?} ${APX_IND:?} ${APL_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Scripts ${M_IND:?} ${AP_IND:?} ${APX_IND:?} ${APL_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove lock file
       rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
 
     else # time.dashbord don't exist, continue with warden
 
       # no double trouble when overlapping pinode <> warden
-      if ! tail -5 "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | grep "Removing old file!" &>/dev/null; then
+      if ! tail -5 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Removing old file!" &>/dev/null; then
         DETACH="${G0:?}<${N0:?} [ ${G0:?}Warden${N0:?} ]"
         # communication port warden
-        echo "COM > Warden" >"${LOG_DIR:?}"/node_data/com 2>/dev/null
+        echo "COM > Warden" >"${LOG_DIR:?}"/node_data/com 2>&1
         run_functions
       else
         run_functions
         DETACH="${CY:?}<<${N0:?} [ ${CY:?}Data Swap${N0:?} ] ${GR:?}${FUNC_LIMIT:?}${N0:?}"
       fi
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Scripts ${M_IND:?} ${AP_IND:?} ${APX_IND:?} ${APL_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Dashbord() Data [${G1:?}Ok${N0:?}] ${DETACH:?} ${SYSTEM_LOAD:?} P2P ${WALLET_P2P:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Scripts ${M_IND:?} ${AP_IND:?} ${APX_IND:?} ${APL_IND:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
       # remove lock file
       rm "${LOG_DIR:?}"/node_data/wallet/data/func.lock &>/dev/null
     fi
@@ -185,111 +185,111 @@ fi
 
 ### screen status add_peers ####################################################
 
-if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -o "add_peers" 2>/dev/null)" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -o "add_peers" 2>&1)" ]] &>/dev/null; then
 
   # screen add_peers
-  SCREEN_NOW_P2P=$(LC_ALL=de_US.utf8 date 2>/dev/null | awk '{ print $4 }' 2>/dev/null | egrep -o "([0-9]+:[0-9]+)" 2>/dev/null | tr -d ':' 2>/dev/null)
-  SCREEN_TIME_P2P=$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep "add_peers" 2>/dev/null | egrep -o "([0-9]+:[0-9]+)" 2>/dev/null | tr -d ':' 2>/dev/null)
-  SCREEN_CALC_P2P=$(echo "${SCREEN_NOW_P2P:?}-${SCREEN_TIME_P2P:?}" 2>/dev/null | bc -l 2>/dev/null | egrep -v "syntax|-" 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)
-  SCREEN_ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check 2>/dev/null | awk '{ print $1 }' 2>/dev/null)
+  SCREEN_NOW_P2P=$(LC_ALL=de_US.utf8 date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  SCREEN_TIME_P2P=$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep "add_peers" 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  SCREEN_CALC_P2P=$(echo "${SCREEN_NOW_P2P:?}-${SCREEN_TIME_P2P:?}" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  SCREEN_ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check 2>&1 | awk '{ print $1 }' 2>&1)
   SESSION_NAME="add_peers"
 
   # kill time jump
   if [[ "$SCREEN_CALC_P2P" -gt "42" ]] &>/dev/null; then
-    screen -ls "${SESSION_NAME:?}" 2>/dev/null | (
-      IFS=$(printf '\t' 2>/dev/null)
-      sed "s/^$IFS//" 2>/dev/null |
+    screen -ls "${SESSION_NAME:?}" 2>&1 | (
+      IFS=$(printf '\t' 2>&1)
+      sed "s/^$IFS//" 2>&1 |
         while read -r NAME stuff &>/dev/null; do
           screen -S "${SESSION_NAME:?}" -X quit &>/dev/null
         done
     )
   fi
 
-  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null | awk '{ print $1 }' 2>/dev/null)" -gt "2" ]] &>/dev/null; then
+  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2" ]] &>/dev/null; then
     # kill old screen session (max 30 seconds on average for each connection attempt)
-    if [[ "$SCREEN_CALC_P2P" -gt "$(echo "${SCREEN_ADD_LINE:?}/2" 2>/dev/null | bc 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)" ]] &>/dev/null; then
-      screen -ls "${SESSION_NAME:?}" 2>/dev/null | (
-        IFS=$(printf '\t' 2>/dev/null)
-        sed "s/^$IFS//" 2>/dev/null |
+    if [[ "$SCREEN_CALC_P2P" -gt "$(echo "${SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+      screen -ls "${SESSION_NAME:?}" 2>&1 | (
+        IFS=$(printf '\t' 2>&1)
+        sed "s/^$IFS//" 2>&1 |
           while read -r NAME stuff &>/dev/null; do
             screen -S "${SESSION_NAME:?}" -X quit &>/dev/null
           done
       )
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 fi
 
 ### screen status add_extra_peers ##############################################
 
-if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -o "add_extra_peers" 2>/dev/null)" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -o "add_extra_peers" 2>&1)" ]] &>/dev/null; then
 
   # screen add_extra_peers
-  EXTRA_SCREEN_NOW_P2P=$(LC_ALL=de_US.utf8 date 2>/dev/null | awk '{ print $4 }' 2>/dev/null | egrep -o "([0-9]+:[0-9]+)" 2>/dev/null | tr -d ':' 2>/dev/null)
-  EXTRA_SCREEN_TIME_P2P=$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep "add_extra_peers" 2>/dev/null | egrep -o "([0-9]+:[0-9]+)" 2>/dev/null | tr -d ':' 2>/dev/null)
-  EXTRA_SCREEN_CALC_P2P=$(echo "${EXTRA_SCREEN_NOW_P2P:?}-${EXTRA_SCREEN_TIME_P2P:?}" 2>/dev/null | bc -l 2>/dev/null | egrep -v "syntax|-" 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)
-  EXTRA_SCREEN_ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check 2>/dev/null | awk '{ print $1 }' 2>/dev/null)
+  EXTRA_SCREEN_NOW_P2P=$(LC_ALL=de_US.utf8 date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  EXTRA_SCREEN_TIME_P2P=$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep "add_extra_peers" 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  EXTRA_SCREEN_CALC_P2P=$(echo "${EXTRA_SCREEN_NOW_P2P:?}-${EXTRA_SCREEN_TIME_P2P:?}" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  EXTRA_SCREEN_ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check 2>&1 | awk '{ print $1 }' 2>&1)
   EXTRA_SESSION_NAME="add_extra_peers"
 
   # kill time jump
   if [[ "$EXTRA_SCREEN_CALC_P2P" -gt "42" ]] &>/dev/null; then
-    screen -ls "${EXTRA_SESSION_NAME:?}" 2>/dev/null | (
-      IFS=$(printf '\t' 2>/dev/null)
-      sed "s/^$IFS//" 2>/dev/null |
+    screen -ls "${EXTRA_SESSION_NAME:?}" 2>&1 | (
+      IFS=$(printf '\t' 2>&1)
+      sed "s/^$IFS//" 2>&1 |
         while read -r NAME stuff &>/dev/null; do
           screen -S "${EXTRA_SESSION_NAME:?}" -X quit &>/dev/null
         done
     )
   fi
 
-  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null | awk '{ print $1 }' 2>/dev/null)" -gt "2" ]] &>/dev/null; then
+  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2" ]] &>/dev/null; then
     # kill old screen session (max 30 seconds on average for each connection attempt)
-    if [[ "$EXTRA_SCREEN_CALC_P2P" -gt "$(echo "${EXTRA_SCREEN_ADD_LINE:?}/2" 2>/dev/null | bc 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)" ]] &>/dev/null; then
-      screen -ls "${EXTRA_SESSION_NAME:?}" 2>/dev/null | (
-        IFS=$(printf '\t' 2>/dev/null)
-        sed "s/^$IFS//" 2>/dev/null |
+    if [[ "$EXTRA_SCREEN_CALC_P2P" -gt "$(echo "${EXTRA_SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+      screen -ls "${EXTRA_SESSION_NAME:?}" 2>&1 | (
+        IFS=$(printf '\t' 2>&1)
+        sed "s/^$IFS//" 2>&1 |
           while read -r NAME stuff &>/dev/null; do
             screen -S "${EXTRA_SESSION_NAME:?}" -X quit &>/dev/null
           done
       )
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_extra_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_extra_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 fi
 
 ### screen status add_lost_peers ###############################################
 
-if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -o "add_lost_peers" 2>/dev/null)" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -o "add_lost_peers" 2>&1)" ]] &>/dev/null; then
 
   # screen add_lost_peers
-  LOST_SCREEN_NOW_P2P=$(LC_ALL=de_US.utf8 date 2>/dev/null | awk '{ print $4 }' 2>/dev/null | egrep -o "([0-9]+:[0-9]+)" 2>/dev/null | tr -d ':' 2>/dev/null)
-  LOST_SCREEN_TIME_P2P=$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep "add_lost_peers" 2>/dev/null | egrep -o "([0-9]+:[0-9]+)" 2>/dev/null | tr -d ':' 2>/dev/null)
-  LOST_SCREEN_CALC_P2P=$(echo "${LOST_SCREEN_NOW_P2P:?}-${LOST_SCREEN_TIME_P2P:?}" 2>/dev/null | bc -l 2>/dev/null | egrep -v "syntax|-" 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)
-  LOST_SCREEN_ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check 2>/dev/null | awk '{ print $1 }' 2>/dev/null)
+  LOST_SCREEN_NOW_P2P=$(LC_ALL=de_US.utf8 date 2>&1 | awk '{ print $4 }' 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  LOST_SCREEN_TIME_P2P=$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep "add_lost_peers" 2>&1 | egrep -o "([0-9]+:[0-9]+)" 2>&1 | tr -d ':' 2>&1)
+  LOST_SCREEN_CALC_P2P=$(echo "${LOST_SCREEN_NOW_P2P:?}-${LOST_SCREEN_TIME_P2P:?}" 2>&1 | bc -l 2>&1 | egrep -v "syntax|-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  LOST_SCREEN_ADD_LINE=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check 2>&1 | awk '{ print $1 }' 2>&1)
   LOST_SESSION_NAME="add_lost_peers"
 
   # kill time jump
   if [[ "$LOST_SCREEN_CALC_P2P" -gt "42" ]] &>/dev/null; then
-    screen -ls "${LOST_SESSION_NAME:?}" 2>/dev/null | (
-      IFS=$(printf '\t' 2>/dev/null)
-      sed "s/^$IFS//" 2>/dev/null |
+    screen -ls "${LOST_SESSION_NAME:?}" 2>&1 | (
+      IFS=$(printf '\t' 2>&1)
+      sed "s/^$IFS//" 2>&1 |
         while read -r NAME stuff &>/dev/null; do
           screen -S "${LOST_SESSION_NAME:?}" -X quit &>/dev/null
         done
     )
   fi
 
-  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null | awk '{ print $1 }' 2>/dev/null)" -gt "2" ]] &>/dev/null; then
+  if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2" ]] &>/dev/null; then
     # kill old screen session (max 30 seconds on average for each connection attempt)
-    if [[ "$LOST_SCREEN_CALC_P2P" -gt "$(echo "${LOST_SCREEN_ADD_LINE:?}/2" 2>/dev/null | bc 2>/dev/null | awk -F. '{ print $1 }' 2>/dev/null)" ]] &>/dev/null; then
-      screen -ls "${LOST_SESSION_NAME:?}" 2>/dev/null | (
-        IFS=$(printf '\t' 2>/dev/null)
-        sed "s/^$IFS//" 2>/dev/null |
+    if [[ "$LOST_SCREEN_CALC_P2P" -gt "$(echo "${LOST_SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+      screen -ls "${LOST_SESSION_NAME:?}" 2>&1 | (
+        IFS=$(printf '\t' 2>&1)
+        sed "s/^$IFS//" 2>&1 |
           while read -r NAME stuff &>/dev/null; do
             screen -S "${LOST_SESSION_NAME:?}" -X quit &>/dev/null
           done
       )
-      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_lost_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+      printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: Stopping add_lost_peers script.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 fi

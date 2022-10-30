@@ -1,77 +1,77 @@
 #!/bin/bash
 
 # By Rainman
-# V20223010
+# V20220406
 # 0.3.8.1
 
 # shellcheck disable=SC2154
 
-source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
-source /usr/local/bin/include/pinode/color 2>/dev/null
+source /usr/local/bin/include/pinode/pinode.conf 2>&1
+source /usr/local/bin/include/pinode/color 2>&1
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/wallet/system/date 2>/dev/null)
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
-  LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>/dev/null)
+  LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>&1)
 fi
 
 ### arp -a intranet - local network ############################################
 
 # add local address (arp) intranet, no ports on these, ignore common default router ip address
-arp -a 2>/dev/null | grep -vwE "(127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>/dev/null | grep -v ":" 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.arp 2>/dev/null
+arp -a 2>&1 | grep -vwE "(127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | grep -v ":" 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.arp 2>&1
 
 # get new.arp count
-ARP_NEW=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/nodes.arp 2>/dev/null | awk '{ print $1 }' 2>/dev/null)
+ARP_NEW=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/nodes.arp 2>&1 | awk '{ print $1 }' 2>&1)
 
 # setup arp file
-cat "${LOG_DIR:?}"/node_data/wallet/peers/nodes.arp 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.all 2>/dev/null
-printf '%b' "${LOG_DATE:?} Status() Intranet.ARP() Found ${G1:?}${ARP_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+cat "${LOG_DIR:?}"/node_data/wallet/peers/nodes.arp 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.all 2>&1
+printf '%b' "${LOG_DATE:?} Status() Intranet.ARP() Found ${G1:?}${ARP_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 ### chainz.cryptoid nodes ######################################################
 
 # add node address (api) internet, (ipv4) no ports on these
-torify curl -s https://chainz.cryptoid.info/freed/api.dws?q=nodes 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.api 2>/dev/null
+torify curl -s https://chainz.cryptoid.info/freed/api.dws?q=nodes 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.api 2>&1
 
 # get new count
-API_NEW=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/nodes.api 2>/dev/null | awk '{ print $1 }' 2>/dev/null)
+API_NEW=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/nodes.api 2>&1 | awk '{ print $1 }' 2>&1)
 
 # setup api file
-cat "${LOG_DIR:?}"/node_data/wallet/peers/nodes.api 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/wallet/peers/nodes.all 2>/dev/null
-printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Found ${G1:?}${API_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
-cat "${LOG_DIR:?}"/node_data/wallet/peers/nodes.all 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.tmp 2>/dev/null
+cat "${LOG_DIR:?}"/node_data/wallet/peers/nodes.api 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/wallet/peers/nodes.all 2>&1
+printf '%b' "${LOG_DATE:?} Status() Chainz.C.API() Found ${G1:?}${API_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+cat "${LOG_DIR:?}"/node_data/wallet/peers/nodes.all 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/wallet/peers/nodes.tmp "${LOG_DIR:?}"/node_data/wallet/peers/nodes.all &>/dev/null
 
 # remove duplicates and create peers.tmp
 # disregard invalid pattern address (cidr - classless inter-domain routing)
-grepcidr -f "${LOG_DIR:?}"/node_data/wallet/peers/nodes.all "${LOG_DIR:?}"/node_data/wallet/peers/nodes.all 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>"${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr
+grepcidr -f "${LOG_DIR:?}"/node_data/wallet/peers/nodes.all "${LOG_DIR:?}"/node_data/wallet/peers/nodes.all 2>&1 | sort -n 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>"${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr
 
 ### getnodeaddresses ###########################################################
 
-"${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getnodeaddresses 1440 2>/dev/null | egrep -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" 2>/dev/null | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.get 2>/dev/null
+"${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getnodeaddresses 1440 2>&1 | egrep -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/nodes.get 2>&1
 
 # get new count
-GET_NEW=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/nodes.get 2>/dev/null | awk '{ print $1 }' 2>/dev/null)
+GET_NEW=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/nodes.get 2>&1 | awk '{ print $1 }' 2>&1)
 
 # setup get file
-cat "${LOG_DIR:?}"/node_data/wallet/peers/nodes.get 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null
-printf '%b' "${LOG_DATE:?} Status() NodeAddr.GET() Found ${G1:?}${GET_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+cat "${LOG_DIR:?}"/node_data/wallet/peers/nodes.get 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>&1
+printf '%b' "${LOG_DATE:?} Status() NodeAddr.GET() Found ${G1:?}${GET_NEW:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # get total count
-TOTAL_NODES=$(echo "${API_NEW:?}+${ARP_NEW:?}+${GET_NEW:?}" 2>/dev/null | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)
-printf '%b' "${LOG_DATE:?} Status() Addnode.Script Total ${G1:?}${TOTAL_NODES:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+TOTAL_NODES=$(echo "${API_NEW:?}+${ARP_NEW:?}+${GET_NEW:?}" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+printf '%b' "${LOG_DATE:?} Status() Addnode.Script Total ${G1:?}${TOTAL_NODES:?}${N0:?} Peers!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # sort peers.tmp, remove duplicates and grepcidr lines
-cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | sort -n 2>/dev/null | grep -v "grepcidr" 2>/dev/null | awk '!a[$0]++' >"${LOG_DIR:?}"/peers.tmp 2>/dev/null
-mv "${LOG_DIR:?}"/peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null
+cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | sort -n 2>&1 | grep -v "grepcidr" 2>&1 | awk '!a[$0]++' >"${LOG_DIR:?}"/peers.tmp 2>&1
+mv "${LOG_DIR:?}"/peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>&1
 
 # api values
-API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>/dev/null)
-API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>/dev/null)
+API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
+API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
 ### screen sessions ############################################################
 
 # create screen list
-LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null
+LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&1
 
 # random api
 RANDOM_SCREEN=$((((RANDOM % 2) + 1)))
@@ -93,12 +93,12 @@ if [[ "$RANDOM_SCREEN" -eq "1" ]] &>/dev/null; then
   # look for screen session, if not found, run this block
   if ! cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "add_cg" &>/dev/null; then
     # create screen session
-    screen -dmS add_cg 2>/dev/null
+    screen -dmS add_cg 2>&1
     sleep 1
     screen -S add_cg -X -p 0 stuff $'torify bash '"${LOG_DIR:?}"'/add_cg\n'
   fi
   # create screen list
-  LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null
+  LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&1
 fi
 
 # run with cmc
@@ -112,12 +112,12 @@ if [[ "$RANDOM_SCREEN" -eq "2" ]] &>/dev/null; then
   # look for screen session, if not found, run this block
   if ! cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "add_cmc" &>/dev/null; then
     # create screen session
-    screen -dmS add_cmc 2>/dev/null
+    screen -dmS add_cmc 2>&1
     sleep 1
     screen -S add_cmc -X -p 0 stuff $'torify bash '"${LOG_DIR:?}"'/add_cmc\n'
   fi
   # create screen list
-  LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null
+  LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&1
 fi
 
 ### screen sessions done #######################################################
@@ -127,16 +127,16 @@ if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
 
   if [[ -z "$API_PRICE_CG" ]] &>/dev/null; then
     # make sure ticker exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/value.rrd 2>/dev/null | grep "last_ds" 2>/dev/null | awk '{ print $1 }' 2>/dev/null | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>/dev/null
+    rrdtool info /home/"$(whoami)"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
     # non responsive
-    API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>/dev/null)
+    API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi
 
   if [[ -z "$API_VOLUME_CG" ]] &>/dev/null; then
     # make sure volume exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>/dev/null | grep "last_ds" 2>/dev/null | awk '{ print $1 }' 2>/dev/null | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>/dev/null
+    rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
     # non responsive
-    API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>/dev/null)
+    API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi
 fi
 
@@ -144,16 +144,16 @@ fi
 if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   if [[ -z "$API_PRICE_CMC" ]] &>/dev/null; then
     # make sure ticker exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/value.rrd 2>/dev/null | grep "last_ds" 2>/dev/null | awk '{ print $1 }' 2>/dev/null | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>/dev/null
+    rrdtool info /home/"$(whoami)"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
     # non responsive
-    API_PRICE_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>/dev/null)
+    API_PRICE_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi
 
   if [[ -z "$API_VOLUME_CMC" ]] &>/dev/null; then
     # make sure volume exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>/dev/null | grep "last_ds" 2>/dev/null | awk '{ print $1 }' 2>/dev/null | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>/dev/null
+    rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
     # non responsive
-    API_VOLUME_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>/dev/null)
+    API_VOLUME_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi
 fi
 
@@ -169,27 +169,27 @@ if [ ! -f "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp ] &>/dev/null; then
 fi
 
 # add addnodes backup if backup is greater
-if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '{ print $1 }' 2>/dev/null)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>/dev/null | awk '{ print $1 }' 2>/dev/null)" ]] &>/dev/null; then
+if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
   # note: don't overwrite this (peers.tmp) created by data
-  cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '{ print $1 }' 2>/dev/null) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+  cat "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '!a[$0]++' >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Adding backup peers! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # disregard failed peers (failed list)
-  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${WALLET_DIR:?}"/addnodes >"${WALLET_DIR:?}"/addnodes.tmp 2>/dev/null
-  mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after adding! $(wc -l "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '{ print $1 }' 2>/dev/null) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${WALLET_DIR:?}"/addnodes >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
+  mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after adding! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
 # create addnodes backup if backup is less
-if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '{ print $1 }' 2>/dev/null)" -lt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>/dev/null | awk '{ print $1 }' 2>/dev/null)" ]] &>/dev/null; then
+if [[ "$(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -lt "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1)" ]] &>/dev/null; then
   cp "${LOG_DIR:?}"/node_data/wallet/peers/success "${WALLET_DIR:?}"/addnodes &>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>/dev/null | awk '{ print $1 }' 2>/dev/null) ${C1:?}<<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Creating addnodes backup! $(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}<<${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   # disregard failed peers (failed list)
-  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${WALLET_DIR:?}"/addnodes >"${WALLET_DIR:?}"/addnodes.tmp 2>/dev/null
-  mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>/dev/null
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after backup! $(wc -l "${WALLET_DIR:?}"/addnodes 2>/dev/null | awk '{ print $1 }' 2>/dev/null) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${WALLET_DIR:?}"/addnodes >"${WALLET_DIR:?}"/addnodes.tmp 2>&1
+  mv "${WALLET_DIR:?}"/addnodes.tmp "${WALLET_DIR:?}"/addnodes 2>&1
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Cleaning up list after backup! $(wc -l "${WALLET_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) ${C1:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
 
-if [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>/dev/null)" -gt "0" ]] &>/dev/null; then
+if [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep -c "txhash" 2>&1)" -gt "0" ]] &>/dev/null; then
   rm "${DATA_DIR:?}"/masternode_status &>/dev/null
   "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${WALLET_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodestatus >"${DATA_DIR:?}"/masternode_status 2>/dev/null
   if [[ ! -f "${WALLET_DIR:?}"/masternode_status ]] &>/dev/null; then
@@ -216,38 +216,38 @@ fi
 # failed_peers function
 function failed_peers() {
   # get old count
-  OLD_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null | awk '{ print $1 }' 2>/dev/null)
+  OLD_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | awk '{ print $1 }' 2>&1)
 
   # grep all ipv4 failed connections in debug.log
-  egrep -o " to (25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | awk '{ print $2 }' 2>/dev/null | awk '!a[$0]++' 2>/dev/null | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/failed.all 2>/dev/null
+  egrep -o " to (25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/failed.all 2>&1
   # grep all domains failed connections in debug.log
-  egrep -o " to .*\.[^.]+\.[[:alpha:]].[[:alpha:]]" "${WALLET_LOG_DIR:?}"/debug.log | awk '{ print $2 }' | awk '!a[$0]++' 2>/dev/null | sort -n >>"${LOG_DIR:?}"/node_data/wallet/peers/failed.all 2>/dev/null
+  egrep -o " to .*\.[^.]+\.[[:alpha:]].[[:alpha:]]" "${WALLET_LOG_DIR:?}"/debug.log | awk '{ print $2 }' | awk '!a[$0]++' 2>&1 | sort -n >>"${LOG_DIR:?}"/node_data/wallet/peers/failed.all 2>&1
   # grep all onion failed connections in debug.log
-  egrep -o " to .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | awk '{ print $2 }' 2>/dev/null | awk '!a[$0]++' 2>/dev/null | sort -n >>"${LOG_DIR:?}"/node_data/wallet/peers/failed.all 2>/dev/null
+  egrep -o " to .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $2 }' 2>&1 | awk '!a[$0]++' 2>&1 | sort -n >>"${LOG_DIR:?}"/node_data/wallet/peers/failed.all 2>&1
 
-  cat "${LOG_DIR:?}"/node_data/wallet/peers/failed.all 2>/dev/null | grep -v "/" 2>/dev/null | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null
+  cat "${LOG_DIR:?}"/node_data/wallet/peers/failed.all 2>&1 | grep -v "/" 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1
   rm "${LOG_DIR:?}"/node_data/wallet/peers/failed.all &>/dev/null
 
-  IPV4_FAILS=$(egrep -c "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null)
-  DNS_FAILS=$(egrep -c " to .*\.[^.]+\.[[:alpha:]].[[:alpha:]]" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null)
-  ONION_FAILS=$(egrep -c "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null)
+  IPV4_FAILS=$(egrep -c "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1)
+  DNS_FAILS=$(egrep -c " to .*\.[^.]+\.[[:alpha:]].[[:alpha:]]" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1)
+  ONION_FAILS=$(egrep -c "[a0-z9]+.onion" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1)
 
-  NEW_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null | awk '{ print $1 }' 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)
-  DIFF_FAIL=$(echo "${NEW_COUNT:?}-${OLD_COUNT:?}" 2>/dev/null | bc -l 2>/dev/null | grep -v "-" 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null)
+  NEW_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+  DIFF_FAIL=$(echo "${NEW_COUNT:?}-${OLD_COUNT:?}" 2>&1 | bc -l 2>&1 | grep -v "-" 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
   if [[ -z "$DIFF_FAIL" ]] &>/dev/null; then
     DIFF_FAIL="0"
   fi
 
   DIFF_C="${GR:?}"
-  if [[ ! "$(echo "${DIFF_FAIL:?}" 2>/dev/null | grep "-" 2>/dev/null)" ]] &>/dev/null; then
+  if [[ ! "$(echo "${DIFF_FAIL:?}" 2>&1 | grep "-" 2>&1)" ]] &>/dev/null; then
     DIFF_C="${G1:?}+"
   fi
-  if [[ "$(echo "${DIFF_FAIL:?}" 2>/dev/null)" -eq "0" ]] &>/dev/null; then
+  if [[ "$(echo "${DIFF_FAIL:?}" 2>&1)" -eq "0" ]] &>/dev/null; then
     DIFF_C="${GR:?}"
   fi
 
-  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! ${N0:?}$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null | awk '{ print $1 }' 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>/dev/null) (${G1:?}${IPV4_FAILS:?}${N0:?}/${CY:?}${DNS_FAILS:?}${N0:?}/${P0:?}${ONION_FAILS:?}${N0:?}) ${DIFF_C:?}${DIFF_FAIL:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+  printf '%b' "${LOG_DATE:?} Status() Addnode.Script Updating failed list! ${N0:?}$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1) (${G1:?}${IPV4_FAILS:?}${N0:?}/${CY:?}${DNS_FAILS:?}${N0:?}/${P0:?}${ONION_FAILS:?}${N0:?}) ${DIFF_C:?}${DIFF_FAIL:?} ${GR:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 }
 
 # create failed peers list
@@ -259,22 +259,22 @@ IP_ADDRESS_NR="$(cat "${LOG_DIR:?}"/node_data/system/ip_address 2>/dev/null)"
 if [ -f "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo ] &>/dev/null; then
 
   # get ipv4 address from getpeerinfo, disregard 127., addrlocal
-  cat "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>/dev/null | grep -v "addrlocal" 2>/dev/null | egrep -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" 2>/dev/null | awk '!a[$0]++' 2>/dev/null 2>/dev/null | sort -n 2>/dev/null | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/success 2>/dev/null
+  cat "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>/dev/null | grep -v "addrlocal" 2>&1 | egrep -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" 2>&1 | awk '!a[$0]++' 2>&1 2>&1 | sort -n 2>&1 | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1
 
   # get domain address from getpeerinfo
-  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' 2>/dev/null | sed -r '/^.{,9}$/d' >>"${LOG_DIR:?}"/node_data/wallet/peers/success 2>/dev/null
+  grep -oiE '([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.){1,}(\.?[a-zA-Z]{2,}){1,}' "${LOG_DIR:?}"/node_data/wallet/client/getpeerinfo 2>&1 | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | sed -r '/^.{,9}$/d' >>"${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1
 fi
 
 ### add_peers screen script ####################################################
 
 # create screen list
-LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null
+LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&1
 
 # kill when too many screens appears (all of them)
-if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -c "add_peers" 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -c "add_peers" 2>&1)" -gt "1" ]] &>/dev/null; then
   killall screen &>/dev/null
 fi
-if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -c "add_lost_peers" 2>/dev/null)" -gt "1" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -c "add_lost_peers" 2>&1)" -gt "1" ]] &>/dev/null; then
   killall screen &>/dev/null
 fi
 
@@ -284,70 +284,70 @@ if cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep "dead" &>
   if cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "add_peers" &>/dev/null; then
     screen -wipe &>/dev/null
     screen -X -S add_peers quit &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_peers) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_peers) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   if cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "add_cmc" &>/dev/null; then
     screen -wipe &>/dev/null
     screen -X -S add_cmc quit &>/dev/null
     killall curl &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cmc) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cmc) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   if cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "add_cg" &>/dev/null; then
     screen -wipe &>/dev/null
     screen -X -S add_cg quit &>/dev/null
     killall curl &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cg) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+    printf '%b' "${LOG_DATE:?} Status() Addnode.Script (add_cg) dead ??? it's dead now.${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
 if [ ! -f "${LOG_DIR:?}"/node_data/wallet/peers/success ] &>/dev/null; then
   # make sure success exist
-  touch "${LOG_DIR:?}"/node_data/wallet/peers/success 2>/dev/null
+  touch "${LOG_DIR:?}"/node_data/wallet/peers/success 2>&1
 fi
 
 # create add_peers
-cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' 2>/dev/null | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers
+cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers
 
 # generate random ip address (ipv4)
-RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>/dev/null)
+RIP_IPV4=$(printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" 2>&1)
 # generate random ip address (ipv6)
-RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>/dev/null | sed 's/:$//' 2>/dev/null)
+RIP_IPV6=$(for ((i = 0; i < 8; i++)); do printf "%02x%02x:" $((RANDOM % 256)) $((RANDOM % 256)); done 2>&1 | sed 's/:$//' 2>&1)
 
 # create address (ipv4/ipv6), ignore common default router ip address (ipv4)
-echo "${RIP_IPV6:?}" >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null
-echo "${RIP_IPV4:?}" 2>/dev/null | grep -vwE "($(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep "inet " 2>/dev/null | grep -vwE "127.0.0.1" 2>/dev/null | awk '{ print $2 }' 2>/dev/null | head -1 2>/dev/null)|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null
+echo "${RIP_IPV6:?}" >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
+echo "${RIP_IPV4:?}" 2>&1 | grep -vwE "($(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)|127.0.0.1|192.168.1.1|192.168.0.1|192.168.1.10.1|192.168.2.1|192.168.1.254|192.168.0.30|192.168.0.50|10.0.0.2|10.1.1.1|10.0.1.1|10.0.0.1|10.0.0.138|10.10.1.1)" >>"${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
 
 # ban wallet from connecting itself
-if [[ ! "$(grep "$(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep "inet " 2>/dev/null | grep -vwE "127.0.0.1" 2>/dev/null | awk '{ print $2 }' 2>/dev/null | head -1 2>/dev/null)" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null)" ]] &>/dev/null; then
+if [[ ! "$(grep "$(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)" "${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1)" ]] &>/dev/null; then
   # add system ip address
-  echo "$(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep "inet " 2>/dev/null | grep -vwE "127.0.0.1" 2>/dev/null | awk '{ print $2 }' 2>/dev/null | head -1 2>/dev/null)" >>"${LOG_DIR:?}"/node_data/wallet/peers/failed 2>/dev/null
+  echo "$(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1 | head -1 2>&1)" >>"${LOG_DIR:?}"/node_data/wallet/peers/failed 2>&1
 fi
 
 # disregard already connected peers (success list)
-grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>/dev/null
+grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
 cp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
 
 # disregard failed peers (failed list), remove 127. address (localhost)
-grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null | sort -n 2>/dev/null | grep -v "127." >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>/dev/null
+grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/failed "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | sort -n 2>&1 | grep -v "127." >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
 cp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
 
 # disregard invalid pattern address (cidr - classless inter-domain routing) and count wrong patterns (cidr)
 grepcidr -f "${LOG_DIR:?}"/node_data/wallet/peers/add_peers "${LOG_DIR:?}"/node_data/wallet/peers/add_peers >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>"${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr
 
 # disregard onion address
-grep -v ".onion" "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr >"${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr.tmp 2>/dev/null
+grep -v ".onion" "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr >"${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr.tmp "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr &>/dev/null
 
 # count all invalid patterns
-INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr 2>/dev/null | tail -1 2>/dev/null | awk '{ print $1 }' 2>/dev/null)
+INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
 
-cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>/dev/null | sort -n 2>/dev/null | awk '!a[$0]++' 2>/dev/null | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.sorted 2>/dev/null
+cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>/dev/null | sort -n 2>&1 | awk '!a[$0]++' 2>&1 | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.sorted 2>&1
 mv "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.sorted "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
 
 # create total cidr list
 cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr >>"${LOG_DIR:?}"/node_data/wallet/peers/total.cidr 2>/dev/null
 # count total invalid patterns
-TOT_INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/total.cidr 2>/dev/null | tail -1 2>/dev/null | awk '{ print $1 }' 2>/dev/null)
+TOT_INV_CIDR=$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/total.cidr 2>&1 | tail -1 2>&1 | awk '{ print $1 }' 2>&1)
 
 if [[ "$TOT_INV_CIDR" -gt "0" ]] &>/dev/null; then
   CIDRC="${R1:?}CIDR"
@@ -356,9 +356,9 @@ else
 fi
 
 # get latest occurrence
-CIDR_DATED=$(ls -l "${LOG_DIR:?}"/node_data/wallet/peers/total.cidr 2>/dev/null | awk '{ print $6,$7,$8 }' 2>/dev/null)
+CIDR_DATED=$(ls -l "${LOG_DIR:?}"/node_data/wallet/peers/total.cidr 2>&1 | awk '{ print $6,$7,$8 }' 2>&1)
 
-printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?}/${TOT_INV_CIDR:?} Invalid pattern ${CIDRC:?} @ ${CIDR_DATED:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+printf '%b' "${LOG_DATE:?} Status() Addnode.Script ${INV_CIDR:?}/${TOT_INV_CIDR:?} Invalid pattern ${CIDRC:?} @ ${CIDR_DATED:?}${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
 # kill old add_peers session
 screen -X -S add_peers quit &>/dev/null
@@ -370,7 +370,7 @@ truncate -s 0 "${LOG_DIR:?}"/node_data/wallet/peers/peers.cidr &>/dev/null
 screen -dmS add_peers &>/dev/null
 
 # create temp and backup list for connection check
-cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>/dev/null
+cat "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
 mv "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check &>/dev/null
 cp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.check "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
 

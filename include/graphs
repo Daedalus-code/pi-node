@@ -4,14 +4,14 @@
 # V20222508
 # 0.5.1.6
 
-source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
+source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
 ### auto graphs w time #########################################################
 
-if [[ $(echo "$GRAPH_TIME" 2>/dev/null | egrep "A|Auto|a|auto|0" 2>/dev/null) ]] &>/dev/null; then
+if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; then
 
   # uptime in hours
-  echo "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/3600" 2>/dev/null | bc >"${LOG_DIR:?}"/node_data/wallet/uptime.hours 2>/dev/null
+  echo "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/3600" 2>&1 | bc >"${LOG_DIR:?}"/node_data/wallet/uptime.hours 2>&1
   ROUND_UP=$(cat "${LOG_DIR:?}"/node_data/wallet/uptime.hours 2>/dev/null)
   # organic hour graph ruled by uptime_daemon > uptime.hours
   if [[ "$ROUND_UP" -eq "0" ]] &>/dev/null; then
@@ -178,11 +178,11 @@ REW_GPRINT="Rewards"
 POS_GPRINT="Stakes"
 
 # single reward
-if [[ "$(wc -l "${DATA_DIR:?}"/rewards 2>/dev/null | awk '{ print $1 }' 2>/dev/null)" -eq "1" ]] &>/dev/null; then
+if [[ "$(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1)" -eq "1" ]] &>/dev/null; then
   REW_GPRINT="Reward"
 fi
 # single stake
-if [[ "$(wc -l "${DATA_DIR:?}"/staking 2>/dev/null | awk '{ print $1 }' 2>/dev/null)" -eq "1" ]] &>/dev/null; then
+if [[ "$(wc -l "${DATA_DIR:?}"/staking 2>&1 | awk '{ print $1 }' 2>&1)" -eq "1" ]] &>/dev/null; then
   POS_GPRINT="Stake"
 fi
 

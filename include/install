@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20223010
+# V20221710
 # 0.3.0.4
 
 # create script directories
@@ -34,7 +34,7 @@ source /usr/local/bin/include/pinode/color 2>/dev/null
 if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
   printf '%b' "[??] Enter Wallet Port ${G1:?}> ${N0:?}"
   read -r WALLET_PORT
-  echo "${WALLET_PORT:?}" >"${DATA_DIR:?}"/wallet_port 2>/dev/null
+  echo "${WALLET_PORT:?}" >"${DATA_DIR:?}"/wallet_port 2>&1
   if [[ -z "$WALLET_PORT" ]] &>/dev/null; then
     exit
   fi
@@ -44,17 +44,17 @@ fi
 if [[ ! -f "${DATA_DIR:?}"/masternode_collateral ]] &>/dev/null; then
   printf '%b' "[??] Enter Masternode Collateral ${G1:?}> ${N0:?}"
   read -r WALLET_COLLATERAL
-  echo "${WALLET_COLLATERAL:?}" >"${DATA_DIR:?}"/masternode_collateral 2>/dev/null
+  echo "${WALLET_COLLATERAL:?}" >"${DATA_DIR:?}"/masternode_collateral 2>&1
   if [[ -z "$WALLET_COLLATERAL" ]] &>/dev/null; then
     exit
   fi
 fi
 
-LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>/dev/null
+LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
 
-if [[ "$(wc -l "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>/dev/null | tr '[:upper:]' '[:lower:]' 2>/dev/null)".conf 2>/dev/null | awk '{ print $1 }')" -lt "2" ]]; then
-  rm "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>/dev/null | tr '[:upper:]' '[:lower:]' 2>/dev/null)".conf &>/dev/null
+if [[ "$(wc -l "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf 2>/dev/null | awk '{ print $1 }')" -lt "2" ]]; then
+  rm "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf &>/dev/null
 fi
 
 # if data missing, add values
@@ -79,14 +79,14 @@ CookieAuthFileGroupReadable 1
 HiddenServiceDir /var/lib/tor/${WALLET_NAME:?}-service/
 HiddenServicePort ${PORT:?} 127.0.0.1:${PORT:?}
 ${HIDDEN_SERVICE:?}
-" >"${LOG_DIR:?}"/torrc 2>/dev/null
+" >"${LOG_DIR:?}"/torrc 2>&1
 
-  cat "${LOG_DIR:?}"/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>/dev/null
+  cat "${LOG_DIR:?}"/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
   # remove old files
   rm "${LOG_DIR:?}"/torrc &>/dev/null
 fi
 
-if [[ ! -f "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>/dev/null | tr '[:upper:]' '[:lower:]' 2>/dev/null)".conf ]] &>/dev/null; then
+if [[ ! -f "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf ]] &>/dev/null; then
   echo "
 ## configuration file.
 # Network-related settings:
@@ -95,8 +95,8 @@ if [[ ! -f "${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>/dev/null | tr '[:upper:
 #testnet=1
 
 # RPC credentials
-rpcuser=$(tr -dc 'a-z' </dev/urandom 2>/dev/null | head -c 8 2>/dev/null | rev 2>/dev/null)
-rpcpassword=$(tr -dc 'a-z' </dev/urandom 2>/dev/null | head -c 8 2>/dev/null | rev 2>/dev/null)
+rpcuser=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
+rpcpassword=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 8 2>&1 | rev 2>&1)
 rpcallowip=127.0.0.1
 rpcbind=127.0.0.1
 
@@ -120,18 +120,18 @@ discover=1
 maxconnections=125
 
 # can be commented out if you use the service script
-daemon=1" >"${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>/dev/null | tr '[:upper:]' '[:lower:]' 2>/dev/null)".conf 2>/dev/null
+daemon=1" >"${DATA_DIR:?}"/"$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)".conf 2>/dev/null
 fi
 
 clear
 
-if uname -a 2>/dev/null | grep "Microsoft" &>/dev/null; then
+if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   printf '%b' "${GR:?}No support for Microsoft.${N0:?}\n"
   exit
 fi
 
-cd /home/"$(whoami)"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S' >"${LOG_DIR:?}"/node_data/repo 2>/dev/null
-cd /home/"$(whoami)"/pi-node || exit && git rev-parse --short HEAD 2>/dev/null | grep -Eo '[a0-z9]{7}' 2>/dev/null | head -1 >>"${LOG_DIR:?}"/node_data/repo 2>/dev/null
+cd /home/"$(whoami)"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S' >"${LOG_DIR:?}"/node_data/repo 2>&1
+cd /home/"$(whoami)"/pi-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 >>"${LOG_DIR:?}"/node_data/repo 2>&1
 
 # updating repository
 if [[ -f /tmp/updating ]] &>/dev/null; then
@@ -245,12 +245,12 @@ CookieAuthFileGroupReadable 1
 HiddenServiceDir /var/lib/tor/${WALLET_NAME:?}-service/
 HiddenServicePort ${PORT:?} 127.0.0.1:${PORT:?}
 #HiddenServicePort 80 127.0.0.1:80
-" >/tmp/torrc 2>/dev/null
-    cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>/dev/null
+" >/tmp/torrc 2>&1
+    cat /tmp/torrc 2>/dev/null | sudo tee -a /etc/tor/torrc 2>&1
     # remove old files
     rm /tmp/torrc &>/dev/null
     # restart tor after configuration
-    sudo service tor restart 2>/dev/null
+    sudo service tor restart 2>&1
   fi
 fi
 
@@ -260,7 +260,7 @@ sudo cp -R /home/"$(whoami)"/pi-node/include/update /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/helpme /usr/local/bin/ &>/dev/null
 sudo cp -R /home/"$(whoami)"/pi-node/include/menu /usr/local/bin/ &>/dev/null
 echo "# wait on node (daemon) to start
-until pidof ${WALLET_DAEMON:?} 2>/dev/null | wc -w 2>/dev/null | egrep 1 &>/dev/null; do
+until pidof ${WALLET_DAEMON:?} 2>&1 | wc -w 2>&1 | egrep 1 &>/dev/null; do
   clear
   printf '%b' waiting on wallet daemon..
   sleep 2
@@ -268,30 +268,30 @@ done
 clear && tail -f ${WALLET_LOG_DIR:?}/debug.log" >/tmp/log.tmp 2>/dev/null
 sudo mv /tmp/log.tmp /usr/local/bin/log &>/dev/null
 
-sudo chmod +x /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/helpme /usr/local/bin/menu /usr/local/bin/log 2>/dev/null
+sudo chmod +x /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/helpme /usr/local/bin/menu /usr/local/bin/log 2>&1
 
-sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/pinode 2>/dev/null
-sudo chown -R "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>/dev/null
+sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/pinode 2>&1
+sudo chown -R "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
 
-LATEST_DATE=$(head -1 "${LOG_DIR:?}"/node_data/repo 2>/dev/null)
-LATEST_HEAD=$(tail -1 "${LOG_DIR:?}"/node_data/repo 2>/dev/null)
-OLD_HEAD=$(grep "Update.Script" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | awk '{ print $7 }' 2>/dev/null | tail -1 2>/dev/null | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" 2>/dev/null)
+LATEST_DATE=$(head -1 "${LOG_DIR:?}"/node_data/repo 2>&1)
+LATEST_HEAD=$(tail -1 "${LOG_DIR:?}"/node_data/repo 2>&1)
+OLD_HEAD=$(grep "Update.Script" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | awk '{ print $7 }' 2>&1 | tail -1 2>&1 | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" 2>&1)
 
 if [[ -z "$OLD_HEAD" ]] &>/dev/null; then
   # non responsive (fsociety)
   OLD_HEAD="${GR:?}[fsociety]${N0:?}"
 fi
 
-LATEST_DATE=$(head -1 "${LOG_DIR:?}"/node_data/repo 2>/dev/null)
-LATEST_HEAD=$(tail -1 "${LOG_DIR:?}"/node_data/repo 2>/dev/null)
+LATEST_DATE=$(head -1 "${LOG_DIR:?}"/node_data/repo 2>&1)
+LATEST_HEAD=$(tail -1 "${LOG_DIR:?}"/node_data/repo 2>&1)
 
-PLEASE=$(printf '%b' "[${G1:?}Ok${N0:?}] Please use ${CY:?}update${N0:?} | ${Y1:?}helpme${N0:?} | ${CY:?}menu${N0:?} to continue the install.\n" 2>/dev/null)
+PLEASE=$(printf '%b' "[${G1:?}Ok${N0:?}] Please use ${CY:?}update${N0:?} | ${Y1:?}helpme${N0:?} | ${CY:?}menu${N0:?} to continue the install.\n" 2>&1)
 printf '%b' "[${G1:?}Ok${N0:?}] Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] ${GR:?}$LATEST_DATE${N0:?}\n"
-printf '%b' "${LOG_DATE:?} Status() Update.Script: Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] $LATEST_DATE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null
+printf '%b' "${LOG_DATE:?} Status() Update.Script: Updating! ${GR:?}${OLD_HEAD:?}${N0:?} -> [${G1:?}$LATEST_HEAD${N0:?}] $LATEST_DATE${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
-ls -lSh /usr/local/bin/include/pinode 2>/dev/null
-ls -lSh /usr/local/bin/include/ 2>/dev/null
-ls -lSh /usr/local/bin/ 2>/dev/null | egrep -o ".* pinode|.* update|total [0-9]+[Aa-Zz]+" 2>/dev/null
+ls -lSh /usr/local/bin/include/pinode 2>&1
+ls -lSh /usr/local/bin/include/ 2>&1
+ls -lSh /usr/local/bin/ 2>&1 | egrep -o ".* pinode|.* update|total [0-9]+[Aa-Zz]+" 2>/dev/null
 rm "${LOG_DIR:?}"/node_data/wallet/data/screens &>/dev/null
 rm "${LOG_DIR:?}"/read_* &>/dev/null
 rm "${LOG_DIR:?}"/add_* &>/dev/null
