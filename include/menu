@@ -44,7 +44,7 @@ else
 fi
 # calculate celcius and fahrenheit
 CELCIUS=$(echo "$CPU_RAW_TEMP/100*0.1" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.1f\n", $1 }' 2>&1)
-FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1)
+FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.1f\n", $1 }' 2>&1)
 
 CPU_CTEMP="${CELCIUS:?}"
 CPU_FTEMP="${FAHRENHEIT:?}"
@@ -568,13 +568,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # get uptime
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)%60")))
-    UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
+    UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/86400" 2>&1 | bc 2>/dev/null)
     UPTIME="${UPTIME_DAYS:?}d ${UPTIME:?}"
 
     # get system uptime
     awk -F. ' {print $1 }' /proc/uptime >"${LOG_DIR:?}"/node_data/system/system.uptime 2>&1
     SYS_UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)%60")))
-    SYS_UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
+    SYS_UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)/86400" 2>&1 | bc 2>/dev/null)
     SYS_UPTIME="${SYS_UPTIME_DAYS:?}d ${SYS_UPTIME:?}"
 
     # pidof daemon
@@ -626,8 +626,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $7 }' 2>&1)
     FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)
     # calculate
-    TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1)
-    FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
+    TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>/dev/null)
+    FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>/dev/null)
     # total and free memory (rrdtool, no color)
     TOTAL_MEM_RR="$TOTAL_MEM"
     FREE_MEM_RR="$FREE_MEM"
@@ -646,8 +646,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # get cpu temp, celcius, fahrenheit, (raspberry pi)
     CPU_CTEMP=$(</sys/class/thermal/thermal_zone0/temp)
-    CPU_CTEMP=$(echo "${CPU_CTEMP:?} / 100 * 0.1" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    CPU_FTEMP=$(echo "(1.8 * ${CPU_CTEMP:?}) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    CPU_CTEMP=$(echo "${CPU_CTEMP:?} / 100 * 0.1" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    CPU_FTEMP=$(echo "(1.8 * ${CPU_CTEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     # do this once (cpu speed, wait time)
     if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
@@ -675,8 +675,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # used swap
     USED_SWAP=$(cat /proc/meminfo 2>&1 | grep "SwapCached" 2>&1 | awk '{ print $2 }' 2>&1)
     # calculate swap kilo bytes into mega bytes
-    USED_SWAP_CALC=$(echo "${USED_SWAP:?}/1024" 2>&1 | bc 2>&1)
-    TOTAL_SWAP_CALC=$(echo "${TOTAL_SWAP:?}/1024" 2>&1 | bc 2>&1)
+    USED_SWAP_CALC=$(echo "${USED_SWAP:?}/1024" 2>&1 | bc 2>/dev/null)
+    TOTAL_SWAP_CALC=$(echo "${TOTAL_SWAP:?}/1024" 2>&1 | bc 2>/dev/null)
 
     if [[ ! -f "${LOG_DIR:?}"/node_data/system/ifconfig ]] &>/dev/null; then
       # save ifconfig values to ifconfig, do this once
@@ -1301,7 +1301,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo make install
 
     # seconds since start
-    DURATION=$(echo "$SECONDS-$START" 2>&1 | bc 2>&1)
+    DURATION=$(echo "$SECONDS-$START" 2>&1 | bc 2>/dev/null)
     # convert seconds
     TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
     echo

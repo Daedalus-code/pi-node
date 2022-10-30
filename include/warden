@@ -207,7 +207,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -o 
 
   if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2" ]] &>/dev/null; then
     # kill old screen session (max 30 seconds on average for each connection attempt)
-    if [[ "$SCREEN_CALC_P2P" -gt "$(echo "${SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+    if [[ "$SCREEN_CALC_P2P" -gt "$(echo "${SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
       screen -ls "${SESSION_NAME:?}" 2>&1 | (
         IFS=$(printf '\t' 2>&1)
         sed "s/^$IFS//" 2>&1 |
@@ -244,7 +244,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -o 
 
   if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2" ]] &>/dev/null; then
     # kill old screen session (max 30 seconds on average for each connection attempt)
-    if [[ "$EXTRA_SCREEN_CALC_P2P" -gt "$(echo "${EXTRA_SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+    if [[ "$EXTRA_SCREEN_CALC_P2P" -gt "$(echo "${EXTRA_SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
       screen -ls "${EXTRA_SESSION_NAME:?}" 2>&1 | (
         IFS=$(printf '\t' 2>&1)
         sed "s/^$IFS//" 2>&1 |
@@ -281,7 +281,7 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -o 
 
   if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1 | awk '{ print $1 }' 2>&1)" -gt "2" ]] &>/dev/null; then
     # kill old screen session (max 30 seconds on average for each connection attempt)
-    if [[ "$LOST_SCREEN_CALC_P2P" -gt "$(echo "${LOST_SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>&1 | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
+    if [[ "$LOST_SCREEN_CALC_P2P" -gt "$(echo "${LOST_SCREEN_ADD_LINE:?}/2" 2>&1 | bc 2>/dev/null | awk -F. '{ print $1 }' 2>&1)" ]] &>/dev/null; then
       screen -ls "${LOST_SESSION_NAME:?}" 2>&1 | (
         IFS=$(printf '\t' 2>&1)
         sed "s/^$IFS//" 2>&1 |

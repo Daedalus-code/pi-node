@@ -74,7 +74,7 @@ function timeline_stats() {
     # calculate seconds into age
     if [[ -f "${LOG_DIR:?}"/node_data/wallet/client/listunspent ]] &>/dev/null; then
       TIMELINE_INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-      TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     fi
     if [[ -z "$TIMELINE_CONF" ]] &>/dev/null; then
       # non responsive
@@ -90,7 +90,7 @@ function timeline_stats() {
     # calculate seconds into age
     if [[ -f "${LOG_DIR:?}"/node_data/wallet/client/listunspent ]] &>/dev/null; then
       TIMELINE_INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-      TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     fi
     if [[ -z "$TIMELINE_CONF" ]] &>/dev/null; then
       # non responsive
@@ -103,7 +103,7 @@ function timeline_stats() {
     TIMELINE_UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # average calculated
-    TIMELINE_AVG=$(echo "$TIMELINE_CONF/$TIMELINE_UNSPENT_COUNT" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_AVG=$(echo "$TIMELINE_CONF/$TIMELINE_UNSPENT_COUNT" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     if [[ -z "$TIMELINE_AVG" ]] &>/dev/null; then
       # non responsive
       TIMELINE_AVG="${GR:?}0${N0:?}"
@@ -114,7 +114,7 @@ function timeline_stats() {
     TIMELINE_INPUT_AGE=$(printf '%dh:%dm' $(("${TIMELINE_SEC:?}/3600")) $(("${TIMELINE_SEC:?}%3600/60")))
     # save the value
     echo "${TIMELINE_INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/wallet/data/avg_confirmations
-    TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     TIMELINE="Average ${TIMELINE_AVG:?} (${TIMELINE_INPUT_AGE_D:?}d) ${GR:?}$TIMELINE_INPUT_AGE${N0:?}"
 
     # wallet value
@@ -145,7 +145,7 @@ function timeline_stats() {
   elif [ "$TIMELINE_RANDOM" -eq "12" ] &>/dev/null; then
     TIMELINE_DAEMON_UPTIME="$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)"
     TIMELINE_UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)/3600")) $(("$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)%3600/60")) $(("$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)%60")))
-    TIMELINE_DAYS=$(echo "$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_DAYS=$(echo "$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     TIMELINE="Wallet (${TIMELINE_DAYS:?}d) ${GR:?}${TIMELINE_UPTIME:?}${N0:?}"
 
     # peer 2 peer
@@ -191,7 +191,7 @@ function timeline_stats() {
     awk -F. '{print $1 }' /proc/uptime >"${LOG_DIR:?}"/node_data/system/system.uptime 2>&1
     TIMELINE_SYSTEM_UPTIME="$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)"
     TIMELINE_SYS_UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)/3600")) $(("$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)%3600/60")) $(("$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)%60")))
-    TIMELINE_SYS_UPTIME_DAYS=$(echo "$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>&1)
+    TIMELINE_SYS_UPTIME_DAYS=$(echo "$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>/dev/null)
     TIMELINE_SYS_UPTIME="System (${TIMELINE_SYS_UPTIME_DAYS:?}d) ${GR:?}${TIMELINE_SYS_UPTIME:?}${N0:?}"
     TIMELINE="${TIMELINE_SYS_UPTIME:?}"
 
