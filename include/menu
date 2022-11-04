@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20223010
-# 2.6.7.6
+# V20220411
+# 2.6.7.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -308,11 +308,13 @@ Then the importprivkey can be used with this output
 
   "3")
 
+    grep -B6 -A4 "amount" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | egrep -v "safe|solvable|spendable|scriptPubKey|generated|vout|{|}" 2>&1 | tr -d ' |-' >"${LOG_DIR:?}"/node_data/wallet/data/inputs 2>&1
+
     read -r -p "[YN] Raw format (without dialog)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       clear
-      grep -B6 -A4 "amount" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | egrep -v "safe|solvable|spendable|scriptPubKey|generated|vout" 2>&1 | tr -d ' |-' 2>&1
+      cat "${LOG_DIR:?}"/node_data/wallet/data/inputs 2>/dev/null
       echo
       printf '%b' "Inputs ${G1:?}$(grep -c "amount" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1)${N0:?} Amount ${G1:?}$(grep "amount" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1) + ${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | grep "immature_balance" 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${N0:?}\n"
       echo
@@ -328,7 +330,7 @@ Then the importprivkey can be used with this output
       }
 
       # output wallet inputs - address, label and amount
-      RESULT=$(grep -B6 -A4 "amount" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | egrep -v "safe|solvable|spendable|scriptPubKey|generated|vout" 2>&1 | tr -d ' |-' 2>&1)
+      RESULT=$(cat "${LOG_DIR:?}"/node_data/wallet/data/inputs 2>/dev/null)
       display_result "Coin Control"
       clear
     fi
