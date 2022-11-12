@@ -17,5 +17,3 @@ touch /tmp/updating &>/dev/null
 clear
 # update repo
 cd /home/"${WHOAMI:?}"/pi-node || exit && git pull -q 2>/dev/null && bash /home/"${WHOAMI:?}"/pi-node/include/install 2>/dev/null
-
-# END
