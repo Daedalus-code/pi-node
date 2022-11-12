@@ -1,13 +1,16 @@
 #!/bin/bash
 
 # By Rainman
-# V20220406
-# 0.3.8.1
+# V20221211
+# 0.3.8.4
 
 # shellcheck disable=SC2154
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
+
+# system user
+WHOAMI="$(whoami)"
 
 # date for logs
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/wallet/system/date 2>/dev/null)
@@ -127,14 +130,14 @@ if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
 
   if [[ -z "$API_PRICE_CG" ]] &>/dev/null; then
     # make sure ticker exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
+    rrdtool info /home/"${WHOAMI:?}"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
     # non responsive
     API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi
 
   if [[ -z "$API_VOLUME_CG" ]] &>/dev/null; then
     # make sure volume exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
+    rrdtool info /home/"${WHOAMI:?}"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
     # non responsive
     API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi
@@ -144,14 +147,14 @@ fi
 if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   if [[ -z "$API_PRICE_CMC" ]] &>/dev/null; then
     # make sure ticker exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
+    rrdtool info /home/"${WHOAMI:?}"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
     # non responsive
     API_PRICE_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi
 
   if [[ -z "$API_VOLUME_CMC" ]] &>/dev/null; then
     # make sure volume exist, use rrdtool database, if available
-    rrdtool info /home/"$(whoami)"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
+    rrdtool info /home/"${WHOAMI:?}"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
     # non responsive
     API_VOLUME_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   fi

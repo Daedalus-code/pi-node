@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20220411
-# 2.6.7.8
+# V20221211
+# 2.6.8.1
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -12,6 +12,9 @@ export NCURSES_NO_UTF8_ACS=1
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
+
+# system user
+WHOAMI="$(whoami)"
 
 if [[ ! -s "${LOG_DIR:?}"/node_data/wallet/client/listunspent ]] &>/dev/null; then
   # non responsive
@@ -736,8 +739,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     # get latest repository and date
-    LATEST_HEAD=$(cd /home/"$(whoami)"/pi-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
-    LATEST_DATE=$(cd /home/"$(whoami)"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y')
+    LATEST_HEAD=$(cd /home/"${WHOAMI:?}"/pi-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 2>&1)
+    LATEST_DATE=$(cd /home/"${WHOAMI:?}"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y')
 
     # get wallet value
     WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
@@ -925,7 +928,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-aarch64-linux-gnu.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-aarch64-linux-gnu || exit
+        cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-aarch64-linux-gnu || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
         cd || exit
       else
@@ -946,7 +949,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-arm-linux-gnueabihf.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-arm-linux-gnueabihf || exit
+        cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-arm-linux-gnueabihf || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
         cd || exit
       else
@@ -967,7 +970,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-Linux.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Linux || exit
+        cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Linux || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
         cd || exit
       else
@@ -988,7 +991,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-aarch64.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-aarch64 || exit
+        cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-aarch64 || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
         cd || exit
       else
@@ -1009,7 +1012,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-arm.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-arm || exit
+        cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-arm || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
         cd || exit
       else
@@ -1030,7 +1033,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if [ $RESULT -eq "0" ] &>/dev/null; then
         echo "[Ok] Download success"
         unzip "${WALLET_NAME:?}"-Ubuntu16.zip
-        cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Ubuntu16 || exit
+        cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Ubuntu16 || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
         cd || exit
       else
@@ -1266,8 +1269,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     read -r -p "[YN] Remove old build? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      sudo rm -r /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
-      sudo rm -r /home/"$(whoami)"/"${LATEST_VERSION:?}".zip &>/dev/null
+      sudo rm -r /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
+      sudo rm -r /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip &>/dev/null
     fi
 
     # start counting (seconds)
@@ -1277,25 +1280,25 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo apt-get install autoconf autogen automake autotools-dev binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential cargo cmake curl g++-4.8-arm-linux-gnueabihf g++-4.8-multilib g++-arm-linux-gnueabihf gcc-4.8-arm-linux-gnueabihf gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3 -y 2>/dev/null
     clear
 
-    if [[ ! -f /home/"$(whoami)"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
+    if [[ ! -f /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
       echo "Downloading source"
       cd || exit && sudo wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
     fi
 
-    if [[ ! -f "/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
+    if [[ ! -f "/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
       echo "Unzip source.zip"
       sudo unzip "${LATEST_VERSION:?}".zip
     fi
 
-    cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
+    cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
     sudo make -j"${CPU_CORES:?}" HOST=arm-linux-gnueabihf
 
     cd ..
 
     sudo make install
-    cd /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
+    cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" || exit
 
-    BUILD="/home/$(whoami)/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
+    BUILD="/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
 
     sudo ./autogen.sh
     sudo ./configure --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
@@ -1310,15 +1313,15 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     printf '%b' "Build time: ${G1:?}$TIMER${N0:?}\n"
 
     # move build into home
-    sudo cp /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoind /home/"$(whoami)" &>/dev/null
-    sudo cp /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin-cli /home/"$(whoami)" &>/dev/null
+    sudo cp /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoind /home/"${WHOAMI:?}" &>/dev/null
+    sudo cp /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin-cli /home/"${WHOAMI:?}" &>/dev/null
 
     echo
-    ls -lSah /home/"$(whoami)"/freedomcoin* | awk '{ print $NF }' 2>/dev/null
+    ls -lSah /home/"${WHOAMI:?}"/freedomcoin* | awk '{ print $NF }' 2>/dev/null
     echo
 
     # set user ownership
-    sudo chown "$(whoami)":"$(whoami)" /home/"$(whoami)"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin* &>/dev/null
+    sudo chown "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin* &>/dev/null
 
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -1393,7 +1396,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
     read -r -p "[YN] Save result? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      cat /tmp/speedtest* >/home/"$(whoami)"/speedtest_result
+      cat /tmp/speedtest* >/home/"${WHOAMI:?}"/speedtest_result
       rm /tmp/speedtest* &>/dev/null
       read -r -p "[Ok] Saved! (speedtest_result) Press Enter to continue" </dev/tty
       echo
@@ -1935,7 +1938,7 @@ Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ 
       read -r -p "[YN] Remove graph databases? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        rm -r /home/"$(whoami)"/stats/* &>/dev/null
+        rm -r /home/"${WHOAMI:?}"/stats/* &>/dev/null
         echo
         read -r -p "[Ok] rrdtool graphs removed! Press Enter to continue" </dev/tty
         echo
@@ -2056,7 +2059,7 @@ maxconnections=${MAX_P2P:?}" >"${DATA_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
         echo "Reset pinode.conf!"
-        cp /home/"$(whoami)"/pi-node/pinode.conf /home/"$(whoami)"/ &>/dev/null
+        cp /home/"${WHOAMI:?}"/pi-node/pinode.conf /home/"${WHOAMI:?}"/ &>/dev/null
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
@@ -2071,7 +2074,7 @@ maxconnections=${MAX_P2P:?}" >"${DATA_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
         echo "Creating backup! (/boot/config.txt)"
-        cp /boot/config.txt /home/"$(whoami)"/ &>/dev/null
+        cp /boot/config.txt /home/"${WHOAMI:?}"/ &>/dev/null
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
@@ -2102,7 +2105,7 @@ maxconnections=${MAX_P2P:?}" >"${DATA_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
 
         # tor group, user configuration
         TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>/dev/null)
-        sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>/dev/null
+        sudo usermod -a -G "${TORGROUP:?}" "${WHOAMI:?}" 2>/dev/null
 
         # if data missing, add values
         if ! grep "${WALLET_NAME:?}" /etc/tor/torrc &>/dev/null; then
@@ -2154,12 +2157,12 @@ ${HIDDEN_SERVICE:?}
       }
 
       RESULT=$(
-        printf '%b' "OLD=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) - Personal addnodes\n"
-        printf '%b' "FILE=$(ls -lh /home/"$(whoami)"/addnodes 2>&1)\n"
-        truncate -s 0 /home/"$(whoami)"/addnodes &>/dev/null
+        printf '%b' "OLD=$(wc -l /home/"${WHOAMI:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) - Personal addnodes\n"
+        printf '%b' "FILE=$(ls -lh /home/"${WHOAMI:?}"/addnodes 2>&1)\n"
+        truncate -s 0 /home/"${WHOAMI:?}"/addnodes &>/dev/null
         echo
-        printf '%b' "NEW=$(wc -l /home/"$(whoami)"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)\n"
-        printf '%b' "FILE=$(ls -lh /home/"$(whoami)"/addnodes 2>&1)\n"
+        printf '%b' "NEW=$(wc -l /home/"${WHOAMI:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)\n"
+        printf '%b' "FILE=$(ls -lh /home/"${WHOAMI:?}"/addnodes 2>&1)\n"
         echo
         printf '%b' "OLD=$(wc -l "${DATA_DIR:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1) - Wallet addnodes (backup)\n"
         printf '%b' "FILE=$(ls -lh "${DATA_DIR:?}"/addnodes 2>&1)\n"
@@ -2311,16 +2314,16 @@ ${HIDDEN_SERVICE:?}
 
       # zip backups directory, masternode data
       printf '%b' "[${G1:?}Ok${N0:?}] Zipping backup, please wait.\n"
-      zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/backups/* 2>/dev/null
+      zip -r /home/"${WHOAMI:?}"/backup.zip "${DATA_DIR:?}"/backups/* 2>/dev/null
       if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status 2>/dev/null)" ]] &>/dev/null; then
         printf '%b' "[${G1:?}Ok${N0:?}] Zipping masternode data, please wait.\n"
-        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_key 2>/dev/null
-        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_status 2>/dev/null
-        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_address 2>/dev/null
-        zip -r /home/"$(whoami)"/backup.zip "${DATA_DIR:?}"/masternode_outputs 2>/dev/null
+        zip -r /home/"${WHOAMI:?}"/backup.zip "${DATA_DIR:?}"/masternode_key 2>/dev/null
+        zip -r /home/"${WHOAMI:?}"/backup.zip "${DATA_DIR:?}"/masternode_status 2>/dev/null
+        zip -r /home/"${WHOAMI:?}"/backup.zip "${DATA_DIR:?}"/masternode_address 2>/dev/null
+        zip -r /home/"${WHOAMI:?}"/backup.zip "${DATA_DIR:?}"/masternode_outputs 2>/dev/null
       fi
 
-      printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh /home/"$(whoami)"/backup.zip 2>/dev/null)\n"
+      printf '%b' "[${G1:?}Ok${N0:?}] $(ls -lSh /home/"${WHOAMI:?}"/backup.zip 2>/dev/null)\n"
       echo
       read -r -p "[Ok] Backups is done! Press Enter to continue" </dev/tty
       echo

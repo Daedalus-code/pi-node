@@ -1,15 +1,18 @@
 #!/bin/bash
 
 # By Rainman
-# V20221710
-# 0.3.0.4
+# V20221211
+# 0.3.0.7
+
+# system user
+WHOAMI="$(whoami)"
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null
 sudo mkdir /usr/local/bin/include/pinode &>/dev/null
 
 if [[ ! -f /usr/local/bin/include/pinode/pinode.conf ]] &>/dev/null; then
-  cp /home/"$(whoami)"/pi-node/pinode.conf /tmp/pinode.conf.tmp &>/dev/null
+  cp /home/"${WHOAMI:?}"/pi-node/pinode.conf /tmp/pinode.conf.tmp &>/dev/null
   sudo mv /tmp/pinode.conf.tmp /usr/local/bin/include/pinode/pinode.conf &>/dev/null
 fi
 source /usr/local/bin/include/pinode/pinode.conf 2>/dev/null
@@ -25,7 +28,7 @@ mkdir "${LOG_DIR:?}"/node_data/wallet/client &>/dev/null
 mkdir "${LOG_DIR:?}"/node_data/wallet/client/tmp &>/dev/null
 
 if [[ ! -f /usr/local/bin/include/pinode/color ]] &>/dev/null; then
-  cp /home/"$(whoami)"/pi-node/include/color /tmp/color.tmp &>/dev/null
+  cp /home/"${WHOAMI:?}"/pi-node/include/color /tmp/color.tmp &>/dev/null
   sudo mv /tmp/color.tmp /usr/local/bin/include/pinode/color &>/dev/null
 fi
 source /usr/local/bin/include/pinode/color 2>/dev/null
@@ -130,8 +133,8 @@ if uname -a 2>&1 | grep "Microsoft" &>/dev/null; then
   exit
 fi
 
-cd /home/"$(whoami)"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S' >"${LOG_DIR:?}"/node_data/repo 2>&1
-cd /home/"$(whoami)"/pi-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 >>"${LOG_DIR:?}"/node_data/repo 2>&1
+cd /home/"${WHOAMI:?}"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S' >"${LOG_DIR:?}"/node_data/repo 2>&1
+cd /home/"${WHOAMI:?}"/pi-node || exit && git rev-parse --short HEAD 2>&1 | grep -Eo '[a0-z9]{7}' 2>&1 | head -1 >>"${LOG_DIR:?}"/node_data/repo 2>&1
 
 # updating repository
 if [[ -f /tmp/updating ]] &>/dev/null; then
@@ -233,7 +236,7 @@ if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   sudo apt-get install tor -y
   # tor group, user configuration
   TORGROUP=$(stat -c '%G' /run/tor/control.authcookie 2>/dev/null)
-  sudo usermod -a -G "${TORGROUP:?}" "$(whoami)" 2>/dev/null
+  sudo usermod -a -G "${TORGROUP:?}" "${WHOAMI:?}" 2>/dev/null
   # check torrc configuration for service
   if ! grep "${WALLET_NAME:?}-service" /etc/tor/torrc &>/dev/null; then
     echo "RunAsDaemon 1
@@ -254,11 +257,11 @@ HiddenServicePort ${PORT:?} 127.0.0.1:${PORT:?}
   fi
 fi
 
-sudo cp -R /home/"$(whoami)"/pi-node/include/* /usr/local/bin/include/pinode &>/dev/null
-sudo cp -R /home/"$(whoami)"/pi-node/pinode /usr/local/bin/ &>/dev/null
-sudo cp -R /home/"$(whoami)"/pi-node/include/update /usr/local/bin/ &>/dev/null
-sudo cp -R /home/"$(whoami)"/pi-node/include/helpme /usr/local/bin/ &>/dev/null
-sudo cp -R /home/"$(whoami)"/pi-node/include/menu /usr/local/bin/ &>/dev/null
+sudo cp -R /home/"${WHOAMI:?}"/pi-node/include/* /usr/local/bin/include/pinode &>/dev/null
+sudo cp -R /home/"${WHOAMI:?}"/pi-node/pinode /usr/local/bin/ &>/dev/null
+sudo cp -R /home/"${WHOAMI:?}"/pi-node/include/update /usr/local/bin/ &>/dev/null
+sudo cp -R /home/"${WHOAMI:?}"/pi-node/include/helpme /usr/local/bin/ &>/dev/null
+sudo cp -R /home/"${WHOAMI:?}"/pi-node/include/menu /usr/local/bin/ &>/dev/null
 echo "# wait on node (daemon) to start
 until pidof ${WALLET_DAEMON:?} 2>&1 | wc -w 2>&1 | egrep 1 &>/dev/null; do
   clear
@@ -270,8 +273,8 @@ sudo mv /tmp/log.tmp /usr/local/bin/log &>/dev/null
 
 sudo chmod +x /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/helpme /usr/local/bin/menu /usr/local/bin/log 2>&1
 
-sudo chown -R "$(whoami)":"$(whoami)" /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/pinode 2>&1
-sudo chown -R "$(whoami)":"$(whoami)" "${LOG_DIR:?}"/node_data 2>&1
+sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /usr/local/bin/pinode /usr/local/bin/update /usr/local/bin/include /usr/local/bin/include/pinode 2>&1
+sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" "${LOG_DIR:?}"/node_data 2>&1
 
 LATEST_DATE=$(head -1 "${LOG_DIR:?}"/node_data/repo 2>&1)
 LATEST_HEAD=$(tail -1 "${LOG_DIR:?}"/node_data/repo 2>&1)
