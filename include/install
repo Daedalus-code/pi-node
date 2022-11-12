@@ -5,7 +5,7 @@
 # 0.3.0.7
 
 # system user
-WHOAMI="$(whoami)"
+WHOAMI=$(whoami)
 
 # create script directories
 sudo mkdir /usr/local/bin/include &>/dev/null

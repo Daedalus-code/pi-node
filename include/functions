@@ -13,7 +13,7 @@ source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
 
 # system user
-WHOAMI="$(whoami)"
+WHOAMI=$(whoami)
 
 ### display ####################################################################
 
