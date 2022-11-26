@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221211
-# 0.5.1.9
+# V20222611
+# 0.5.2.3
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 
@@ -11,8 +11,7 @@ WHOAMI=$(whoami)
 
 ### auto graphs w time #########################################################
 
-if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; then
-
+if [[ "$GRAPH_TIME" -eq "0" ]] &>/dev/null; then
   # uptime in hours
   echo "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/3600" 2>&1 | bc >"${LOG_DIR:?}"/node_data/wallet/uptime.hours 2>&1
   ROUND_UP=$(cat "${LOG_DIR:?}"/node_data/wallet/uptime.hours 2>/dev/null)
@@ -22,6 +21,11 @@ if [[ $(echo "$GRAPH_TIME" 2>&1 | egrep "A|Auto|a|auto|0" 2>&1) ]] &>/dev/null; 
   else
     GRAPH_TIME="${ROUND_UP:?}h"
   fi
+else
+  GRAPH_TIME="${GRAPH_TIME:?}"
+fi
+if [[ -z "$GRAPH_TIME" ]] &>/dev/null; then
+  GRAPH_TIME="24h"
 fi
 
 ### create graphs ##############################################################
