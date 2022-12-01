@@ -13,7 +13,7 @@ source /usr/local/bin/include/pinode/color 2>&1
 
 function timeline_stats() {
   # random start number
-  TIMELINE_RANDOM=$((((RANDOM % 19) + 1)))
+  TIMELINE_RANDOM=$((((RANDOM % 20) + 1)))
 
   if [[ -z "$TIMELINE_RANDOM" ]] &>/dev/null; then
     # non responsive, go with difficulty
@@ -57,24 +57,24 @@ function timeline_stats() {
   # unconfirmed_balance
   elif [ "$TIMELINE_RANDOM" -eq "4" ] &>/dev/null; then
     TIMELINE_WALLET_UNCONFIRMED=$(grep "unconfirmed_balance" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE_WALLET_UNCONFIRMED_VALUE=$(echo "$TIMELINE_WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+    TIMELINE_WALLET_UNCONFIRMED_VALUE=$(echo "$TIMELINE_WALLET_UNCONFIRMED*$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1)" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     TIMELINE="Unconfirmed $TIMELINE_WALLET_UNCONFIRMED ${GR:?}$TIMELINE_WALLET_UNCONFIRMED_VALUE USD${N0:?}"
 
   # immature_balance
   elif [ "$TIMELINE_RANDOM" -eq "5" ] &>/dev/null; then
     TIMELINE_WALLET_IMMATURE=$(grep "immature_balance" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-    TIMELINE_WALLET_IMMATURE_VALUE=$(echo "$TIMELINE_WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+    TIMELINE_WALLET_IMMATURE_VALUE=$(echo "$TIMELINE_WALLET_IMMATURE*$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1)" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     TIMELINE="Immature $TIMELINE_WALLET_IMMATURE ${GR:?}$TIMELINE_WALLET_IMMATURE_VALUE USD${N0:?}"
 
     # lowest confirmation
   elif [ "$TIMELINE_RANDOM" -eq "6" ] &>/dev/null; then
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds into age
     if [[ -f "${LOG_DIR:?}"/node_data/wallet/client/listunspent ]] &>/dev/null; then
       TIMELINE_INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-      TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     fi
     if [[ -z "$TIMELINE_CONF" ]] &>/dev/null; then
       # non responsive
@@ -86,11 +86,11 @@ function timeline_stats() {
   elif [ "$TIMELINE_RANDOM" -eq "7" ] &>/dev/null; then
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_SEC=$(echo "$TIMELINE_CONF*60" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds into age
     if [[ -f "${LOG_DIR:?}"/node_data/wallet/client/listunspent ]] &>/dev/null; then
       TIMELINE_INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
-      TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+      TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     fi
     if [[ -z "$TIMELINE_CONF" ]] &>/dev/null; then
       # non responsive
@@ -103,23 +103,23 @@ function timeline_stats() {
     TIMELINE_UNSPENT_COUNT=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # average calculated
-    TIMELINE_AVG=$(echo "$TIMELINE_CONF/$TIMELINE_UNSPENT_COUNT" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_AVG=$(echo "$TIMELINE_CONF/$TIMELINE_UNSPENT_COUNT" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     if [[ -z "$TIMELINE_AVG" ]] &>/dev/null; then
       # non responsive
       TIMELINE_AVG="${GR:?}0${N0:?}"
     fi
     # calculate seconds
-    TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds into age
     TIMELINE_INPUT_AGE=$(printf '%dh:%dm' $(("${TIMELINE_SEC:?}/3600")) $(("${TIMELINE_SEC:?}%3600/60")))
     # save the value
     echo "${TIMELINE_INPUT_AGE:?}" >"${LOG_DIR:?}"/node_data/wallet/data/avg_confirmations
-    TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     TIMELINE="Average ${TIMELINE_AVG:?} (${TIMELINE_INPUT_AGE_D:?}d) ${GR:?}$TIMELINE_INPUT_AGE${N0:?}"
 
     # wallet value
   elif [ "$TIMELINE_RANDOM" -eq "9" ] &>/dev/null; then
-    TIMELINE_WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+    TIMELINE_WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev/null)" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     TIMELINE_WALLET_TICKER=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price 2>/dev/null | tail -1 2>&1 | awk '{ printf "%.4f\n", $1 }' 2>&1)
     TIMELINE="Value ${TIMELINE_WALLET_VALUE:?} USD ${GR:?}${TIMELINE_WALLET_TICKER:?}${N0:?}"
 
@@ -145,7 +145,7 @@ function timeline_stats() {
   elif [ "$TIMELINE_RANDOM" -eq "12" ] &>/dev/null; then
     TIMELINE_DAEMON_UPTIME="$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)"
     TIMELINE_UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)/3600")) $(("$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)%3600/60")) $(("$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)%60")))
-    TIMELINE_DAYS=$(echo "$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_DAYS=$(echo "$(echo "${TIMELINE_DAEMON_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     TIMELINE="Wallet (${TIMELINE_DAYS:?}d) ${GR:?}${TIMELINE_UPTIME:?}${N0:?}"
 
     # peer 2 peer
@@ -191,7 +191,7 @@ function timeline_stats() {
     awk -F. '{print $1 }' /proc/uptime >"${LOG_DIR:?}"/node_data/system/system.uptime 2>&1
     TIMELINE_SYSTEM_UPTIME="$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)"
     TIMELINE_SYS_UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)/3600")) $(("$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)%3600/60")) $(("$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)%60")))
-    TIMELINE_SYS_UPTIME_DAYS=$(echo "$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>&1)
+    TIMELINE_SYS_UPTIME_DAYS=$(echo "$(echo "${TIMELINE_SYSTEM_UPTIME:?}" 2>&1)/86400" 2>&1 | bc 2>/dev/null)
     TIMELINE_SYS_UPTIME="System (${TIMELINE_SYS_UPTIME_DAYS:?}d) ${GR:?}${TIMELINE_SYS_UPTIME:?}${N0:?}"
     TIMELINE="${TIMELINE_SYS_UPTIME:?}"
 
@@ -209,6 +209,12 @@ function timeline_stats() {
   # uname - print system information
   elif [ "$TIMELINE_RANDOM" -eq "19" ] &>/dev/null; then
     TIMELINE="$(uname -a 2>&1 | awk '{ print $1,$2,$3 }' 2>&1)"
+
+    # proof-of-stake percentage
+  elif [ "$TIMELINE_RANDOM" -eq "20" ] &>/dev/null; then
+    TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE_INPUTS=$(grep -c "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    TIMELINE="PoS $(echo "$(echo "100/$WALLET_ACTIVE*$TIMELINE_CONF" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')/$TIMELINE_INPUTS" | bc -l | awk '{ printf "%.2f\n", $1 }' 2>&1)%"
   fi
 }
 
