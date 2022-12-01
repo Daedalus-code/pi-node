@@ -110,7 +110,7 @@ rrdtool graph /var/www/html/peers_graph.png \
 
 # blockchain activity
 rrdtool graph /var/www/html/blockchain_activity.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 162 -a PNG \
   --slope-mode \
   --vertical-label "Activity" \
   --alt-autoscale-max --lower-limit=1 \
