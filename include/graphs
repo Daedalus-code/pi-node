@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222611
+# V20220112
 # 0.5.2.3
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
@@ -32,7 +32,7 @@ fi
 
 # loadavg 1,5,15m
 rrdtool graph /var/www/html/load_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "System Load" \
   --color BACK#565875 \
@@ -55,7 +55,7 @@ rrdtool graph /var/www/html/load_graph.png \
 
 # inputs
 rrdtool graph /var/www/html/inputs_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Wallet Inputs" \
   --alt-autoscale-max --lower-limit=1 \
@@ -75,7 +75,7 @@ rrdtool graph /var/www/html/inputs_graph.png \
 
 # peers
 rrdtool graph /var/www/html/peers_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Peers (P2P)" \
   --alt-autoscale-max --lower-limit=1 \
@@ -110,7 +110,7 @@ rrdtool graph /var/www/html/peers_graph.png \
 
 # blockchain activity
 rrdtool graph /var/www/html/blockchain_activity.png \
-  -w 1394 -h 100 -a PNG \
+  -w 400 -h 100 -a PNG \
   --slope-mode \
   --vertical-label "Activity" \
   --alt-autoscale-max --lower-limit=1 \
@@ -131,7 +131,7 @@ rrdtool graph /var/www/html/blockchain_activity.png \
 
 # masternodes
 rrdtool graph /var/www/html/masternode_count_graph.png \
-  -w 1394 -h 100 -a PNG \
+  -w 400 -h 100 -a PNG \
   --slope-mode \
   --vertical-label "Masternodes" \
   --alt-autoscale-max --lower-limit=1 \
@@ -158,7 +158,7 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
 
 # masternode pay
 rrdtool graph /var/www/html/masternode_pay_graph.png \
-  -w 1394 -h 100 -a PNG \
+  -w 400 -h 100 -a PNG \
   --slope-mode \
   --vertical-label "Masternode Earnings" \
   --alt-autoscale-max --lower-limit=1 \
@@ -197,7 +197,7 @@ fi
 if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
   # stakes & rewards
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
-    -w 400 -h 160 -a PNG \
+    -w 400 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Stakes & Rewards" \
     --alt-autoscale-max --lower-limit=1 \
@@ -218,7 +218,7 @@ if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/d
     LINE2:stakes#FFDC77:"Stakes"
 else
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
-    -w 400 -h 160 -a PNG \
+    -w 400 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Stakes" \
     --alt-autoscale-max --lower-limit=1 \
@@ -238,7 +238,7 @@ fi
 
 # balance
 rrdtool graph /var/www/html/balance_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Wallet Balance" \
   --alt-autoscale-max --lower-limit=1 \
@@ -259,7 +259,7 @@ rrdtool graph /var/www/html/balance_graph.png \
 
 # rank
 rrdtool graph /var/www/html/rank_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "CoinMarketCap Rank" \
   --alt-autoscale-max --lower-limit=1 \
@@ -345,7 +345,7 @@ rrdtool graph /var/www/html/market_volume_graph.png \
 
 # network
 rrdtool graph /var/www/html/network_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Network" \
   --color BACK#565875 \
@@ -365,7 +365,7 @@ rrdtool graph /var/www/html/network_graph.png \
 
 # total hdd, used
 rrdtool graph /var/www/html/hdd_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "System Drive" \
   --alt-autoscale-max --lower-limit=1 \
@@ -386,7 +386,7 @@ rrdtool graph /var/www/html/hdd_graph.png \
 
 # memory
 rrdtool graph /var/www/html/memory_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Memory (MB)" \
   --color BACK#565875 \
@@ -406,7 +406,7 @@ rrdtool graph /var/www/html/memory_graph.png \
 
 # cpu temperature
 rrdtool graph /var/www/html/temp_graph.png \
-  -w 400 -h 160 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "CPU Temp (°C)" \
   --color BACK#565875 \
@@ -429,7 +429,7 @@ if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
 
   # difficulty + auto pos
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 400 -h 160 -a PNG \
+    -w 400 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty+APC" \
     --alt-autoscale-max --lower-limit=1 \
@@ -453,7 +453,7 @@ if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
 
   # total avg confirmations + auto pos
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 160 -a PNG \
+    -w 400 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
@@ -479,7 +479,7 @@ else
 
   # difficulty normal
   rrdtool graph /var/www/html/difficulty_graph.png \
-    -w 400 -h 160 -a PNG \
+    -w 400 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Network Difficulty" \
     --alt-autoscale-max --lower-limit=1 \
@@ -500,7 +500,7 @@ else
 
   # total avg confirmations normal
   rrdtool graph /var/www/html/total_tx_graph.png \
-    -w 400 -h 160 -a PNG \
+    -w 400 -h 150 -a PNG \
     --slope-mode \
     --vertical-label "Wallet Total AVG TX" \
     --alt-autoscale-max --lower-limit=1 \
