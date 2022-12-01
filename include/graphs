@@ -110,7 +110,7 @@ rrdtool graph /var/www/html/peers_graph.png \
 
 # blockchain activity
 rrdtool graph /var/www/html/blockchain_activity.png \
-  -w 400 -h 100 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Activity" \
   --alt-autoscale-max --lower-limit=1 \
@@ -131,7 +131,7 @@ rrdtool graph /var/www/html/blockchain_activity.png \
 
 # masternodes
 rrdtool graph /var/www/html/masternode_count_graph.png \
-  -w 400 -h 100 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Masternodes" \
   --alt-autoscale-max --lower-limit=1 \
@@ -158,7 +158,7 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
 
 # masternode pay
 rrdtool graph /var/www/html/masternode_pay_graph.png \
-  -w 400 -h 100 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Masternode Earnings" \
   --alt-autoscale-max --lower-limit=1 \
