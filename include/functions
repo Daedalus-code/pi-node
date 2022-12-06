@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20220612
-# 1.5.9.3
+# 1.5.9.1
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.9.3"
+VERSION="v1.5.9.1"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -228,7 +228,7 @@ if ! cat "${LOG_DIR:?}"/node_data/wallet/data/screens 2>/dev/null | grep -q "rea
     cat >"${LOG_DIR:?}"/read_mempool <<'EOF'
 #!/bin/bash
 # By Rainman
-# V20221406
+# V20220612
 # 0.0.3.0
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
@@ -239,11 +239,11 @@ LOG_DATE=$(LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' 2>&1)
 
 if [[ "$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo 2>&1 | awk '{ print $2 }' 2>&1)" -gt "0" ]] &>/dev/null; then
   if [[ ! "$(tail -6 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Read.mempool()" 2>&1)" ]] &>/dev/null; then
-    printf '%b' "${LOG_DATE:?} Status() Read.mempool() Memory pool ${G0:?}$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1) ${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | tail -1 2>&1) ${N0:?}$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo 2>&1 | awk '{ print $2 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Read.mempool() Memory pool ${G0:?}$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>/dev/null | awk '{ print $1 }' 2>&1) ${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | tail -1 2>&1) ${N0:?}$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo 2>&1 | awk '{ print $2 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 else
   if [[ ! "$(tail -15 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "Read.mempool()" 2>&1)" ]] &>/dev/null; then
-    printf '%b' "${LOG_DATE:?} Status() Read.mempool() Memory pool ${G0:?}$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{ print $1 }' 2>&1) ${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | tail -1 2>&1) ${N0:?}$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo 2>&1 | awk '{ print $2 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+    printf '%b' "${LOG_DATE:?} Status() Read.mempool() Memory pool ${G0:?}$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>/dev/null | awk '{ print $1 }' 2>&1) ${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>/dev/null | tail -1 2>&1) ${N0:?}$(grep "size" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getmempoolinfo 2>&1 | awk '{ print $2 }' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 fi
 
