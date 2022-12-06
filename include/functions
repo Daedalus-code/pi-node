@@ -570,9 +570,9 @@ fi
 
 ### wallet balance, value ######################################################
 
-WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-WALLET_UNCONFIRMED=$(grep "unconfirmed_balance" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-WALLET_IMMATURE=$(grep "immature_balance" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+WALLET_BALANCE=$(grep "balance" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>&1 | egrep -o "[0-9]+.[0-9]+" 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
+WALLET_UNCONFIRMED=$(grep "unconfirmed_balance" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
+WALLET_IMMATURE=$(grep "immature_balance" "${LOG_DIR:?}"/node_data/wallet/client/getwalletinfo 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
 
 if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
   WALLET_BALANCE="0"
@@ -1554,8 +1554,6 @@ if [[ "$HIDE_BALANCE" -eq "1" ]] &>/dev/null; then
     WALLET_INPUTS_NODES="I/MN ${GR:?}$(tr -dc '1-9' </dev/urandom 2>&1 | head -c "${RANDOM_INPUTS_NODES:?}" 2>&1 | rev 2>&1) $(tr -dc '1-9' </dev/urandom 2>&1 | head -c 1 2>&1 | rev 2>&1)${N0:?}"
   fi
 fi
-
-WALLET_BALANCES_DASH="$(echo "$WALLET_BALANCES" | awk '{ printf "%.2f\n", $1 }')"
 
 ### display wan, onion and tor address #########################################
 

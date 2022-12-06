@@ -27,7 +27,7 @@ ${CB:?}      ###.    ,###     ${N0:?} ${SYSTEM_USER:?}@${IP_ADDRESS:?} ${G0:?}â‡
 ${CB:?}      ###########      ${N0:?} ${WALLET_DAEMON:?} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
 ${CB:?}      ###       ###    ${N0:?} WAN ${PUBLIC_IP:?} Peers ${WALLET_PEERS_TOTAL:?} ${WALLET_PEERS_LATEST:?} ${WALLET_PEERS_OTHER:?}
 ${CB:?}      ###.     ,###    ${N0:?}
-${CB:?}    ##############     ${N0:?} Balance ${WALLET_BALANCES_DASH:?} ${WALLET_POS_REWARDS:?} ${WALLET_INPUTS_NODES:?}
+${CB:?}    ##############     ${N0:?} Balance ${WALLET_BALANCES:?} ${WALLET_POS_REWARDS:?} ${WALLET_INPUTS_NODES:?}
 ${CB:?}        ##   ##        ${N0:?} TxCount ${WALLET_TXCOUNT:?} Mempool ${WALLET_MEMPOOL:?} Block ${WALLET_HEADS:?}
 ${CB:?}        ##   ##        ${N0:?} ${TIMELINE:?}
 
