@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20221211
+# V20220612
 # 1.5.8.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -105,7 +105,7 @@ fi
 ### system information #########################################################
 
 # time - date, trim extra spaces with xargs
-LC_ALL=de_US.utf8 date '+%H:%M:%S' >"${LOG_DIR:?}"/node_data/system/clock 2>&1
+LC_ALL=de_US.utf8 date '+%D %H:%M:%S' >"${LOG_DIR:?}"/node_data/system/clock 2>&1
 
 # system user
 whoami 2>&1 | awk '{ print $1 }' >"${LOG_DIR:?}"/node_data/system/user 2>&1
