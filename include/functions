@@ -588,7 +588,7 @@ if [[ -z "$WALLET_BALANCES" ]] &>/dev/null; then
 fi
 
 # total wallet balance combining unconfirmed_balance, immature_balance and wallet_balance
-WALLET_BALANCES=$(echo "${WALLET_BALANCE:?}+${WALLET_UNCONFIRMED:?}+${WALLET_IMMATURE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+WALLET_BALANCES=$(echo "${WALLET_BALANCE:?}+${WALLET_UNCONFIRMED:?}+${WALLET_IMMATURE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
 echo "${WALLET_BALANCES:?}" >"${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>&1
 
 WALLET_POS=$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/staking 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
