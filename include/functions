@@ -673,7 +673,7 @@ QUOTE_RANDOM=$((((RANDOM % 3) + 1)))
 if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
 
   if [[ ! "$(grep -c "Cloudflare" "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null)" -gt "0" ]] &>/dev/null; then
-    if [[ "$(egrep -c "[Aa-Zz]+" "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null)" -gt "0" ]] &>/dev/null; then
+    if [[ "$(egrep -c "[a-z]+" "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null)" -gt "0" ]] &>/dev/null; then
       RQ_QUOTE="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | grep -A10 "logo" | egrep -v "logo|authors" | tr -d '"' | xargs)"
       RQ_AUTHOR="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | egrep -o "authors/[Aa-Zz]+-[Aa-Zz]+" | egrep -o "/[Aa-Zz]+-[Aa-Zz]+" | tr -d '/')"
 
