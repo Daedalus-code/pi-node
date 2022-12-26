@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20222612
-# 0.2.7.6
+# 0.2.7.3
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -221,7 +221,7 @@ function timeline_stats() {
 function timeline_quotes() {
   # wait on wallet w random quotes
   # random start number
-  RANDOM_QUOTES=$((((RANDOM % 11) + 1)))
+  RANDOM_QUOTES=$((((RANDOM % 10) + 1)))
   # quotes - art of the deal
   if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
     TIMELINE="${GR}Think big${N0:?}"
@@ -243,13 +243,10 @@ function timeline_quotes() {
     TIMELINE="${GR}Contain the costs${N0:?}"
   elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
     TIMELINE="${GR}Have fun${N0:?}"
-  elif [ "$RANDOM_QUOTES" -eq "11" ] &>/dev/null; then
-    torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
-    TIMELINE="${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | grep -A10 "logo" | egrep -v "logo|authors" | tr -d '"')${N0:?}"
-  fi
 
-  if [[ -z "$TIMELINE" ]] &>/dev/null; then
-    TIMELINE="${GR:?}Always something.${N0:?}"
+    if [[ -z "$TIMELINE" ]] &>/dev/null; then
+      TIMELINE="${GR:?}Always something.${N0:?}"
+    fi
   fi
 }
 

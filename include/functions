@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20220612
-# 1.5.9.1
+# V20222612
+# 1.6.1.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.5.9.1"
+VERSION="v1.6.1.0"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -665,8 +665,27 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
   WALLET_TXLAST=$(cat "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>/dev/null | tr -d ':' 2>&1 | grep -B8 "confirmations ${LAST_TX:?}" 2>&1 | grep "txid" 2>&1 | awk '{ print $2 }' 2>&1 | tail -1 2>&1)
 fi
 
-LAST_LOG=$(grep -v "Status()" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | tail -n 1 2>&1)
-LOG_SIZE=$(ls -lS --block-size=M "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | tr -d 'M' 2>&1)
+# random start number
+LAST_LOG_RANDOM=$((((RANDOM % 2) + 1)))
+
+if [[ "$LAST_LOG_RANDOM" -eq "1" ]] &>/dev/null; then
+  LAST_LOG=$(grep -v "Status()" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | tail -n 1 2>&1)
+  LOG_SIZE=$(ls -lS --block-size=M "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | tr -d 'M' 2>&1)
+else
+  LAST_LOG_Q_RANDOM=$((((RANDOM % 2) + 1)))
+  if [[ "$LAST_LOG_Q_RANDOM" -eq "1" ]] &>/dev/null; then
+    torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+  else
+    if [[ -f "${LOG_DIR:?}"/node_data/wallet/data/rq.list ]]; then
+      sort -R "${LOG_DIR:?}"/node_data/wallet/data/rq.list | head -1 >"${LOG_DIR:?}"/node_data/wallet/data/rq
+    else
+      torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+    fi
+  fi
+  LAST_LOG="${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | grep -A10 "logo" | egrep -v "logo|authors" | tr -d '"')${N0:?}"
+  echo "$LAST_LOG" >>"${LOG_DIR:?}"/node_data/wallet/data/rq.list
+fi
+
 LAST_LOG="${N0:?}${LAST_LOG:0:188} log=${LOG_SIZE:?}M${N0:?}"
 
 ### wallet boot/sync progress ##################################################
