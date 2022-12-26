@@ -691,7 +691,7 @@ function last_log_rq() {
   LAST_LOG="${N0:?}${LAST_LOG:0:188}${N0:?}"
 }
 
-if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "0" ]] &>/dev/null; then
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "1" ]] &>/dev/null; then
   last_log_rq
 else
   last_log
