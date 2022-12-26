@@ -668,7 +668,7 @@ fi
 ### wallet last log ############################################################
 
 # random start number
-QUOTE_RANDOM=$((((RANDOM % 2) + 1)))
+QUOTE_RANDOM=$((((RANDOM % 3) + 1)))
 
 if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
   echo "$(torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
@@ -694,7 +694,7 @@ function last_log() {
 
 function last_log_rq() {
   LAST_LOG="$(sort -R "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | head -1)"
-  LAST_LOG="${N0:?}${LAST_LOG:0:188}${N0:?}"
+  LAST_LOG="${N0:?}${LAST_LOG:0:196}${N0:?}"
 }
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "1" ]] &>/dev/null; then
