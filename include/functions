@@ -674,7 +674,7 @@ if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
   echo "$(torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
 
   RQ_QUOTE="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | grep -A10 "logo" | egrep -v "logo|authors" | tr -d '"' | sed 's/ //g' | xargs)"
-  RQ_AUTHOR="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq | egrep -o "authors/[Aa-Zz]+-[Aa-Zz]+" | egrep -o "/[Aa-Zz]+-[Aa-Zz]+" | tr -d '/')"
+  RQ_AUTHOR="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | egrep -o "authors/[Aa-Zz]+-[Aa-Zz]+" | egrep -o "/[Aa-Zz]+-[Aa-Zz]+" | tr -d '/')"
 
   echo "$RQ_QUOTE --${RQ_AUTHOR:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/rq.list
   echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | sed '/^.\{,13\}$/d')" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list
