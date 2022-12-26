@@ -671,6 +671,7 @@ LAST_LOG_RANDOM=$((((RANDOM % 2) + 1)))
 if [[ "$LAST_LOG_RANDOM" -eq "1" ]] &>/dev/null; then
   LAST_LOG=$(grep -v "Status()" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | tail -n 1 2>&1)
   LOG_SIZE=$(ls -lS --block-size=M "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | tr -d 'M' 2>&1)
+  LAST_LOG="${N0:?}${LAST_LOG:0:188} log=${LOG_SIZE:?}M${N0:?}"
 else
   LAST_LOG_Q_RANDOM=$((((RANDOM % 2) + 1)))
   if [[ "$LAST_LOG_Q_RANDOM" -eq "1" ]] &>/dev/null; then
@@ -684,9 +685,8 @@ else
   fi
   LAST_LOG="${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | grep -A10 "logo" | egrep -v "logo|authors" | tr -d '"')${N0:?}"
   echo "$LAST_LOG" >>"${LOG_DIR:?}"/node_data/wallet/data/rq.list
+  LAST_LOG="${N0:?}${LAST_LOG:0:188}${N0:?}"
 fi
-
-LAST_LOG="${N0:?}${LAST_LOG:0:188} log=${LOG_SIZE:?}M${N0:?}"
 
 ### wallet boot/sync progress ##################################################
 
