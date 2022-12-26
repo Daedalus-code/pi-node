@@ -678,12 +678,12 @@ else
   LAST_LOG_Q_RANDOM=$((((RANDOM % 2) + 1)))
 
   if [[ "$LAST_LOG_Q_RANDOM" -eq "1" ]] &>/dev/null; then
-    torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+    echo "$(torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
   else
     if [[ -f "${LOG_DIR:?}"/node_data/wallet/data/rq.list ]] &>/dev/null; then
       sort -R "${LOG_DIR:?}"/node_data/wallet/data/rq.list | head -1 >"${LOG_DIR:?}"/node_data/wallet/data/rq
     else
-      torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+      echo "$(torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
     fi
   fi
 
