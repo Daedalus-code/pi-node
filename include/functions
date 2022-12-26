@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222612
-# 1.6.3.5
+# 1.6.3.6
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.3.5"
+VERSION="v1.6.3.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
