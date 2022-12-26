@@ -678,7 +678,7 @@ if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
     RQ_AUTHOR="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | egrep -o "authors/[Aa-Zz]+-[Aa-Zz]+" | egrep -o "/[Aa-Zz]+-[Aa-Zz]+" | tr -d '/')"
 
     echo "$RQ_QUOTE --${RQ_AUTHOR:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/rq.list
-    echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | sed '/^.\{,23\}$/d')" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list
+    echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | sed '/^.\{,23\}$/d' | sed '/^.\{197\}./d')" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list
 
     if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "369" ]] &>/dev/null; then
       echo "$(tail -36 "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null)" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null
@@ -694,7 +694,7 @@ function last_log() {
 
 function last_log_rq() {
   LAST_LOG="$(sort -R "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | head -1)"
-  LAST_LOG="${N0:?}${LAST_LOG:0:196}${N0:?}"
+  LAST_LOG="${N0:?}${LAST_LOG:0:197}${N0:?}"
 }
 
 if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "1" ]] &>/dev/null; then
