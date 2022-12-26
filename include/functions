@@ -1625,11 +1625,11 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
     # keep last three, remove duplicates
     echo "$(tail -10 "${DATA_DIR:?}"/getproxy 2>&1 | awk '!a[$0]++' 2>&1 | tail -3 2>&1)" >"${DATA_DIR:?}"/getproxy 2>&1
   fi
-  PUBLIC_IP="${P1:?}$(tail -1 "${DATA_DIR:?}"/getproxy 2>&1)${N0:?}"
+  PUBLIC_PROXY="$(tail -1 "${DATA_DIR:?}"/getproxy 2>&1)"
   if [[ "$(tail -1 "${DATA_DIR:?}"/getproxy 2>&1 | grep -c "onion")" -eq "1" ]] &>/dev/null; then
-    PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+    PUBLIC_IP="${P1:?}${PUBLIC_PROXY:0:15}...onion${N0:?}"
   else
-    PUBLIC_IP="${P1:?}${PUBLIC_IP:0:15}${N0:?}"
+    PUBLIC_IP="${P1:?}${PUBLIC_PROXY:0:23}${N0:?}"
   fi
 fi
 
