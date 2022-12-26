@@ -675,7 +675,7 @@ if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
   if [[ "$(egrep -c "authors" "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null)" -gt "0" ]] &>/dev/null; then
     # get quote data
     RQ_QUOTE="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | grep -A10 "logo" | egrep -v "logo|authors" | tr -d '"' | xargs)"
-    RQ_AUTHOR="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | egrep -o "authors/[a-z]+-[a-z]+-[a-z]+|authors/[a-z]+-[a-z]+|authors/[a-z]+" | egrep -o "/[a-z]+-[a-z]+" | tr -d '/')"
+    RQ_AUTHOR="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | egrep -o "authors/[a-z]+-[a-z]+-[a-z]+|authors/[a-z]+-[a-z]+|authors/[a-z]+" | egrep -o "/[a-z]+-[a-z]+-[a-z]+|/[a-z]+-[a-z]+|/[a-z]+" | tr -d '/')"
 
     if [[ -z "$RQ_QUOTE" ]] &>/dev/null; then
       RQ_QUOTE="Something was said"
