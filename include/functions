@@ -689,6 +689,7 @@ else
 
   LAST_LOG="${GR:?}$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | grep -A10 "logo" | egrep -v "logo|authors" | tr -d '"')${N0:?}"
   echo "$LAST_LOG" >>"${LOG_DIR:?}"/node_data/wallet/data/rq.list
+  echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | sed '/^.\{,13\}$/d')" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list
   LAST_LOG="${N0:?}${LAST_LOG:0:188}${N0:?}"
 fi
 
