@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20222612
-# 1.6.3.6
+# 1.6.3.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.3.6"
+VERSION="v1.6.3.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -686,7 +686,6 @@ if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
   fi
 
   echo "$(torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
-
 fi
 
 function last_log() {
