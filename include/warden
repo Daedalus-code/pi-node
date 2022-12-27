@@ -11,7 +11,7 @@ source /usr/local/bin/include/pinode/color 2>&1
 
 ### directories ################################################################
 
-if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" -eq "1" ]] &>/dev/null; then
+if [[ "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" -eq "0" ]] &>/dev/null; then
 
   # create temp directories, ruled by configuration
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
