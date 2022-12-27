@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20220512
+# V20222712
 # 0.3.0.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -28,7 +28,7 @@ echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/
 LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&1
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
 
-if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" ]] &>/dev/null; then
+if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" -eq "1" ]] &>/dev/null; then
   mv "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/debug.log.old &>/dev/null
   touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
   printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
