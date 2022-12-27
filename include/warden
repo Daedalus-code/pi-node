@@ -63,11 +63,11 @@ if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &
     cat "${DATA_DIR:?}"/masternode_started >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
 
-  if [[ "$(grep "Successfully started" "${DATA_DIR:?}"/masternode_status 2>&1 | wc -l)" -eq "0" ]] &>/dev/null; then
+  if [[ ! "$(grep "Successfully started" "${DATA_DIR:?}"/masternode_status 2>&1)" ]] &>/dev/null; then
     cp "${LOG_DIR:?}"/node_data/wallet/client/getmasternodestatus "${DATA_DIR:?}"/masternode_status &>/dev/null
   fi
 
-  if [[ $(grep "Successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | wc -l) -eq "0" ]] &>/dev/null; then
+  if [[ ! $(grep "Successfully started" "${WALLET_LOG_DIR:?}"/debug.log 2>&1) ]] &>/dev/null; then
 
     # start masternodes
     printf '%b' "${GR:?}${LOG_DATE:?} Status() startingmasternodes - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
@@ -76,7 +76,7 @@ if [[ "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_outputs 2>&1)" -gt "0" ]] &
   fi
 fi
 
-if [[ "$(tail -101 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "ManageStatus - not capable" 2>&1 | wc -l)" -gt "0" ]] &>/dev/null; then
+if [[ "$(tail -101 "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | grep "ManageStatus - not capable" 2>&1)" ]] &>/dev/null; then
   start_masternode
   printf '%b' "${Y1:?}${LOG_DATE:?} Status() getmasternodestatus UPDATE 'patriotnodeaddr' & REBOOT!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 fi
