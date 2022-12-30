@@ -1620,7 +1620,7 @@ elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
 elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
   # create advertiselocal list
   grep "advertising address" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk -F: '{ print $1 }' | egrep -v "::" | sed -r '/^.{,12}$/d' | tail -10 >>"${DATA_DIR:?}"/getproxy.list 2>&1
-  echo "$(tail -10 "${DATA_DIR:?}"/getproxy.list 2>/dev/null)" >"${DATA_DIR:?}"/getproxy.list 2>/dev/null
+  echo "$(tail -10 "${DATA_DIR:?}"/getproxy.list 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy.list 2>/dev/null
 
   if [[ "$(wc -l "${DATA_DIR:?}"/getproxy.list 2>&1 | awk '{ print $1 }' 2>&1)" -ge "10" ]] &>/dev/null; then
     # keep last three, remove duplicates, ipv6, lines less than n
