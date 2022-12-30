@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20222612
+# V20223012
 # 1.6.4.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -1619,7 +1619,7 @@ elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
 
 elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
   # create advertiselocal list
-  grep "advertising address" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk -F: '{ print $1 }' | tail -10 >>"${DATA_DIR:?}"/getproxy 2>&1
+  grep "advertising address" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk -F: '{ print $1 }' | grep -v "::" | tail -10 >>"${DATA_DIR:?}"/getproxy 2>&1
 
   if [[ "$(wc -l "${DATA_DIR:?}"/getproxy 2>&1 | awk '{ print $1 }' 2>&1)" -ge "10" ]] &>/dev/null; then
     # keep last three, remove duplicates
