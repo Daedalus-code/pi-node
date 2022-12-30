@@ -1623,7 +1623,7 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
 
   if [[ "$(wc -l "${DATA_DIR:?}"/getproxy 2>&1 | awk '{ print $1 }' 2>&1)" -ge "10" ]] &>/dev/null; then
     # keep last three, remove duplicates
-    echo "$(tail -10 "${DATA_DIR:?}"/getproxy 2>&1 | awk '!a[$0]++' 2>&1 | tail -3 2>&1)" >"${DATA_DIR:?}"/getproxy 2>&1
+    echo "$(tail -10 "${DATA_DIR:?}"/getproxy 2>&1 | awk '!a[$0]++' 2>&1 | grep -v "::" | tail -3 2>&1)" >"${DATA_DIR:?}"/getproxy 2>&1
   fi
   PUBLIC_PROXY="$(tail -1 "${DATA_DIR:?}"/getproxy 2>&1)"
   if [[ "$(tail -1 "${DATA_DIR:?}"/getproxy 2>&1 | grep -c "onion")" -eq "1" ]] &>/dev/null; then
