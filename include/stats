@@ -512,7 +512,7 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
             fi
 
             sleep 1
-            printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold -> ${G1:?}$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1) ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+            printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New auto combine threshold -> ${G1:?}${STAKE_SPLIT_AUTO:?} ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
             printf '%b' "${LOG_DATE:?} Status() Staking.Script Set New stake split threshold -> ${G1:?}${STAKE_SPLIT:?} ${CY:?}>>${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
           else
             printf '%b' "${LOG_DATE:?} Status() Staking.Script Average confirmations between inputs -> ${G1:?}OK!${N0:?} (${CONF_AVG:?} -> ${POS_LIMIT:?})${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
