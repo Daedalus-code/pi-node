@@ -488,14 +488,14 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
           STAKE_CHECK_POS="$(echo "$(echo "100/$WALLET_ACTIVE*$STAKE_CHECK_CONFIRMATIONS" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')/$STAKE_CHECK_INPUTS" | bc -l | awk '{ printf "%.2f\n", $1 }' 2>&1)"
 
           # if proof-of-stake greater than n%, continue
-          if [[ "$STAKE_CHECK_POS" -gt "200" ]] &>/dev/null; then
+          if [[ "$(echo "$STAKE_CHECK_POS" | awk -F. '{ print $1 }')" -gt "200" ]] &>/dev/null; then
             STAKE_SPLIT="500"
             STAKE_SPLIT_AUTO="500"
           else
             STAKE_SPLIT_AUTO="$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1)"
           fi
 
-          printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} ${STAKE_CHECK_POS:?}% <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+          printf '%b' "${LOG_DATE:?} Status() Staking.Script ${GR:?}::${N0:?} Auto PoS Grinding! ${GR:?}::${N0:?} Config ${GR:?}$CON_DIFF <${N0:?} Now ${DIFF_AVG:?} (${STAKE_CHECK_POS:?}%) <${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
 
           # total average confirmations greater than limit set, continue
           if [[ "${CONF_AVG:?}" -gt "${POS_LIMIT:?}" ]] &>/dev/null; then
