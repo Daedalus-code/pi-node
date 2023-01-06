@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # By Rainman
-# V20221211
-# 0.5.7.6
+# V20230601
+# 0.5.8.6
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -476,6 +476,16 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
           STAKE_SPLIT="$(echo "$(echo "${DIFF_AVG:?}*${AUTO_RULE:?}" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)/10" 2>&1 | bc -l 2>&1 | awk -F. '{ print $1 }' 2>&1)"
 
           if [[ "$STAKE_SPLIT" -lt "500" ]] &>/dev/null; then
+            STAKE_SPLIT="500"
+          fi
+
+          # get proof-of-stake percentage
+          STAKE_CHECK_CONFIRMATIONS=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+          STAKE_CHECK_INPUTS=$(grep -c "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent | awk '{ printf "%.0f\n", $1 }' 2>&1)
+          STAKE_CHECK_POS="$(echo "$(echo "100/$WALLET_ACTIVE*$STAKE_CHECK_CONFIRMATIONS" | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }')/$STAKE_CHECK_INPUTS" | bc -l | awk '{ printf "%.2f\n", $1 }' 2>&1)"
+
+          # if proof-of-stake greater than n%, continue
+          if [[ "$STAKE_CHECK_POS" -gt "300" ]] &>/dev/null; then
             STAKE_SPLIT="500"
           fi
 
