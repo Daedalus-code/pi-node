@@ -1644,7 +1644,7 @@ if [[ "$(echo "${PUBLIC_IP:?}" 2>&1 | egrep -c "[0-9]+" 2>&1)" -lt "1" || -z "${
   PUBLIC_IP="${GR:?}...${N0:?}"
 fi
 
-if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+if [[ "$(echo "$PUBLIC_IP" | egrep "[0-9]+" | wc -l)" -eq "0" ]] &>/dev/null; then
   PUBLIC_IP="${GR:?}...${N0:?}"
 fi
 
