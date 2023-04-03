@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20231702
-# 1.6.5.4
+# V20230304
+# 1.6.5.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.5.4"
+VERSION="v1.6.5.8"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1641,6 +1641,10 @@ fi
 
 if [[ "$(echo "${PUBLIC_IP:?}" 2>&1 | egrep -c "[0-9]+" 2>&1)" -lt "1" || -z "${PUBLIC_IP:?}" ]] &>/dev/null; then
   torify curl -s https://api.myip.com 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${DATA_DIR:?}"/getproxy 2>&1
+  PUBLIC_IP="${GR:?}...${N0:?}"
+fi
+
+if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
   PUBLIC_IP="${GR:?}...${N0:?}"
 fi
 
