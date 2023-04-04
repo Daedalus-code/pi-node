@@ -1614,7 +1614,7 @@ function get_proxy_list() {
   fi
 
   # getonion
-  if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/getproxy)))")" -gt "$GET_ONION_TIME" ]] &>/dev/null; then
+  if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/getonion)))")" -gt "$GET_ONION_TIME" ]] &>/dev/null; then
     egrep -o "AdvertiseLocal: .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | awk '{ print $NF }' >>"${DATA_DIR:?}"/getonion 2>/dev/null
   fi
   echo "$(grep "onion" "${DATA_DIR:?}"/getproxy.list 2>/dev/null)" >>"${DATA_DIR:?}"/getonion 2>/dev/null
