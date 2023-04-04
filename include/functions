@@ -486,6 +486,7 @@ fi
 ### public ip address ##########################################################
 
 if [[ ! -f "${DATA_DIR:?}"/getwan ]] &>/dev/null; then
+  touch "${DATA_DIR:?}"/getwan &>/dev/null
   GET_WAN_TIME="0"
   sleep 0.5
 else
@@ -1588,12 +1589,14 @@ fi
 function get_proxy_list() {
 
   if [[ ! -f "${DATA_DIR:?}"/getproxy ]] &>/dev/null; then
+    touch "${DATA_DIR:?}"/getproxy &>/dev/null
     GET_PROXY_TIME="0"
     sleep 0.5
   else
     GET_PROXY_TIME="86400"
   fi
   if [[ ! -f "${DATA_DIR:?}"/getonion ]] &>/dev/null; then
+    touch "${DATA_DIR:?}"/getonion &>/dev/null
     GET_ONION_TIME="0"
     sleep 0.5
   else
