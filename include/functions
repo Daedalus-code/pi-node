@@ -1588,7 +1588,7 @@ fi
 
 function get_proxy_list() {
 
-  grep "advertising address" "${WALLET_LOG_DIR:?}"/debug.log | awk '{ print $NF }' | egrep ".onion|[0-9]+.[0-9]+.[0-9]+.[0-9]+." | awk -F: '{ print $1 }' | awk '!a[$0]++' >>"${DATA_DIR:?}"/getproxy.list 2>/dev/null
+  grep "advertising address" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | awk '{ print $NF }' | egrep ".onion|[0-9]+.[0-9]+.[0-9]+.[0-9]+." | awk -F: '{ print $1 }' | awk '!a[$0]++' >>"${DATA_DIR:?}"/getproxy.list 2>/dev/null
   echo "$(tail -10 "${DATA_DIR:?}"/getproxy.list 2>/dev/null | sed '/^$/d' | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy.list 2>/dev/null
 
   # getproxy ###################################################################
