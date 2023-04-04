@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20230404
-# 1.6.4.9
+# 1.6.5.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.4.9"
+VERSION="v1.6.5.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1603,10 +1603,16 @@ function get_proxy_list() {
   echo "$(tail -10 "${DATA_DIR:?}"/getonion 2>/dev/null | sed '/^$/d' | awk '!a[$0]++')" >"${DATA_DIR:?}"/getonion 2>/dev/null
 }
 
-function empty_proxy_random() {
+function empty_proxy_random_onion() {
   if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
     PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
     PUBLIC_IP="${GR:?}${PUBLIC_IP:0:9}...onion${N0:?}"
+  fi
+}
+
+function empty_proxy_empty() {
+  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+    PUBLIC_IP="${GR:?}...${N0:?}"
   fi
 }
 
@@ -1622,7 +1628,7 @@ elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
   PUBLIC_IP="$(sort -R "${DATA_DIR:?}"/getonion | head -1)"
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:9}...onion${N0:?}"
 
-  empty_proxy_random
+  empty_proxy_random_onion
 
 elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
 
@@ -1631,7 +1637,7 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
   PUBLIC_IP="$(sort -R "${DATA_DIR:?}"/getproxy | head -1)"
   PUBLIC_IP="${P1:?}${PUBLIC_IP:?}${N0:?}"
 
-  empty_proxy_random
+  empty_proxy_empty
 
 fi
 
