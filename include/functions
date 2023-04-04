@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20230404
-# 1.6.3.8
+# 1.6.5.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.3.8"
+VERSION="v1.6.5.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1579,21 +1579,32 @@ fi
 ### display wan, onion and tor address #########################################
 
 function get_proxy_list() {
-  grep "advertising address" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk -F: '{ print $1 }' | egrep -v "::" | sed -r '/^.{,12}$/d' | tail -10 >>"${DATA_DIR:?}"/getproxy.list 2>/dev/null
-  echo "$(tail -10 "${DATA_DIR:?}"/getproxy.list 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy.list 2>/dev/null
-  # getproxy
+
   if [[ ! -f "${DATA_DIR:?}"/getproxy ]] &>/dev/null; then
     GET_PROXY_TIME="0"
   else
     GET_PROXY_TIME="86400"
   fi
+  if [[ ! -f "${DATA_DIR:?}"/getonion ]] &>/dev/null; then
+    GET_ONION_TIME="0"
+  else
+    GET_ONION_TIME="86400"
+  fi
+
+  grep "advertising address" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk -F: '{ print $1 }' | egrep -v "::" | sed -r '/^.{,12}$/d' | tail -10 >>"${DATA_DIR:?}"/getproxy.list 2>/dev/null
+  echo "$(tail -10 "${DATA_DIR:?}"/getproxy.list 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy.list 2>/dev/null
+
+  # getproxy
   if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/getproxy)))")" -gt "$GET_PROXY_TIME" ]] &>/dev/null; then
     torify host myip.opendns.com resolver1.opendns.com | grep "myip" 2>/dev/null | awk '{ print $NF }' >>"${DATA_DIR:?}"/getproxy 2>&1
     echo "$(cat "${DATA_DIR:?}"/getproxy 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>/dev/null)" >"${DATA_DIR:?}"/getproxy 2>/dev/null
     echo "$(tail -10 "${DATA_DIR:?}"/getproxy 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy 2>/dev/null
   fi
+
   # getonion
-  egrep -o "AdvertiseLocal: .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | awk '{ print $NF }' >>"${DATA_DIR:?}"/getonion 2>/dev/null
+  if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/getproxy)))")" -gt "$GET_ONION_TIME" ]] &>/dev/null; then
+    egrep -o "AdvertiseLocal: .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null | awk '{ print $NF }' >>"${DATA_DIR:?}"/getonion 2>/dev/null
+  fi
   echo "$(grep "onion" "${DATA_DIR:?}"/getproxy.list 2>/dev/null)" >>"${DATA_DIR:?}"/getonion 2>/dev/null
   echo "$(tail -10 "${DATA_DIR:?}"/getonion 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getonion 2>/dev/null
 }
