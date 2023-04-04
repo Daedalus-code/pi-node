@@ -1582,14 +1582,22 @@ fi
 
 ### display wan, onion and tor address #########################################
 
-function get_proxylist() {
+function get_proxy_list() {
   grep "advertising address" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk -F: '{ print $1 }' | egrep -v "::" | sed -r '/^.{,12}$/d' | tail -10 >>"${DATA_DIR:?}"/getproxy.list 2>&1
   echo "$(tail -10 "${DATA_DIR:?}"/getproxy.list 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy.list 2>/dev/null
   if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/getproxy)))")" -gt "86400" ]] &>/dev/null; then
     torify host myip.opendns.com resolver1.opendns.com | grep "myip" | awk '{ print $NF }' >>"${DATA_DIR:?}"/getproxy 2>&1
+    echo "$(tail -10 "${DATA_DIR:?}"/getproxy 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy 2>/dev/null
   fi
-  echo "$(tail -10 "${DATA_DIR:?}"/getproxy 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy 2>/dev/null
   echo "$(grep "onion" "${DATA_DIR:?}"/getproxy.list 2>/dev/null)" >>"${DATA_DIR:?}"/getonion
+  echo "$(tail -10 "${DATA_DIR:?}"/getonion 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getonion 2>/dev/null
+}
+
+function empty_proxy_random() {
+  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+    PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
+    PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+  fi
 }
 
 RANDOM_WAN=$((((RANDOM % 3) + 1)))
@@ -1599,21 +1607,21 @@ if [[ "$RANDOM_WAN" -eq "1" ]] &>/dev/null; then
 
 elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
 
-  get_proxylist
+  get_proxy_list
 
   PUBLIC_IP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
-  if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-    PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
-    PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
-  fi
+  empty_proxy_random
 
 elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
 
-  get_proxylist
+  get_proxy_list
 
   PUBLIC_PROXY="$(sort -R "${DATA_DIR:?}"/getproxy | head -1)"
+
+  empty_proxy_random
+
 fi
 
 if [[ ! "$(echo "$PUBLIC_IP" | egrep "[0-9]+" | wc -l)" -eq "1" ]] &>/dev/null; then
