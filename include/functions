@@ -1597,6 +1597,9 @@ function get_proxy_list() {
     touch "${DATA_DIR:?}"/getproxy &>/dev/null
     GET_PROXY_TIME="0"
     sleep 0.5
+  elif [[ ! -s "${DATA_DIR:?}"/getproxy ]] &>/dev/null; then
+    GET_PROXY_TIME="0"
+    sleep 0.5
   else
     GET_PROXY_TIME="86400"
   fi
@@ -1611,6 +1614,9 @@ function get_proxy_list() {
 
   if [[ ! -f "${DATA_DIR:?}"/getonion ]] &>/dev/null; then
     touch "${DATA_DIR:?}"/getonion &>/dev/null
+    GET_ONION_TIME="0"
+    sleep 0.5
+  elif [[ ! -s "${DATA_DIR:?}"/getonion ]] &>/dev/null; then
     GET_ONION_TIME="0"
     sleep 0.5
   else
