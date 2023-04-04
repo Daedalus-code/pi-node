@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20230404
-# 1.6.4.6
+# 1.6.4.5
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.4.6"
+VERSION="v1.6.4.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1589,6 +1589,8 @@ fi
 function get_proxylist() {
   # create advertiselocal list
   grep "advertising address" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $5 }' 2>&1 | awk -F: '{ print $1 }' | egrep -v "::" | sed -r '/^.{,12}$/d' | tail -10 >>"${DATA_DIR:?}"/getproxy.list 2>&1
+  echo "$(tail -10 "${DATA_DIR:?}"/getproxy.list 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy.list 2>/dev/null
+  echo "$(grep "onion" "${DATA_DIR:?}"/getproxy.list 2>/dev/null)" >>"${DATA_DIR:?}"/getonion
 }
 
 RANDOM_WAN=$((((RANDOM % 3) + 1)))
@@ -1599,8 +1601,6 @@ if [[ "$RANDOM_WAN" -eq "1" ]] &>/dev/null; then
 elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
 
   get_proxylist
-  echo "$(grep "onion" "${DATA_DIR:?}"/getproxy.list 2>/dev/null)" >>"${DATA_DIR:?}"/getonion
-  echo "$(cat "${DATA_DIR:?}"/getonion 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getonion
 
   PUBLIC_IP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
@@ -1613,7 +1613,6 @@ elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
 elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
 
   get_proxylist
-  echo "$(tail -10 "${DATA_DIR:?}"/getproxy.list 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getproxy.list 2>/dev/null
 
   if [[ "$(wc -l "${DATA_DIR:?}"/getproxy.list 2>&1 | awk '{ print $1 }' 2>&1)" -ge "10" ]] &>/dev/null; then
     # keep last three, remove duplicates, ipv6, lines less than n
