@@ -1599,7 +1599,7 @@ if [[ "$RANDOM_WAN" -eq "1" ]] &>/dev/null; then
 elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
 
   get_proxylist
-  echo "$(grep "onion" "${DATA_DIR:?}"/getproxy.list 2>/dev/null)" >"${DATA_DIR:?}"/getonion
+  echo "$(grep "onion" "${DATA_DIR:?}"/getproxy.list 2>/dev/null)" >>"${DATA_DIR:?}"/getonion
   echo "$(cat "${DATA_DIR:?}"/getonion 2>/dev/null | awk '!a[$0]++')" >"${DATA_DIR:?}"/getonion
 
   PUBLIC_IP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
