@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20230404
-# 1.6.3.0
+# 1.6.3.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.3.0"
+VERSION="v1.6.3.9"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1609,7 +1609,7 @@ elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
 
   get_proxy_list
 
-  PUBLIC_IP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
+  PUBLIC_IP="$(sort -R "${DATA_DIR:?}"/getonion | head -1)"
   PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
   empty_proxy_random
@@ -1618,7 +1618,8 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
 
   get_proxy_list
 
-  PUBLIC_PROXY="$(sort -R "${DATA_DIR:?}"/getproxy | head -1)"
+  PUBLIC_IP="$(sort -R "${DATA_DIR:?}"/getproxy | head -1)"
+  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
 
   empty_proxy_random
 
