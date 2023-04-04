@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20230304
-# 1.6.5.8
+# V20230404
+# 1.6.3.8
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.5.8"
+VERSION="v1.6.3.8"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -483,45 +483,25 @@ if [[ -z "$WALLET_CHAIN" ]] &>/dev/null; then
   WALLET_CHAIN="${GR:?}...${N0:?}"
 fi
 
-if [ ! -s "${DATA_DIR:?}"/getwan ] &>/dev/null; then
-  curl -s https://api.myip.com 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${DATA_DIR:?}"/getwan 2>&1
-fi
-
 if [ ! -s "${DATA_DIR:?}"/getproxy ] &>/dev/null; then
   echo "searching proxy" >"${DATA_DIR:?}"/getproxy 2>&1
 fi
 
 ### public ip address ##########################################################
 
-PUBLIC_IP=$(cat "${DATA_DIR:?}"/getwan 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1 | tail -1 2>&1)
-
-if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-  PUBLIC_IP="Fetching ip.."
+if [ ! -s "${DATA_DIR:?}"/getwan ] &>/dev/null; then
+  curl -s https://api.myip.com 2>&1 | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" >"${DATA_DIR:?}"/getwan 2>&1
 fi
 
-PUBLIC_IP="${C1:?}${PUBLIC_IP:?}${N0:?}"
+PUBLIC_IP="$(grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1)"
+PUBLIC_IP="$(egrep "AdvertiseLocal: .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $5 }' 2>&1)"
+PUBLIC_IP="$(sudo cat /var/lib/tor/"${WALLET_NAME:?}"-service/hostname)"
 
-# look for working proxy
-if egrep "proxy: [0-9]+.[0-9]+.[0-9]+.[0-9]+:9050" "${LOG_DIR:?}"/node_data/wallet/client/getinfo &>/dev/null; then
-
-  if [[ ! -f "${DATA_DIR:?}"/getonion ]] &>/dev/null; then
-
-    PUBLIC_IP="$(grep "tor: Got service ID" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1)"
-    PUBLIC_IP="$(egrep "AdvertiseLocal: .*.onion" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | tail -1 2>&1 | awk '{ print $5 }' 2>&1)"
-    PUBLIC_IP="$(sudo cat /var/lib/tor/"${WALLET_NAME:?}"-service/hostname)"
-
-    if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-      PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
-      PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
-    else
-      echo "${PUBLIC_IP:?}" >"${DATA_DIR:?}"/getonion 2>&1
-    fi
-
-  else
-    PUBLIC_IP="$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)"
-  fi
-
-  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+  PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
+  PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+else
+  echo "${PUBLIC_IP:?}" >"${DATA_DIR:?}"/getonion 2>&1
 fi
 
 if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
