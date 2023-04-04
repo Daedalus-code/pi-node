@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20230404
-# 1.6.5.5
+# 1.6.5.0
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.5.5"
+VERSION="v1.6.5.0"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1636,14 +1636,9 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
 
   PUBLIC_IP="$(sort -R "${DATA_DIR:?}"/getproxy | head -1)"
   PUBLIC_IP="${P1:?}${PUBLIC_IP:?}${N0:?}"
-
-  empty_proxy_empty
-
 fi
 
-if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-  PUBLIC_IP="${GR:?}...${N0:?}"
-fi
+empty_proxy_empty
 
 ### hiding wan address, ruled by configuration #################################
 
