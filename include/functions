@@ -1641,7 +1641,7 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
 
 fi
 
-if [[ ! "$(echo "$PUBLIC_IP" | egrep "[0-9]+" | wc -l)" -eq "1" ]] &>/dev/null; then
+if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
   PUBLIC_IP="${GR:?}...${N0:?}"
 fi
 
