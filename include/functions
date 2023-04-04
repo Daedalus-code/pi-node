@@ -1628,7 +1628,7 @@ function get_proxy_list() {
 function empty_proxy_random() {
   if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
     PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
-    PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+    PUBLIC_IP="${GR:?}${PUBLIC_IP:0:9}...onion${N0:?}"
   fi
 }
 
@@ -1642,7 +1642,7 @@ elif [[ "$RANDOM_WAN" -eq "2" ]] &>/dev/null; then
   get_proxy_list
 
   PUBLIC_IP="$(sort -R "${DATA_DIR:?}"/getonion | head -1)"
-  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:9}...onion${N0:?}"
 
   empty_proxy_random
 
@@ -1651,7 +1651,7 @@ elif [[ "$RANDOM_WAN" -eq "3" ]] &>/dev/null; then
   get_proxy_list
 
   PUBLIC_IP="$(sort -R "${DATA_DIR:?}"/getproxy | head -1)"
-  PUBLIC_IP="${P1:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+  PUBLIC_IP="${P1:?}${PUBLIC_IP:?}${N0:?}"
 
   empty_proxy_random
 
@@ -1665,7 +1665,7 @@ fi
 
 if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
   PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
-  PUBLIC_IP="${GR:?}${PUBLIC_IP:0:8}...onion${N0:?}"
+  PUBLIC_IP="${GR:?}${PUBLIC_IP:0:9}...onion${N0:?}"
 fi
 
 # END
