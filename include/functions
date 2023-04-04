@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20230404
-# 1.6.5.5
+# 1.6.6.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.5.5"
+VERSION="v1.6.6.4"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -485,7 +485,14 @@ fi
 
 ### public ip address ##########################################################
 
-if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/getwan)))")" -gt "86400" ]] &>/dev/null; then
+if [[ ! -f "${DATA_DIR:?}"/getwan ]] &>/dev/null; then
+  GET_WAN_TIME="0"
+  sleep 0.5
+else
+  GET_WAN_TIME="86400"
+fi
+
+if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/getwan)))")" -gt "$GET_WAN_TIME" ]] &>/dev/null; then
   host myip.opendns.com resolver1.opendns.com | grep "myip" | awk '{ print $NF }' >"${DATA_DIR:?}"/getwan 2>&1
 fi
 
@@ -1582,11 +1589,13 @@ function get_proxy_list() {
 
   if [[ ! -f "${DATA_DIR:?}"/getproxy ]] &>/dev/null; then
     GET_PROXY_TIME="0"
+    sleep 0.5
   else
     GET_PROXY_TIME="86400"
   fi
   if [[ ! -f "${DATA_DIR:?}"/getonion ]] &>/dev/null; then
     GET_ONION_TIME="0"
+    sleep 0.5
   else
     GET_ONION_TIME="86400"
   fi
