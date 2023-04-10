@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20230504
+# V20231004
 # 1.6.5.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -670,8 +670,8 @@ if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
     # remove lines less than n, bigger than n, duplicates, lines with unknown, lines without a dot, lines starting with a dot, sort
     echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | sed '/^.\{,23\}$/d' | sed '/^.\{197\}./d' | sed '/^\./d' | awk '!a[$0]++' | egrep -v "Something was said| --unknown|ah" | sed '/\./!d' | sort -n)" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null
 
-    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "42" ]] &>/dev/null; then
-      echo "$(sort -R "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | tail -42)" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null
+    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "84" ]] &>/dev/null; then
+      echo "$(sort -R "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | tail -84)" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null
     fi
   fi
   echo "$(torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
