@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20231004
-# 1.6.5.3
+# V20231704
+# 1.6.6.4
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.5.3"
+VERSION="v1.6.6.4"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -670,11 +670,22 @@ if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
     # remove lines less than n, bigger than n, duplicates, lines with unknown, lines without a dot, lines starting with a dot, sort
     echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | sed '/^.\{,23\}$/d' | sed '/^.\{197\}./d' | sed '/^\./d' | awk '!a[$0]++' | egrep -v "Something was said| --unknown|ah" | sed '/\./!d' | sort -n)" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null
 
-    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "84" ]] &>/dev/null; then
-      echo "$(sort -R "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | tail -84)" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null
+    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "369" ]] &>/dev/null; then
+      echo "$(sort -R "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | tail -123)" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null
     fi
   fi
-  echo "$(torify curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+
+  RQ_QUOTE_AGE="$(stat -c '%Y' "${LOG_DIR:?}"/node_data/wallet/data/rq | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+  # older than n seconds, continue
+  if [[ "$RQ_QUOTE_AGE" -gt "3600" ]] &>/dev/null; then
+    # use proxy
+    echo "$(curl -s --proxy socks5h://localhost:9050 https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+  fi
+
+  # no data
+  if [[ "$(grep "Enable JavaScript and cookies to continue" "${LOG_DIR:?}"/node_data/wallet/data/rq | wc -l)" -eq "1" ]]; then
+    echo "$(curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+  fi
 fi
 
 function last_log() {
