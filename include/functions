@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20231704
-# 1.6.6.4
+# 1.6.6.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.6.4"
+VERSION="v1.6.6.9"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -653,28 +653,33 @@ fi
 QUOTE_RANDOM=$((((RANDOM % 3) + 1)))
 
 if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
-
   if [[ "$(egrep -c "authors" "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null)" -gt "0" ]] &>/dev/null; then
+
     # get quote data
     RQ_QUOTE="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | grep -A10 "logo" | egrep -v "logo|authors" | tr -d '"' | xargs 2>/dev/null)"
     RQ_AUTHOR="$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | egrep -o "authors/[a-z]+-[a-z]+-[a-z]+|authors/[a-z]+-[a-z]+|authors/[a-z]+" | egrep -o "/[a-z]+-[a-z]+-[a-z]+|/[a-z]+-[a-z]+|/[a-z]+" | tr -d '/')"
 
+    # something
     if [[ -z "$RQ_QUOTE" ]] &>/dev/null; then
       RQ_QUOTE="Something was said"
     fi
+    # by unknown
     if [[ -z "$RQ_AUTHOR" ]] &>/dev/null; then
       RQ_AUTHOR="unknown"
     fi
 
+    # output all quotes and authors
     echo "$RQ_QUOTE --${RQ_AUTHOR:?}" >>"${LOG_DIR:?}"/node_data/wallet/data/rq.list
     # remove lines less than n, bigger than n, duplicates, lines with unknown, lines without a dot, lines starting with a dot, sort
     echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | sed '/^.\{,23\}$/d' | sed '/^.\{197\}./d' | sed '/^\./d' | awk '!a[$0]++' | egrep -v "Something was said| --unknown|ah" | sed '/\./!d' | sort -n)" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null
 
-    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')" -gt "369" ]] &>/dev/null; then
+    # line greater than n, continue
+    if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | awk '{ print $1 }')" -gt "369" ]] &>/dev/null; then
       echo "$(sort -R "${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null | tail -123)" >"${LOG_DIR:?}"/node_data/wallet/data/rq.list 2>/dev/null
     fi
   fi
 
+  # seconds since last edit
   RQ_QUOTE_AGE="$(stat -c '%Y' "${LOG_DIR:?}"/node_data/wallet/data/rq | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
   # older than n seconds, continue
   if [[ "$RQ_QUOTE_AGE" -gt "3600" ]] &>/dev/null; then
