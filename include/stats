@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20230601
+# V20231904
 # 0.5.9.2
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
@@ -85,7 +85,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/load.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/load.rrd \
     --step=60 \
     DS:load:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # load 5
 if [ ! -f "/home/${WHOAMI:?}/stats/load5.rrd" ] &>/dev/null; then
@@ -93,7 +93,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/load5.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/load5.rrd \
     --step=60 \
     DS:load5:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # load 15
 if [ ! -f "/home/${WHOAMI:?}/stats/load15.rrd" ] &>/dev/null; then
@@ -101,7 +101,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/load15.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/load15.rrd \
     --step=60 \
     DS:load15:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # cpu temperature
 if [ ! -f "/home/${WHOAMI:?}/stats/temp.rrd" ] &>/dev/null; then
@@ -109,7 +109,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/temp.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/temp.rrd \
     --step=60 \
     DS:temp:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # memory available
 if [ ! -f "/home/${WHOAMI:?}/stats/memory_total.rrd" ] &>/dev/null; then
@@ -117,7 +117,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/memory_total.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/memory_total.rrd \
     --step=60 \
     DS:memory_total:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # memory free
 if [ ! -f "/home/${WHOAMI:?}/stats/memory_free.rrd" ] &>/dev/null; then
@@ -125,7 +125,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/memory_free.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/memory_free.rrd \
     --step=60 \
     DS:memory_free:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # hdd
 if [ ! -f "/home/${WHOAMI:?}/stats/hdd.rrd" ] &>/dev/null; then
@@ -133,7 +133,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/hdd.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/hdd.rrd \
     --step=60 \
     DS:hdd:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # hdd total
 if [ ! -f "/home/${WHOAMI:?}/stats/hdd_total.rrd" ] &>/dev/null; then
@@ -141,7 +141,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/hdd_total.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/hdd_total.rrd \
     --step=60 \
     DS:hdd_total:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # network
 if [ ! -f "/home/${WHOAMI:?}/stats/network.rrd" ] &>/dev/null; then
@@ -150,7 +150,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/network.rrd" ] &>/dev/null; then
     --step=60 \
     DS:rxbytes:DERIVE:300:U:U \
     DS:txbytes:DERIVE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 
 ### create round robin databases for wallet (rrdtool) ##########################
@@ -161,7 +161,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/balance.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/balance.rrd \
     --step=60 \
     DS:balance:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # balance value
 if [ ! -f "/home/${WHOAMI:?}/stats/value.rrd" ] &>/dev/null; then
@@ -169,7 +169,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/value.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/value.rrd \
     --step=60 \
     DS:value:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # stakes
 if [ ! -f "/home/${WHOAMI:?}/stats/stakes.rrd" ] &>/dev/null; then
@@ -177,7 +177,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/stakes.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/stakes.rrd \
     --step=60 \
     DS:stakes:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # inputs
 if [ ! -f "/home/${WHOAMI:?}/stats/inputs.rrd" ] &>/dev/null; then
@@ -185,7 +185,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/inputs.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/inputs.rrd \
     --step=60 \
     DS:inputs:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # peers
 if [ ! -f "/home/${WHOAMI:?}/stats/peers.rrd" ] &>/dev/null; then
@@ -193,7 +193,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/peers.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/peers.rrd \
     --step=60 \
     DS:peers:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # peers protocol
 if [ ! -f "/home/${WHOAMI:?}/stats/peers_proto.rrd" ] &>/dev/null; then
@@ -205,7 +205,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/peers_proto.rrd" ] &>/dev/null; then
     DS:peers_dns:GAUGE:300:U:U \
     DS:peers_onion:GAUGE:300:U:U \
     DS:peers_proxy:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # banned peers
 if [ ! -f "/home/${WHOAMI:?}/stats/banned_peers.rrd" ] &>/dev/null; then
@@ -213,7 +213,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/banned_peers.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/banned_peers.rrd \
     --step=60 \
     DS:banned_peers:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # masternode count
 if [ ! -f "/home/${WHOAMI:?}/stats/masternodes.rrd" ] &>/dev/null; then
@@ -224,7 +224,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/masternodes.rrd" ] &>/dev/null; then
     DS:stable:GAUGE:300:U:U \
     DS:enabled:GAUGE:300:U:U \
     DS:inqueue:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # masternode pay, value
 if [ ! -f "/home/${WHOAMI:?}/stats/masternode_pay.rrd" ] &>/dev/null; then
@@ -234,7 +234,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/masternode_pay.rrd" ] &>/dev/null; then
     DS:paycount:GAUGE:300:U:U \
     DS:payout:GAUGE:300:U:U \
     DS:payvalue:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # difficulty
 if [ ! -f "/home/${WHOAMI:?}/stats/difficulty.rrd" ] &>/dev/null; then
@@ -242,7 +242,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/difficulty.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/difficulty.rrd \
     --step=60 \
     DS:difficulty:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # set auto pos (difficulty)
 if [ ! -f "/home/${WHOAMI:?}/stats/set_auto_pos.rrd" ] &>/dev/null; then
@@ -250,7 +250,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/set_auto_pos.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/set_auto_pos.rrd \
     --step=60 \
     DS:set_auto_pos:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # set auto con (confirmation)
 if [ ! -f "/home/${WHOAMI:?}/stats/set_auto_con.rrd" ] &>/dev/null; then
@@ -258,7 +258,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/set_auto_con.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/set_auto_con.rrd \
     --step=60 \
     DS:set_auto_con:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # total confirmations
 if [ ! -f "/home/${WHOAMI:?}/stats/total_tx.rrd" ] &>/dev/null; then
@@ -266,7 +266,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/total_tx.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/total_tx.rrd \
     --step=60 \
     DS:total_tx:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # blockchain activity
 if [ ! -f "/home/${WHOAMI:?}/stats/block_activity.rrd" ] &>/dev/null; then
@@ -274,7 +274,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/block_activity.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/block_activity.rrd \
     --step=60 \
     DS:activity:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # blockchain coin supply
 if [ ! -f "/home/${WHOAMI:?}/stats/coin_supply.rrd" ] &>/dev/null; then
@@ -282,7 +282,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/coin_supply.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/coin_supply.rrd \
     --step=60 \
     DS:coin_supply:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 
 ### create round robin databases for api (rrdtool) #############################
@@ -293,7 +293,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/rank.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/rank.rrd \
     --step=60 \
     DS:rank:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # watchlist coinmarketcap
 if [ ! -f "/home/${WHOAMI:?}/stats/watchlist.rrd" ] &>/dev/null; then
@@ -301,7 +301,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/watchlist.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/watchlist.rrd \
     --step=60 \
     DS:watchlist:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # price and volume coingecko
 if [ ! -f "/home/${WHOAMI:?}/stats/coingecko.rrd" ] &>/dev/null; then
@@ -310,7 +310,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/coingecko.rrd" ] &>/dev/null; then
     --step=60 \
     DS:price_cg:GAUGE:300:U:U \
     DS:volume_cg:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # price and volume coinmarketcap
 if [ ! -f "/home/${WHOAMI:?}/stats/coinmarketcap.rrd" ] &>/dev/null; then
@@ -319,7 +319,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/coinmarketcap.rrd" ] &>/dev/null; then
     --step=60 \
     DS:price_cmc:GAUGE:300:U:U \
     DS:volume_cmc:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # price avg
 if [ ! -f "/home/${WHOAMI:?}/stats/price_avg.rrd" ] &>/dev/null; then
@@ -327,7 +327,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/price_avg.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/price_avg.rrd \
     --step=60 \
     DS:price_avg:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 # volume avg
 if [ ! -f "/home/${WHOAMI:?}/stats/volume_avg.rrd" ] &>/dev/null; then
@@ -335,7 +335,7 @@ if [ ! -f "/home/${WHOAMI:?}/stats/volume_avg.rrd" ] &>/dev/null; then
   rrdtool create /home/"${WHOAMI:?}"/stats/volume_avg.rrd \
     --step=60 \
     DS:volume_avg:GAUGE:300:U:U \
-    RRA:AVERAGE:0.5:1:315360
+    RRA:AVERAGE:0.5:1:1051200
 fi
 
 ### update rrdtool databases ###################################################
