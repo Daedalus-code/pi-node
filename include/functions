@@ -1459,14 +1459,20 @@ fi
 # if success, create files, reset requests.cmc file
 if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
+  ##############################################################################
+
+  RAW_COINMCAP="$(cat "${LOG_DIR:?}"/node_data/wallet/data/raw.coinmcap)"
+
   # get token price
-  egrep " Price   .[0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/raw.coinmcap 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$' 2>&1 | tail -1 2>&1 | awk '{ printf "%.4f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>&1
+  echo "$RAW_COINMCAP" 2>/dev/null | grep "price today" | awk '{ print $7 }' | tr -d '$' >"${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>&1
   # get token volume
-  grep "Trading Volume24h" "${LOG_DIR:?}"/node_data/wallet/data/raw.coinmcap 2>&1 | tail -1 2>&1 | awk '{ print $3 }' 2>&1 | tr -d '$|,' | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>&1
+  echo "$RAW_COINMCAP" 2>/dev/null | grep -A1 "trading volume" | grep "of " | egrep -o "[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>&1
   # get token rank
-  grep "Market Rank" "${LOG_DIR:?}"/node_data/wallet/data/raw.coinmcap 2>&1 | tail -1 2>&1 | tr -d '#' 2>&1 | awk '{ print $3 }' | awk '{ printf "%.0f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/rank.cmc 2>&1
+  echo "$RAW_COINMCAP" 2>/dev/null | grep -o "ranking is.*" | egrep -o "[0-9]+" >"${LOG_DIR:?}"/node_data/wallet/data/rank.cmc 2>&1
   # get token watchlist
-  grep "watchlists" "${LOG_DIR:?}"/node_data/wallet/data/raw.coinmcap 2>&1 | tr -d ',' 2>&1 | awk '{ print $2 }' | awk '{ printf "%.0f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>&1
+  echo "$RAW_COINMCAP" 2>/dev/null | grep "watchlists" | tr -d ',' | egrep -o "[0-9]+" >"${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>&1
+
+  ##############################################################################
 
   # coinmarketcap api values
   API_PRICE_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
