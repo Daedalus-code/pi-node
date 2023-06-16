@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # By Rainman
-# V20231904
-# 1.6.6.9
+# V20231606
+# 1.6.7.3
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.6.9"
+VERSION="v1.6.7.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -648,6 +648,10 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
 fi
 
 ### wallet last log ############################################################
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/rq ]] &>/dev/null; then
+  echo "There was something said. --Unknown" >"${LOG_DIR:?}"/node_data/wallet/data/rq
+fi
 
 # random start number
 QUOTE_RANDOM=$((((RANDOM % 3) + 1)))
