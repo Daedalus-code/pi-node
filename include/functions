@@ -662,14 +662,19 @@ QUOTE_RANDOM=$((((RANDOM % 3) + 1)))
 
 if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
 
+  if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/rq.list ]] &>/dev/null; then
+    touch "${LOG_DIR:?}"/node_data/wallet/data/rq.list &>/dev/null
+  fi
+
   if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/rq ]] &>/dev/null; then
-    echo "There was something said. authors --Unknown" >"${LOG_DIR:?}"/node_data/wallet/data/rq
+    echo "There was something said.
+//www.q u o t e.com/authors/unknown" >"${LOG_DIR:?}"/node_data/wallet/data/rq
   fi
 
   # seconds since last edit
   RQ_QUOTE_AGE="$(stat -c '%Y' "${LOG_DIR:?}"/node_data/wallet/data/rq | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
   # count number
-  RQ_QUOTE_LIST="$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq | awk '{ print $1 }')"
+  RQ_QUOTE_LIST="$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')"
 
   # older than n seconds, continue with proxy
   if [[ "$RQ_QUOTE_AGE" -gt "3600" ]] &>/dev/null; then
