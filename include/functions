@@ -2,12 +2,12 @@
 
 # By Rainman
 # V20231606
-# 1.6.7.3
+# 1.6.8.9
 
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.6.7.3"
+VERSION="v1.6.8.9"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -649,26 +649,41 @@ fi
 
 ### wallet last log ############################################################
 
-if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/rq ]] &>/dev/null; then
-  echo "There was something said. authors --Unknown" >"${LOG_DIR:?}"/node_data/wallet/data/rq
-fi
+function get_random_quotes_proxy() {
+  echo "$(curl -s --proxy socks5h://localhost:9050 https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+}
+
+function get_random_quotes() {
+  echo "$(curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+}
 
 # random start number
 QUOTE_RANDOM=$((((RANDOM % 3) + 1)))
 
 if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
 
+  if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/rq ]] &>/dev/null; then
+    echo "There was something said. authors --Unknown" >"${LOG_DIR:?}"/node_data/wallet/data/rq
+  fi
+
   # seconds since last edit
   RQ_QUOTE_AGE="$(stat -c '%Y' "${LOG_DIR:?}"/node_data/wallet/data/rq | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+  # count number
+  RQ_QUOTE_LIST="$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq | awk '{ print $1 }')"
 
   # older than n seconds, continue with proxy
   if [[ "$RQ_QUOTE_AGE" -gt "3600" ]] &>/dev/null; then
-    echo "$(curl -s --proxy socks5h://localhost:9050 https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+    get_random_quotes_proxy
+  fi
+
+  # list less than n, continue with proxy
+  if [[ "$RQ_QUOTE_LIST" -lt "10" ]] &>/dev/null; then
+    get_random_quotes_proxy
   fi
 
   # if no data, continue without proxy
   if [[ "$(grep "Enable JavaScript and cookies to continue" "${LOG_DIR:?}"/node_data/wallet/data/rq | wc -l)" -eq "1" ]]; then
-    echo "$(curl -s https://www.quotedb.com/quote/quote.php?action=random_quote_rss 2>/dev/null | html2text)" >"${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null
+    get_random_quotes
   fi
 
   if [[ "$(egrep -c "authors" "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null)" -gt "0" ]] &>/dev/null; then
