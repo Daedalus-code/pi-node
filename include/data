@@ -143,6 +143,8 @@ if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   fi
 fi
 
+################################################################################
+
 # if no success, continue
 if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   if [[ -z "$API_PRICE_CMC" ]] &>/dev/null; then
