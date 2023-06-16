@@ -1090,6 +1090,10 @@ EOF
 
 ### coingecko price, volume ####################################################
 
+if [[ ! -f "${LOG_DIR:?}"/node_data/requests.cg ]] &>/dev/null; then
+  touch "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null
+fi
+
 cat >"${LOG_DIR:?}"/add_cg <<'EOF'
 #!/bin/bash
 
@@ -1127,6 +1131,10 @@ done
 EOF
 
 ### coinmarketcap price, volume, rank, watchlist ###############################
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/requests.cmc ]] &>/dev/null; then
+  touch "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null
+fi
 
 cat >"${LOG_DIR:?}"/add_cmc <<'EOF'
 #!/bin/bash
