@@ -1270,7 +1270,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       CPU_ARCH=$(uname -m)
       CPU_CORES=$(nproc)
 
-      if [[ $CPU_ARCH == "aarch64" || $CPU_ARCH == "armv7l" || $CPU_ARCH == "x86_64" ]]; then
+      if [[ $CPU_ARCH == "aarch64" || $CPU_ARCH == "armv7l" || $CPU_ARCH == "x86_64" ]] &>/dev/null; then
         echo "Detected $CPU_ARCH with $CPU_CORES cores."
       else
         echo "Unsupported architecture. Exiting."
@@ -1286,19 +1286,21 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # function to install rust and cargo
     install_rust() {
-      echo "Installing Rust and Cargo..."
-      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-      eval "$(cat "$HOME/.cargo/env")"
+      if [[ ! -d "$HOME/.cargo" ]] &>/dev/null; then
+        echo "Installing Rust and Cargo..."
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        eval "$(cat "$HOME/.cargo/env")"
+      fi
     }
 
     # function to download and extract source
     download_and_extract_source() {
-      if [[ ! -f /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip ]]; then
+      if [[ ! -f /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
         echo "Downloading source..."
         cd || exit && sudo wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
       fi
 
-      if [[ ! -f "/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]]; then
+      if [[ ! -f "/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
         echo "Unzipping source..."
         sudo unzip "${LATEST_VERSION:?}".zip
       fi
@@ -1331,7 +1333,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # ask user to remove old build
     read -r -p "[YN] Remove old build? y/n " -n 1 -r
     echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       sudo rm -r /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
       sudo rm -r /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip &>/dev/null
     fi
@@ -1644,7 +1646,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
           WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
           OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
-          if [[ ! "$(grep "$WALLET_TXHASH" "${DATA_DIR:?}"/"${WALLET_MASTER:?}" | wc -l)" -eq "1" ]]; then
+          if [[ ! "$(grep "$WALLET_TXHASH" "${DATA_DIR:?}"/"${WALLET_MASTER:?}" | wc -l)" -eq "1" ]] &>/dev/null; then
             echo "MN $(cat "${DATA_DIR:?}"/wan_curl 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?} ${MASTERNODE_KEY:?} ${WALLET_TXHASH:?} ${OUTPUT_IDX:?}" >>"${DATA_DIR:?}"/"${WALLET_MASTER:?}"
           fi
         fi
