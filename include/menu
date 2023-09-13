@@ -1300,7 +1300,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # build freedomcoin
     cd ..
     ./autogen.sh
-    ./configure --host="$HOST" --prefix="$(pwd)"/depends/built/"$HOST"
+    ./configure --host="$HOST" --prefix="$(pwd)"/depends/built/"$HOST" --with-incompatible-bdb
     make -j"$CPU_CORES"
 
     # set user ownership
