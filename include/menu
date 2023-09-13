@@ -1302,7 +1302,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         exit 1
       fi
       cd /home/"${WHOAMI:?}"/FreedomCoin-Core || exit
-      echo "Configuring project..."
+      echo "Autogen project..."
       ./autogen.sh
       echo "Configuring project..."
       ./configure --prefix=/usr/arm-linux-gnueabihf CC="$ARM_GCC_PATH"/arm-linux-gnueabihf-gcc CXX="$ARM_GCC_PATH"/arm-linux-gnueabihf-g++
