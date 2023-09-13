@@ -1307,7 +1307,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo "Configuring project..."
       ./configure --prefix=/usr/arm-linux-gnueabihf CC="$ARM_GCC_PATH"/arm-linux-gnueabihf-gcc CXX="$ARM_GCC_PATH"/arm-linux-gnueabihf-g++
       echo "Building project..."
-      make -j"$(nproc)"
+      sudo make -j"$(nproc)"
     }
 
     # start counting (seconds)
@@ -1332,7 +1332,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     # set user ownership
-    sudo chown "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin* &>/dev/null
+    sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core/ &>/dev/null
 
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
