@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231309
-# 2.6.8.1
+# 2.6.8.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -63,12 +63,16 @@ if [[ -z "$OLD_HEAD" ]] &>/dev/null; then
   OLD_HEAD="[fsociety]"
 fi
 
-if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/client/latest ]] &>/dev/null; then
-  curl -s -L "${WALLET_RELEASE:?}" 2>&1 | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
-fi
+function latest_release() {
+  # if file doesnt exist
+  if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/client/latest ]] &>/dev/null; then
+    curl -s -L "${WALLET_RELEASE:?}" 2>&1 | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
+  fi
+  # get latest release
+  LATEST_VERSION="$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)"
+}
 
-# get latest release
-LATEST_VERSION="$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)"
+latest_release
 
 HEIGHT=17
 WIDTH=55
@@ -870,6 +874,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "1")
 
+    latest_release
+
     # create uname -a
     uname -a >"${LOG_DIR:?}"/node_data/system/uname
 
@@ -1256,6 +1262,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # compiler
 
   "3")
+
+    latest_release
 
     CPU_CORES="$(grep "cpu cores" /proc/cpuinfo | awk '{ print $4  }' | head -1)"
 
