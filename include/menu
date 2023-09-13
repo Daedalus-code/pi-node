@@ -1281,7 +1281,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # function to install dependencies
     install_dependencies() {
       echo "Please wait. Installing dependencies..."
-      sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+      sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++
     }
 
     # function to download and extract source
