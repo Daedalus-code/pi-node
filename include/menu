@@ -1301,7 +1301,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         echo "ARM GCC compiler not found. Please make sure it is installed and in your system's PATH."
         exit 1
       fi
-      cd /home/"${WHOAMI:?}"/FreedomCoin-Core || exit
+
       echo "Autogen project..."
       ./autogen.sh
       echo "Configuring project..."
