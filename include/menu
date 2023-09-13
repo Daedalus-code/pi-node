@@ -1292,18 +1292,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
 
-    sudo make -j"${CPU_CORES:?}" HOST=arm-linux-gnueabihf 2>/dev/null
+    sudo make -j"${CPU_CORES:?}" HOST=arm-linux-gnueabihf
 
     cd ..
 
-    sudo make install 2>/dev/null
+    sudo make install
 
     BUILD="/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
 
-    sudo ./autogen.sh 2>/dev/null
-    sudo ./configure --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust 2>/dev/null
-    sudo make -j"${CPU_CORES:?}" 2>/dev/null
-    sudo make install 2>/dev/null
+    sudo ./autogen.sh
+    sudo ./configure --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
+    sudo make -j"${CPU_CORES:?}"
+    sudo make install
 
     # seconds since start
     DURATION=$(echo "$SECONDS-$START" 2>&1 | bc 2>&1)
