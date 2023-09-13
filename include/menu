@@ -1306,7 +1306,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     ./autogen.sh
 
     # configure the project for cross-compilation
-    ./configure --host=$TARGET_ARCH CC=${CROSS_COMPILER}gcc CXX=${CROSS_COMPILER}g++
+    ./configure --host=$TARGET_ARCH CC=${CROSS_COMPILER}gcc CXX=${CROSS_COMPILER}g++ --prefix=/usr/arm-linux-gnueabihf
 
     # build the project
     make
