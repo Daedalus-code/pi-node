@@ -1281,7 +1281,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # function to install dependencies
     install_dependencies() {
       echo "Please wait. Installing dependencies..."
-      sudo apt-get install -y autoconf autogen automake autotools-dev binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential cmake curl g++-4.8-arm-linux-gnueabihf g++-4.8-multilib g++-arm-linux-gnueabihf gcc-4.8-arm-linux-gnueabihf gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3
+      sudo apt-get install -y autoconf autogen automake autotools-dev binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential cmake curl arm-linux-gnueabihf multilib g++-arm-linux-gnueabihf imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3
     }
 
     # function to install rust and cargo
