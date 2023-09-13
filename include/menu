@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231309
-# 2.6.8.9
+# 2.7.2.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1265,17 +1265,73 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "3")
 
-    latest_release
+    # function to detect CPU architecture and cores
+    detect_architecture() {
+      CPU_ARCH=$(uname -m)
+      CPU_CORES=$(nproc)
 
-    CPU_CORES=$(nproc)
+      if [[ $CPU_ARCH == "aarch64" || $CPU_ARCH == "armv7l" || $CPU_ARCH == "x86_64" ]]; then
+        echo "Detected $CPU_ARCH with $CPU_CORES cores."
+      else
+        echo "Unsupported architecture. Exiting."
+        exit 1
+      fi
+    }
 
-    if [[ -z "$CPU_CORES" ]] &>/dev/null; then
-      CPU_CORES="1"
-    fi
+    # function to install dependencies
+    install_dependencies() {
+      echo "Please wait. Installing dependencies..."
+      sudo apt-get install -y autoconf autogen automake autotools-dev binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential cmake curl g++-4.8-arm-linux-gnueabihf g++-4.8-multilib g++-arm-linux-gnueabihf gcc-4.8-arm-linux-gnueabihf gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3
+    }
 
+    # function to install rust and cargo
+    install_rust() {
+      echo "Installing Rust and Cargo..."
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+      eval "$(cat "$HOME/.cargo/env")"
+    }
+
+    # function to download and extract source
+    download_and_extract_source() {
+      if [[ ! -f /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip ]]; then
+        echo "Downloading source..."
+        cd || exit && sudo wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
+      fi
+
+      if [[ ! -f "/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]]; then
+        echo "Unzipping source..."
+        sudo unzip "${LATEST_VERSION:?}".zip
+      fi
+    }
+
+    # function to build and install dependencies
+    build_dependencies() {
+      echo "Building dependencies..."
+      cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
+      sudo make -j"${CPU_CORES:?}" HOST=arm-linux-gnueabihf
+      cd ..
+      sudo make install
+    }
+
+    # function to configure and build the project
+    configure_and_build() {
+      BUILD="/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
+
+      echo "Configuring project..."
+      sudo ./autogen.sh
+      sudo ./configure --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
+
+      echo "Building project..."
+      sudo make -j"${CPU_CORES:?}"
+      sudo make install
+    }
+
+    # main script
+
+    # ask user to remove old build
     read -r -p "[YN] Remove old build? y/n " -n 1 -r
     echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
       sudo rm -r /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
       sudo rm -r /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip &>/dev/null
     fi
@@ -1283,50 +1339,25 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # start counting (seconds)
     START="$SECONDS"
 
-    echo "Please wait"
-    sudo apt-get install autoconf autogen automake autotools-dev binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential cmake curl g++-4.8-arm-linux-gnueabihf g++-4.8-multilib g++-arm-linux-gnueabihf gcc-4.8-arm-linux-gnueabihf gcc-4.8-multilib imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3 -y 2>/dev/null
-    clear
+    # execute functions
+    detect_architecture
+    install_dependencies
+    install_rust
+    download_and_extract_source
+    build_dependencies
+    configure_and_build
 
-    # install rust and cargo
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-    eval "$(cat "$HOME/.cargo/env")"
-
-    if [[ ! -f /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
-      echo "Downloading source"
-      cd || exit && sudo wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
-    fi
-
-    if [[ ! -f "/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
-      echo "Unzip source.zip"
-      sudo unzip "${LATEST_VERSION:?}".zip
-    fi
-
-    cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-
-    sudo make -j"${CPU_CORES:?}" HOST=arm-linux-gnueabihf
-
-    cd ../..
-
-    sudo ./autogen.sh
-    sudo ./configure --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
-
-    sudo make -j"${CPU_CORES:?}"
-    sudo make install
-
-    # seconds since start
-    DURATION=$(echo "$SECONDS-$START" 2>&1 | bc 2>&1)
-    # convert seconds
+    # calculate build time
+    DURATION=$(echo "$SECONDS-$START" | bc)
     TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
     echo
-    printf '%b' "Build time: ${G1:?}$TIMER${N0:?}\n"
+    printf 'Build time: %s\n' "$TIMER"
 
     # move build into home
-    sudo cp /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoind /home/"${WHOAMI:?}" &>/dev/null
-    sudo cp /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin-cli /home/"${WHOAMI:?}" &>/dev/null
-
-    echo
-    ls -lSah /home/"${WHOAMI:?}"/freedomcoin* | awk '{ print $NF }' 2>/dev/null
-    echo
+    if [[ -f /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoind || -f /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin-cli ]] &>/dev/null; then
+      sudo cp /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoind /home/"${WHOAMI:?}" &>/dev/null
+      sudo cp /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin-cli /home/"${WHOAMI:?}" &>/dev/null
+    fi
 
     # set user ownership
     sudo chown "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin* &>/dev/null
