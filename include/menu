@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231309
-# 2.7.2.0
+# 2.6.8.8
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1281,62 +1281,30 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # function to install dependencies
     install_dependencies() {
       echo "Please wait. Installing dependencies..."
-      sudo apt-get install -y autoconf autogen automake autotools-dev binutils-arm-linux-gnueabihf binutils-gold bsdmainutils build-essential cmake curl g++-arm-linux-gnueabihf imagemagick libboost-all-dev libbz2-dev libcap-dev libdb++-dev libevent-dev libgmp-dev librsvg2-bin libsodium-dev libtiff-tools libtool libz-dev pkg-config python-setuptools python3
-    }
-
-    # function to install rust and cargo
-    install_rust() {
-      if [[ ! -d "$HOME/.cargo" ]] &>/dev/null; then
-        echo "Installing Rust and Cargo..."
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-        eval "$(cat "$HOME/.cargo/env")"
-      fi
+      sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
     }
 
     # function to download and extract source
     download_and_extract_source() {
-      if [[ ! -f /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip ]] &>/dev/null; then
+      if [[ ! -f /home/"${WHOAMI:?}"/FreedomCoin-Core ]] &>/dev/null; then
         echo "Downloading source..."
-        cd || exit && sudo wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/archive/refs/tags/"${LATEST_VERSION:?}".zip
+        git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
       fi
-
-      if [[ ! -f "/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}/README.md" ]] &>/dev/null; then
-        echo "Unzipping source..."
-        sudo unzip "${LATEST_VERSION:?}".zip
-      fi
-    }
-
-    # function to build and install dependencies
-    build_dependencies() {
-      echo "Building dependencies..."
-      cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/depends || exit
-      sudo make -j"${CPU_CORES:?}" HOST=arm-linux-gnueabihf
-      cd ..
-      sudo make install
     }
 
     # function to configure and build the project
     configure_and_build() {
-      BUILD="/home/${WHOAMI:?}/${WALLET_NAME:?}-Core-${LATEST_VERSION:?}"
-
+      # detect path to ARM GCC compiler
+      ARM_GCC_PATH=$(which arm-linux-gnueabihf-gcc)
+      if [[ -z "$ARM_GCC_PATH" ]]; then
+        echo "ARM GCC compiler not found. Please make sure it is installed and in your system's PATH."
+        exit 1
+      fi
       echo "Configuring project..."
-      sudo ./autogen.sh
-      sudo ./configure --prefix=$BUILD/depends/arm-linux-gnueabihf LDFLAGS=-static-libstdc++ --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-tests --without-gui --disable-online-rust
-
+      ./configure --prefix=/usr/arm-linux-gnueabihf CC="$ARM_GCC_PATH"/arm-linux-gnueabihf-gcc CXX="$ARM_GCC_PATH"/arm-linux-gnueabihf-g++
       echo "Building project..."
-      sudo make -j"${CPU_CORES:?}"
-      sudo make install
+      make -j"$(nproc)"
     }
-
-    # main script
-
-    # ask user to remove old build
-    read -r -p "[YN] Remove old build? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      sudo rm -r /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}" &>/dev/null
-      sudo rm -r /home/"${WHOAMI:?}"/"${LATEST_VERSION:?}".zip &>/dev/null
-    fi
 
     # start counting (seconds)
     START="$SECONDS"
@@ -1344,9 +1312,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # execute functions
     detect_architecture
     install_dependencies
-    install_rust
     download_and_extract_source
-    build_dependencies
     configure_and_build
 
     # calculate build time
