@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231309
-# 2.6.8.8
+# 2.6.7.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1290,30 +1290,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # start counting (seconds)
     START="$SECONDS"
 
-    # target architecture
-    TARGET_ARCH=arm-linux-gnueabihf
+    # cross-compilation environment
+    HOST=arm-linux-gnueabihf
+    PATH=/usr/bin:"$PATH"
 
-    # path for freedomcoin source code
-    FREEDOMCOIN_SOURCE="$HOME"/FreedomCoin-Core
-    # path for freedomcoin depends code
-    FREEDOMCOIN_DEPENDS="$HOME"/FreedomCoin-Core/depends
+    cd FreedomCoin-Core/depends || exit
+    make HOST="$HOST" -j"$CPU_CORES"
 
-    # path to your cross-compiler
-    CROSS_COMPILER="$FREEDOMCOIN_SOURCE"/depends/${TARGET_ARCH}-
-
-    # navigate to the freedomcoin source directory
-    cd $FREEDOMCOIN_SOURCE || exit
-
-    # autogen the project
+    # build freedomcoin
+    cd ..
     ./autogen.sh
-
-    cd "$FREEDOMCOIN_DEPENDS" || exit
-
-    # configure the project for cross-compilation
-    ./configure --host=$TARGET_ARCH CC=${CROSS_COMPILER}gcc CXX=${CROSS_COMPILER}g++ --prefix=/usr/arm-linux-gnueabihf
-
-    # build the project
-    make
+    ./configure --host="$HOST" --prefix="$(pwd)"/depends/built/"$HOST"
+    make -j"$CPU_CORES"
 
     # set user ownership
     sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core/ &>/dev/null
