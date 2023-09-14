@@ -1265,8 +1265,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "3")
 
-    # function to detect CPU architecture and cores
+    # CPU architecture
     CPU_ARCH=$(uname -m)
+    # CPU cores
     CPU_CORES=$(nproc)
 
     if [[ $CPU_ARCH == "aarch64" || $CPU_ARCH == "armv7l" || $CPU_ARCH == "x86_64" ]] &>/dev/null; then
@@ -1276,15 +1277,27 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       exit 1
     fi
 
-    # function to install dependencies
+    # install dependencies
     echo "Please wait. Installing dependencies..."
     sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++
 
-    # function to download and extract source
+    # download and extract source
     if [[ ! -d /home/"${WHOAMI:?}"/FreedomCoin-Core ]] &>/dev/null; then
       echo "Downloading source..."
       cd || exit
       git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
+    fi
+
+    # install berkeley DB 4.8
+    if [[ ! -d /home/"${WHOAMI:?}"/db-4.8.30.NC ]] &>/dev/null; then
+      echo "Downloading and installing Berkeley DB 4.8..."
+      cd /home/"${WHOAMI:?}" || exit
+      wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
+      tar -xzf db-4.8.30.NC.tar.gz
+      cd db-4.8.30.NC/build_unix || exit
+      ../dist/configure --host="$HOST" --prefix="$(pwd)/depends/built/$HOST"
+      make -j"$CPU_CORES"
+      sudo make install
     fi
 
     # start counting (seconds)
