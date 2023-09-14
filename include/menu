@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231409
-# 2.6.9.3
+# 2.6.8.5
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1281,30 +1281,22 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     echo "Please wait. Installing dependencies..."
     sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev
 
-    export BDB_INCLUDE_PATH="/usr/include"
-    export BDB_LIB_PATH="/usr/lib"
-
-    # remove old tar
-    rm db-4.8.30.NC.tar.gz.* &>/dev/null
-
     # start counting (seconds)
     START="$SECONDS"
 
     # check for and download berkeley DB if needed
-    if [[ ! -f "$HOME/db-4.8.30.NC.tar.gz" ]]; then
-      wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz -P "$HOME"
-      tar -xzf "$HOME/db-4.8.30.NC.tar.gz" -C "$HOME"
+    if [[ ! -f "$HOME/install_db4.sh" ]] &>/dev/null; then
+      cd || exit
+      wget https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
+      bash install_db4.sh "$HOME"
     fi
 
     # build and install Berkeley DB
-    cd "$HOME/db-4.8.30.NC/build_unix" || exit
-    ../dist/configure --host=arm-linux-gnueabihf --prefix=/usr/local/berkeleydb
+    cd "$HOME/db4" || exit
+    export BDB_PREFIX="$HOME/db4"
+    ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include"
     sudo make -j"$CPU_CORES"
     sudo make install
-
-    # set environment variables
-    export CPPFLAGS="-I/usr/local/berkeleydb/include"
-    export LDFLAGS="-L/usr/local/berkeleydb/lib"
 
     # copy Berkeley DB header files
     sudo cp /usr/local/berkeleydb/include/* /usr/include/
