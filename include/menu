@@ -1311,7 +1311,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # copy the header files
     if [[ -d /home/"${WHOAMI:?}"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include ]] &>/dev/null; then
-      cp -r $HOME/db-4.8.30.NC/build_unix/include/* /home/"${WHOAMI:?}"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
+      cp -r "$HOME"/db-4.8.30.NC/build_unix/include/* /home/"${WHOAMI:?}"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
     else
       echo "Error: Directory /home/${WHOAMI:?}/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include does not exist."
     fi
@@ -1319,7 +1319,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # start counting (seconds)
     START="$SECONDS"
 
-    cd FreedomCoin-Core/depends || exit
+    cd "$HOME"/FreedomCoin-Core/depends || exit
     make HOST="$HOST" -j"$CPU_CORES"
 
     # build wallet
