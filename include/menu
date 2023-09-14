@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231409
-# 2.6.8.8
+# 2.6.9.0
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1287,12 +1287,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # start counting (seconds)
     START="$SECONDS"
 
-    cd || exit
-    if [[ ! -f "$HOME"/db-4.8.30.NC.tar.gz ]] &>/dev/null; then
-      wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
-      tar -xzf db-4.8.30.NC.tar.gz
+    # check for and download berkeley DB if needed
+    if [[ ! -f "$HOME/db-4.8.30.NC.tar.gz" ]]; then
+      wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz -P "$HOME"
+      tar -xzf "$HOME/db-4.8.30.NC.tar.gz" -C "$HOME"
     fi
-    cd "$HOME"/db-4.8.30.NC/build_unix || exit
+
+    # build and install Berkeley DB
+    cd "$HOME/db-4.8.30.NC/build_unix" || exit
     ../dist/configure --host=arm-linux-gnueabihf --prefix=/usr/local/berkeleydb
     sudo make -j"$CPU_CORES"
     sudo make install
@@ -1301,19 +1303,19 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     export CPPFLAGS="-I/usr/local/berkeleydb/include"
     export LDFLAGS="-L/usr/local/berkeleydb/lib"
 
-    # copy berkeley DB header files
-    cp /usr/local/berkeleydb/include/* /usr/include/
+    # copy Berkeley DB header files
+    sudo cp /usr/local/berkeleydb/include/* /usr/include/
 
     # download and extract wallet source
-    cd || exit
+    cd "$HOME" || exit
     git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
 
     # build dependencies
-    cd "$HOME"/FreedomCoin-Core/depends || exit
+    cd "$HOME/FreedomCoin-Core/depends" || exit
     sudo make HOST=arm-linux-gnueabihf -j"$CPU_CORES"
 
     # build wallet
-    cd ..
+    cd "$HOME/FreedomCoin-Core" || exit
     ./autogen.sh
     ./configure --host=arm-linux-gnueabihf --prefix="$(pwd)"/depends/built/arm-linux-gnueabihf --with-incompatible-bdb=4.8
     sudo make -j"$CPU_CORES"
