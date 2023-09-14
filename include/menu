@@ -1294,7 +1294,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # build and install Berkeley DB
     cd "$HOME/db4/db-4.8.30.NC" || exit
     export BDB_PREFIX="$HOME/db4"
-    ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include"
+    ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8.a" BDB_CFLAGS="-I${BDB_PREFIX}/include"
     sudo make -j"$CPU_CORES"
     sudo make install
 
