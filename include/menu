@@ -1305,18 +1305,18 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     cd "$HOME" || exit
     git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
 
+    # set user ownership
+    sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
+
     # build dependencies
     cd "$HOME/FreedomCoin-Core/depends" || exit
-    sudo make HOST=arm-linux-gnueabihf -j"$CPU_CORES"
+    make HOST=arm-linux-gnueabihf NO_QT=1 -j"$CPU_CORES"
 
     # build wallet
     cd "$HOME/FreedomCoin-Core" || exit
     ./autogen.sh
-    ./configure --host=arm-linux-gnueabihf --prefix="$(pwd)"/depends/built/arm-linux-gnueabihf --with-incompatible-bdb=4.8
-    sudo make -j"$CPU_CORES"
-
-    # set user ownership
-    sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
+    ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++
+    make -j"$CPU_CORES"
 
     # copy binaries
     sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind src/freedomcoin-cli "$HOME" &>/dev/null
