@@ -1319,7 +1319,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
 
     # copy binaries
-    sudo cp src/freedomcoind src/freedomcoin-cli /usr/local/bin/
+    sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind src/freedomcoin-cli "$HOME" &>/dev/null
 
     # calculate build time
     DURATION=$(echo "$SECONDS-$START" | bc)
