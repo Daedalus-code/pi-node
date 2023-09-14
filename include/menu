@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231409
-# 2.7.0.3
+# 2.6.9.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1310,13 +1310,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     export LDFLAGS="-L/usr/local/berkeleydb/lib"
 
     # copy the header files
-    if [[ -d /home/"${WHOAMI:?}"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include ]]; then
-      cp -r "$HOME"/db-4.8.30.NC/build_unix/include/* /home/"${WHOAMI:?}"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
-    else
-      echo "Creating directory /home/${WHOAMI:?}/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include..."
-      mkdir -p /home/"${WHOAMI:?}"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include
-      cp -r "$HOME"/db-4.8.30.NC/build_unix/include/* /home/"${WHOAMI:?}"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
-    fi
+    cp "$HOME"/db-4.8.30.NC/build_unix/db_cxx.h "$HOME"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
 
     # start counting (seconds)
     START="$SECONDS"
