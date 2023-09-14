@@ -1313,7 +1313,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # build wallet
     cd ..
     ./autogen.sh
-    ./configure --host="$HOST" --prefix="$(pwd)"/depends/built/"$HOST" --with-incompatible-bdb
+    ./configure --host="$HOST" --prefix="$(pwd)"/depends/built/"$HOST" --with-incompatible-bdb=4.8
     make -j"$CPU_CORES"
 
     # set user ownership
