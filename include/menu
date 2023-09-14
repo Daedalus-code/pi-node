@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231409
-# 2.6.9.7
+# 2.6.8.3
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1270,10 +1270,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # CPU cores
     CPU_CORES=$(nproc)
 
-    # cross-compilation environment
-    HOST=arm-linux-gnueabihf
-    PATH=/usr/bin:"$PATH"
-
     if [[ $CPU_ARCH == "aarch64" || $CPU_ARCH == "armv7l" || $CPU_ARCH == "x86_64" ]] &>/dev/null; then
       echo "Detected $CPU_ARCH with $CPU_CORES cores."
     else
@@ -1285,59 +1281,49 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     echo "Please wait. Installing dependencies..."
     sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++
 
-    # download and extract source
-    if [[ ! -d /home/"${WHOAMI:?}"/FreedomCoin-Core ]] &>/dev/null; then
-      echo "Downloading source..."
-      cd || exit
-      git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
-    fi
-
-    # install berkeley DB 4.8
-    if [[ ! -d /usr/local/berkeleydb ]] &>/dev/null; then
-      echo "Downloading and installing Berkeley DB 4.8..."
-      cd /home/"${WHOAMI:?}" || exit
-      wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
-      tar -xzf db-4.8.30.NC.tar.gz
-    fi
-
-    cd "$HOME"/db-4.8.30.NC/build_unix || exit
-    ../dist/configure --host="$HOST" --prefix="/usr/local/berkeleydb"
-    make -j"$CPU_CORES"
-    sudo make install
-
-    # set the environment variables for berkeley DB
-    export CPPFLAGS="-I/usr/local/berkeleydb/include"
-    export LDFLAGS="-L/usr/local/berkeleydb/lib"
-
-    # copy the header files
-    cp "$HOME"/db-4.8.30.NC/build_unix/db_cxx.h "$HOME"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
-
     # start counting (seconds)
     START="$SECONDS"
 
+    cd || exit
+    wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
+    tar -xzf db-4.8.30.NC.tar.gz
+    cd "$HOME"/db-4.8.30.NC/build_unix || exit
+    ../dist/configure --host=arm-linux-gnueabihf --prefix=/usr/local/berkeleydb
+    make -j"$(nproc)"
+    sudo make install
+
+    # set environment variables
+    export CPPFLAGS="-I/usr/local/berkeleydb/include"
+    export LDFLAGS="-L/usr/local/berkeleydb/lib"
+
+    # copy berkeley DB header files
+    cp /usr/local/berkeleydb/include/* /usr/include/
+
+    # download and extract wallet source
+    cd || exit
+    git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
+
+    # build dependencies
     cd "$HOME"/FreedomCoin-Core/depends || exit
-    make HOST="$HOST" -j"$CPU_CORES"
+    make HOST=arm-linux-gnueabihf -j"$CPU_CORES"
 
     # build wallet
     cd ..
     ./autogen.sh
-    ./configure --host="$HOST" --prefix="$(pwd)"/depends/built/"$HOST" --with-incompatible-bdb=4.8
+    ./configure --host=arm-linux-gnueabihf --prefix="$(pwd)"/depends/built/arm-linux-gnueabihf --with-incompatible-bdb=4.8
     make -j"$CPU_CORES"
 
     # set user ownership
-    sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core/ &>/dev/null
+    sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
+
+    # copy binaries
+    sudo cp src/freedomcoind src/freedomcoin-cli /usr/local/bin/
 
     # calculate build time
     DURATION=$(echo "$SECONDS-$START" | bc)
     TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
     echo
     printf 'Build time: %s\n' "$TIMER"
-
-    # move build into home
-    if [[ -f /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoind || -f /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin-cli ]] &>/dev/null; then
-      sudo cp /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoind /home/"${WHOAMI:?}" &>/dev/null
-      sudo cp /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Core-"${LATEST_VERSION:?}"/src/freedomcoin-cli /home/"${WHOAMI:?}" &>/dev/null
-    fi
 
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
