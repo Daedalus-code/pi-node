@@ -1315,7 +1315,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # build wallet
     cd "$HOME/FreedomCoin-Core" || exit
     ./autogen.sh
-    ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8
+    ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --disable-wallet
     make -j"$CPU_CORES"
 
     # copy binaries
