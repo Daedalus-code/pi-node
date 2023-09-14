@@ -1293,15 +1293,15 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     # install berkeley DB 4.8
-    if [[ ! -d /home/"${WHOAMI:?}"/db-4.8.30.NC ]] &>/dev/null; then
+    if [[ ! -d /usr/local/berkeleydb ]] &>/dev/null; then
       echo "Downloading and installing Berkeley DB 4.8..."
       cd /home/"${WHOAMI:?}" || exit
       wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
       tar -xzf db-4.8.30.NC.tar.gz
     fi
 
-    cd $HOME/db-4.8.30.NC/build_unix || exit
-    ../dist/configure --host=arm-linux-gnueabihf --prefix=/usr/local/berkeleydb
+    cd "$HOME"/db-4.8.30.NC/build_unix || exit
+    ../dist/configure --host="$HOST" --prefix="/usr/local/berkeleydb"
     make -j"$CPU_CORES"
     sudo make install
 
