@@ -1310,7 +1310,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     export LDFLAGS="-L/usr/local/berkeleydb/lib"
 
     # copy the header files
-    cp -r $HOME/db-4.8.30.NC/build_unix/include/* FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
+    cp -r $HOME/db-4.8.30.NC/build_unix/include/* /home/"${WHOAMI:?}"/FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
 
     # start counting (seconds)
     START="$SECONDS"
