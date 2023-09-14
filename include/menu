@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231409
-# 2.6.9.6
+# 2.6.9.7
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1298,15 +1298,16 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd /home/"${WHOAMI:?}" || exit
       wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
       tar -xzf db-4.8.30.NC.tar.gz
-      cd db-4.8.30.NC/build_unix || exit
-      ../dist/configure --host="$HOST" --prefix="$(pwd)/depends/built/$HOST"
-      make -j"$CPU_CORES"
-      sudo make install
     fi
 
+    cd $HOME/db-4.8.30.NC/build_unix || exit
+    ../dist/configure --host=arm-linux-gnueabihf --prefix=/usr/local/berkeleydb
+    make -j"$CPU_CORES"
+    sudo make install
+
     # set the environment variables for berkeley DB
-    export CPPFLAGS="-I$HOME/db-4.8.30.NC/build_unix/include"
-    export LDFLAGS="-L$HOME/db-4.8.30.NC/build_unix/lib"
+    export CPPFLAGS="-I/usr/local/berkeleydb/include"
+    export LDFLAGS="-L/usr/local/berkeleydb/lib"
 
     # copy the header files
     cp -r $HOME/db-4.8.30.NC/build_unix/include/* FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
