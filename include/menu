@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231409
-# 2.6.9.3
+# 2.6.9.6
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1304,12 +1304,15 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       sudo make install
     fi
 
+    # set the environment variables for berkeley DB
+    export CPPFLAGS="-I$HOME/db-4.8.30.NC/build_unix/include"
+    export LDFLAGS="-L$HOME/db-4.8.30.NC/build_unix/lib"
+
+    # copy the header files
+    cp -r $HOME/db-4.8.30.NC/build_unix/include/* FreedomCoin-Core/depends/built/arm-linux-gnueabihf/include/
+
     # start counting (seconds)
     START="$SECONDS"
-
-    # set the environment variables for berkeley DB
-    export CPPFLAGS="-I$HOME/db-4.8.30.NC/build_unix"
-    export LDFLAGS="-L$HOME/db-4.8.30.NC/build_unix"
 
     cd FreedomCoin-Core/depends || exit
     make HOST="$HOST" -j"$CPU_CORES"
