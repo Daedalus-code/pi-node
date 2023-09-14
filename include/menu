@@ -2,7 +2,7 @@
 
 # By Rainman
 # V20231409
-# 2.6.8.5
+# 2.6.8.9
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -1270,6 +1270,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # CPU cores
     CPU_CORES=$(nproc)
 
+    # if architecture exist
     if [[ $CPU_ARCH == "aarch64" || $CPU_ARCH == "armv7l" || $CPU_ARCH == "x86_64" ]] &>/dev/null; then
       echo "Detected $CPU_ARCH with $CPU_CORES cores."
     else
@@ -1302,7 +1303,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     # if repo doesnt exist
-    if [[ ! -f "$HOME"/FreedomCoin-Core/FreedomCoin-Core.git ]] &>/dev/null; then
+    if [[ ! -d "$HOME/FreedomCoin-Core" ]] &>/dev/null; then
       # download and extract wallet source
       cd "$HOME" || exit
       git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
@@ -1311,14 +1312,14 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # set user ownership
     sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
 
-    # build dependencies
+    # build dependencies without Qt
     cd "$HOME/FreedomCoin-Core/depends" || exit
     make HOST=arm-linux-gnueabihf NO_QT=1 -j"$CPU_CORES"
 
-    # build wallet
+    # build wallet without wallet and GUI
     cd "$HOME/FreedomCoin-Core" || exit
     ./autogen.sh
-    ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --disable-wallet
+    ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --without-gui
     make -j"$CPU_CORES"
 
     # copy binaries
