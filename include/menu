@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20231409
+# V20231609
 # 2.6.8.9
 
 # dialog, ncurses no utf8 acs
@@ -24,7 +24,7 @@ else # get input count
 fi
 
 # date for logs
-LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&1
+LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>/dev/null
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
 
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
@@ -33,7 +33,7 @@ fi
 
 # create uname -a
 if [[ ! -f "${LOG_DIR:?}"/node_data/system/uname ]] &>/dev/null; then
-  uname -a >"${LOG_DIR:?}"/node_data/system/uname
+  uname -a >"${LOG_DIR:?}"/node_data/system/uname 2>/dev/null
 fi
 
 # get system user
@@ -65,10 +65,10 @@ fi
 
 function latest_release() {
   # file age (seconds)
-  WALLET_CLIENT_LATEST_AGE="$(stat -c '%Y' "${LOG_DIR:?}"/node_data/wallet/client/latest | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done | awk '{ SUM += $1} END { print SUM }')"
+  WALLET_CLIENT_LATEST_AGE="$(stat -c '%Y' "${LOG_DIR:?}"/node_data/wallet/client/latest | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done | awk '{ SUM += $1} END { print SUM }' 2>/dev/null)"
   # if file doesnt exist
   if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/client/latest || "$WALLET_CLIENT_LATEST_AGE" -gt "300" ]] &>/dev/null; then
-    curl -s -L "${WALLET_RELEASE:?}" 2>&1 | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/wallet/client/latest 2>&1
+    curl -s -L "${WALLET_RELEASE:?}" 2>/dev/null | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/wallet/client/latest
   fi
   # get latest release
   LATEST_VERSION="$(cat "${LOG_DIR:?}"/node_data/wallet/client/latest 2>/dev/null)"
