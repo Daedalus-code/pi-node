@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# By Rainman
-# V20231904
-# 0.5.9.2
+################################################################################
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1

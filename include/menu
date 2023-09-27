@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# By Rainman
-# V092723
-# 2.6.8.9
+################################################################################
 
 # dialog, ncurses no utf8 acs
 export NCURSES_NO_UTF8_ACS=1
@@ -76,9 +74,9 @@ function latest_release() {
 
 latest_release
 
-HEIGHT=17
+HEIGHT=18
 WIDTH=55
-CHOICE_HEIGHT=10
+CHOICE_HEIGHT=11
 BACKTITLE="Pi-Node - ${OLD_HEAD:?} ${LATEST_DATE:?}"
 TITLE="$(hostname 2>/dev/null) ($(grep "inet" "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep -v "inet6|127.0.0.1" 2>/dev/null | awk '{ print $2 }' 2>/dev/null | xargs 2>/dev/null | awk '{ print $1 }' 2>/dev/null))"
 MENU=" $(LC_ALL=de_US.utf8 date 2>/dev/null) ${CPU_CTEMP:?}C ${CPU_FTEMP:?}F P2P $(grep "connections" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' 2>/dev/null)"
@@ -92,6 +90,7 @@ OPTIONS=(1 "Node Menu        Shutdown, Re/Start node"
   7 "System Space     Disk space utilized"
   8 "Proxy Menu       Proxy options (tor)"
   9 "Swap Menu        Swap, DTR options"
+  10 "VPS Menu         VPS options"
   0 "Quit             Exit menu")
 
 CHOICE=$(dialog --clear \
@@ -2668,6 +2667,165 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
     else
       # run nyx
       nyx
+    fi
+
+    ;;
+
+  esac
+
+  ;;
+
+"10")
+
+  # vps configuration
+
+  # no proxy config found (empty)
+  if [[ ! -s "${LOG_DIR:?}"/vps_proxy ]] &>/dev/null; then
+    # run with proxy
+    read -r -p "[YN] Run with proxy (tor)? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      # proxy config
+      PROXY_STATUS="$(tor --version | head -1 | awk '{ print $1,$3}')"
+      # set proxy config
+      echo "$PROXY_STATUS" >"${LOG_DIR:?}"/vps_proxy
+    else
+      # normal config
+      PROXY_STATUS="Normal"
+      # set proxy config
+      echo "$PROXY_STATUS" >"${LOG_DIR:?}"/vps_proxy
+    fi
+  fi
+
+  # vps directory name
+
+  # no proxy dir found (empty)
+  if [[ ! -s "${LOG_DIR:?}"/vps_dir ]] &>/dev/null; then
+    read -r -p "[YN] Set VPS directory? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      echo "Enter VPS directory name: (name1)"
+      read -r WALLET
+      # set proxy dir
+      echo "$WALLET" >"${LOG_DIR:?}"/vps_dir
+    else
+      exit
+    fi
+  fi
+
+  WALLET="$(cat "${LOG_DIR:?}"/vps_dir 2>/dev/null)"
+  WALLET_TRIM=$(echo "${WALLET:?}" 2>&1 | tr -d '1' 2>&1)
+  WALLET_DIR="/home/$(whoami)/${WALLET_TRIM:?}"
+  PROXY_STATUS="$(cat "${LOG_DIR:?}"/vps_proxy 2>/dev/null)"
+
+  # VPS
+  HEIGHT=10
+  WIDTH=45
+  CHOICE_HEIGHT=3
+  BACKTITLE="Pi-Node VPS"
+  TITLE="VPS Menu $PROXY_STATUS"
+  MENU="Choose one option:"
+
+  OPTIONS=(1 "Status           Show VPS status"
+    3 "Start            Start the VPS"
+    4 "Stop             Stop the VPS")
+
+  CHOICE=$(dialog --clear \
+    --backtitle "$BACKTITLE" \
+    --title "$TITLE" \
+    --menu "$MENU" \
+    $HEIGHT $WIDTH $CHOICE_HEIGHT \
+    "${OPTIONS[@]}" \
+    2>&1 >/dev/tty)
+
+  clear
+  case $CHOICE in
+
+  # vps status
+
+  "1")
+
+    # virtual private server status
+    VPS_USERS="$(users | wc -w)"
+    VPS_COUNT="$(pidof "$WALLET_DAEMON" | wc -w)"
+    VPS_LOAD="$(cat /proc/loadavg | awk '{ print $1,$2,$3 }')"
+    VPS_UPTIME="$(uptime | awk '{ print $1,$2,$3 }' | tr -d ',')"
+
+    display_result() {
+      dialog --title "Memory Status - System memory $(free --total --mega 2>&1 | grep "Mem:" 2>&1 | awk '{ print $2 }' 2>&1)Mb" \
+        --no-collapse \
+        --msgbox "$RESULT" 0 0
+    }
+
+    # output total memory, swap info
+    RESULT=$(echo "
+VPS Users...: $VPS_USERS
+VPS daemons.: $VPS_COUNT
+VPS Load....: $VPS_LOAD
+VPS Proxy...: $PROXY_STATUS
+VPS Uptime..: $VPS_UPTIME")
+
+    display_result "VPS (Virtual Private Server) Status"
+    clear
+
+    ;;
+
+    # start vps
+
+  "2")
+
+    read -r -p "[YN] Start VPS? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+      # start vps
+      echo "Starting VPS"
+
+      i=1
+      while true; do
+        WALLET_DIR_N="${WALLET_DIR:?}${i}"
+        if [ -d "$WALLET_DIR_N" ]; then
+          # start client(s)
+          if [[ "$(grep -c "Tor" "$PROXY_STATUS")" -eq "1" ]] &>/dev/null; then
+            # with proxy (tor)
+            cd "${WALLET_DIR_N:?}" &>/dev/null && ./"${WALLET_DAEMON:?}" -datadir="${WALLET_DIR_N:?}" -debug=tor -proxy="${PROXY:?}" -daemon &>/dev/null
+          else
+            # without proxy (tor)
+            cd "${WALLET_DIR_N:?}" &>/dev/null && ./"${WALLET_DAEMON:?}" -datadir="${WALLET_DIR_N:?}" -daemon &>/dev/null
+          fi
+          i=$((i + 1))
+        else
+          break
+        fi
+      done
+      echo "Done"
+    fi
+
+    ;;
+
+    # stop vps
+
+  "3")
+
+    read -r -p "[YN] Stop VPS? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+
+      # stop vps
+      echo "Stopping VPS"
+
+      i=1
+      while true; do
+        WALLET_DIR_N="${WALLET_DIR:?}${i}"
+        if [ -d "$WALLET_DIR_N" ]; then
+          # start client(s)
+          cd "${WALLET_DIR_N:?}" &>/dev/null && ./"${WALLET_CLIENT:?}" -datadir="${WALLET_DIR_N:?}" stop &>/dev/null
+          i=$((i + 1))
+        else
+          break
+        fi
+      done
+      echo "Done"
     fi
 
     ;;
