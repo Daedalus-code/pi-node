@@ -166,6 +166,15 @@ DOWNLOAD=$(egrep "RX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/syst
 # get upload from wlan(*) - eth(*)
 UPLOAD=$(egrep "TX packets [0-9]+  bytes [0-9]+" "${LOG_DIR:?}"/node_data/system/ifconfig 2>&1 | egrep -o "bytes [0-9]+" 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1)
 
+# if zero
+if [[ -z "$DOWNLOAD" ]] &>/dev/null; then
+  DOWNLOAD="0"
+fi
+# if zero
+if [[ -z "$UPLOAD" ]] &>/dev/null; then
+  UPLOAD="0"
+fi
+
 # get screen list
 LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&1
 
