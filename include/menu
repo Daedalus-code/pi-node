@@ -2727,8 +2727,8 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
   MENU="Choose one option:"
 
   OPTIONS=(1 "Status           Show VPS status"
-    3 "Start            Start the VPS"
-    4 "Stop             Stop the VPS")
+    2 "Start            Start the VPS"
+    3 "Stop             Stop the VPS")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
