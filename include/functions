@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # By Rainman
-# V20231606
+# V092723
 # 1.7.0.7
 
 # shellcheck disable=SC2034  # Unused variables left for readability
@@ -671,7 +671,7 @@ if [[ "$QUOTE_RANDOM" -eq "1" ]] &>/dev/null; then
   fi
 
   # seconds since last edit
-  RQ_QUOTE_AGE="$(stat -c '%Y' "${LOG_DIR:?}"/node_data/wallet/data/rq | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+  RQ_QUOTE_AGE="$(stat -c '%Y' "${LOG_DIR:?}"/node_data/wallet/data/rq 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
   # count number
   RQ_QUOTE_LIST="$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/rq.list | awk '{ print $1 }')"
 
