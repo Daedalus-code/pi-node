@@ -45,7 +45,18 @@ else
 fi
 # calculate celcius and fahrenheit
 CELCIUS=$(echo "$CPU_RAW_TEMP/100*0.1" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.1f\n", $1 }' 2>&1)
+
+# if zero
+if [[ -z "$CELCIUS" ]] &>/dev/null; then
+  CELCIUS="0"
+fi
+
 FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.1f\n", $1 }' 2>&1)
+
+# if zero
+if [[ -z "$FAHRENHEIT" ]] &>/dev/null; then
+  FAHRENHEIT="0"
+fi
 
 CPU_CTEMP="${CELCIUS:?}"
 CPU_FTEMP="${FAHRENHEIT:?}"
