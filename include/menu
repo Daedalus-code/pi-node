@@ -2806,7 +2806,8 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 Users....: $VPS_USERS
 Load.....: $VPS_LOAD
 LAN......: $VPS_IP_ADDRESS
-RAM......: ${VPS_TOTAL_MEM:?} MB - SWAP: ${VPS_TOTAL_SWAP:?} MB
+RAM......: ${VPS_TOTAL_MEM:?} MB
+SWAP.....: ${VPS_TOTAL_SWAP:?} MB
 Used.....: ${VPS_USED_MEM:?} MB ${VPS_USED_MEM_PERCENTAGE:?}%
 Free.....: ${VPS_FREE_MEM:?} MB ${VPS_FREE_MEM_PERCENTAGE:?}%
 Space....: $VPS_HD_SIZE
