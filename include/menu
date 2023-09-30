@@ -2800,7 +2800,6 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
     # output total memory, swap info
     RESULT=$(echo "
-System
 Users....: $VPS_USERS
 Load.....: $VPS_LOAD
 LAN......: $VPS_IP_ADDRESS
@@ -2811,12 +2810,12 @@ Space....: $VPS_HD_SIZE
 Used.....: $VPS_HD_USED
 Free.....: $VPS_HD_AVAIL
 
-VPS
 Nodes....: $VPS_COUNT
 Proxy....: $VPS_PROXY_STATUS
 Uptime...: $VPS_UPTIME
 Download.: $VPS_DOWNLOAD
-Upload...: $VPS_UPLOAD")
+Upload...: $VPS_UPLOAD
+")
 
     display_result "VPS (Virtual Private Server) Status"
     clear
