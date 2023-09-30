@@ -2762,44 +2762,47 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
   "1")
 
-    CAT_IFCONFIG="$(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null)"
-    CAT_FINAL_SPACE="$(cat "$LOG_DIR"/final_space 2>/dev/null)"
-
-    # system free memory
-    echo "$(cat /proc/meminfo 2>/dev/null | grep "MemFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_free 2>&1
-    # system total memory
-    echo "$(cat /proc/meminfo 2>/dev/null | grep "MemTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_total 2>&1
-    # system free swap
-    echo "$(cat /proc/meminfo 2>/dev/null | grep "SwapFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/swap_free 2>&1
-    # system total swap
-    echo "$(cat /proc/meminfo 2>/dev/null | grep "SwapTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/swap_total 2>&1
-
-    # virtual private server status
-    VPS_USERS="$(users | wc -w)"
     VPS_COUNT="$(pidof "$WALLET_DAEMON" | wc -w)"
-    VPS_LOAD="$(cat /proc/loadavg | awk '{ print $1,$2,$3 }')"
-    VPS_TOTAL_MEM="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)" | bc 2>/dev/null)"
-    VPS_TOTAL_SWAP="$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)"
-    VPS_FREE_MEM="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_free 2>/dev/null)" | bc 2>/dev/null)"
-    VPS_USED_MEM="$(echo "$VPS_TOTAL_MEM"-"$VPS_FREE_MEM" | bc 2>/dev/null)"
-    VPS_USED_MEM_PERCENTAGE="$(echo "100/$VPS_TOTAL_MEM*$VPS_USED_MEM" | bc -l 2>/dev/null | awk -F. '{ print $1 }')"
-    VPS_FREE_MEM_PERCENTAGE="$(echo "100/$VPS_TOTAL_MEM*$VPS_FREE_MEM" | bc -l 2>/dev/null | awk -F. '{ print $1 }')"
-    VPS_UPTIME="$(uptime | awk '{ print $3,$4,$5 }' | tr -d ',')"
-    VPS_IP_ADDRESS="$(echo "$CAT_IFCONFIG" | grep "broadcast" | tr -d 'a-z' | awk '{ print $1 }' | head -1)"
-    VPS_DOWNLOAD="$(echo "$CAT_IFCONFIG" | grep -A6 "broadcast" | grep "RX" | head -1 | egrep -o "[0-9].[0-9] .B")"
-    VPS_UPLOAD="$(echo "$CAT_IFCONFIG" | grep -A6 "broadcast" | grep "TX" | head -1 | egrep -o "[0-9].[0-9] .B")"
-    VPS_HD_SIZE="$(echo "$CAT_FINAL_SPACE" | egrep -v "tmp|boot|efi" | egrep "/" | awk '{ print $2 }')"
-    VPS_HD_USED="$(echo "$CAT_FINAL_SPACE" | egrep -v "tmp|boot|efi" | egrep "/" | awk '{ print $3 }')"
-    VPS_HD_AVAIL="$(echo "$CAT_FINAL_SPACE" | egrep -v "tmp|boot|efi" | egrep "/" | awk '{ print $4 }')"
 
-    display_result() {
-      dialog --title "Virtual Private Server (VPS)" \
-        --no-collapse \
-        --msgbox "$RESULT" 0 0
-    }
+    if [[ "$VPS_COUNT" -gt "1" ]] &>/dev/null; then
 
-    # output total memory, swap info
-    RESULT=$(echo "
+      CAT_IFCONFIG="$(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null)"
+      CAT_FINAL_SPACE="$(cat "$LOG_DIR"/final_space 2>/dev/null)"
+
+      # system free memory
+      echo "$(cat /proc/meminfo 2>/dev/null | grep "MemFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_free 2>&1
+      # system total memory
+      echo "$(cat /proc/meminfo 2>/dev/null | grep "MemTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_total 2>&1
+      # system free swap
+      echo "$(cat /proc/meminfo 2>/dev/null | grep "SwapFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/swap_free 2>&1
+      # system total swap
+      echo "$(cat /proc/meminfo 2>/dev/null | grep "SwapTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/swap_total 2>&1
+
+      # virtual private server status
+      VPS_USERS="$(users | wc -w)"
+      VPS_LOAD="$(cat /proc/loadavg | awk '{ print $1,$2,$3 }')"
+      VPS_TOTAL_MEM="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)" | bc 2>/dev/null)"
+      VPS_TOTAL_SWAP="$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)"
+      VPS_FREE_MEM="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_free 2>/dev/null)" | bc 2>/dev/null)"
+      VPS_USED_MEM="$(echo "$VPS_TOTAL_MEM"-"$VPS_FREE_MEM" | bc 2>/dev/null)"
+      VPS_USED_MEM_PERCENTAGE="$(echo "100/$VPS_TOTAL_MEM*$VPS_USED_MEM" | bc -l 2>/dev/null | awk -F. '{ print $1 }')"
+      VPS_FREE_MEM_PERCENTAGE="$(echo "100/$VPS_TOTAL_MEM*$VPS_FREE_MEM" | bc -l 2>/dev/null | awk -F. '{ print $1 }')"
+      VPS_UPTIME="$(uptime | awk '{ print $3,$4,$5 }' | tr -d ',')"
+      VPS_IP_ADDRESS="$(echo "$CAT_IFCONFIG" | grep "broadcast" | tr -d 'a-z' | awk '{ print $1 }' | head -1)"
+      VPS_DOWNLOAD="$(echo "$CAT_IFCONFIG" | grep -A6 "broadcast" | grep "RX" | head -1 | egrep -o "[0-9].[0-9] .B")"
+      VPS_UPLOAD="$(echo "$CAT_IFCONFIG" | grep -A6 "broadcast" | grep "TX" | head -1 | egrep -o "[0-9].[0-9] .B")"
+      VPS_HD_SIZE="$(echo "$CAT_FINAL_SPACE" | egrep -v "tmp|boot|efi" | egrep "/" | awk '{ print $2 }')"
+      VPS_HD_USED="$(echo "$CAT_FINAL_SPACE" | egrep -v "tmp|boot|efi" | egrep "/" | awk '{ print $3 }')"
+      VPS_HD_AVAIL="$(echo "$CAT_FINAL_SPACE" | egrep -v "tmp|boot|efi" | egrep "/" | awk '{ print $4 }')"
+
+      display_result() {
+        dialog --title "Virtual Private Server (VPS)" \
+          --no-collapse \
+          --msgbox "$RESULT" 0 0
+      }
+
+      # output total memory, swap info
+      RESULT=$(echo "
 Users....: $VPS_USERS
 Load.....: $VPS_LOAD
 LAN......: $VPS_IP_ADDRESS
@@ -2809,17 +2812,19 @@ Free.....: ${VPS_FREE_MEM:?} MB ${VPS_FREE_MEM_PERCENTAGE:?}%
 Space....: $VPS_HD_SIZE
 Used.....: $VPS_HD_USED
 Free.....: $VPS_HD_AVAIL
-
 Nodes....: $VPS_COUNT
 Proxy....: $VPS_PROXY_STATUS
 Uptime...: $VPS_UPTIME
 Download.: $VPS_DOWNLOAD
-Upload...: $VPS_UPLOAD
+Upload...: $VPS_UPLOAD")
 
-")
+      display_result "VPS (Virtual Private Server) Status"
+      clear
 
-    display_result "VPS (Virtual Private Server) Status"
-    clear
+    else
+      echo "This is not a VPS Server!"
+      sleep 1
+    fi
 
     ;;
 
