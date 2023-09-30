@@ -44,8 +44,8 @@ else
   CPU_RAW_TEMP="0"
 fi
 # calculate celcius and fahrenheit
-CELCIUS=$(echo "$CPU_RAW_TEMP/100*0.1" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1)
-FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.1f\n", $1 }' 2>&1)
+CELCIUS=$(echo "$CPU_RAW_TEMP/100*0.1" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.1f\n", $1 }' 2>&1)
+FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.1f\n", $1 }' 2>&1)
 
 CPU_CTEMP="${CELCIUS:?}"
 CPU_FTEMP="${FAHRENHEIT:?}"
@@ -578,13 +578,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # get uptime
     UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)%60")))
-    UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
+    UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/uptime 2>/dev/null)/86400" 2>&1 | bc 2>/dev/null)
     UPTIME="${UPTIME_DAYS:?}d ${UPTIME:?}"
 
     # get system uptime
     awk -F. ' {print $1 }' /proc/uptime >"${LOG_DIR:?}"/node_data/system/system.uptime 2>&1
     SYS_UPTIME=$(printf '%dh:%dm:%ds\n' $(("$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)/3600")) $(("$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)%3600/60")) $(("$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)%60")))
-    SYS_UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)/86400" 2>&1 | bc 2>&1)
+    SYS_UPTIME_DAYS=$(echo "$(cat "${LOG_DIR:?}"/node_data/system/system.uptime 2>/dev/null)/86400" 2>&1 | bc 2>/dev/null)
     SYS_UPTIME="${SYS_UPTIME_DAYS:?}d ${SYS_UPTIME:?}"
 
     # pidof daemon
@@ -628,8 +628,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     FREE_MEM=$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $7 }' 2>&1)
     FREE_SWAP=$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $4 }' 2>&1)
     # calculate
-    TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>&1)
-    FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>&1)
+    TOTAL_MEM=$(echo "$TOTAL_MEM+$TOTAL_SWAP" 2>&1 | bc 2>/dev/null)
+    FREE_MEM=$(echo "$FREE_MEM+$FREE_SWAP" 2>&1 | bc 2>/dev/null)
     # total and free memory (rrdtool, no color)
     TOTAL_MEM_RR="$TOTAL_MEM"
     FREE_MEM_RR="$FREE_MEM"
@@ -648,8 +648,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # get cpu temp, celcius, fahrenheit, (raspberry pi)
     CPU_CTEMP=$(</sys/class/thermal/thermal_zone0/temp)
-    CPU_CTEMP=$(echo "${CPU_CTEMP:?} / 100 * 0.1" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    CPU_FTEMP=$(echo "(1.8 * ${CPU_CTEMP:?}) + 32" 2>&1 | bc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    CPU_CTEMP=$(echo "${CPU_CTEMP:?} / 100 * 0.1" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    CPU_FTEMP=$(echo "(1.8 * ${CPU_CTEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
     # do this once (cpu speed, wait time)
     if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
@@ -666,7 +666,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # get free Space, mmc block device #0, partition #2, partition #2, dev/root
     USED_HDD=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)
     # get bytes from kilo
-    USED_HDD=$(echo "${USED_HDD:?}*1024" 2>&1 | bc -l 2>&1)
+    USED_HDD=$(echo "${USED_HDD:?}*1024" 2>&1 | bc -l 2>/dev/null)
     # human-readable format
     USED_HDD=$(numfmt --to iec --format "%8.3f" "${USED_HDD:?}" 2>&1 | xargs 2>&1)
     # get used hdd percentage
@@ -677,8 +677,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # used swap
     USED_SWAP=$(cat /proc/meminfo 2>&1 | grep "SwapCached" 2>&1 | awk '{ print $2 }' 2>&1)
     # calculate swap kilo bytes into mega bytes
-    USED_SWAP_CALC=$(echo "${USED_SWAP:?}/1024" 2>&1 | bc 2>&1)
-    TOTAL_SWAP_CALC=$(echo "${TOTAL_SWAP:?}/1024" 2>&1 | bc 2>&1)
+    USED_SWAP_CALC=$(echo "${USED_SWAP:?}/1024" 2>&1 | bc 2>/dev/null)
+    TOTAL_SWAP_CALC=$(echo "${TOTAL_SWAP:?}/1024" 2>&1 | bc 2>/dev/null)
 
     # save ifconfig values to ifconfig, do this once
     ifconfig 2>&1 | egrep -A8 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/system/ifconfig 2>&1
@@ -735,7 +735,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
       WALLET_SYNC="1"
     fi
-    WALLET_SYNC=$(echo "100/999990*${WALLET_SYNC:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    WALLET_SYNC=$(echo "100/999990*${WALLET_SYNC:?}" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
     # if progress equals 1, then 100% synced
     if [[ $(grep -o "progress=1.00" "${LOG_DIR:?}"/node_data/synced 2>&1) ]] &>/dev/null; then
       WALLET_SYNC="OK" # wallet blockchain is synced 100%
@@ -748,7 +748,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     LATEST_DATE=$(cd /home/"${WHOAMI:?}"/pi-node || exit && git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y')
 
     # get wallet value
-    WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
+    WALLET_VALUE=$(echo "$(tail -1 "${LOG_DIR:?}"/node_data/wallet/data/price 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)*$WALLET_BALANCE" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1 | tail -1 2>&1)
     # get wallet inputs
     WALLET_INPUTS=$(grep "address" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
@@ -1551,7 +1551,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         # get useable wallet balance
         WALLET_BALANCE=$(grep "amount:" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk -F. '{ print $1 }' 2>&1)
         # get masternode address balance
-        MASTER_BALANCE=$(echo "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+        MASTER_BALANCE=$(echo "$(grep -c "txhash" "${DATA_DIR:?}"/masternode_status 2>&1)*${MASTERNODECO:?}" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
         if [[ -z "$WALLET_BALANCE" ]] &>/dev/null; then
           # non responsive
@@ -1576,7 +1576,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
               fi
             else
               # missing node collateral (not enough balance)
-              WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+              WALLET_MISSNG="$(echo "${MASTERNODECO:?}-${WALLET_BALANCE:?}" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)"
               printf '%b' "[${Y1:?}!!${N0:?}] Wallet has not enough coins ${G1:?}+${WALLET_BALANCE:?}${N0:?}, missing ${GR:?}-${WALLET_MISSNG:?}${N0:?}\n"
               echo
               ls -lSah "${DATA_DIR:?}"/masternode_* 2>/dev/null
@@ -2348,7 +2348,7 @@ ${HIDDEN_SERVICE:?}
 
   # get total physical system memory, do this once
   if [[ ! -f "${DATA_DIR:?}"/swapinfo ]] &>/dev/null; then
-    echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)" 2>&1 | bc >"${DATA_DIR:?}"/swapinfo 2>&1
+    echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)" 2>&1 | bc >"${DATA_DIR:?}"/swapinfo 2>/dev/null
   fi
 
   if [[ ! -f /swapfile ]] &>/dev/null; then
@@ -2754,10 +2754,17 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
     CAT_IFCONFIG="$(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null)"
     CAT_FINAL_SPACE="$(cat "$LOG_DIR"/final_space 2>/dev/null)"
 
+    # system free memory
+    echo "$(cat /proc/meminfo 2>/dev/null | grep "MemFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null
+    # system total memory
+    echo "$(cat /proc/meminfo 2>/dev/null | grep "MemTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null
+
     # virtual private server status
     VPS_USERS="$(users | wc -w)"
     VPS_COUNT="$(pidof "$WALLET_DAEMON" | wc -w)"
     VPS_LOAD="$(cat /proc/loadavg | awk '{ print $1,$2,$3 }')"
+    VPS_FREE_MEM="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_free 2>/dev/null)" | bc 2>/dev/null)"
+    VPS_TOTAL_MEM="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)" | bc 2>/dev/null)"
     VPS_UPTIME="$(uptime | awk '{ print $3,$4,$5 }' | tr -d ',')"
     VPS_IP_ADDRESS="$(echo "$CAT_IFCONFIG" | grep "broadcast" | tr -d 'a-z' | awk '{ print $1 }' | head -1)"
     VPS_DOWNLOAD="$(echo "$CAT_IFCONFIG" | grep -A6 "broadcast" | grep "RX" | head -1 | egrep -o "[0-9].[0-9] .B")"
@@ -2777,6 +2784,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 Users....: $VPS_USERS
 Daemons..: $VPS_COUNT
 Load.....: $VPS_LOAD
+Memory...: ${VPS_FREE_MEM:?}/${VPS_TOTAL_MEM:?}
 Address..: $VPS_IP_ADDRESS
 Proxy....: $VPS_PROXY_STATUS
 Uptime...: $VPS_UPTIME
