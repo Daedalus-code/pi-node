@@ -2778,8 +2778,10 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
     VPS_USERS="$(users | wc -w)"
     VPS_COUNT="$(pidof "$WALLET_DAEMON" | wc -w)"
     VPS_LOAD="$(cat /proc/loadavg | awk '{ print $1,$2,$3 }')"
-    VPS_FREE_MEM="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_free 2>/dev/null)" | bc 2>/dev/null)"
-    VPS_TOTAL_MEM="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)" | bc 2>/dev/null)"
+    VPS_FREE_MEM_RAW="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_free 2>/dev/null)" | bc 2>/dev/null)"
+    VPS_FREE_MEM="$(echo "$VPS_FREE_MEM_RAW/1024" | bc -l | awk '{ printf "%.2f\n", $1 }')"
+    VPS_TOTAL_MEM_RAW="$(echo "$(cat "${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null)+$(cat "${LOG_DIR:?}"/node_data/system/swap_total 2>/dev/null)" | bc 2>/dev/null)"
+    VPS_TOTAL_MEM="$(echo "$VPS_TOTAL_MEM_RAW/1024" | bc -l | awk '{ printf "%.2f\n", $1 }')"
     VPS_UPTIME="$(uptime | awk '{ print $3,$4,$5 }' | tr -d ',')"
     VPS_IP_ADDRESS="$(echo "$CAT_IFCONFIG" | grep "broadcast" | tr -d 'a-z' | awk '{ print $1 }' | head -1)"
     VPS_DOWNLOAD="$(echo "$CAT_IFCONFIG" | grep -A6 "broadcast" | grep "RX" | head -1 | egrep -o "[0-9].[0-9] .B")"
@@ -2799,7 +2801,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 Users....: $VPS_USERS
 Daemons..: $VPS_COUNT
 Load.....: $VPS_LOAD
-Memory...: ${VPS_FREE_MEM:?}/${VPS_TOTAL_MEM:?}
+Memory...: ${VPS_FREE_MEM:?}Gb/${VPS_TOTAL_MEM:?}Gb
 Address..: $VPS_IP_ADDRESS
 Proxy....: $VPS_PROXY_STATUS
 Uptime...: $VPS_UPTIME
