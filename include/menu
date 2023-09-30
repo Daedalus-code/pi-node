@@ -2800,20 +2800,21 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
     # output total memory, swap info
     RESULT=$(echo "
-Users......: $VPS_USERS
-Nodes....: $VPS_COUNT
-Load.......: $VPS_LOAD
-Total RAM..: ${VPS_TOTAL_MEM:?} MB - SWAP: ${VPS_TOTAL_SWAP:?} MB
-Used.......: ${VPS_USED_MEM:?} MB ${VPS_USED_MEM_PERCENTAGE:?}%
-Free.......: ${VPS_FREE_MEM:?} MB ${VPS_FREE_MEM_PERCENTAGE:?}%
-Address....: $VPS_IP_ADDRESS
-Proxy......: $VPS_PROXY_STATUS
-Uptime.....: $VPS_UPTIME
-Download...: $VPS_DOWNLOAD
-Upload.....: $VPS_UPLOAD
-HDSize.....: $VPS_HD_SIZE
-HDUsed.....: $VPS_HD_USED
-HDAvail....: $VPS_HD_AVAIL")
+System_Users.: $VPS_USERS
+System_Load..: $VPS_LOAD
+System_LAN...: $VPS_IP_ADDRESS
+System_RAM...: ${VPS_TOTAL_MEM:?} MB - SWAP: ${VPS_TOTAL_SWAP:?} MB
+Used.........: ${VPS_USED_MEM:?} MB ${VPS_USED_MEM_PERCENTAGE:?}%
+Free.........: ${VPS_FREE_MEM:?} MB ${VPS_FREE_MEM_PERCENTAGE:?}%
+HD_Size......: $VPS_HD_SIZE
+HD_Used......: $VPS_HD_USED
+HD_Available.: $VPS_HD_AVAIL
+
+Active_Nodes.: $VPS_COUNT
+Proxy........: $VPS_PROXY_STATUS
+Uptime.......: $VPS_UPTIME
+Download.....: $VPS_DOWNLOAD
+Upload.......: $VPS_UPLOAD")
 
     display_result "VPS (Virtual Private Server) Status"
     clear
