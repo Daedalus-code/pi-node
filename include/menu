@@ -2803,7 +2803,6 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
       # output total memory, swap info
       RESULT=$(echo "
-Users....: $VPS_USERS
 Load.....: $VPS_LOAD
 LAN......: $VPS_IP_ADDRESS
 RAM......: ${VPS_TOTAL_MEM:?} MB
@@ -2813,6 +2812,7 @@ Free.....: ${VPS_FREE_MEM:?} MB ${VPS_FREE_MEM_PERCENTAGE:?}%
 Space....: $VPS_HD_SIZE
 Used.....: $VPS_HD_USED
 Free.....: $VPS_HD_AVAIL
+Users....: $VPS_USERS
 Nodes....: $VPS_COUNT
 Proxy....: $VPS_PROXY_STATUS
 Uptime...: $VPS_UPTIME
