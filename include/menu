@@ -2689,6 +2689,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 "V")
 
   # vps configuration
+  VPS_COUNT="$(pidof "$WALLET_DAEMON" | wc -w)"
 
   # save ifconfig values to ifconfig, do this once
   ifconfig >"${LOG_DIR:?}"/node_data/system/ifconfig 2>&1
@@ -2740,7 +2741,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
   WIDTH=43
   CHOICE_HEIGHT=3
   BACKTITLE="Pi-Node VPS"
-  TITLE="VPS Menu $VPS_PROXY_STATUS"
+  TITLE="VPS Menu - Nodes: $VPS_COUNT"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Status           Show VPS status"
@@ -2761,8 +2762,6 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
   # vps status
 
   "1")
-
-    VPS_COUNT="$(pidof "$WALLET_DAEMON" | wc -w)"
 
     if [[ "$VPS_COUNT" -gt "1" ]] &>/dev/null; then
 
@@ -2866,25 +2865,31 @@ Upload...: $VPS_UPLOAD")
 
   "3")
 
-    read -r -p "[YN] Stop VPS? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    if [[ "$VPS_COUNT" -gt "1" ]] &>/dev/null; then
 
-      # stop vps
-      echo "Stopping VPS"
+      read -r -p "[YN] Stop VPS? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
 
-      i=1
-      while true; do
-        WALLET_DIR_N="${WALLET_DIR:?}${i}"
-        if [ -d "$WALLET_DIR_N" ]; then
-          # start client(s)
-          cd "${WALLET_DIR_N:?}" &>/dev/null && ./"${WALLET_CLIENT:?}" -datadir="${WALLET_DIR_N:?}" stop &>/dev/null
-          i=$((i + 1))
-        else
-          break
-        fi
-      done
-      echo "Done"
+        # stop vps
+        echo "Stopping VPS"
+
+        i=1
+        while true; do
+          WALLET_DIR_N="${WALLET_DIR:?}${i}"
+          if [ -d "$WALLET_DIR_N" ]; then
+            # start client(s)
+            cd "${WALLET_DIR_N:?}" &>/dev/null && ./"${WALLET_CLIENT:?}" -datadir="${WALLET_DIR_N:?}" stop &>/dev/null
+            i=$((i + 1))
+          else
+            break
+          fi
+        done
+        echo "Done"
+      fi
+    else
+      echo "This is not a VPS Server!"
+      sleep 1
     fi
 
     ;;
