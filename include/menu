@@ -2766,9 +2766,13 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
     CAT_FINAL_SPACE="$(cat "$LOG_DIR"/final_space 2>/dev/null)"
 
     # system free memory
-    echo "$(cat /proc/meminfo 2>/dev/null | grep "MemFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_free 2>/dev/null
+    echo "$(cat /proc/meminfo 2>/dev/null | grep "MemFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_free 2>&1
     # system total memory
-    echo "$(cat /proc/meminfo 2>/dev/null | grep "MemTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_total 2>/dev/null
+    echo "$(cat /proc/meminfo 2>/dev/null | grep "MemTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/mem_total 2>&1
+    # system free swap
+    echo "$(cat /proc/meminfo 2>/dev/null | grep "SwapFree" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/swap_free 2>&1
+    # system total swap
+    echo "$(cat /proc/meminfo 2>/dev/null | grep "SwapTotal" 2>&1 | awk '{ print $2 }')/1024" 2>&1 | bc >"${LOG_DIR:?}"/node_data/system/swap_total 2>&1
 
     # virtual private server status
     VPS_USERS="$(users | wc -w)"
