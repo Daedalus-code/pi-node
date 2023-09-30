@@ -2815,6 +2815,7 @@ Proxy....: $VPS_PROXY_STATUS
 Uptime...: $VPS_UPTIME
 Download.: $VPS_DOWNLOAD
 Upload...: $VPS_UPLOAD
+
 ")
 
     display_result "VPS (Virtual Private Server) Status"
