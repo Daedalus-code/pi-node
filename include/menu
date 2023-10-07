@@ -657,10 +657,44 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       LOAD=$(uptime 2>&1 | xargs 2>&1 | egrep -o "[0-9]+.[0-9]+, [0-9]+.[0-9]+, [0-9]+.[0-9]+" 2>&1 | sed 's/\([0-9]\),/\1./g' 2>&1 | egrep -o "[0-9]+.[0-9]+" | xargs 2>&1)
     fi
 
-    # get cpu temp, celcius, fahrenheit, (raspberry pi)
-    CPU_CTEMP=$(</sys/class/thermal/thermal_zone0/temp)
-    CPU_CTEMP=$(echo "${CPU_CTEMP:?} / 100 * 0.1" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
-    CPU_FTEMP=$(echo "(1.8 * ${CPU_CTEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+    ############################################################################
+
+    # get cpu architecture
+    ARCHITECTURE=$(uname -m)
+    # get cpu temp, celcius, fahrenheit, (linux)
+    case $ARCHITECTURE in
+    "x86_64" | "i686" | "i386")
+      TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
+      ;;
+    "armv6l" | "armv7l")
+      if [ -f "/sys/class/thermal/thermal_zone0/temp" ] &>/dev/null; then
+        TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
+      elif [ -f "/sys/class/thermal/thermal_zone1/temp" ] &>/dev/null; then
+        TEMP_PATH="/sys/class/thermal/thermal_zone1/temp"
+      fi
+      ;;
+    "aarch64")
+      TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
+      ;;
+    *)
+      echo "Unsupported architecture: $ARCHITECTURE"
+      ;;
+    esac
+
+    if [ -f "$TEMP_PATH" ] &>/dev/null; then
+      TEMP=$(cat $TEMP_PATH)
+      TEMP=$(echo "scale=2; $TEMP/1000" | bc 2>/dev/null)
+      echo "CPU Temperature: $TEMP°C"
+    else
+      TEMP="0"
+    fi
+
+    # celcius
+    CPU_CTEMP="$TEMP°C"
+    # calculate fahrenheit
+    CPU_FTEMP="$(echo "(1.8 * ${TEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)°C"
+
+    ############################################################################
 
     # do this once (cpu speed, wait time)
     if [ ! -f "${LOG_DIR:?}"/node_data/system/lscpu ] &>/dev/null; then
@@ -674,6 +708,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # get cpu count
     CPUS=$(grep "CPU(s):" "${LOG_DIR:?}"/node_data/system/lscpu 2>&1 | awk '{ print $2 }' 2>&1)
 
+    ############################################################################
+
     # get free Space, mmc block device #0, partition #2, partition #2, dev/root
     USED_HDD=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $3 }' 2>&1)
     # get bytes from kilo
@@ -683,6 +719,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # get used hdd percentage
     USED_HDD_P=$(df -k 2>&1 | egrep "mmcblk0p2|mmcblk0p3|/dev/root" 2>&1 | awk '{ print $5 }' 2>&1)
 
+    ############################################################################
+
     # total swap
     TOTAL_SWAP=$(cat /proc/meminfo 2>&1 | grep "SwapTotal" 2>&1 | awk '{ print $2 }' 2>&1)
     # used swap
@@ -690,6 +728,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # calculate swap kilo bytes into mega bytes
     USED_SWAP_CALC=$(echo "${USED_SWAP:?}/1024" 2>&1 | bc 2>/dev/null)
     TOTAL_SWAP_CALC=$(echo "${TOTAL_SWAP:?}/1024" 2>&1 | bc 2>/dev/null)
+
+    ############################################################################
 
     # save ifconfig values to ifconfig, do this once
     ifconfig 2>&1 | egrep -A8 "wlan[0-9]+|eth[0-9]+" >"${LOG_DIR:?}"/node_data/system/ifconfig 2>&1
@@ -708,6 +748,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     IP_ADDRESS=$(cat "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep "inet " 2>&1 | grep -vwE "127.0.0.1" 2>&1 | awk '{ print $2 }' 2>&1)
     # get ip address (no color)
     IP_ADDRESS_N="${IP_ADDRESS:?}"
+
+    ############################################################################
 
     # get wallet version
     WALLET_VERSION=$(cat "${LOG_DIR:?}"/node_data/wallet/client/version 2>/dev/null)
