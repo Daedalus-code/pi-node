@@ -142,7 +142,6 @@ esac
 if [ -f "$TEMP_PATH" ] &>/dev/null; then
   TEMP=$(cat $TEMP_PATH)
   TEMP=$(echo "scale=2; $TEMP/1000" | bc 2>/dev/null)
-  echo "CPU Temperature: $TEMP°C"
 else
   TEMP="0"
 fi
