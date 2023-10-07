@@ -37,31 +37,59 @@ fi
 # get system user
 USER=$(whoami 2>&1 | awk '{ print $1 }' 2>&1)
 
-if cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | egrep "armv7l|aarch64" &>/dev/null; then
-  # get cpu temp, celcius, fahrenheit, (raspberry pi)
-  CPU_RAW_TEMP=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
+################################################################################
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/system/uname ]] &>/dev/null; then
+  echo "$(uname -a)" >"${LOG_DIR:?}"/node_data/system/uname 2>&1
+fi
+
+# get cpu architecture
+ARCHITECTURE=$(cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | egrep -o "x86_64|i686|i386|armv6l|armv7l|aarch64" | head -1)
+# get cpu temp, celcius, fahrenheit, (linux)
+case $ARCHITECTURE in
+"x86_64" | "i686" | "i386")
+  TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
+  ;;
+"armv6l" | "armv7l")
+  if [ -f "/sys/class/thermal/thermal_zone0/temp" ] &>/dev/null; then
+    TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
+  elif [ -f "/sys/class/thermal/thermal_zone1/temp" ] &>/dev/null; then
+    TEMP_PATH="/sys/class/thermal/thermal_zone1/temp"
+  fi
+  ;;
+"aarch64")
+  TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
+  ;;
+*)
+  echo "Unsupported architecture: $ARCHITECTURE"
+  ;;
+esac
+
+if [ -f "$TEMP_PATH" ] &>/dev/null; then
+  TEMP=$(cat $TEMP_PATH)
+  TEMP=$(echo "scale=2; $TEMP/1000" | bc 2>/dev/null)
+  echo "CPU Temperature: $TEMP°C"
 else
-  CPU_RAW_TEMP="0"
-fi
-# calculate celcius and fahrenheit
-CELCIUS=$(echo "$CPU_RAW_TEMP/100*0.1" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.1f\n", $1 }' 2>&1)
-
-# if zero
-if [[ -z "$CELCIUS" ]] &>/dev/null; then
-  CELCIUS="0"
+  TEMP="0"
 fi
 
-FAHRENHEIT=$(echo "scale=2;((9/5) * $CELCIUS) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.1f\n", $1 }' 2>&1)
+# celcius
+CPU_CTEMP="$TEMP°C"
+# calculate fahrenheit
+CPU_FTEMP="$(echo "(1.8 * ${TEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)°C"
 
-# if zero
-if [[ -z "$FAHRENHEIT" ]] &>/dev/null; then
-  FAHRENHEIT="0"
-fi
+# system cpu temperature (celcius)
+echo "$CPU_CTEMP" >"${LOG_DIR:?}"/node_data/system/cpu_ctemp 2>&1
+# system cpu temperature (fahrenheit)
+echo "$CPU_FTEMP" >"${LOG_DIR:?}"/node_data/system/cpu_ftemp 2>&1
 
-CPU_CTEMP="${CELCIUS:?}"
-CPU_FTEMP="${FAHRENHEIT:?}"
+CPU_CTEMP="$(cat "${LOG_DIR:?}"/node_data/system/cpu_ctemp 2>/dev/null)"
+CPU_FTEMP="$(cat "${LOG_DIR:?}"/node_data/system/cpu_ftemp 2>/dev/null)"
+
+################################################################################
 
 LATEST_DATE=$(head -1 "${LOG_DIR:?}"/node_data/repo 2>/dev/null)
+
 if [[ -z "$LATEST_DATE" ]] &>/dev/null; then
   LATEST_DATE="January 1st, 1970 at 00:00:00 UTC"
 fi
@@ -658,41 +686,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     ############################################################################
-
-    # get cpu architecture
-    ARCHITECTURE=$(uname -m)
-    # get cpu temp, celcius, fahrenheit, (linux)
-    case $ARCHITECTURE in
-    "x86_64" | "i686" | "i386")
-      TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
-      ;;
-    "armv6l" | "armv7l")
-      if [ -f "/sys/class/thermal/thermal_zone0/temp" ] &>/dev/null; then
-        TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
-      elif [ -f "/sys/class/thermal/thermal_zone1/temp" ] &>/dev/null; then
-        TEMP_PATH="/sys/class/thermal/thermal_zone1/temp"
-      fi
-      ;;
-    "aarch64")
-      TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
-      ;;
-    *)
-      echo "Unsupported architecture: $ARCHITECTURE"
-      ;;
-    esac
-
-    if [ -f "$TEMP_PATH" ] &>/dev/null; then
-      TEMP=$(cat $TEMP_PATH)
-      TEMP=$(echo "scale=2; $TEMP/1000" | bc 2>/dev/null)
-      echo "CPU Temperature: $TEMP°C"
-    else
-      TEMP="0"
-    fi
-
-    # celcius
-    CPU_CTEMP="$TEMP°C"
-    # calculate fahrenheit
-    CPU_FTEMP="$(echo "(1.8 * ${TEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)°C"
 
     ############################################################################
 

@@ -111,10 +111,53 @@ whoami 2>&1 | awk '{ print $1 }' >"${LOG_DIR:?}"/node_data/system/user 2>&1
 # loadavg
 cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }' >"${LOG_DIR:?}"/node_data/system/load 2>&1
 
+################################################################################
+
+if [[ ! -f "${LOG_DIR:?}"/node_data/system/uname ]] &>/dev/null; then
+  echo "$(uname -a)" >"${LOG_DIR:?}"/node_data/system/uname 2>&1
+fi
+
+# get cpu architecture
+ARCHITECTURE=$(cat "${LOG_DIR:?}"/node_data/system/uname 2>/dev/null | egrep -o "x86_64|i686|i386|armv6l|armv7l|aarch64" | head -1)
+# get cpu temp, celcius, fahrenheit, (linux)
+case $ARCHITECTURE in
+"x86_64" | "i686" | "i386")
+  TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
+  ;;
+"armv6l" | "armv7l")
+  if [ -f "/sys/class/thermal/thermal_zone0/temp" ] &>/dev/null; then
+    TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
+  elif [ -f "/sys/class/thermal/thermal_zone1/temp" ] &>/dev/null; then
+    TEMP_PATH="/sys/class/thermal/thermal_zone1/temp"
+  fi
+  ;;
+"aarch64")
+  TEMP_PATH="/sys/class/thermal/thermal_zone0/temp"
+  ;;
+*)
+  echo "Unsupported architecture: $ARCHITECTURE"
+  ;;
+esac
+
+if [ -f "$TEMP_PATH" ] &>/dev/null; then
+  TEMP=$(cat $TEMP_PATH)
+  TEMP=$(echo "scale=2; $TEMP/1000" | bc 2>/dev/null)
+  echo "CPU Temperature: $TEMP°C"
+else
+  TEMP="0"
+fi
+
+# celcius
+CPU_CTEMP="$TEMP°C"
+# calculate fahrenheit
+CPU_FTEMP="$(echo "(1.8 * ${TEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)°C"
+
 # system cpu temperature (celcius)
-echo "$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)/100*0.1" | bc -l | awk '{ printf "%.1f\n", $1 }' >"${LOG_DIR:?}"/node_data/system/cpu_ctemp 2>&1
+echo "$CPU_CTEMP" >"${LOG_DIR:?}"/node_data/system/cpu_ctemp 2>&1
 # system cpu temperature (fahrenheit)
-echo "scale=2;((9/5) * $(echo "$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)/100*0.1" | bc -l | awk '{ printf "%.1f\n", $1 }' 2>&1)) + 32" 2>&1 | bc -l 2>&1 | awk '{ printf "%.1f\n", $1 }' >"${LOG_DIR:?}"/node_data/system/cpu_ftemp 2>&1
+echo "$CPU_FTEMP" >"${LOG_DIR:?}"/node_data/system/cpu_ftemp 2>&1
+
+################################################################################
 
 # do this once (lscpu values)
 if [[ ! -f "${LOG_DIR:?}"/node_data/system/cpuinfo ]] &>/dev/null; then
