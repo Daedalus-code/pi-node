@@ -141,7 +141,7 @@ esac
 
 if [ -f "$TEMP_PATH" ] &>/dev/null; then
   TEMP=$(cat $TEMP_PATH)
-  TEMP=$(echo "scale=2; $TEMP/1000" | bc 2>/dev/null)
+  TEMP=$(echo "scale=2; $TEMP/1000" | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }')
 else
   TEMP="0"
 fi
@@ -149,7 +149,7 @@ fi
 # celcius
 CPU_CTEMP="$TEMP°C"
 # calculate fahrenheit
-CPU_FTEMP="$(echo "(1.8 * ${TEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)°C"
+CPU_FTEMP="$(echo "(1.8 * ${TEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)°F"
 
 # system cpu temperature (celcius)
 echo "$CPU_CTEMP" >"${LOG_DIR:?}"/node_data/system/cpu_ctemp 2>&1

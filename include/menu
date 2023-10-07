@@ -67,7 +67,7 @@ esac
 
 if [ -f "$TEMP_PATH" ] &>/dev/null; then
   TEMP=$(cat $TEMP_PATH)
-  TEMP=$(echo "scale=2; $TEMP/1000" | bc 2>/dev/null)
+  TEMP=$(echo "scale=2; $TEMP/1000" | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }')
 else
   TEMP="0"
 fi
@@ -75,7 +75,7 @@ fi
 # celcius
 CPU_CTEMP="$TEMP°C"
 # calculate fahrenheit
-CPU_FTEMP="$(echo "(1.8 * ${TEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)°C"
+CPU_FTEMP="$(echo "(1.8 * ${TEMP:?}) + 32" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)°F"
 
 # system cpu temperature (celcius)
 echo "$CPU_CTEMP" >"${LOG_DIR:?}"/node_data/system/cpu_ctemp 2>&1
@@ -842,7 +842,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       printline "System" "$(uname -o 2>&1)" "Kernel" "$(uname -r 2>&1)" "Hardware" "$(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1 | awk '{ print $1,$2,$3 }' 2>&1)"
       printline "Load" "${LOAD:?}" "System Uptime" "${SYS_UPTIME:?}" "Wallet Uptime" "${UPTIME:?}"
       echo
-      printline "Free/Memory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "CPU Temperature" "${CPU_CTEMP:?} C ${CPU_FTEMP:?} F (${CPUS:?})" "Address" "${IP_ADDRESS_N:?}"
+      printline "Free/Memory" "${FREE_MEM_RR:?}M/${TOTAL_MEM_RR:?}M" "CPU Temp" "$CPU_CTEMP | $CPU_FTEMP (${CPUS:?})" "  Address" "  ${IP_ADDRESS_N:?}"
       printline "Used/Swap" "${USED_SWAP_CALC:?}M/${TOTAL_SWAP_CALC:?}M" "CPU Speed" "$(cat "$LOG_DIR"/node_data/system/cpuspeed 2>/dev/null) MHz" "Network" "${WALLET_CHAIN:?} ${INTERFACE:?}"
       printline "User Space" "$(du -sh /home/* 2>/dev/null | xargs 2>&1 | awk '{ print $1,$2 }' 2>&1)" "Users" "${USER:?} ($(users 2>&1 | awk '{ print $1 }' 2>&1))" "Upload" "${UPLOAD:?}"
       printline "Used HDD" "${USED_HDD:?} ${USED_HDD_P:?}" "COM" "$COM" "Download" "${DOWNLOAD:?}"
