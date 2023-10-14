@@ -2740,6 +2740,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
   # no proxy config found (empty)
   if [[ ! -s "${LOG_DIR:?}"/vps_proxy ]] &>/dev/null; then
     # run with proxy
+    echo "no proxy config found (empty)"
     read -r -p "[YN] Run with proxy (tor)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -2759,6 +2760,8 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
   # no proxy dir found (empty)
   if [[ ! -s "${LOG_DIR:?}"/vps_dir ]] &>/dev/null; then
+    # vps directory
+    echo "no proxy dir found (empty)"
     read -r -p "[YN] Set VPS directory? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
