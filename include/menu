@@ -14,6 +14,12 @@ source /usr/local/bin/include/pinode/color 2>&1
 # system user
 WHOAMI=$(whoami)
 
+# if directory missing
+if [[ ! -d "${LOG_DIR:?}"/node_data ]] &>/dev/null; then
+  # create directory
+  mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+fi
+
 if [[ ! -s "${LOG_DIR:?}"/node_data/wallet/client/listunspent ]] &>/dev/null; then
   # non responsive
   POS_COUNT="0"
