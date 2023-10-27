@@ -14,10 +14,17 @@ source /usr/local/bin/include/pinode/color 2>&1
 # system user
 WHOAMI=$(whoami)
 
-# if directory missing
-if [[ ! -d "${LOG_DIR:?}"/node_data ]] &>/dev/null; then
-  # create directory
+# if base directory missing
+if [[ ! -d "${LOG_DIR:?}"/node_data || ! -d "${LOG_DIR:?}"/node_data/system || ! -d "${LOG_DIR:?}"/node_data/wallet ]] &>/dev/null; then
+  # create directories
+  mkdir "${DATA_DIR:?}" &>/dev/null
   mkdir "${LOG_DIR:?}"/node_data &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/system &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet/peers &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet/data &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet/client &>/dev/null
+  mkdir "${LOG_DIR:?}"/node_data/wallet/client/tmp &>/dev/null
 fi
 
 if [[ ! -s "${LOG_DIR:?}"/node_data/wallet/client/listunspent ]] &>/dev/null; then
