@@ -2405,16 +2405,16 @@ ${HIDDEN_SERVICE:?}
 "9")
 
   # get total physical system memory, do this once
-  if [[ ! -f "${DATA_DIR:?}"/swapinfo ]] &>/dev/null; then
-    echo "$(free --mega 2>&1 | grep "Mem" 2>&1 | awk '{ print $2 }' 2>&1)+$(free --mega 2>&1 | grep "Swap" 2>&1 | awk '{ print $2 }' 2>&1)" 2>&1 | bc >"${DATA_DIR:?}"/swapinfo 2>/dev/null
+  if [[ ! -f /tmp/swapinfo ]] &>/dev/null; then
+    echo "$(free --mega 2>/dev/null | grep "Mem" 2>/dev/null | awk '{ print $2 }')+$(free --mega 2>/dev/null | grep "Swap" 2>/dev/null | awk '{ print $2 }')" 2>/dev/null | bc >/tmp/swapinfo 2>/dev/null
   fi
 
   if [[ ! -f /swapfile ]] &>/dev/null; then
 
     # if physical memory greater than n megabytes, don't install
-    if [[ "$(cat "${DATA_DIR:?}"/swapinfo 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
+    if [[ "$(cat /tmp/swapinfo 2>/dev/null)" -gt "1200" ]] &>/dev/null; then
       # system has enough memory
-      printf '%b' "[${G1:?}Ok${N0:?}] System has enough sufficient memory ${G1:?}$(cat "${DATA_DIR:?}"/swapinfo 2>/dev/null)MB${N0:?}\n"
+      printf '%b' "[${G1:?}Ok${N0:?}] System has enough sufficient memory ${G1:?}$(cat /tmp/swapinfo 2>/dev/null)MB${N0:?}\n"
       # output memory, swap info
       echo
       sudo free -h
@@ -2465,9 +2465,9 @@ ${HIDDEN_SERVICE:?}
 
   # swap menu, after the fact
 
-  HEIGHT=11
+  HEIGHT=12
   WIDTH=45
-  CHOICE_HEIGHT=4
+  CHOICE_HEIGHT=5
   BACKTITLE="Swap options"
   TITLE="Setup Swap space"
   MENU="Choose one option:"
@@ -2475,7 +2475,8 @@ ${HIDDEN_SERVICE:?}
   OPTIONS=(1 "Create           Create swapfile"
     2 "Delete           Delete swapfile"
     3 "Status           Swap information"
-    4 "DTR              Data to RAM")
+    4 "DTR              Data to RAM"
+    5 "Clear            Cache/RAM/SWAP")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -2654,6 +2655,62 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
+
+    ;;
+
+  "5")
+
+    # check if running with sudo
+    if [ "$EUID" -ne 0 ]; then
+      echo "Please run as root (with sudo) Example: sudo menu in terminal"
+      exit
+    fi
+
+    # clear memory caches
+    echo "Clearing memory caches.."
+    sync
+    echo 3 >/proc/sys/vm/drop_caches
+    echo "Memory caches cleared!"
+
+    # clear swap
+    echo "Clearing swap.."
+    swapoff -a && swapon -a
+    echo "Swap cleared!"
+
+    # monitor free memory with timeout
+    INITIAL_FREE_MEM=$(grep MemFree /proc/meminfo | awk '{print $2}')
+
+    TIMEOUT=60 # set a timeout of 60 seconds
+
+    SECONDS=0
+    while [ $SECONDS -lt $TIMEOUT ]; do
+      CURRENT_FREE_MEM=$(grep MemFree /proc/meminfo | awk '{print $2}')
+      if [ "$CURRENT_FREE_MEM" -lt "$INITIAL_FREE_MEM" ]; then
+        echo "Free memory decreased from $INITIAL_FREE_MEM kB to $CURRENT_FREE_MEM kB"
+        break
+      fi
+      sleep 1
+    done
+
+    if [ $SECONDS -ge $TIMEOUT ]; then
+      echo "Memory monitoring timed out after $TIMEOUT seconds."
+    fi
+
+    # check if data moved back to RAM
+    TOTAL_SWAP=$(grep SwapTotal /proc/meminfo | awk '{print $2}')
+    FREE_SWAP=$(grep SwapFree /proc/meminfo | awk '{print $2}')
+    MOVED_DATA_MB=$((($TOTAL_SWAP - $FREE_SWAP)))
+
+    if [ "$MOVED_DATA_MB" -gt 0 ]; then
+      echo "Data successfully moved back to RAM. Moved $MOVED_DATA_MB MB from swap to RAM."
+    else
+      echo "Data may not have been entirely moved back to RAM. No data moved from swap to RAM."
+    fi
+
+    echo
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
+    echo
+    exit # reset
 
     ;;
 
