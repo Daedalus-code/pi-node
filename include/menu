@@ -2985,7 +2985,7 @@ Upload...: $VPS_UPLOAD")
         while true; do
           WALLET_DIR_N="${WALLET_DIR:?}${i}"
           if [ -d "$WALLET_DIR_N" ]; then
-            # start client(s)
+            # stop client(s)
             cd "${WALLET_DIR_N:?}" &>/dev/null && ./"${WALLET_CLIENT:?}" -datadir="${WALLET_DIR_N:?}" stop &>/dev/null
             i=$((i + 1))
           else
