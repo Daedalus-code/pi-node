@@ -2951,7 +2951,7 @@ Upload...: $VPS_UPLOAD")
         WALLET_DIR_N="${WALLET_DIR:?}${i}"
         if [ -d "$WALLET_DIR_N" ]; then
           # start client(s)
-          if [[ "$(grep -c "Tor" "$VPS_PROXY_STATUS")" -eq "1" ]] &>/dev/null; then
+          if [[ -n "$VPS_PROXY_STATUS" ]] &>/dev/null; then
             # with proxy (tor)
             cd "${WALLET_DIR_N:?}" &>/dev/null && ./"${WALLET_DAEMON:?}" -datadir="${WALLET_DIR_N:?}" -debug=tor -proxy="${PROXY:?}" -daemon &>/dev/null
           else
