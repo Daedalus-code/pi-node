@@ -793,14 +793,6 @@ fi
 
 ### wallet boot/sync progress ##################################################
 
-function loading() {
-  WALLET_BALANCES="${GR:?}0${N0:?}"
-  WALLET_POS_REWARDS="Stakes ${GR:?}0${N0:?}"
-  WALLET_INPUTS_NODES="Inputs ${GR:?}0${N0:?}"
-  WALLET_TXCOUNT="${GR:?}0${N0:?}"
-  WALLET_MEMPOOL="${GR:?}0${N0:?}"
-}
-
 if [[ ! "$(grep "OK" "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing)" ]] &>/dev/null; then
   if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/synced 2>/dev/null | grep "progress=1.00" 2>&1)" ]] &>/dev/null; then
     if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -o "progress=1.00" &>/dev/null; then
@@ -816,7 +808,6 @@ fi
 
 if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
   WALLET_SYNC="${GR:?}loading${N0:?}"
-  loading
 fi
 
 if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "120" ]] &>/dev/null; then
@@ -824,7 +815,6 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "120" ]] &>/dev/null; then
   if [[ "$(grep "blocks:" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' | tr -d ':')" -eq "0" ]] &>/dev/null; then
     WALLET_TXLAST="${GR:?}       Loading${N0:?}"
   fi
-  loading
 fi
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | grep -c "Staking Active")" -eq "1" || "$(! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -c "progress=1.00")" -eq "1" ]] &>/dev/null; then
@@ -834,7 +824,6 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | grep -
     grep "progress=1.000000" "${WALLET_LOG_DIR:?}"/debug.log | tail -1 >"${LOG_DIR:?}"/node_data/wallet/synced 2>&1
   fi
   WALLET_TXLAST="${G0:?}${SYNC_PROGRESS_BAR:?}${N0:?}"
-  loading
 fi
 
 ### theme ######################################################################
@@ -979,7 +968,6 @@ if grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 |
     WALLET_TXLAST="$("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getbestblockhash 2>/dev/null)"
     if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
       WALLET_TXLAST="${GR:?}$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)${N0:?}"
-      loading
     fi
   fi
 
