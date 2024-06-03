@@ -817,7 +817,7 @@ if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -lt "120" ]] &>/dev/null; then
   fi
 fi
 
-if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | grep -c "Staking Active")" -eq "0" || "$(! grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -c "progress=1.00")" -eq "1" ]] &>/dev/null; then
+if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | grep -c "Staking Active")" -eq "0" || "$(grep "progress=" "${LOG_DIR:?}"/node_data/wallet/synced 2>&1 | tail -1 2>&1 | grep -c "progress=1.00")" -eq "0" ]] &>/dev/null; then
   source /usr/local/bin/include/pinode/proc 2>&1
   if [[ -z "$SYNC_PROGRESS_BAR" ]] &>/dev/null; then
     SYNC_PROGRESS_BAR="${CY:?}       Loading${N0:?}"
