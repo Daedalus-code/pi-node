@@ -826,6 +826,10 @@ if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | grep -
   WALLET_TXLAST="${G0:?}${SYNC_PROGRESS_BAR:?}${N0:?}"
 fi
 
+if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | grep -c "Staking Active")" -eq "1" ]] &>/dev/null; then
+  echo "progress=1.00" >"${LOG_DIR:?}"/node_data/wallet/synced 2>&1
+fi
+
 ### theme ######################################################################
 
 RC="${GR:?}"
