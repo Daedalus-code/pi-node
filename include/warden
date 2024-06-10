@@ -27,8 +27,7 @@ LC_ALL=de_US.utf8 date '+%Y-%m-%dT%TZ' >"${LOG_DIR:?}"/node_data/system/date 2>&
 LOG_DATE=$(cat "${LOG_DIR:?}"/node_data/system/date 2>/dev/null)
 
 if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" ]] &>/dev/null; then
-  mv "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/debug.log.old &>/dev/null
-  touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+  truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
   printf '%b' "${LOG_DATE:?} Status() SystemHardware $(cat /proc/device-tree/model 2>/dev/null | tr -d '\0' 2>&1)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   cd "${WALLET_DIR:?}" || exit &&
     yes "y" | ./"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
@@ -36,8 +35,7 @@ if [[ ! "$(pidof "${WALLET_DAEMON:?}" 2>&1 | wc -w 2>&1 | egrep "1")" ]] &>/dev/
 fi
 
 if [[ "$(grep "Do you want to rebuild the block database now?" "${WALLET_LOG_DIR:?}"/debug.log 2>&1)" ]] &>/dev/null; then
-  mv "${WALLET_LOG_DIR:?}"/debug.log "${WALLET_LOG_DIR:?}"/debug.log.old &>/dev/null
-  touch "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
+  truncate -s 0 "${WALLET_LOG_DIR:?}"/debug.log &>/dev/null
   cd "${WALLET_DIR:?}" || exit &&
     yes "" | ./"${WALLET_DAEMON:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -reindex -daemon
   printf '%b' "${LOG_DATE:?} Status() Wallet.Warden: PID(?) Starting wallet daemon!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
