@@ -1566,7 +1566,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   # get token volume
   egrep -o "volumes.*" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko 2>&1 | tr -d '"|:' 2>&1 | awk -F, '{ print $2 }' 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>&1
 
-  if [[ "$(grep "Cloudflare" /tmp/node_data/wallet/data/raw.coingcko)" ]] &>/dev/null; then
+  if [[ "$(egrep "Cloudflare|Enable JavaScript and cookies to continue" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko)" ]] &>/dev/null; then
     cp "${DATA_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/wallet/data/price.cg
     cp "${DATA_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/wallet/data/volume.cg
   fi
