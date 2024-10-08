@@ -5,7 +5,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.5.6"
+VERSION="v1.7.8.9"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -614,9 +614,6 @@ fi
 if [[ -z "$WALLET_IMMATURE" ]] &>/dev/null; then
   WALLET_IMMATURE="0"
 fi
-if [[ -z "$WALLET_BALANCES" ]] &>/dev/null; then
-  WALLET_BALANCES="0"
-fi
 
 # total wallet balance combining unconfirmed_balance, immature_balance and wallet_balance
 echo "${WALLET_BALANCE:?}+${WALLET_UNCONFIRMED:?}+${WALLET_IMMATURE:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>&1
@@ -624,6 +621,10 @@ WALLET_BALANCES="$(cat "${LOG_DIR:?}"/node_data/wallet/data/total_balance 2>/dev
 
 WALLET_POS=$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/staking 2>&1 | awk '!a[$0]++' 2>&1 | wc -l 2>&1)
 WALLET_INPUTS="$(grep -c "address" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)"
+
+if [[ -z "$WALLET_BALANCES" ]] &>/dev/null; then
+  WALLET_BALANCES="0"
+fi
 
 if [[ "$PROOF_OF_STAKE" -eq "1" ]] &>/dev/null; then
   WALLET_BALANCES="${G1:?}$WALLET_BALANCES${N0:?}"
