@@ -179,7 +179,7 @@ fi
 if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
   # stakes & rewards
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
-    -w 400 -h 240 -a PNG \
+    -w 400 -h 260 -a PNG \
     --slope-mode \
     --vertical-label "Stakes & Rewards" \
     --alt-autoscale-max --lower-limit=1 \
@@ -359,7 +359,7 @@ rrdtool graph /var/www/html/hdd_graph.png \
 
 # memory
 rrdtool graph /var/www/html/memory_graph.png \
-  -w 400 -h 165 -a PNG \
+  -w 400 -h 164 -a PNG \
   --slope-mode \
   --vertical-label "Memory (MB)" \
   --color BACK#565875 \
@@ -377,7 +377,7 @@ rrdtool graph /var/www/html/memory_graph.png \
 
 # cpu temperature
 rrdtool graph /var/www/html/temp_graph.png \
-  -w 400 -h 165 -a PNG \
+  -w 400 -h 164 -a PNG \
   --slope-mode \
   --vertical-label "CPU Temp (°C)" \
   --color BACK#565875 \
