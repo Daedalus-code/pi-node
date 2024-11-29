@@ -1611,7 +1611,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   # get token volume
   grep -A4 "converted_volume" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko | grep "usd" | awk '{ print $2 }' | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>&1
   # calculate average volume
-  echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.cg | awk '{ print $1 }')" >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg
+  echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cg)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.cg | awk '{ print $1 }')" >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg
   ##############################################################################
 
   if [[ "$(egrep "Cloudflare|Enable JavaScript and cookies to continue" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko)" ]] &>/dev/null; then
