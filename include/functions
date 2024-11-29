@@ -5,7 +5,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.6.2"
+VERSION="v1.7.6.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1605,8 +1605,9 @@ fi
 
 ################################################################################
 
-# calculate price
+# calculate price, volume
 echo "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>/dev/null | awk '{ SUM += $1} END { print SUM }') / $(cat "${LOG_DIR:?}"/node_data/wallet/data/price.* 2>/dev/null | egrep -c "[0-9]+")" | bc -l 2>/dev/null)" >"${LOG_DIR:?}"/node_data/wallet/data/price
+echo "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | awk '{ SUM += $1} END { print SUM }') / $(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.* 2>/dev/null | egrep -c "[0-9]+")" | bc -l 2>/dev/null)" >"${LOG_DIR:?}"/node_data/wallet/data/volume
 
 ### restore failed list ########################################################
 
