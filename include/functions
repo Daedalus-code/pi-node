@@ -5,7 +5,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.8.1"
+VERSION="v1.7.5.7"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1421,20 +1421,6 @@ else # restore it
   fi
 fi
 
-if [ -f "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc ] &>/dev/null; then
-  if [[ ! -f "${DATA_DIR:?}"/watchers.cmc ]] &>/dev/null; then
-    # create backup if missing
-    cp "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc "${DATA_DIR:?}"/watchers.cmc &>/dev/null
-  fi
-
-else # restore it
-
-  if [[ -f "${DATA_DIR:?}"/watchers.cmc ]] &>/dev/null; then
-    cp "${DATA_DIR:?}"/watchers.cmc "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc &>/dev/null
-    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Restored API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)${N0:?} Watchlist! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-  fi
-fi
-
 # run data with intervals, every n minutes, update api, arp and ticker
 if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 2>&1)" ]] &>/dev/null; then
 
@@ -1466,16 +1452,6 @@ if [[ "$(echo "${LOG_CHECK:?}" 2>&1 | egrep "[0-9]+:30:[0-9]+|[0-9]+:00:[0-9]+" 
       OLD_VOLUME_CMC=$(egrep "[0-9]+" "${DATA_DIR:?}"/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
       cp "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc "${DATA_DIR:?}"/volume.cmc &>/dev/null
       printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${CY:?}->${N0:?} ${GR:?}${OLD_VOLUME_CMC:?}${N0:?} Volume! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    fi
-  fi
-
-  # no update if empty
-  if [[ -s "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc ]] &>/dev/null; then
-
-    if [[ ! "$(cat "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>/dev/null | tr -d '.' 2>&1)" -eq "$(cat "${DATA_DIR:?}"/watchers.cmc 2>/dev/null | tr -d '.' 2>&1)" ]] &>/dev/null; then
-      OLD_WATCHERS_CMC=$(egrep "[0-9]+" "${DATA_DIR:?}"/watchers.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)
-      cp "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc "${DATA_DIR:?}"/watchers.cmc &>/dev/null
-      printf '%b' "${LOG_DATE:?} Status() Coingcko.API() Updating backup API ${G1:?}$(egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>&1 | awk '{ printf "%.2f\n", $1 }' 2>&1)${N0:?} ${CY:?}->${N0:?} ${GR:?}${OLD_WATCHERS_CMC:?}${N0:?} Watchers! (CMC)${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     fi
   fi
 fi
@@ -1565,14 +1541,14 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   grep "telegram_channel_user_count" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko | awk -F, '{ print $1 }' | awk '{ print $2 }' >"${LOG_DIR:?}"/node_data/wallet/data/telegram.cg 2>&1
   ##############################################################################
   # get token price
-  grep -A4 "converted_last" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko | grep "usd" | awk '{ print $2 }' | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>&1
+  grep -A4 "converted_last" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko | grep "usd" | awk '{ print $2 }' | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/data/price.cg
   # calculate average price
-  echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.cg | awk '{ print $1 }')" | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>/dev/null
+  echo "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg) / $(grep -A4 "converted_last" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko | grep -c "usd")" | bc -l 2>/dev/null)" >"${LOG_DIR:?}"/node_data/wallet/data/price.cg
   ##############################################################################
   # get token volume
-  grep -A4 "converted_volume" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko | grep "usd" | awk '{ print $2 }' | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>&1
+  grep -A4 "converted_volume" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko | grep "usd" | awk '{ print $2 }' | awk '{ SUM += $1} END { print SUM }' >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg
   # calculate average volume
-  echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cg)/$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.cg | awk '{ print $1 }')" | bc -l >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>/dev/null
+  echo "$(echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cg) / $(grep -A4 "converted_volume" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko | grep -c "usd")" | bc -l 2>/dev/null)" >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg
   ##############################################################################
 
   if [[ "$(egrep "Cloudflare|Enable JavaScript and cookies to continue" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko)" ]] &>/dev/null; then
