@@ -1163,7 +1163,7 @@ truncate -s 0 "${LOG_DIR:?}"/node_data/requests.cg
 for (( ; ; )); do # loop until success
 
   clear
-  torify curl -o "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'${COING_API:?}'/market_chart?vs_currency='${EXCHA_API:?}'&days='$days'' -H 'accept: application/json' &>/dev/null
+  torify curl -o "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko -X 'GET' 'https://api.coingecko.com/api/v3/coins/'${COING_API:?}'' -H 'accept:application/json' &>/dev/null
 
   sleep 2
   echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
