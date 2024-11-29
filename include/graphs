@@ -251,7 +251,7 @@ rrdtool graph /var/www/html/balance_graph.png \
   DEF:balance=/home/"${WHOAMI:?}"/stats/balance.rrd:balance:MAX \
   DEF:value=/home/"${WHOAMI:?}"/stats/value.rrd:value:MAX \
   AREA:balance#85bb65:" Balance          " GPRINT:balance:LAST:"%.8lf\n" \
-  LINE2:value#668163:" USD               " GPRINT:value:LAST:"%.2lf\n"
+  LINE2:value#668163:" USD              " GPRINT:value:LAST:"%.2lf\n"
 
 # rank
 rrdtool graph /var/www/html/rank_graph.png \
