@@ -301,9 +301,9 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   DEF:telegram=/home/"${WHOAMI:?}"/stats/watchlist.rrd:telegram:AVERAGE \
   GPRINT:telegram:LAST:%.0lf\ Telegram \
   GPRINT:telegram:AVERAGE:%.0lf\ Telegram\ AVG \
-  LINE1:watchlist#65AABB:"Watchlist" \
-  LINE1:watchlist#65AABB:"Twitter" \
-  LINE1:watchlist#65AABB:"Telegram"
+  LINE1:watchlist#8CC53F:"Watchlist" \
+  LINE1:watchlist#E7E9EA:"X/Twitter" \
+  LINE1:watchlist#24A1DE:"Telegram"
 
 # market price
 rrdtool graph /var/www/html/market_price_graph.png \
