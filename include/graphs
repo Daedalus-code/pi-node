@@ -316,9 +316,9 @@ rrdtool graph /var/www/html/market_volume_graph.png \
   DEF:volume_cg=/home/"${WHOAMI:?}"/stats/coingecko.rrd:volume_cg:MAX \
   DEF:volume_cmc=/home/"${WHOAMI:?}"/stats/coinmarketcap.rrd:volume_cmc:MAX \
   DEF:volume_avg=/home/"${WHOAMI:?}"/stats/volume_avg.rrd:volume_avg:MAX \
-  LINE1:volume_cg#7D7FB4:" Volume cg        " GPRINT:volume_cg:LAST:"%.0lf\n" \
-  LINE1:volume_cmc#7476A8:" Volume cmc       " GPRINT:volume_cmc:LAST:"%.0lf\n" \
-  LINE3:volume_avg#7C9AC2:" Volume avg       " GPRINT:volume_avg:LAST:"%.0lf\n"
+  LINE1:volume_cg#7D7FB4:" Volume cg        " GPRINT:volume_cg:LAST:"%.2lf\n" \
+  LINE1:volume_cmc#7476A8:" Volume cmc       " GPRINT:volume_cmc:LAST:"%.2lf\n" \
+  LINE3:volume_avg#7C9AC2:" Volume avg       " GPRINT:volume_avg:LAST:"%.2lf\n"
 
 # network
 rrdtool graph /var/www/html/network_graph.png \
