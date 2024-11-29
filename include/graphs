@@ -158,9 +158,9 @@ rrdtool graph /var/www/html/masternode_pay_graph.png \
   DEF:paycount=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:paycount:MAX \
   DEF:payout=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:payout:MAX \
   DEF:payvalue=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:payvalue:MAX \
-  LINE1:paycount#FFDC77:" Daily Rewards    " GPRINT:paycount:LAST:"%.0lf\n" \
-  LINE1:payout#85bb65:" Daily Coins      " GPRINT:payout:LAST:"%.0lf\n" \
-  LINE2:payvalue#668163:" Daily USD        " GPRINT:payvalue:LAST:"%.0lf\n"
+  LINE1:paycount#FFDC77:" Daily Rewards    " GPRINT:paycount:LAST:"%.2lf\n" \
+  LINE1:payout#85bb65:" Daily Coins      " GPRINT:payout:LAST:"%.2lf\n" \
+  LINE2:payvalue#668163:" Daily USD        " GPRINT:payvalue:LAST:"%.2lf\n"
 
 # plural
 REW_GPRINT="Rewards"
@@ -354,8 +354,8 @@ rrdtool graph /var/www/html/hdd_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:hdd_total=/home/"${WHOAMI:?}"/stats/hdd_total.rrd:hdd_total:MAX \
   DEF:hdd=/home/"${WHOAMI:?}"/stats/hdd.rrd:hdd:MAX \
-  AREA:hdd_total#8AA6B6:" Total Space      " GPRINT:hdd_total:LAST:"%.2lf\n" \
-  AREA:hdd#597E93:" Used Space       " GPRINT:hdd:LAST:"%.2lf\n"
+  AREA:hdd_total#8AA6B6:" Total GB         " GPRINT:hdd_total:LAST:"%.2lf\n" \
+  AREA:hdd#597E93:" Used GB          " GPRINT:hdd:LAST:"%.2lf\n"
 
 # memory
 rrdtool graph /var/www/html/memory_graph.png \
@@ -372,8 +372,8 @@ rrdtool graph /var/www/html/memory_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:memory_total=/home/"${WHOAMI:?}"/stats/memory_total.rrd:memory_total:MAX \
   DEF:memory_free=/home/"${WHOAMI:?}"/stats/memory_free.rrd:memory_free:MAX \
-  AREA:memory_total#8BABB6:" Total            " GPRINT:memory_total:MAX:"%.2lf\n" \
-  AREA:memory_free#9FC49A:" Free             " GPRINT:memory_free:LAST:"%.2lf\n"
+  AREA:memory_total#8BABB6:" Total MB         " GPRINT:memory_total:MAX:"%.2lf\n" \
+  AREA:memory_free#9FC49A:" Free MB          " GPRINT:memory_free:LAST:"%.2lf\n"
 
 # cpu temperature
 rrdtool graph /var/www/html/temp_graph.png \
