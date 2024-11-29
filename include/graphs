@@ -290,13 +290,10 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:watchlist=/home/"${WHOAMI:?}"/stats/watchlist.rrd:watchlist:MAX \
-  DEF:watchlist=/home/"${WHOAMI:?}"/stats/watchlist.rrd:watchlist:AVERAGE \
-  GPRINT:watchlist:LAST:%.0lf\ Watchlist \
   DEF:twitter=/home/"${WHOAMI:?}"/stats/watchlist.rrd:twitter:MAX \
-  DEF:twitter=/home/"${WHOAMI:?}"/stats/watchlist.rrd:twitter:AVERAGE \
-  GPRINT:twitter:LAST:%.0lf\ Twitter \
   DEF:telegram=/home/"${WHOAMI:?}"/stats/watchlist.rrd:telegram:MAX \
-  DEF:telegram=/home/"${WHOAMI:?}"/stats/watchlist.rrd:telegram:AVERAGE \
+  GPRINT:watchlist:LAST:%.0lf\ Watchlist \
+  GPRINT:twitter:LAST:%.0lf\ Twitter \
   GPRINT:telegram:LAST:%.0lf\ Telegram \
   LINE1:watchlist#8CC53F:" Watchlist        " GPRINT:watchlist:LAST:"%.0lf\n" \
   LINE1:twitter#E7E9EA:" X/Twitter        " GPRINT:twitter:LAST:"%.0lf\n" \
@@ -321,6 +318,7 @@ rrdtool graph /var/www/html/market_price_graph.png \
   DEF:price_avg=/home/"${WHOAMI:?}"/stats/price_avg.rrd:price_avg:MAX \
   GPRINT:price_cg:LAST:%.4lf\ CoinGecko\ Price \
   GPRINT:price_cmc:LAST:%.4lf\ CoinMarketCap\ Price \
+  GPRINT:price_avg:LAST:%.4lf\ Average\ Price \
   LINE1:price_cg#7D7FB4:" Price cg         " GPRINT:price_cg:LAST:"%.4lf\n" \
   LINE1:price_cmc#7476A8:" Price cmc        " GPRINT:price_cmc:LAST:"%.4lf\n" \
   LINE3:price_avg#9A9DE1:" Price avg        " GPRINT:price_avg:LAST:"%.0lf\n"
