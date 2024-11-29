@@ -41,9 +41,9 @@ rrdtool graph /var/www/html/load_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:load=/home/"${WHOAMI:?}"/stats/load.rrd:load:MAX \
-  DEF:load5=/home/"${WHOAMI:?}"/stats/load5.rrd:load5:MAX \
-  DEF:load15=/home/"${WHOAMI:?}"/stats/load15.rrd:load15:MAX \
+  DEF:load=/home/"${WHOAMI:?}"/stats/load.rrd:load:LAST \
+  DEF:load5=/home/"${WHOAMI:?}"/stats/load5.rrd:load5:LAST \
+  DEF:load15=/home/"${WHOAMI:?}"/stats/load15.rrd:load15:LAST \
   LINE1:load#45DC63:" Load 1m          " GPRINT:load:LAST:"%.2lf\n" \
   LINE2:load5#FFE000:" Load 5m          " GPRINT:load5:LAST:"%.2lf\n" \
   LINE2:load15#FF5100:" Load 15m         " GPRINT:load15:LAST:"%.2lf\n"
@@ -62,7 +62,7 @@ rrdtool graph /var/www/html/inputs_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:inputs=/home/"${WHOAMI:?}"/stats/inputs.rrd:inputs:MAX \
+  DEF:inputs=/home/"${WHOAMI:?}"/stats/inputs.rrd:inputs:LAST \
   LINE1:inputs#80B886:" Inputs           " GPRINT:inputs:LAST:"%.0lf\n" \
   LINE1:inputs#ACF8B4:" Inputs Max       " GPRINT:inputs:MAX:"%.0lf\n" \
   LINE1:inputs#577C5B:" Inputs Min       " GPRINT:inputs:MIN:"%.0lf\n"
@@ -81,14 +81,13 @@ rrdtool graph /var/www/html/peers_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:peers=/home/"${WHOAMI:?}"/stats/peers.rrd:peers:MAX \
-  DEF:peers=/home/"${WHOAMI:?}"/stats/peers.rrd:peers:AVERAGE \
-  DEF:banned_peers=/home/"${WHOAMI:?}"/stats/banned_peers.rrd:banned_peers:MAX \
-  DEF:peers_ipv4=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_ipv4:MAX \
-  DEF:peers_ipv6=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_ipv6:MAX \
-  DEF:peers_dns=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_dns:MAX \
-  DEF:peers_onion=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_onion:MAX \
-  DEF:peers_proxy=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_proxy:MAX \
+  DEF:peers=/home/"${WHOAMI:?}"/stats/peers.rrd:peers:LAST \
+  DEF:banned_peers=/home/"${WHOAMI:?}"/stats/banned_peers.rrd:banned_peers:LAST \
+  DEF:peers_ipv4=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_ipv4:LAST \
+  DEF:peers_ipv6=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_ipv6:LAST \
+  DEF:peers_dns=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_dns:LAST \
+  DEF:peers_onion=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_onion:LAST \
+  DEF:peers_proxy=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_proxy:LAST \
   LINE2:peers#82FE82:" Peers            " GPRINT:peers:LAST:"%.0lf\n" \
   LINE2:peers#82FE82:" Peers avg        " GPRINT:peers:AVERAGE:"%.0lf\n" \
   LINE1:banned_peers#CC2C4B:" Bans             " GPRINT:banned_peers:LAST:"%.0lf\n" \
@@ -113,9 +112,6 @@ rrdtool graph /var/www/html/blockchain_activity.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:activity=/home/"${WHOAMI:?}"/stats/block_activity.rrd:activity:LAST \
-  DEF:activity=/home/"${WHOAMI:?}"/stats/block_activity.rrd:activity:AVERAGE \
-  DEF:activity=/home/"${WHOAMI:?}"/stats/block_activity.rrd:activity:MAX \
-  DEF:activity=/home/"${WHOAMI:?}"/stats/block_activity.rrd:activity:MIN \
   LINE1:activity#71E75E:" Activity         " GPRINT:activity:LAST:"%.2lf\n" \
   LINE1:activity#C0EDB9:" Activity avg     " GPRINT:activity:AVERAGE:"%.2lf\n" \
   LINE1:activity#7CFB68:" Activity Max     " GPRINT:activity:MAX:"%.2lf\n" \
@@ -135,10 +131,10 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:total=/home/"${WHOAMI:?}"/stats/masternodes.rrd:total:MAX \
-  DEF:stable=/home/"${WHOAMI:?}"/stats/masternodes.rrd:stable:MAX \
-  DEF:enabled=/home/"${WHOAMI:?}"/stats/masternodes.rrd:enabled:MAX \
-  DEF:inqueue=/home/"${WHOAMI:?}"/stats/masternodes.rrd:inqueue:MAX \
+  DEF:total=/home/"${WHOAMI:?}"/stats/masternodes.rrd:total:LAST \
+  DEF:stable=/home/"${WHOAMI:?}"/stats/masternodes.rrd:stable:LAST \
+  DEF:enabled=/home/"${WHOAMI:?}"/stats/masternodes.rrd:enabled:LAST \
+  DEF:inqueue=/home/"${WHOAMI:?}"/stats/masternodes.rrd:inqueue:LAST \
   LINE2:total#F4F4F4:" Total            " GPRINT:total:LAST:"%.0lf\n" \
   LINE1:stable#3BE536:" Stable           " GPRINT:stable:LAST:"%.0lf\n" \
   LINE1:enabled#3bbb33:" Enabled          " GPRINT:enabled:LAST:"%.0lf\n" \
@@ -235,8 +231,8 @@ rrdtool graph /var/www/html/balance_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:balance=/home/"${WHOAMI:?}"/stats/balance.rrd:balance:MAX \
-  DEF:value=/home/"${WHOAMI:?}"/stats/value.rrd:value:MAX \
+  DEF:balance=/home/"${WHOAMI:?}"/stats/balance.rrd:balance:LAST \
+  DEF:value=/home/"${WHOAMI:?}"/stats/value.rrd:value:LAST \
   AREA:balance#85bb65:" Balance          " GPRINT:balance:LAST:"%.8lf\n" \
   LINE2:value#668163:" USD              " GPRINT:value:LAST:"%.2lf\n"
 
@@ -254,8 +250,7 @@ rrdtool graph /var/www/html/rank_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:rank=/home/"${WHOAMI:?}"/stats/rank.rrd:rank:MAX \
-  DEF:rank=/home/"${WHOAMI:?}"/stats/rank.rrd:rank:AVERAGE \
+  DEF:rank=/home/"${WHOAMI:?}"/stats/rank.rrd:rank:LAST \
   GPRINT:rank:LAST:%.0lf\ Rank \
   GPRINT:rank:AVERAGE:%.0lf\ Rank\ AVG \
   LINE1:rank#8A8FAB:"Rank"
