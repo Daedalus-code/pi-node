@@ -250,8 +250,6 @@ rrdtool graph /var/www/html/balance_graph.png \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:balance=/home/"${WHOAMI:?}"/stats/balance.rrd:balance:MAX \
   DEF:value=/home/"${WHOAMI:?}"/stats/value.rrd:value:MAX \
-  GPRINT:balance:LAST:%.8lf\ Coins \
-  GPRINT:value:LAST:%.2lf\ USD \
   AREA:balance#85bb65:" Balance          " GPRINT:balance:LAST:"%.8lf\n" \
   LINE2:value#668163:" USD               " GPRINT:value:LAST:"%.2lf\n"
 
