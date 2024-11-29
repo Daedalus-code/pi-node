@@ -5,7 +5,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.0.2"
+VERSION="v1.6.9.6"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -1420,8 +1420,6 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
   # if zero
   if [[ -z "$API_PRICE_CMC" ]] &>/dev/null; then
-    API_PRICE_CMC="0"
-    echo "$API_PRICE_CMC" >"${LOG_DIR:?}"/node_data/wallet/data/price.cmc
     ############################################################################
     # if cg has price data
     if [[ -s "${LOG_DIR:?}"/node_data/wallet/data/price.cg ]] &>/dev/null; then
@@ -1432,8 +1430,6 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   fi
   # if zero
   if [[ -z "$API_VOLUME_CMC" ]] &>/dev/null; then
-    API_VOLUME_CMC="0"
-    echo "$API_VOLUME_CMC" >"${LOG_DIR:?}"/node_data/wallet/data/volume.cmc
     ############################################################################
     # if cg has volume data
     if [[ -s "${LOG_DIR:?}"/node_data/wallet/data/volume.cg ]] &>/dev/null; then
@@ -1516,8 +1512,6 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   fi
   # if zero
   if [[ -z "$API_VOLUME_CG" ]] &>/dev/null; then
-    API_VOLUME_CG="0"
-    echo "$API_VOLUME_CG" >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg
     ############################################################################
     # if cmc has volume data
     if [[ -s "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc ]] &>/dev/null; then
