@@ -69,7 +69,7 @@ rrdtool graph /var/www/html/inputs_graph.png \
 
 # peers
 rrdtool graph /var/www/html/peers_graph.png \
-  -w 400 -h 100 -a PNG \
+  -w 400 -h 80 -a PNG \
   --slope-mode \
   --vertical-label "Peers (P2P)" \
   --alt-autoscale-max --lower-limit=1 \
