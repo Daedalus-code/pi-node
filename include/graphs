@@ -321,7 +321,7 @@ rrdtool graph /var/www/html/market_price_graph.png \
   GPRINT:price_avg:LAST:%.4lf\ Average\ Price \
   LINE1:price_cg#7D7FB4:" Price cg         " GPRINT:price_cg:LAST:"%.4lf\n" \
   LINE1:price_cmc#7476A8:" Price cmc        " GPRINT:price_cmc:LAST:"%.4lf\n" \
-  LINE3:price_avg#9A9DE1:" Price avg        " GPRINT:price_avg:LAST:"%.0lf\n"
+  LINE3:price_avg#9A9DE1:" Price avg        " GPRINT:price_avg:LAST:"%.4lf\n"
 
 # market volume
 rrdtool graph /var/www/html/market_volume_graph.png \
@@ -405,7 +405,7 @@ rrdtool graph /var/www/html/memory_graph.png \
   GPRINT:memory_total:MAX:%.2lf\M\ Total \
   GPRINT:memory_free:LAST:%.2lf\M\ Free \
   AREA:memory_total#8BABB6:" Total            " GPRINT:memory_total:MAX:"%.2lf\n" \
-  AREA:memory_free#9FC49A:" Free             " GPRINT:watchlist:LAST:"%.2lf\n"
+  AREA:memory_free#9FC49A:" Free             " GPRINT:memory_free:LAST:"%.2lf\n"
 
 # cpu temperature
 rrdtool graph /var/www/html/temp_graph.png \
