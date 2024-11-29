@@ -292,18 +292,15 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   DEF:watchlist=/home/"${WHOAMI:?}"/stats/watchlist.rrd:watchlist:MAX \
   DEF:watchlist=/home/"${WHOAMI:?}"/stats/watchlist.rrd:watchlist:AVERAGE \
   GPRINT:watchlist:LAST:%.0lf\ Watchlist \
-  GPRINT:watchlist:AVERAGE:%.0lf\ Watchlist\ AVG \
   DEF:twitter=/home/"${WHOAMI:?}"/stats/watchlist.rrd:twitter:MAX \
   DEF:twitter=/home/"${WHOAMI:?}"/stats/watchlist.rrd:twitter:AVERAGE \
   GPRINT:twitter:LAST:%.0lf\ Twitter \
-  GPRINT:twitter:AVERAGE:%.0lf\ Twitter\ AVG \
   DEF:telegram=/home/"${WHOAMI:?}"/stats/watchlist.rrd:telegram:MAX \
   DEF:telegram=/home/"${WHOAMI:?}"/stats/watchlist.rrd:telegram:AVERAGE \
   GPRINT:telegram:LAST:%.0lf\ Telegram \
-  GPRINT:telegram:AVERAGE:%.0lf\ Telegram\ AVG \
-  LINE1:watchlist#8CC53F:" Watchlist        " GPRINT:watchlist:LAST:"%.0lf" GPRINT:watchlist:AVERAGE:"%.0lf\n" \
-  LINE1:twitter#E7E9EA:" X/Twitter        " GPRINT:twitter:LAST:"%.0lf" GPRINT:twitter:AVERAGE:"%.0lf\n" \
-  LINE1:telegram#24A1DE:" Telegram         " GPRINT:telegram:LAST:"%.0lf" GPRINT:telegram:AVERAGE:"%.0lf\n"
+  LINE1:watchlist#8CC53F:" Watchlist        " GPRINT:watchlist:LAST:"%.0lf\n" \
+  LINE1:twitter#E7E9EA:" X/Twitter        " GPRINT:twitter:LAST:"%.0lf\n" \
+  LINE1:telegram#24A1DE:" Telegram         " GPRINT:telegram:LAST:"%.0lf\n"
 
 # market price
 rrdtool graph /var/www/html/market_price_graph.png \
@@ -324,9 +321,9 @@ rrdtool graph /var/www/html/market_price_graph.png \
   DEF:price_avg=/home/"${WHOAMI:?}"/stats/price_avg.rrd:price_avg:MAX \
   GPRINT:price_cg:LAST:%.4lf\ CoinGecko\ Price \
   GPRINT:price_cmc:LAST:%.4lf\ CoinMarketCap\ Price \
-  LINE1:price_cg#7D7FB4 \
-  LINE1:price_cmc#7476A8 \
-  LINE3:price_avg#9A9DE1
+  LINE1:price_cg#7D7FB4:" Price cg         " GPRINT:price_cg:LAST:"%.4lf\n" \
+  LINE1:price_cmc#7476A8:" Price cmc        " GPRINT:price_cmc:LAST:"%.4lf\n" \
+  LINE3:price_avg#9A9DE1:" Price avg        " GPRINT:price_avg:LAST:"%.0lf\n"
 
 # market volume
 rrdtool graph /var/www/html/market_volume_graph.png \
@@ -347,9 +344,9 @@ rrdtool graph /var/www/html/market_volume_graph.png \
   DEF:volume_avg=/home/"${WHOAMI:?}"/stats/volume_avg.rrd:volume_avg:MAX \
   GPRINT:volume_cg:LAST:%.2lf\ CoinGecko\ Volume \
   GPRINT:volume_cmc:LAST:%.2lf\ CoinMarketCap\ Volume \
-  LINE1:volume_cg#7D7FB4 \
-  LINE1:volume_cmc#7476A8 \
-  LINE3:volume_avg#7C9AC2
+  LINE1:volume_cg#7D7FB4:" Volume cg        " GPRINT:volume_cg:LAST:"%.0lf\n" \
+  LINE1:volume_cmc#7476A8:" Volume cmc       " GPRINT:volume_cmc:LAST:"%.0lf\n" \
+  LINE3:volume_avg#7C9AC2:" Volume avg       " GPRINT:volume_avg:LAST:"%.0lf\n"
 
 # network
 rrdtool graph /var/www/html/network_graph.png \
@@ -368,8 +365,8 @@ rrdtool graph /var/www/html/network_graph.png \
   DEF:txbytes=/home/"${WHOAMI:?}"/stats/network.rrd:txbytes:MAX \
   GPRINT:rxbytes:MAX:%.0lf\ Bytes\ Down \
   GPRINT:txbytes:MAX:%.0lf\ Bytes\ Up \
-  LINE1:rxbytes#3DCD3D:"Down" \
-  LINE1:txbytes#DC5F3A:"Up"
+  LINE1:rxbytes#3DCD3D:" Download         " GPRINT:rxbytes:MAX:"%.0lf\n" \
+  LINE1:txbytes#DC5F3A:" Upload           " GPRINT:txbytes:MAX:"%.0lf\n"
 
 # total hdd, used
 rrdtool graph /var/www/html/hdd_graph.png \
@@ -389,8 +386,8 @@ rrdtool graph /var/www/html/hdd_graph.png \
   DEF:hdd=/home/"${WHOAMI:?}"/stats/hdd.rrd:hdd:MAX \
   GPRINT:hdd_total:LAST:%.2lf\ GB \
   GPRINT:hdd:LAST:%.2lf\ GB \
-  AREA:hdd_total#8AA6B6:"Total Space" \
-  AREA:hdd#597E93:"Used Space"
+  AREA:hdd_total#8AA6B6:" Total Space      " GPRINT:hdd_total:LAST:"%.2lf\n" \
+  AREA:hdd#597E93:" Used Space       " GPRINT:hdd:LAST:"%.2lf\n"
 
 # memory
 rrdtool graph /var/www/html/memory_graph.png \
@@ -409,8 +406,8 @@ rrdtool graph /var/www/html/memory_graph.png \
   DEF:memory_free=/home/"${WHOAMI:?}"/stats/memory_free.rrd:memory_free:MAX \
   GPRINT:memory_total:MAX:%.2lf\M\ Total \
   GPRINT:memory_free:LAST:%.2lf\M\ Free \
-  AREA:memory_total#8BABB6:"Total" \
-  AREA:memory_free#9FC49A:"Free"
+  AREA:memory_total#8BABB6:" Total            " GPRINT:memory_total:MAX:"%.2lf\n" \
+  AREA:memory_free#9FC49A:" Free             " GPRINT:watchlist:LAST:"%.2lf\n"
 
 # cpu temperature
 rrdtool graph /var/www/html/temp_graph.png \
@@ -430,7 +427,7 @@ rrdtool graph /var/www/html/temp_graph.png \
   GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
   GPRINT:temp:MAX:%.2lf\°C\ Max \
   GPRINT:temp:MIN:%.2lf\°C\ Min \
-  AREA:temp#F15A3A:"CPUTemp"
+  AREA:temp#F15A3A:" CPUTemp          " GPRINT:temp:LAST:"%.2lf\n"
 
 # auto proof-of-stake config
 if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
