@@ -121,45 +121,6 @@ if [[ "$RANDOM_SCREEN" -eq "2" ]] &>/dev/null; then
   LC_ALL=de_US.utf8 screen -list >"${LOG_DIR:?}"/node_data/wallet/data/screens 2>&1
 fi
 
-### screen sessions done #######################################################
-
-# if no success, continue
-if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
-
-  if [[ -z "$API_PRICE_CG" ]] &>/dev/null; then
-    # make sure ticker exist, use rrdtool database, if available
-    rrdtool info /home/"${WHOAMI:?}"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
-    # non responsive
-    API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  fi
-
-  if [[ -z "$API_VOLUME_CG" ]] &>/dev/null; then
-    # make sure volume exist, use rrdtool database, if available
-    rrdtool info /home/"${WHOAMI:?}"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
-    # non responsive
-    API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  fi
-fi
-
-################################################################################
-
-# if no success, continue
-if ! grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
-  if [[ -z "$API_PRICE_CMC" ]] &>/dev/null; then
-    # make sure ticker exist, use rrdtool database, if available
-    rrdtool info /home/"${WHOAMI:?}"/stats/value.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
-    # non responsive
-    API_PRICE_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  fi
-
-  if [[ -z "$API_VOLUME_CMC" ]] &>/dev/null; then
-    # make sure volume exist, use rrdtool database, if available
-    rrdtool info /home/"${WHOAMI:?}"/stats/volume.rrd 2>&1 | grep "last_ds" 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
-    # non responsive
-    API_VOLUME_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
-  fi
-fi
-
 ### adding nodes, create failed and success lists ##############################
 
 if [ ! -f "${WALLET_DIR:?}"/addnodes ] &>/dev/null; then
