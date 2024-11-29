@@ -143,7 +143,7 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
 
 # masternode pay
 rrdtool graph /var/www/html/masternode_pay_graph.png \
-  -w 400 -h 150 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Masternode Earnings" \
   --alt-autoscale-max --lower-limit=1 \
@@ -179,7 +179,7 @@ fi
 if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
   # stakes & rewards
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
-    -w 400 -h 170 -a PNG \
+    -w 400 -h 200 -a PNG \
     --slope-mode \
     --vertical-label "Stakes & Rewards" \
     --alt-autoscale-max --lower-limit=1 \
