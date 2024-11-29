@@ -90,7 +90,7 @@ rrdtool graph /var/www/html/peers_graph.png \
   DEF:peers_onion=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_onion:MAX \
   DEF:peers_proxy=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_proxy:MAX \
   LINE2:peers#82FE82:" Peers            " GPRINT:peers:LAST:"%.0lf\n" \
-  LINE2:peers#82FE82:" Peers avg        " GPRINT:peers:AVG:"%.0lf\n" \
+  LINE2:peers#82FE82:" Peers avg        " GPRINT:peers:AVERAGE:"%.0lf\n" \
   LINE1:banned_peers#CC2C4B:" Bans             " GPRINT:banned_peers:LAST:"%.0lf\n" \
   LINE1:peers_ipv4#FFFFFF:" IPV4             " GPRINT:peers_ipv4:LAST:"%.0lf\n" \
   LINE1:peers_ipv6#2CCC8D:" IPV6             " GPRINT:peers_ipv6:LAST:"%.0lf\n" \
