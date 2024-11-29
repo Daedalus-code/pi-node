@@ -50,7 +50,7 @@ rrdtool graph /var/www/html/load_graph.png \
 
 # inputs
 rrdtool graph /var/www/html/inputs_graph.png \
-  -w 400 -h 150 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Wallet Inputs" \
   --alt-autoscale-max --lower-limit=1 \
@@ -94,7 +94,7 @@ rrdtool graph /var/www/html/peers_graph.png \
   LINE1:banned_peers#CC2C4B:" Bans             " GPRINT:banned_peers:LAST:"%.0lf\n" \
   LINE1:peers_ipv4#FFFFFF:" IPV4             " GPRINT:peers_ipv4:LAST:"%.0lf\n" \
   LINE1:peers_ipv6#2CCC8D:" IPV6             " GPRINT:peers_ipv6:LAST:"%.0lf\n" \
-  LINE1:peers_dns#2C69CC:" DNS             " GPRINT:peers_dns:LAST:"%.0lf\n" \
+  LINE1:peers_dns#2C69CC:" DNS              " GPRINT:peers_dns:LAST:"%.0lf\n" \
   LINE1:peers_onion#A02CCC:" Onion            " GPRINT:peers_onion:LAST:"%.0lf\n" \
   LINE1:peers_proxy#C26EE2:" Proxy            " GPRINT:peers_proxy:LAST:"%.0lf\n"
 
@@ -143,7 +143,7 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
 
 # masternode pay
 rrdtool graph /var/www/html/masternode_pay_graph.png \
-  -w 400 -h 150 -a PNG \
+  -w 400 -h 160 -a PNG \
   --slope-mode \
   --vertical-label "Masternode Earnings" \
   --alt-autoscale-max --lower-limit=1 \
@@ -179,7 +179,7 @@ fi
 if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
   # stakes & rewards
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
-    -w 400 -h 150 -a PNG \
+    -w 400 -h 170 -a PNG \
     --slope-mode \
     --vertical-label "Stakes & Rewards" \
     --alt-autoscale-max --lower-limit=1 \
