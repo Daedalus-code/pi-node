@@ -1495,8 +1495,6 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   echo "$RAW_COINMCAP" 2>/dev/null | grep -A1 "trading volume" | grep "of " | egrep -o "[0-9]+.[0-9]+" >"${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>&1
   # get token rank
   echo "$RAW_COINMCAP" 2>/dev/null | grep -o "ranking is.*" | egrep -o "[0-9]+" >"${LOG_DIR:?}"/node_data/wallet/data/rank.cmc 2>&1
-  # get token watchlist
-  echo "$RAW_COINMCAP" 2>/dev/null | grep "watchlists" | tr -d ',' | egrep -o "[0-9]+" >"${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>&1
 
   ##############################################################################
 
@@ -1504,7 +1502,6 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   API_PRICE_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
   API_VOLUME_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   API_RANK_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/rank.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
-  API_WATCH_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
   # if zero
   if [[ -z "$API_PRICE_CMC" ]] &>/dev/null; then
@@ -1535,11 +1532,6 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
     API_RANK_CMC="0"
     echo "$API_RANK_CMC" >"${LOG_DIR:?}"/node_data/wallet/data/rank.cmc
   fi
-  # if zero
-  if [[ -z "$API_WATCH_CMC" ]] &>/dev/null; then
-    API_WATCH_CMC="0"
-    echo "$API_WATCH_CMC" >"${LOG_DIR:?}"/node_data/wallet/data/watchers.cmc
-  fi
 
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "420" ]] &>/dev/null; then
@@ -1547,7 +1539,6 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_PRICE_CMC:?}${N0:?} price!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_VOLUME_CMC:?}${N0:?} volume!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_RANK_CMC:?}${N0:?} rank!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    printf '%b' "${LOG_DATE:?} Status() CoinMCap.API() Found ${G1:?}${API_WATCH_CMC:?}${N0:?} watchlist!${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
     printf '%b' "${GR:?}${LOG_DATE:?} Status() - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ${N0:?}\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
   fi
   screen -X -S add_cmc quit &>/dev/null
