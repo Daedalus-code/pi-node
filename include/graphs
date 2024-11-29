@@ -179,7 +179,7 @@ fi
 if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/dev/null; then
   # stakes & rewards
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
-    -w 400 -h 180 -a PNG \
+    -w 400 -h 179 -a PNG \
     --slope-mode \
     --vertical-label "Stakes & Rewards" \
     --alt-autoscale-max --lower-limit=1 \
@@ -200,7 +200,7 @@ if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/d
     LINE2:stakes#FFDC77:"Stakes"
 else
   rrdtool graph /var/www/html/stakes_and_rewards_graph.png \
-    -w 400 -h 180 -a PNG \
+    -w 400 -h 179 -a PNG \
     --slope-mode \
     --vertical-label "Stakes" \
     --alt-autoscale-max --lower-limit=1 \
