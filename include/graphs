@@ -112,7 +112,10 @@ rrdtool graph /var/www/html/blockchain_activity.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
+  DEF:activity=/home/"${WHOAMI:?}"/stats/block_activity.rrd:activity:LAST \
+  DEF:activity=/home/"${WHOAMI:?}"/stats/block_activity.rrd:activity:AVERAGE \
   DEF:activity=/home/"${WHOAMI:?}"/stats/block_activity.rrd:activity:MAX \
+  DEF:activity=/home/"${WHOAMI:?}"/stats/block_activity.rrd:activity:MIN \
   LINE1:activity#71E75E:" Activity         " GPRINT:activity:LAST:"%.2lf\n" \
   LINE1:activity#C0EDB9:" Activity avg     " GPRINT:activity:AVERAGE:"%.2lf\n" \
   LINE1:activity#7CFB68:" Activity Max     " GPRINT:activity:MAX:"%.2lf\n" \
