@@ -44,12 +44,9 @@ rrdtool graph /var/www/html/load_graph.png \
   DEF:load=/home/"${WHOAMI:?}"/stats/load.rrd:load:MAX \
   DEF:load5=/home/"${WHOAMI:?}"/stats/load5.rrd:load5:MAX \
   DEF:load15=/home/"${WHOAMI:?}"/stats/load15.rrd:load15:MAX \
-  GPRINT:load:LAST:%.2lf \
-  GPRINT:load5:LAST:%.2lf \
-  GPRINT:load15:LAST:%.2lf \
-  LINE1:load#45DC63:"Load 1m" \
-  LINE2:load5#FFE000:"Load 5m" \
-  LINE2:load15#FF5100:"Load 15m"
+  LINE1:load#45DC63:" Load 1m          " GPRINT:load:LAST:"%.2lf\n" \
+  LINE2:load5#FFE000:" Load 5m          " GPRINT:load5:LAST:"%.2lf\n" \
+  LINE2:load15#FF5100:" Load 15m         " GPRINT:load15:LAST:"%.2lf\n"
 
 # inputs
 rrdtool graph /var/www/html/inputs_graph.png \
@@ -66,10 +63,9 @@ rrdtool graph /var/www/html/inputs_graph.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:inputs=/home/"${WHOAMI:?}"/stats/inputs.rrd:inputs:MAX \
-  GPRINT:inputs:LAST:%.0lf\ Now \
-  GPRINT:inputs:MAX:%.0lf\ Max \
-  GPRINT:inputs:MIN:%.0lf\ Min \
-  AREA:inputs#819C7D:"Inputs"
+  LINE1:inputs#80B886:" Inputs           " GPRINT:inputs:LAST:"%.0lf\n" \
+  LINE1:inputs#ACF8B4:" Inputs Max       " GPRINT:inputs:MAX:"%.0lf\n" \
+  LINE1:inputs#577C5B:" Inputs Min       " GPRINT:inputs:MIN:"%.0lf\n"
 
 # peers
 rrdtool graph /var/www/html/peers_graph.png \
@@ -93,22 +89,18 @@ rrdtool graph /var/www/html/peers_graph.png \
   DEF:peers_dns=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_dns:MAX \
   DEF:peers_onion=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_onion:MAX \
   DEF:peers_proxy=/home/"${WHOAMI:?}"/stats/peers_proto.rrd:peers_proxy:MAX \
-  GPRINT:peers:LAST:%.0lf\ Now \
-  GPRINT:peers:AVERAGE:%.0lf\ AVG \
-  GPRINT:banned_peers:LAST:%.0lf\ Bans \
-  GPRINT:peers:MAX:%.0lf\ Max \
-  GPRINT:peers:MIN:%.0lf\ Min \
-  LINE2:peers#82FE82:"Peers" \
-  LINE1:banned_peers#CC2C4B:"Bans" \
-  LINE1:peers_ipv4#FFFFFF \
-  LINE1:peers_ipv6#2CCC8D \
-  LINE1:peers_dns#2C69CC \
-  LINE1:peers_onion#A02CCC \
-  LINE1:peers_proxy#C26EE2
+  LINE2:peers#82FE82:" Peers            " GPRINT:peers:LAST:"%.0lf\n" \
+  LINE2:peers#82FE82:" Peers avg        " GPRINT:peers:AVG:"%.0lf\n" \
+  LINE1:banned_peers#CC2C4B:" Bans             " GPRINT:banned_peers:LAST:"%.0lf\n" \
+  LINE1:peers_ipv4#FFFFFF:" IPV4             " GPRINT:peers_ipv4:LAST:"%.0lf\n" \
+  LINE1:peers_ipv6#2CCC8D:" IPV6             " GPRINT:peers_ipv6:LAST:"%.0lf\n" \
+  LINE1:peers_dns#2C69CC:" DNS             " GPRINT:peers_dns:LAST:"%.0lf\n" \
+  LINE1:peers_onion#A02CCC:" Onion            " GPRINT:peers_onion:LAST:"%.0lf\n" \
+  LINE1:peers_proxy#C26EE2:" Proxy            " GPRINT:peers_proxy:LAST:"%.0lf\n"
 
 # blockchain activity
 rrdtool graph /var/www/html/blockchain_activity.png \
-  -w 400 -h 164 -a PNG \
+  -w 400 -h 150 -a PNG \
   --slope-mode \
   --vertical-label "Activity" \
   --alt-autoscale-max --lower-limit=1 \
@@ -121,11 +113,10 @@ rrdtool graph /var/www/html/blockchain_activity.png \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
   DEF:activity=/home/"${WHOAMI:?}"/stats/block_activity.rrd:activity:MAX \
-  GPRINT:activity:LAST:%.2lf\ Now \
-  GPRINT:activity:AVERAGE:%.2lf\ AVG \
-  GPRINT:activity:MAX:%.2lf\ Max \
-  GPRINT:activity:MIN:%.2lf\ Min \
-  AREA:activity#71E75E:"Activity"
+  LINE1:activity#71E75E:" Activity         " GPRINT:activity:LAST:"%.2lf\n" \
+  LINE1:activity#C0EDB9:" Activity avg         " GPRINT:activity:AVERAGE:"%.2lf\n" \
+  LINE1:activity#7CFB68:" Activity Max         " GPRINT:activity:MAX:"%.2lf\n" \
+  LINE1:activity#7D8B7A:" Activity Min         " GPRINT:activity:MIN:"%.2lf\n"
 
 # masternodes
 rrdtool graph /var/www/html/masternode_count_graph.png \
@@ -145,14 +136,10 @@ rrdtool graph /var/www/html/masternode_count_graph.png \
   DEF:stable=/home/"${WHOAMI:?}"/stats/masternodes.rrd:stable:MAX \
   DEF:enabled=/home/"${WHOAMI:?}"/stats/masternodes.rrd:enabled:MAX \
   DEF:inqueue=/home/"${WHOAMI:?}"/stats/masternodes.rrd:inqueue:MAX \
-  GPRINT:total:LAST:%.0lf\ Total \
-  GPRINT:stable:LAST:%.0lf\ Stable \
-  GPRINT:enabled:LAST:%.0lf\ Enabled \
-  GPRINT:inqueue:LAST:%.0lf\ Inqueue \
-  LINE2:total#F4F4F4:"Total" \
-  LINE1:stable#3BE536:"Stable" \
-  LINE1:enabled#3bbb33:"Enabled" \
-  LINE1:inqueue#828282:"Inqueue"
+  LINE2:total#F4F4F4:" Total            " GPRINT:total:LAST:"%.0lf\n" \
+  LINE1:stable#3BE536:" Stable           " GPRINT:stable:LAST:"%.0lf\n" \
+  LINE1:enabled#3bbb33:" Enabled          " GPRINT:enabled:LAST:"%.0lf\n" \
+  LINE1:inqueue#828282:" Inqueue          " GPRINT:inqueue:LAST:"%.0lf\n"
 
 # masternode pay
 rrdtool graph /var/www/html/masternode_pay_graph.png \
@@ -171,12 +158,9 @@ rrdtool graph /var/www/html/masternode_pay_graph.png \
   DEF:paycount=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:paycount:MAX \
   DEF:payout=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:payout:MAX \
   DEF:payvalue=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:payvalue:MAX \
-  GPRINT:paycount:LAST:%.2lf\ Rewards\ Daily \
-  GPRINT:payout:LAST:%.2lf\ Coins\ Daily \
-  GPRINT:payvalue:LAST:%.2lf\ USD\ Daily \
-  LINE1:paycount#FFDC77:"Rewards Daily" \
-  LINE1:payout#85bb65:"Coins Daily" \
-  LINE2:payvalue#668163:"USD Daily"
+  LINE1:paycount#FFDC77:" Daily Rewards    " GPRINT:paycount:LAST:"%.0lf\n" \
+  LINE1:payout#85bb65:" Daily Coins      " GPRINT:payout:LAST:"%.0lf\n" \
+  LINE2:payvalue#668163:" Daily USD        " GPRINT:payvalue:LAST:"%.0lf\n"
 
 # plural
 REW_GPRINT="Rewards"
