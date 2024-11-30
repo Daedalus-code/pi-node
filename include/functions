@@ -1321,6 +1321,32 @@ if [[ "$(wc -l /home/"${WHOAMI:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt
   timeout 900 screen -S add_extra_peers -X -p 0 stuff $'bash '"${LOG_DIR:?}"'/add_peers\n'
 fi
 
+### calculate average price and volume #########################################
+
+# add direct price, volume (coingecko), disregard zeros, empty lines (no data)
+cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.4f\n", $1 }' >>"${LOG_DIR:?}"/node_data/wallet/data/price.avg
+cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >>"${LOG_DIR:?}"/node_data/wallet/data/volume.avg
+# add direct price, volume (coinmarketcap), disregard zeros, empty lines (no data)
+cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.4f\n", $1 }' >>"${LOG_DIR:?}"/node_data/wallet/data/price.avg
+cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | awk '{ printf "%.2f\n", $1 }' >>"${LOG_DIR:?}"/node_data/wallet/data/volume.avg
+# create average ticker price and volume, disregard zeros, empty lines (no data)
+cat "${LOG_DIR:?}"/node_data/wallet/data/price* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' >>"${LOG_DIR:?}"/node_data/wallet/data/price.avg
+cat "${LOG_DIR:?}"/node_data/wallet/data/volume* 2>/dev/null | sed '/^$/d' 2>&1 | awk '{show=0; for (i=1; i<=NF; i++) {if ($i!=0) show=1; col[i]+=$i;}} show==1{tr++; for (i=1; i<=NF; i++) vals[tr,i]=$i; tc=NF} END{for(i=1; i<=tr; i++) { for (j=1; j<=tc; j++) { if (col[j]>0) printf("%s%s", vals[i,j], OFS)} print ""; } }' 2>&1 | xargs 2>&1 | awk '{ printf "%.8f\n", $1 }' >>"${LOG_DIR:?}"/node_data/wallet/data/volume.avg
+# count price and volume lines
+TICKER_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+VOLUME_COUNT=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
+# calculate average price and volume
+echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1)/${TICKER_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/price 2>&1
+echo "$(awk '{ SUM += $1} END { print SUM }' "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1)/${VOLUME_COUNT:?}" 2>&1 | bc -l 2>&1 | awk '{ printf "%.8f\n", $1 }' >"${LOG_DIR:?}"/node_data/wallet/data/volume 2>&1
+# keep n lines
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1 | awk '{ print $1 }' 2>&1)" -gt "360" ]] &>/dev/null; then
+  echo "$(tail -90 "${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/price.avg 2>&1
+fi
+# keep n lines
+if [[ "$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1 | awk '{ print $1 }' 2>&1)" -gt "360" ]] &>/dev/null; then
+  echo "$(tail -90 "${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/volume.avg 2>&1
+fi
+
 ################################################################################
 ### backup values coingecko ####################################################
 ################################################################################
