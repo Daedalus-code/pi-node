@@ -1463,6 +1463,8 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
 
   RAW_COINMCAP="$(cat "${LOG_DIR:?}"/node_data/wallet/data/raw.coinmcap)"
 
+  ##############################################################################
+
   # get token price
   echo "$RAW_COINMCAP" 2>/dev/null | grep "price today" | awk '{ print $7 }' | tr -d '$' >"${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>&1
   # get token volume
@@ -1477,9 +1479,11 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   API_VOLUME_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
   API_RANK_CMC=$(cat "${LOG_DIR:?}"/node_data/wallet/data/rank.cmc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
 
+  ##############################################################################
+
   # if zero
   if [[ -z "$API_PRICE_CMC" ]] &>/dev/null; then
-    ############################################################################
+    API_PRICE_CMC="0"
     # if cg has price data
     if [[ -s "${LOG_DIR:?}"/node_data/wallet/data/price.cg ]] &>/dev/null; then
       # update cmc price data
@@ -1489,7 +1493,7 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cmc &>/dev/null; then
   fi
   # if zero
   if [[ -z "$API_VOLUME_CMC" ]] &>/dev/null; then
-    ############################################################################
+    API_VOLUME_CMC="0"
     # if cg has volume data
     if [[ -s "${LOG_DIR:?}"/node_data/wallet/data/volume.cg ]] &>/dev/null; then
       # update cmc volume data
@@ -1550,6 +1554,8 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
     cp "${DATA_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/wallet/data/volume.cg
   fi
 
+  ##############################################################################
+
   # coingecko api values
   API_WATCH_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/watchlist.cg 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
   API_TWITTER_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/twitter.cg 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
@@ -1557,28 +1563,41 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   API_PRICE_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>/dev/null | awk '{ printf "%.4f\n", $1 }' 2>&1)
   API_VOLUME_CG=$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
 
+  ##############################################################################
+
+  # if zero
+  if [[ -z "$API_WATCH_CG" ]] &>/dev/null; then
+    API_WATCH_CG="0"
+  fi
+  # if zero
+  if [[ -z "$API_TWITTER_CG" ]] &>/dev/null; then
+    API_TWITTER_CG="0"
+  fi
+  # if zero
+  if [[ -z "$API_TELEGRAM_CG" ]] &>/dev/null; then
+    API_TELEGRAM_CG="0"
+  fi
   # if zero
   if [[ -z "$API_PRICE_CG" ]] &>/dev/null; then
     API_PRICE_CG="0"
     echo "$API_PRICE_CG" >"${LOG_DIR:?}"/node_data/wallet/data/price.cg
-    ############################################################################
     # if cmc has price data
     if [[ -s "${LOG_DIR:?}"/node_data/wallet/data/price.cmc ]] &>/dev/null; then
       # update cg price data
       echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null)" >"${LOG_DIR:?}"/node_data/wallet/data/price.cg
     fi
-    ############################################################################
   fi
   # if zero
   if [[ -z "$API_VOLUME_CG" ]] &>/dev/null; then
-    ############################################################################
+    API_VOLUME_CG="0"
     # if cmc has volume data
     if [[ -s "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc ]] &>/dev/null; then
       # update cg volume data
       echo "$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null)" >"${LOG_DIR:?}"/node_data/wallet/data/volume.cg
     fi
-    ############################################################################
   fi
+
+  ##############################################################################
 
   # greater than n seconds, continue
   if [[ "$(echo "${DAEMON_UPTIME:?}" 2>&1)" -gt "420" ]] &>/dev/null; then
