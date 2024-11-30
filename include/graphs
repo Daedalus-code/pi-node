@@ -154,9 +154,9 @@ rrdtool graph /var/www/html/masternode_pay_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:paycount=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:paycount:MAX \
-  DEF:payout=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:payout:MAX \
-  DEF:payvalue=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:payvalue:MAX \
+  DEF:paycount=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:paycount:LAST \
+  DEF:payout=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:payout:LAST \
+  DEF:payvalue=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:payvalue:LAST \
   LINE1:paycount#FFDC77:" Daily Rewards    " GPRINT:paycount:LAST:"%.2lf\n" \
   LINE1:payout#85bb65:" Daily Coins      " GPRINT:payout:LAST:"%.2lf\n" \
   LINE2:payvalue#668163:" Daily USD        " GPRINT:payvalue:LAST:"%.2lf\n"
@@ -190,8 +190,8 @@ if [[ "$(grep "successfully started" "${DATA_DIR:?}"/masternode_status)" ]] &>/d
     --color SHADEA#565875 \
     --color SHADEB#565875 \
     --end now --start end-"${GRAPH_TIME:?}" \
-    DEF:stakes=/home/"${WHOAMI:?}"/stats/stakes.rrd:stakes:MAX \
-    DEF:paycount=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:paycount:MAX \
+    DEF:stakes=/home/"${WHOAMI:?}"/stats/stakes.rrd:stakes:LAST \
+    DEF:paycount=/home/"${WHOAMI:?}"/stats/masternode_pay.rrd:paycount:LAST \
     GPRINT:paycount:LAST:%.2lf\ "${REW_GPRINT:?}" \
     GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
     GPRINT:stakes:AVERAGE:%.0lf\ PoS\ AVG \
@@ -211,7 +211,7 @@ else
     --color SHADEA#565875 \
     --color SHADEB#565875 \
     --end now --start end-"${GRAPH_TIME:?}" \
-    DEF:stakes=/home/"${WHOAMI:?}"/stats/stakes.rrd:stakes:MAX \
+    DEF:stakes=/home/"${WHOAMI:?}"/stats/stakes.rrd:stakes:LAST \
     GPRINT:stakes:LAST:%.0lf\ "${POS_GPRINT:?}" \
     GPRINT:stakes:AVERAGE:%.0lf\ PoS\ AVG \
     LINE2:stakes#FFDC77:"Stakes"
@@ -269,9 +269,9 @@ rrdtool graph /var/www/html/watchlist_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:watchlist=/home/"${WHOAMI:?}"/stats/watchlist.rrd:watchlist:MAX \
-  DEF:twitter=/home/"${WHOAMI:?}"/stats/watchlist.rrd:twitter:MAX \
-  DEF:telegram=/home/"${WHOAMI:?}"/stats/watchlist.rrd:telegram:MAX \
+  DEF:watchlist=/home/"${WHOAMI:?}"/stats/watchlist.rrd:watchlist:LAST \
+  DEF:twitter=/home/"${WHOAMI:?}"/stats/watchlist.rrd:twitter:LAST \
+  DEF:telegram=/home/"${WHOAMI:?}"/stats/watchlist.rrd:telegram:LAST \
   LINE1:watchlist#8CC53F:" Watchlist        " GPRINT:watchlist:LAST:"%.0lf\n" \
   LINE1:twitter#E7E9EA:" X/Twitter        " GPRINT:twitter:LAST:"%.0lf\n" \
   LINE1:telegram#24A1DE:" Telegram         " GPRINT:telegram:LAST:"%.0lf\n"
@@ -290,9 +290,9 @@ rrdtool graph /var/www/html/market_price_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:price_cg=/home/"${WHOAMI:?}"/stats/coingecko.rrd:price_cg:MAX \
-  DEF:price_cmc=/home/"${WHOAMI:?}"/stats/coinmarketcap.rrd:price_cmc:MAX \
-  DEF:price_avg=/home/"${WHOAMI:?}"/stats/price_avg.rrd:price_avg:MAX \
+  DEF:price_cg=/home/"${WHOAMI:?}"/stats/coingecko.rrd:price_cg:LAST \
+  DEF:price_cmc=/home/"${WHOAMI:?}"/stats/coinmarketcap.rrd:price_cmc:LAST \
+  DEF:price_avg=/home/"${WHOAMI:?}"/stats/price_avg.rrd:price_avg:LAST \
   LINE1:price_cg#7D7FB4:" Price cg         " GPRINT:price_cg:LAST:"%.4lf\n" \
   LINE1:price_cmc#7476A8:" Price cmc        " GPRINT:price_cmc:LAST:"%.4lf\n" \
   LINE3:price_avg#9A9DE1:" Price avg        " GPRINT:price_avg:LAST:"%.4lf\n"
@@ -311,9 +311,9 @@ rrdtool graph /var/www/html/market_volume_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:volume_cg=/home/"${WHOAMI:?}"/stats/coingecko.rrd:volume_cg:MAX \
-  DEF:volume_cmc=/home/"${WHOAMI:?}"/stats/coinmarketcap.rrd:volume_cmc:MAX \
-  DEF:volume_avg=/home/"${WHOAMI:?}"/stats/volume_avg.rrd:volume_avg:MAX \
+  DEF:volume_cg=/home/"${WHOAMI:?}"/stats/coingecko.rrd:volume_cg:LAST \
+  DEF:volume_cmc=/home/"${WHOAMI:?}"/stats/coinmarketcap.rrd:volume_cmc:LAST \
+  DEF:volume_avg=/home/"${WHOAMI:?}"/stats/volume_avg.rrd:volume_avg:LAST \
   LINE1:volume_cg#7D7FB4:" Volume cg        " GPRINT:volume_cg:LAST:"%.2lf\n" \
   LINE1:volume_cmc#7476A8:" Volume cmc       " GPRINT:volume_cmc:LAST:"%.2lf\n" \
   LINE3:volume_avg#7C9AC2:" Volume avg       " GPRINT:volume_avg:LAST:"%.2lf\n"
@@ -331,10 +331,10 @@ rrdtool graph /var/www/html/network_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:rxbytes=/home/"${WHOAMI:?}"/stats/network.rrd:rxbytes:MAX \
-  DEF:txbytes=/home/"${WHOAMI:?}"/stats/network.rrd:txbytes:MAX \
-  LINE1:rxbytes#3DCD3D:" Download         " GPRINT:rxbytes:MAX:"%.0lf\n" \
-  LINE1:txbytes#DC5F3A:" Upload           " GPRINT:txbytes:MAX:"%.0lf\n"
+  DEF:rxbytes=/home/"${WHOAMI:?}"/stats/network.rrd:rxbytes:LAST \
+  DEF:txbytes=/home/"${WHOAMI:?}"/stats/network.rrd:txbytes:LAST \
+  LINE1:rxbytes#3DCD3D:" Download         " GPRINT:rxbytes:LAST:"%.0lf\n" \
+  LINE1:txbytes#DC5F3A:" Upload           " GPRINT:txbytes:LAST:"%.0lf\n"
 
 # total hdd, used
 rrdtool graph /var/www/html/hdd_graph.png \
@@ -350,8 +350,8 @@ rrdtool graph /var/www/html/hdd_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:hdd_total=/home/"${WHOAMI:?}"/stats/hdd_total.rrd:hdd_total:MAX \
-  DEF:hdd=/home/"${WHOAMI:?}"/stats/hdd.rrd:hdd:MAX \
+  DEF:hdd_total=/home/"${WHOAMI:?}"/stats/hdd_total.rrd:hdd_total:LAST \
+  DEF:hdd=/home/"${WHOAMI:?}"/stats/hdd.rrd:hdd:LAST \
   AREA:hdd_total#8AA6B6:" Total GB         " GPRINT:hdd_total:LAST:"%.2lf\n" \
   AREA:hdd#597E93:" Used GB          " GPRINT:hdd:LAST:"%.2lf\n"
 
@@ -368,8 +368,8 @@ rrdtool graph /var/www/html/memory_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:memory_total=/home/"${WHOAMI:?}"/stats/memory_total.rrd:memory_total:MAX \
-  DEF:memory_free=/home/"${WHOAMI:?}"/stats/memory_free.rrd:memory_free:MAX \
+  DEF:memory_total=/home/"${WHOAMI:?}"/stats/memory_total.rrd:memory_total:LAST \
+  DEF:memory_free=/home/"${WHOAMI:?}"/stats/memory_free.rrd:memory_free:LAST \
   AREA:memory_total#8BABB6:" Total MB         " GPRINT:memory_total:MAX:"%.2lf\n" \
   AREA:memory_free#9FC49A:" Free MB          " GPRINT:memory_free:LAST:"%.2lf\n"
 
@@ -386,7 +386,7 @@ rrdtool graph /var/www/html/temp_graph.png \
   --color SHADEA#565875 \
   --color SHADEB#565875 \
   --end now --start end-"${GRAPH_TIME:?}" \
-  DEF:temp=/home/"${WHOAMI:?}"/stats/temp.rrd:temp:MAX \
+  DEF:temp=/home/"${WHOAMI:?}"/stats/temp.rrd:temp:LAST \
   GPRINT:temp:LAST:%.2lf\°C\ Now \
   GPRINT:temp:AVERAGE:%.2lf\°C\ AVG \
   GPRINT:temp:MAX:%.2lf\°C\ Max \
@@ -410,8 +410,8 @@ if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
     --color SHADEA#565875 \
     --color SHADEB#565875 \
     --end now --start end-"${GRAPH_TIME:?}" \
-    DEF:difficulty=/home/"${WHOAMI:?}"/stats/difficulty.rrd:difficulty:MAX \
-    DEF:set_auto_pos=/home/"${WHOAMI:?}"/stats/set_auto_pos.rrd:set_auto_pos:MAX \
+    DEF:difficulty=/home/"${WHOAMI:?}"/stats/difficulty.rrd:difficulty:LAST \
+    DEF:set_auto_pos=/home/"${WHOAMI:?}"/stats/set_auto_pos.rrd:set_auto_pos:LAST \
     GPRINT:difficulty:LAST:%.0lf\ Now \
     GPRINT:set_auto_pos:LAST:%.0lf\ APC \
     GPRINT:difficulty:AVERAGE:%.0lf\ AVG \
@@ -434,8 +434,8 @@ if [[ "$AUTO_POS" -eq "1" ]] &>/dev/null; then
     --color SHADEA#565875 \
     --color SHADEB#565875 \
     --end now --start end-"${GRAPH_TIME:?}" \
-    DEF:total_tx=/home/"${WHOAMI:?}"/stats/total_tx.rrd:total_tx:MAX \
-    DEF:set_auto_con=/home/"${WHOAMI:?}"/stats/set_auto_con.rrd:set_auto_con:MAX \
+    DEF:total_tx=/home/"${WHOAMI:?}"/stats/total_tx.rrd:total_tx:LAST \
+    DEF:set_auto_con=/home/"${WHOAMI:?}"/stats/set_auto_con.rrd:set_auto_con:LAST \
     GPRINT:total_tx:LAST:%.0lf\ Now \
     GPRINT:set_auto_con:LAST:%.0lf\ APL \
     GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
@@ -460,7 +460,7 @@ else
     --color SHADEA#565875 \
     --color SHADEB#565875 \
     --end now --start end-"${GRAPH_TIME:?}" \
-    DEF:difficulty=/home/"${WHOAMI:?}"/stats/difficulty.rrd:difficulty:MAX \
+    DEF:difficulty=/home/"${WHOAMI:?}"/stats/difficulty.rrd:difficulty:LAST \
     GPRINT:difficulty:LAST:%.0lf\ Now \
     GPRINT:difficulty:AVERAGE:%.0lf\ AVG \
     GPRINT:difficulty:MAX:%.0lf\ Max \
@@ -481,7 +481,7 @@ else
     --color SHADEA#565875 \
     --color SHADEB#565875 \
     --end now --start end-"${GRAPH_TIME:?}" \
-    DEF:total_tx=/home/"${WHOAMI:?}"/stats/total_tx.rrd:total_tx:MAX \
+    DEF:total_tx=/home/"${WHOAMI:?}"/stats/total_tx.rrd:total_tx:LAST \
     GPRINT:total_tx:LAST:%.0lf\ Now \
     GPRINT:total_tx:AVERAGE:%.0lf\ AVG \
     GPRINT:total_tx:MAX:%.0lf\ Max \
