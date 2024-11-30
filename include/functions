@@ -1169,10 +1169,12 @@ for (( ; ; )); do # loop until success
   echo "fail" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
 
   if egrep "[0-9]+" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko &>/dev/null; then
-    echo "success" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
-    printf '%b' "${LOG_DATE:?} Status() Coingcko.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cg 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} requests\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
-    killall curl &>/dev/null
-    exit
+    if ! egrep "error|Error" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko &>/dev/null; then
+      echo "success" >>"${LOG_DIR:?}"/node_data/requests.cg 2>&1
+      printf '%b' "${LOG_DATE:?} Status() Coingcko.API() ${G1:?}Success!${N0:?} Found API Data! After ${CY:?}$(wc -l "${LOG_DIR:?}"/node_data/requests.cg 2>&1 | awk '{ print $1 }' 2>&1)${N0:?} requests\n" >>"${WALLET_LOG_DIR:?}"/debug.log 2>&1
+      killall curl &>/dev/null
+      exit
+    fi
   fi
 
 done
