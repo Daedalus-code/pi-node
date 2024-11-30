@@ -259,7 +259,7 @@ rrdtool graph /var/www/html/rank_graph.png \
 rrdtool graph /var/www/html/watchlist_graph.png \
   -w 400 -h 150 -a PNG \
   --slope-mode \
-  --vertical-label "CoinMarketCap Watchlist" \
+  --vertical-label "Coin Community" \
   --alt-autoscale-max --lower-limit=1 \
   --color BACK#565875 \
   --color FONT#FFFFFF \
