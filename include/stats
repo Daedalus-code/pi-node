@@ -542,77 +542,84 @@ cat >/var/www/html/index.php <<'EOF'
 <?php
   // background color (dark blue)
   echo "<body style='background-color:2D3037'>";
-  // graphs inside flexible containers
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+
+  // Container for all images using Flexbox
+  echo "<div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>";  // Flexbox container with wrapping
+
+  // Display each graph in a responsive and flexible layout
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='load_graph.png' alt='Load' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='temp_graph.png' alt='CPUTemp' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='memory_graph.png' alt='Memory' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='hdd_graph.png' alt='Drive' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='network_graph.png' alt='Network' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='balance_graph.png' alt='Balance' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='stakes_and_rewards_graph.png' alt='Stakes' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='inputs_graph.png' alt='Inputs' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='peers_graph.png' alt='Peers' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='rank_graph.png' alt='Rank' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='total_tx_graph.png' alt='Total TX' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='difficulty_graph.png' alt='Difficulty' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='watchlist_graph.png' alt='Watchlist' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='market_price_graph.png' alt='Market Price' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='market_volume_graph.png' alt='Market Volume' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='masternode_count_graph.png' alt='Masternodes' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='masternode_pay_graph.png' alt='Masternode Pay' style='width: 100%; height: auto;' />";
   echo "</div>";
 
-  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
   echo "<img src='blockchain_activity.png' alt='Block Activity' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  // Close the flex container
   echo "</div>";
 EOF
 
