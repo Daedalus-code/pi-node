@@ -544,7 +544,7 @@ cat >/var/www/html/index.php <<'EOF'
   echo "<body style='background-color:2D3037'>";
 
   // Container for all images using Flexbox
-  echo "<div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 0px;'>";  // Flexbox container with wrapping
+  echo "<div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 1px;'>";  // Flexbox container with wrapping
 
   // Display each graph in a responsive and flexible layout
   echo "<div style='flex: 1 1 300px; max-width: 300px;'>";
