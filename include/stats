@@ -542,25 +542,78 @@ cat >/var/www/html/index.php <<'EOF'
 <?php
   // background color (dark blue)
   echo "<body style='background-color:2D3037'>";
-  // graphs with responsiveness
-  echo "<img src='load_graph.png' alt='Load' style='max-width: 100%; height: auto;' />";
-  echo "<img src='temp_graph.png' alt='CPUTemp' style='max-width: 100%; height: auto;' />";
-  echo "<img src='memory_graph.png' alt='Memory' style='max-width: 100%; height: auto;' />";
-  echo "<img src='hdd_graph.png' alt='Drive' style='max-width: 100%; height: auto;' />";
-  echo "<img src='network_graph.png' alt='Network' style='max-width: 100%; height: auto;' />";
-  echo "<img src='balance_graph.png' alt='Balance' style='max-width: 100%; height: auto;' />";
-  echo "<img src='stakes_and_rewards_graph.png' alt='Stakes' style='max-width: 100%; height: auto;' />";
-  echo "<img src='inputs_graph.png' alt='Inputs' style='max-width: 100%; height: auto;' />";
-  echo "<img src='peers_graph.png' alt='Peers' style='max-width: 100%; height: auto;' />";
-  echo "<img src='rank_graph.png' alt='Rank' style='max-width: 100%; height: auto;' />";
-  echo "<img src='total_tx_graph.png' alt='Total TX' style='max-width: 100%; height: auto;' />";
-  echo "<img src='difficulty_graph.png' alt='Difficulty' style='max-width: 100%; height: auto;' />";
-  echo "<img src='watchlist_graph.png' alt='Watchlist' style='max-width: 100%; height: auto;' />";
-  echo "<img src='market_price_graph.png' alt='Market Price' style='max-width: 100%; height: auto;' />";
-  echo "<img src='market_volume_graph.png' alt='Market Volume' style='max-width: 100%; height: auto;' />";
-  echo "<img src='masternode_count_graph.png' alt='Masternodes' style='max-width: 100%; height: auto;' />";
-  echo "<img src='masternode_pay_graph.png' alt='Masternode Pay' style='max-width: 100%; height: auto;' />";
-  echo "<img src='blockchain_activity.png' alt='Block Activity' style='max-width: 100%; height: auto;' />";
+  // graphs inside flexible containers
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='load_graph.png' alt='Load' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='temp_graph.png' alt='CPUTemp' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='memory_graph.png' alt='Memory' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='hdd_graph.png' alt='Drive' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='network_graph.png' alt='Network' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='balance_graph.png' alt='Balance' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='stakes_and_rewards_graph.png' alt='Stakes' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='inputs_graph.png' alt='Inputs' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='peers_graph.png' alt='Peers' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='rank_graph.png' alt='Rank' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='total_tx_graph.png' alt='Total TX' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='difficulty_graph.png' alt='Difficulty' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='watchlist_graph.png' alt='Watchlist' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='market_price_graph.png' alt='Market Price' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='market_volume_graph.png' alt='Market Volume' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='masternode_count_graph.png' alt='Masternodes' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='masternode_pay_graph.png' alt='Masternode Pay' style='width: 100%; height: auto;' />";
+  echo "</div>";
+
+  echo "<div style='max-width: 100%; overflow: hidden; margin: 10px;'>";
+  echo "<img src='blockchain_activity.png' alt='Block Activity' style='width: 100%; height: auto;' />";
+  echo "</div>";
 EOF
 
 # greater than n seconds, continue
