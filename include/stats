@@ -542,26 +542,25 @@ cat >/var/www/html/index.php <<'EOF'
 <?php
   // background color (dark blue)
   echo "<body style='background-color:2D3037'>";
-  // graphs
-  echo "<img src='load_graph.png' alt='Load' />";
-  echo "<img src='temp_graph.png' alt='CPUTemp' />";
-  echo "<img src='memory_graph.png' alt='Memory' />";
-  echo "<img src='hdd_graph.png' alt='Drive' />";
-  echo "<img src='network_graph.png' alt='Network' />";
-  echo "<img src='balance_graph.png' alt='Balance' />";
-  echo "<img src='stakes_and_rewards_graph.png' alt='Stakes' />";
-  echo "<img src='inputs_graph.png' alt='Inputs' />";
-  echo "<img src='peers_graph.png' alt='Peers' />";
-  echo "<img src='rank_graph.png' alt='Rank' />";
-  echo "<img src='total_tx_graph.png' alt='Total TX' />";
-  echo "<img src='difficulty_graph.png' alt='Difficulty' />";
-  echo "<img src='watchlist_graph.png' alt='Watchlist' />";
-  echo "<img src='market_price_graph.png' alt='Market Price' />";
-  echo "<img src='market_volume_graph.png' alt='Market Volume' />";
-  echo "<img src='masternode_count_graph.png' alt='Masternodes' />";
-  echo "<img src='masternode_pay_graph.png' alt='Masternode Pay' />";
-  echo "<img src='blockchain_activity.png' alt='Block Activity' />";
-
+  // graphs with responsiveness
+  echo "<img src='load_graph.png' alt='Load' style='max-width: 100%; height: auto;' />";
+  echo "<img src='temp_graph.png' alt='CPUTemp' style='max-width: 100%; height: auto;' />";
+  echo "<img src='memory_graph.png' alt='Memory' style='max-width: 100%; height: auto;' />";
+  echo "<img src='hdd_graph.png' alt='Drive' style='max-width: 100%; height: auto;' />";
+  echo "<img src='network_graph.png' alt='Network' style='max-width: 100%; height: auto;' />";
+  echo "<img src='balance_graph.png' alt='Balance' style='max-width: 100%; height: auto;' />";
+  echo "<img src='stakes_and_rewards_graph.png' alt='Stakes' style='max-width: 100%; height: auto;' />";
+  echo "<img src='inputs_graph.png' alt='Inputs' style='max-width: 100%; height: auto;' />";
+  echo "<img src='peers_graph.png' alt='Peers' style='max-width: 100%; height: auto;' />";
+  echo "<img src='rank_graph.png' alt='Rank' style='max-width: 100%; height: auto;' />";
+  echo "<img src='total_tx_graph.png' alt='Total TX' style='max-width: 100%; height: auto;' />";
+  echo "<img src='difficulty_graph.png' alt='Difficulty' style='max-width: 100%; height: auto;' />";
+  echo "<img src='watchlist_graph.png' alt='Watchlist' style='max-width: 100%; height: auto;' />";
+  echo "<img src='market_price_graph.png' alt='Market Price' style='max-width: 100%; height: auto;' />";
+  echo "<img src='market_volume_graph.png' alt='Market Volume' style='max-width: 100%; height: auto;' />";
+  echo "<img src='masternode_count_graph.png' alt='Masternodes' style='max-width: 100%; height: auto;' />";
+  echo "<img src='masternode_pay_graph.png' alt='Masternode Pay' style='max-width: 100%; height: auto;' />";
+  echo "<img src='blockchain_activity.png' alt='Block Activity' style='max-width: 100%; height: auto;' />";
 EOF
 
 # greater than n seconds, continue
