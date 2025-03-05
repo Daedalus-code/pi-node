@@ -447,6 +447,11 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
         # calculate total average confirmations between inputs
         TOTAL_CONF_ABOVE_CALC="$(echo "${TOTAL_CONF_ABOVE:?}/$(egrep -A1 "$(egrep -A1 -o "amount: [0-9]+.[0-9]+" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk -F: '$2>='"${CON_DIFF:?}"'' 2>&1)" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | grep "confirmations" | wc -l 2>&1)" | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1)"
 
+        # if zero
+        if [[ -z "$TOTAL_CONF_ABOVE_CALC" ]] &>/dev/null; then
+          TOTAL_CONF_ABOVE_CALC="0"
+        fi
+
         # continue if lock is found
         if [ -f "${DATA_DIR:?}"/diff.lock ] &>/dev/null; then
           # save value total average confirmations between inputs
@@ -455,6 +460,7 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
 
         TOTAL_CONF_ABOVE="$(cat "${LOG_DIR:?}"/node_data/wallet/data/pos_confirmations 2>/dev/null)"
 
+        # if zero
         if [[ -z "$TOTAL_CONF_ABOVE" ]] &>/dev/null; then
           # no inputs below config
           TOTAL_CONF_ABOVE="0"
