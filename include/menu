@@ -125,6 +125,12 @@ function latest_release() {
 
 latest_release
 
+# if missing
+if [[ ! -f "${LOG_DIR:?}"/node_data/system/ifconfig ]] &>/dev/null; then
+  # save ifconfig values to ifconfig, do this once
+  ifconfig >"${LOG_DIR:?}"/node_data/system/ifconfig 2>&1
+fi
+
 HEIGHT=18
 WIDTH=55
 CHOICE_HEIGHT=11
@@ -2794,9 +2800,6 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
   # vps configuration
   VPS_COUNT="$(pidof "$WALLET_DAEMON" | wc -w)"
-
-  # save ifconfig values to ifconfig, do this once
-  ifconfig >"${LOG_DIR:?}"/node_data/system/ifconfig 2>&1
 
   # final space
   df -h >"${LOG_DIR:?}"/final_space
