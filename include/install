@@ -37,7 +37,9 @@ if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
   read -r WALLET_PORT
   echo "${WALLET_PORT:?}" >"${DATA_DIR:?}"/wallet_port 2>&1
   if [[ -z "$WALLET_PORT" ]] &>/dev/null; then
-    exit
+    echo "Using default port 15110"
+    echo "15110" >"${DATA_DIR:?}"/wallet_port 2>&1
+    sleep 1
   fi
 fi
 
@@ -47,7 +49,9 @@ if [[ ! -f "${DATA_DIR:?}"/masternode_collateral ]] &>/dev/null; then
   read -r WALLET_COLLATERAL
   echo "${WALLET_COLLATERAL:?}" >"${DATA_DIR:?}"/masternode_collateral 2>&1
   if [[ -z "$WALLET_COLLATERAL" ]] &>/dev/null; then
-    exit
+    echo "Using default Collateral"
+    echo "10000" >"${DATA_DIR:?}"/masternode_collateral 2>&1
+    sleep 1
   fi
 fi
 
