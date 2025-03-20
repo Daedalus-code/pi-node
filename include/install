@@ -244,6 +244,9 @@ fi
 if ! [ -x "$(command -v ifconfig)" ] &>/dev/null; then
   echo "Installing net-tools"
   sudo apt-get install net-tools -y
+else
+  # save ifconfig values to ifconfig, do this once
+  ifconfig >"${LOG_DIR:?}"/node_data/system/ifconfig 2>&1
 fi
 
 # make sure tor is installed
