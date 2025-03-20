@@ -1351,24 +1351,25 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev make autoconf libtool automake pkg-config
     sudo apt-get autoremove
 
-    # check memory
-    TOTAL_SYSTEM_MEMORY="$(free -m 2>/dev/null | awk '{ print $2 }' | awk '{ SUM += $1} END { print SUM }')"
+    # check total system memory in MB
+    TOTAL_SYSTEM_MEMORY="$(free -m 2>/dev/null | awk 'NR==2 {print $2}')"
+    # if system memory is less than 2000MB
     if [[ "$TOTAL_SYSTEM_MEMORY" -lt "2000" ]] &>/dev/null; then
-      printf '%b' "System only has ${GR}$(echo "$TOTAL_SYSTEM_MEMORY/1024" | bc 2>/dev/null)G${N0}\n"
-      # create 2G swapfile if total is less than 2000M
-      printf '%b' "Creating ${G1}2G${N0} swapfile.."
+      printf '%b' "System only has ${GR}$(echo "scale=2; $TOTAL_SYSTEM_MEMORY/1024" | bc)G${N0}\n"
+      # create a 2G swapfile if total memory is less than 2000MB
+      printf '%b' "Creating ${G1}2G${N0} swapfile..\n"
       sudo fallocate -l 2G /swapfile
       sudo chmod 600 /swapfile
       sudo mkswap /swapfile
       sudo swapon /swapfile
-      # if not permanent
-      if [[ "$(grep -c "swapfile" /etc/fstab 2>/dev/null)" -eq "0" ]] &>/dev/null; then
-        # make swapfile permanent
-        echo "/swapfile swap swap defaults 0 0" >/tmp/fsb0.tmp
-        # columnt -t fstab file
-        cat /tmp/fsb0.tmp 2>/dev/null | column -t >/tmp/fsb1.tmp
-        sudo mv /tmp/fsb1.tmp /etc/fstab &>/dev/null
+      # if swapfile is not already in /etc/fstab, append it
+      if ! grep -q "^/swapfile swap swap defaults 0 0" /etc/fstab; then
+        echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab >/dev/null
       fi
+      # format `/etc/fstab` properly using `column -t`
+      sudo cp /etc/fstab /etc/fstab.bak
+      # backup fstab before modification
+      sudo column -t /etc/fstab | sudo tee /etc/fstab >/dev/null
     fi
 
     # start counting (seconds)
