@@ -1337,7 +1337,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # install dependencies
     echo "Please wait. Installing dependencies..."
-    sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev
+    sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev make
 
     # start counting (seconds)
     START="$SECONDS"
@@ -2586,7 +2586,7 @@ ${HIDDEN_SERVICE:?}
       # look for crontab setup
       if ! sudo crontab -l 2>&1 | grep "@reboot" &>/dev/null; then
         CRON_JOB="@reboot sudo mkdir /var/log/apache2"
-        (# add cron job for apache2 @reboot (root)
+        ( # add cron job for apache2 @reboot (root)
           sudo crontab -l 2>/dev/null
           echo "${CRON_JOB:?}"
         ) | sudo crontab -
