@@ -1366,9 +1366,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       if ! grep -q "^/swapfile swap swap defaults 0 0" /etc/fstab; then
         echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab >/dev/null
       fi
-      # format `/etc/fstab` properly using `column -t`
-      sudo cp /etc/fstab /etc/fstab.bak
       # backup fstab before modification
+      sudo cp /etc/fstab /etc/fstab.bak
+      # format `/etc/fstab` properly using `column -t`
       sudo column -t /etc/fstab | sudo tee /etc/fstab >/dev/null
     fi
 
