@@ -1372,27 +1372,27 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     # if repo doesnt exist
-    if [[ ! -d "$HOME/FreedomCoin-Core" ]] &>/dev/null; then
+    if [[ ! -d "$HOME/${WALLET_NAME}-Core" ]] &>/dev/null; then
       # download and extract wallet source
       cd "$HOME" || exit
-      git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
+      git clone "https://github.com/${WALLET_NAME}-Project/${WALLET_NAME}-Core.git"
     fi
 
     # set user ownership
-    sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
+    sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME}-Core"/
 
     # build dependencies without Qt
-    cd "$HOME/FreedomCoin-Core/depends" || exit
+    cd "$HOME/${WALLET_NAME}-Core/depends" || exit
     make HOST=arm-linux-gnueabihf NO_QT=1 -j"$CPU_CORES"
 
     # build wallet without wallet and GUI
-    cd "$HOME/FreedomCoin-Core" || exit
+    cd "$HOME/${WALLET_NAME}-Core" || exit
     ./autogen.sh
     ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --without-gui
     make -j"$CPU_CORES"
 
     # copy binaries
-    sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind src/freedomcoin-cli "$HOME" &>/dev/null
+    sudo cp "$HOME"/"${WALLET_NAME}-Core"/src/"${WALLET_DAEMON}" src/"${WALLET_CLIENT}" "$HOME" &>/dev/null
 
     # calculate build time
     DURATION=$(echo "$SECONDS-$START" | bc)
