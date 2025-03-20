@@ -1343,7 +1343,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # install dependencies
     echo "Please wait. Installing dependencies..."
-    sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev make autoconf libtool
+    # if missing
+    if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
+      echo "updated $(date | xargs)" >/tmp/upd.tmp
+      sudo apt-get update
+    fi
+    sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev make autoconf libtool automake
+    sudo apt-get autoremove
 
     # start counting (seconds)
     START="$SECONDS"
