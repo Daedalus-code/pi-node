@@ -1395,10 +1395,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo cp "$HOME"/"${WALLET_NAME}-Core"/src/"${WALLET_DAEMON}" src/"${WALLET_CLIENT}" "$HOME" &>/dev/null
 
     # calculate build time
-    DURATION=$(echo "$SECONDS-$START" | bc)
+    DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
     TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
     echo
-    printf 'Build time: %s\n' "$TIMER"
+    printf 'Build time: %s\n' "${GR}$TIMER${N0}"
 
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
