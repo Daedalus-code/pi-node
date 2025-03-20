@@ -1355,7 +1355,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     TOTAL_SYSTEM_MEMORY="$(free -m 2>/dev/null | awk 'NR==2 {print $2}')"
     # if system memory is less than 2000MB
     if [[ "$TOTAL_SYSTEM_MEMORY" -lt "2000" ]] &>/dev/null; then
-      printf '%b' "System only has ${GR}$(echo "scale=2; $TOTAL_SYSTEM_MEMORY/1024" | bc)G${N0}\n"
+      printf '%b' "System only has ${GR}$(echo "scale=2; $TOTAL_SYSTEM_MEMORY/1024" | bc 2>/dev/null)G${N0}\n"
       # create a 2G swapfile if total memory is less than 2000MB
       printf '%b' "Creating ${G1}2G${N0} swapfile..\n"
       sudo fallocate -l 2G /swapfile
