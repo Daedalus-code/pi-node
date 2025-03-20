@@ -240,6 +240,12 @@ if ! [ -x "$(command -v jq)" ] &>/dev/null; then
   sudo apt-get install jq -y
 fi
 
+# make sure net-tools is installed
+if ! [ -x "$(command -v net-tools)" ] &>/dev/null; then
+  echo "Installing net-tools"
+  sudo apt-get install net-tools -y
+fi
+
 # make sure tor is installed
 if ! [ -x "$(command -v tor)" ] &>/dev/null; then
   echo "Installing tor (proxy)"
