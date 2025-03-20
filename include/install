@@ -241,7 +241,7 @@ if ! [ -x "$(command -v jq)" ] &>/dev/null; then
 fi
 
 # make sure net-tools is installed
-if ! [ -x "$(command -v net-tools)" ] &>/dev/null; then
+if ! [ -x "$(command -v ifconfig)" ] &>/dev/null; then
   echo "Installing net-tools"
   sudo apt-get install net-tools -y
 fi
