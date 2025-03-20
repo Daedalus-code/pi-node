@@ -33,7 +33,7 @@ source /usr/local/bin/include/pinode/color 2>/dev/null
 
 # get wallet port, do this once
 if [[ ! -f "${DATA_DIR:?}"/wallet_port ]] &>/dev/null; then
-  printf '%b' "[??] Enter Wallet Port ${G1:?}> ${N0:?}"
+  printf '%b' "[??] Enter Wallet Port ${G1:?}> ${N0:?} Just hit Enter for default (15110)"
   read -r WALLET_PORT
   if [[ -z "$WALLET_PORT" ]] &>/dev/null; then
     echo "Using default port 15110"
@@ -46,7 +46,7 @@ fi
 
 # get masternode collateral, do this once
 if [[ ! -f "${DATA_DIR:?}"/masternode_collateral ]] &>/dev/null; then
-  printf '%b' "[??] Enter Masternode Collateral ${G1:?}> ${N0:?}"
+  printf '%b' "[??] Enter Masternode Collateral ${G1:?}> ${N0:?} Just hit Enter for default (10000)"
   read -r WALLET_COLLATERAL
   if [[ -z "$WALLET_COLLATERAL" ]] &>/dev/null; then
     echo "Using default Collateral 10000"
