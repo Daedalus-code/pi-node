@@ -1364,10 +1364,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       # if not permanent
       if [[ "$(grep -c "swapfile" /etc/fstab 2>/dev/null)" -eq "0" ]] &>/dev/null; then
         # make swapfile permanent
-        echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab
+        echo "/swapfile swap swap defaults 0 0" >/tmp/fsb0.tmp
         # columnt -t fstab file
-        cat /etc/fstab 2>/dev/null | column -t >/tmp/fsb.tmp
-        sudo mv /tmp/fsb.tmp /etc/fstab &>/dev/null
+        cat /tmp/fsb0.tmp 2>/dev/null | column -t >/tmp/fsb1.tmp
+        sudo mv /tmp/fsb1.tmp /etc/fstab &>/dev/null
       fi
     fi
 
