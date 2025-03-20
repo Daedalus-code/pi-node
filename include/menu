@@ -1351,6 +1351,23 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev make autoconf libtool automake pkg-config
     sudo apt-get autoremove
 
+    # check memory
+    TOTAL_SYSTEM_MEMORY="$(free -m 2>/dev/null | awk '{ print $2 }' | awk '{ SUM += $1} END { print SUM }')"
+    if [[ "$TOTAL_SYSTEM_MEMORY" -lt "2000" ]] &>/dev/null; then
+      echo "System only has $(echo "$TOTAL_SYSTEM_MEMORY/1024" | bc 2>/dev/null)G"
+      # create 2G swapfile if total is less than 2000M
+      echo "Creating 2G swapfile.."
+      sudo fallocate -l 2G /swapfile
+      sudo chmod 600 /swapfile
+      sudo mkswap /swapfile
+      sudo swapon /swapfile
+      # if not permanent
+      if [[ "$(grep -c "swapfile" /etc/fstab 2>/dev/null)" -eq "0" ]] &>/dev/null; then
+        # make swapfile permanent
+        echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab
+      fi
+    fi
+
     # start counting (seconds)
     START="$SECONDS"
 
@@ -1392,7 +1409,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
     TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
     echo
-    printf 'Build time: %s\n' "${GR}$TIMER${N0}"
+    printf '%b' "Build time: ${GR}$TIMER${N0}\n"
     echo
     read -r -p "[Ok] Press Enter to continue" </dev/tty
     echo
