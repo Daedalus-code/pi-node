@@ -5,7 +5,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.8.3"
+VERSION="v1.7.8.4"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -824,7 +824,8 @@ else
   WALLET_SYNC="${G1:?}$(cat "${LOG_DIR:?}"/node_data/wallet/client/tmp/syncing 2>/dev/null)${N0:?}"
 fi
 
-if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
+# if zero
+if [[ -z "$WALLET_SYNC" || "$WALLET_SYNC" == "%" ]] &>/dev/null; then
   WALLET_SYNC="${GR:?}loading${N0:?}"
 fi
 
