@@ -1423,7 +1423,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
 
       # change directory and download bootstrap.zip
-      cd || exit && wget -c "$BOOTSTRAP_URL"
+      cd || exit && wget --progress=dot "$BOOTSTRAP_URL" 2>/dev/null | grep "%" | sed -u -e "s,\.,,g" | awk '{print $2}' | sed -u -e "s,\%,,g" | dialog --gauge "Downloading bootstrap.zip.." 10 100
+
       RESULT=$?
       # if any result
       if [ $RESULT -eq "0" ] &>/dev/null; then
@@ -1530,7 +1531,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
     # if missing
     if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
       # change directory and download bootstrap.zip
-      cd || exit && wget -c "$BOOTSTRAP_URL"
+      cd || exit && wget --progress=dot "$BOOTSTRAP_URL" 2>/dev/null | grep "%" | sed -u -e "s,\.,,g" | awk '{print $2}' | sed -u -e "s,\%,,g" | dialog --gauge "Downloading bootstrap.zip.." 10 100
 
       RESULT=$?
 
