@@ -1430,7 +1430,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         grep --line-buffered "[0-9]% " |
         sed -u -E 's/.* ([0-9]+)% +([0-9.]+[KM]) +([0-9hms]+).*/\1 \2 \3/' |
         while read -r PERCENT SPEED ETA; do
-          echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nSpeed..: $SPEED/sec\nETA....: $ETA" 9 55
+          echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA" 10 55
           sleep 1
         done
 
@@ -1548,7 +1548,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         grep --line-buffered "[0-9]% " |
         sed -u -E 's/.* ([0-9]+)% +([0-9.]+[KM]) +([0-9hms]+).*/\1 \2 \3/' |
         while read -r PERCENT SPEED ETA; do
-          echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nSpeed..: $SPEED/sec\nETA....: $ETA" 9 55
+          echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA" 10 55
           sleep 1
         done
 
