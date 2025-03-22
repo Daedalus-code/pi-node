@@ -1424,6 +1424,13 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       sudo cp /home/"$(whoami)"/"${WALLET_CLIENT}" /usr/local/bin &>/dev/null
     fi
 
+    # if missing
+    if [[ "$(crontab -l 2>/dev/null | grep -c "warden")" -eq "0" ]] &>/dev/null; then
+      # install crontab
+      echo "Installing cronjob.."
+      echo "*/1 * * * * bash /usr/local/bin/include/pinode/warden" | crontab -
+    fi
+
     echo
     printf '%b' "Build time: ${GR}$TIMER${N0}\n"
     echo
@@ -1949,7 +1956,7 @@ Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ 
   "6")
 
     printf '%b' "${GR:?}CTRL+O to save, CTRL+X to exit${N0:?}\n"
-    read -t 1 -r -p "[Ok] Press Enter to continue" </dev/tty
+    read -r -p "[Ok] Press Enter to continue" </dev/tty
     clear
     crontab -e
 
@@ -2624,7 +2631,8 @@ ${HIDDEN_SERVICE:?}
       # look for crontab setup
       if ! sudo crontab -l 2>&1 | grep "@reboot" &>/dev/null; then
         CRON_JOB="@reboot sudo mkdir /var/log/apache2"
-        ( # add cron job for apache2 @reboot (root)
+        # add cron job for apache2 @reboot (root)
+        (
           sudo crontab -l 2>/dev/null
           echo "${CRON_JOB:?}"
         ) | sudo crontab -
