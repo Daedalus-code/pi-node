@@ -1443,8 +1443,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       # if any result
       if [ $RESULT -eq "0" ] &>/dev/null; then
+        clear
         # kill wallet
-        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
         # unzip bootstrap.zip
         unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
       fi
@@ -1571,8 +1572,9 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
       # if any result
       if [ $RESULT -eq "0" ] &>/dev/null; then
+        clear
         # kill wallet
-        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
         # unzip bootstrap.zip
         unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
       else
@@ -1592,8 +1594,9 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
       read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        clear
         # kill wallet
-        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
         # unzip bootstrap.zip
         unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
       fi
