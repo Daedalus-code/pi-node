@@ -914,16 +914,17 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
 "4")
 
-  HEIGHT=11
-  WIDTH=64
-  CHOICE_HEIGHT=4
+  HEIGHT="12"
+  WIDTH="64"
+  CHOICE_HEIGHT="5"
   BACKTITLE="Download Menu"
   MENU="Choose one option:"
 
   OPTIONS=(1 "Download         Download a specific wallet manually"
     2 "Display          Setup display (HyperPixel4) drivers"
     3 "Compiler         Compile new wallet from source"
-    4 "Speedtest        Test internet speed (bytes)")
+    4 "Speedtest        Test internet speed (bytes)"
+    5 "Bootstrap        Download bootstrap.zip")
 
   CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
@@ -944,9 +945,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # create uname -a
     uname -a >"${LOG_DIR:?}"/node_data/system/uname
 
-    HEIGHT=17
-    WIDTH=42
-    CHOICE_HEIGHT=10
+    HEIGHT="16"
+    WIDTH="42"
+    CHOICE_HEIGHT="9"
     BACKTITLE="Download manually"
     TITLE="Download Menu"
     MENU="Choose one option:"
@@ -959,8 +960,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       6 "Wallet-arm.zip"
       7 "Wallet.Ubuntu16.zip"
       8 "Source code (zip)"
-      9 "Source code (tar.gz)"
-      10 "Bootstrap (zip)")
+      9 "Source code (tar.gz)")
 
     CHOICE=$(dialog --clear \
       --backtitle "$BACKTITLE" \
@@ -1150,29 +1150,6 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
       ;;
 
-    "10")
-
-      cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/bootstrap.zip
-      RESULT=$?
-      if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
-        read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          unzip bootstrap.zip
-          cp -R bootstrap/* "${DATA_DIR:?}"
-        fi
-      else
-        echo "[!!] Download failed"
-      fi
-      read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        rm -R bootstrap bootstrap.zip &>/dev/null
-      fi
-
-      ;;
-
     esac
 
     # cleanup macos compilers
@@ -1184,9 +1161,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
   "2")
 
-    HEIGHT=13
-    WIDTH=51
-    CHOICE_HEIGHT=6
+    HEIGHT="13"
+    WIDTH="51"
+    CHOICE_HEIGHT="6"
     BACKTITLE="Setup display"
     TITLE="HyperPixel4 Menu"
     MENU="Choose one option:"
@@ -1431,6 +1408,27 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       echo "*/1 * * * * bash /usr/local/bin/include/pinode/warden" | crontab -
     fi
 
+    # if missing
+    if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
+      # change directory and download bootstrap.zip
+      cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/bootstrap.zip
+      RESULT=$?
+      # if any result
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        unzip bootstrap.zip
+        cp -R bootstrap/* "${DATA_DIR:?}"
+      fi
+      # if found
+      if [[ -f /home/"$(whoami)"/bootstrap.zip || -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
+        # remove bootstrap
+        read -r -p "[YN] Delete bootstrap? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          rm -R bootstrap bootstrap.zip &>/dev/null
+        fi
+      fi
+    fi
+
     echo
     printf '%b' "Build time: ${GR}$TIMER${N0}\n"
     echo
@@ -1512,6 +1510,47 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
       echo
     fi
     rm /tmp/speedtest* &>/dev/null
+
+    ;;
+
+  "5")
+
+    # if missing
+    if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
+      # change directory and download bootstrap.zip
+      cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/bootstrap.zip
+
+      RESULT=$?
+
+      # if any result
+      if [ $RESULT -eq "0" ] &>/dev/null; then
+        echo "[Ok] Download success"
+        unzip /home/"$(whoami)"/bootstrap.zip
+        cp -R /home/"$(whoami)"/bootstrap/* "${DATA_DIR:?}"
+        echo "[OK] Unzip complete"
+      else
+        echo "[!!] Download failed"
+      fi
+
+      # if found
+      if [[ -f /home/"$(whoami)"/bootstrap.zip || -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
+        # remove bootstrap
+        read -r -p "[YN] Delete bootstrap? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          rm -R bootstrap bootstrap.zip &>/dev/null
+        fi
+      fi
+    else
+      read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
+      echo
+      # unzip bootstrap.zip
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        unzip /home/"$(whoami)"/bootstrap.zip
+        cp -R /home/"$(whoami)"/bootstrap/* "${DATA_DIR:?}"
+        echo "[OK] Unzip complete"
+      fi
+    fi
 
     ;;
 
