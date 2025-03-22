@@ -162,7 +162,7 @@ download_bootstrap() {
   if [ $RESULT -eq "0" ] &>/dev/null; then
     clear
     # kill wallet
-    kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
+    kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
     # disable cron
     sudo service cron stop
     # unzip bootstrap.zip
@@ -248,7 +248,7 @@ case $CHOICE in
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
           # hard shutdown
-          kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null && sleep 1
+          kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null && sleep 1
         fi
       fi
       # normal shutdown
@@ -260,7 +260,7 @@ case $CHOICE in
         printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
         printf '%b' "[${N0:?}!!${N0:?}] ${GR:?}CTRL+C to exit${N0:?}\n"
         sleep 10
-        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
       done
 
       read -r -p "[YN] Reboot? y/n " -n 1 -r
@@ -288,7 +288,7 @@ case $CHOICE in
       printf '%b' "[${R1:?}!!${N0:?}] ${GR:?}Disconnecting${N0:?} " 2>/dev/null
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop 2>/dev/null
       killall "${WALLET_DAEMON:?}" &>/dev/null
-      kill -9 "$(pidof "$WALLET_DAEMON")" &>/dev/null
+      kill -9 "$(pidof "$WALLET_DAEMON" 2>/dev/null)" &>/dev/null
       printf '%b' "[${G1:?}Ok${N0:?}] Re/Starting node!\n"
 
       # remove old files
@@ -320,7 +320,7 @@ case $CHOICE in
       printf '%b' "[${R1:?}!!${N0:?}] ${GR:?}Disconnecting${N0:?} " 2>/dev/null
       "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" stop 2>/dev/null
       killall "${WALLET_DAEMON:?}" &>/dev/null
-      kill -9 "$(pidof "$WALLET_DAEMON")" &>/dev/null
+      kill -9 "$(pidof "$WALLET_DAEMON" 2>/dev/null)" &>/dev/null
 
       # remove old files
       rm "${LOG_DIR:?}"/node_data/wallet/client/tmp/proc &>/dev/null
@@ -1577,7 +1577,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
         clear
         # kill wallet
-        kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
         # disable cron
         sudo service cron stop
         # unzip bootstrap.zip
@@ -2766,7 +2766,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
             printf '%b' "[${R1:?}!!${N0:?}] waiting on wallet (${G1:?}$(pidof "${WALLET_DAEMON:?}" 2>&1)${N0:?}) daemon to shutdown..\n"
             printf '%b' "${GR:?}CTRL+C to exit${N0:?}\n"
             sleep 10
-            kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
+            kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
           done
           sudo reboot
         fi
