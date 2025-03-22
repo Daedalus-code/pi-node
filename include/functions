@@ -5,7 +5,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.8.4"
+VERSION="v1.7.8.5"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -565,10 +565,6 @@ fi
 
 if [[ "$(echo "$(($(date +%s) - $(date +%s -r "${DATA_DIR:?}"/getwan)))")" -gt "$GET_WAN_TIME" ]] &>/dev/null; then
   host myip.opendns.com resolver1.opendns.com | grep "myip" | awk '{ print $NF }' >"${DATA_DIR:?}"/getwan 2>&1
-fi
-
-if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-  PUBLIC_IP="${GR:?}...${N0:?}"
 fi
 
 ### wallet peers, connections ##################################################
@@ -1779,6 +1775,11 @@ fi
 if [[ "$HIDE_WAN" -eq "1" ]] &>/dev/null; then
   PUBLIC_IP="$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 64 2>&1 | rev 2>&1)"
   PUBLIC_IP="${GR:?}${PUBLIC_IP:0:9}...onion${N0:?}"
+fi
+
+# if zero
+if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+  PUBLIC_IP="${GR:?}...${N0:?}"
 fi
 
 # END
