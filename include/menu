@@ -140,6 +140,40 @@ if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
   BOOTSTRAP_URL="https://freedomcoin.global/wallets/bootstrap.zip"
 fi
 
+download_bootstrap() {
+  # bootstrap file
+  OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
+  cd || exit
+  # start the download and process progress
+  wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
+    # capture the progress line with percentage, speed, and eta
+    grep --line-buffered "[0-9]% " |
+    while read -r line; do
+      # extract the percentage, speed, and eta using regex
+      PERCENT=$(echo "$line" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
+      SPEED=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $1 }')
+      ETA=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $2 }')
+      # output progress to dialog (display the progress bar)
+      echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA" 10 65
+      sleep 1
+    done
+  RESULT=$?
+  # if any result
+  if [ $RESULT -eq "0" ] &>/dev/null; then
+    clear
+    # kill wallet
+    kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
+    # disable cron
+    sudo service cron stop
+    # unzip bootstrap.zip
+    unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+    # enable cron
+    sudo service cron start
+  else
+    echo "[!!] Download failed"
+  fi
+}
+
 ################################################################################
 
 HEIGHT="18"
@@ -1420,39 +1454,10 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     # if missing
-    if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
+    if [[ ! -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
 
-      # bootstrap file
-      OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
-      cd || exit
-
-      # start the download and process progress
-      wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
-        # capture the progress line with percentage, speed, and ETA
-        grep --line-buffered "[0-9]% " |
-        while read -r line; do
-          # extract the percentage, speed, and ETA using regex
-          PERCENT=$(echo "$line" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
-          SPEED=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $1 }')
-          ETA=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $2 }')
-          # output progress to dialog (Display the progress bar)
-          echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA" 10 65
-          sleep 1
-        done
-
-      RESULT=$?
-      # if any result
-      if [ $RESULT -eq "0" ] &>/dev/null; then
-        clear
-        # kill wallet
-        kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
-        # disable cron
-        sudo service cron stop
-        # unzip bootstrap.zip
-        unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
-        # enable cron
-        sudo service cron start
-      fi
+      # download bootstrap.zip
+      download_bootstrap
 
       # if found
       if [[ -f /home/"$(whoami)"/bootstrap.zip || -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
@@ -1552,42 +1557,10 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
   "5")
 
     # if missing
-    if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
+    if [[ ! -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
 
-      # bootstrap file
-      OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
-      cd || exit
-
-      # start the download and process progress
-      wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
-        # capture the progress line with percentage, speed, and eta
-        grep --line-buffered "[0-9]% " |
-        while read -r line; do
-          # extract the percentage, speed, and eta using regex
-          PERCENT=$(echo "$line" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
-          SPEED=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $1 }')
-          ETA=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $2 }')
-          # output progress to dialog (display the progress bar)
-          echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA" 10 65
-          sleep 1
-        done
-
-      RESULT=$?
-
-      # if any result
-      if [ $RESULT -eq "0" ] &>/dev/null; then
-        clear
-        # kill wallet
-        kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
-        # disable cron
-        sudo service cron stop
-        # unzip bootstrap.zip
-        unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
-        # enable cron
-        sudo service cron start
-      else
-        echo "[!!] Download failed"
-      fi
+      # download bootstrap.zip
+      download_bootstrap
 
       # if found
       if [[ -f /home/"$(whoami)"/bootstrap.zip || -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
