@@ -5,7 +5,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.5.6"
+VERSION="v1.7.7.2"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -76,7 +76,7 @@ LC_ALL=de_US.utf8 date '+%T' >"${LOG_DIR:?}"/node_data/system/date.check 2>&1
 LOG_CHECK=$(cat "${LOG_DIR:?}"/node_data/system/date.check 2>/dev/null)
 
 if [[ ! -z "$LOG_DATE" ]] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/system/date "${LOG_DIR:?}"/node_data/system/date.bkp
+  cp "${LOG_DIR:?}"/node_data/system/date "${LOG_DIR:?}"/node_data/system/date.bkp &>/dev/null
 fi
 if [[ -z "$LOG_DATE" ]] &>/dev/null; then
   LOG_DATE=$(LC_ALL=de_US.utf8 date '+%T' 2>&1)
@@ -86,7 +86,7 @@ if [[ -z "$LOG_DATE" ]] &>/dev/null; then
 fi
 
 if [[ ! -z "$LOG_CHECK" ]] &>/dev/null; then
-  cp "${LOG_DIR:?}"/node_data/system/date.check "${LOG_DIR:?}"/node_data/system/date.check.bkp
+  cp "${LOG_DIR:?}"/node_data/system/date.check "${LOG_DIR:?}"/node_data/system/date.check.bkp &>/dev/null
 fi
 if [[ -z "$LOG_CHECK" ]] &>/dev/null; then
   LOG_CHECK=$(LC_ALL=de_US.utf8 date '+%T' 2>&1)
@@ -1310,14 +1310,14 @@ if [[ "$(wc -l /home/"${WHOAMI:?}"/addnodes 2>&1 | awk '{ print $1 }' 2>&1)" -gt
   # add extras from personal addnodes
   cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.x 2>/dev/null | egrep -v "${IP_ADDRESS_NR:?}|127.|::1|::128|::" >>"${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null
   # remove duplicates, sort
-  cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | awk '!a[$0]++' 2>&1 | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/peers.clean 2>&1
+  cat "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp 2>/dev/null | awk '!a[$0]++' | sort -n >"${LOG_DIR:?}"/node_data/wallet/peers/peers.clean
   mv "${LOG_DIR:?}"/node_data/wallet/peers/peers.clean "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp &>/dev/null
   # remove file, now old
   rm "${LOG_DIR:?}"/node_data/wallet/peers/peers.x* &>/dev/null
 
-  cp "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>&1
+  cp "${LOG_DIR:?}"/node_data/wallet/peers/peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers &>/dev/null
   # make sure addnodes is clean of successfully peers, as above as below
-  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success "${LOG_DIR:?}"/node_data/wallet/peers/add_peers >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp 2>&1
+  grep -vf "${LOG_DIR:?}"/node_data/wallet/peers/success "${LOG_DIR:?}"/node_data/wallet/peers/add_peers >"${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp
   mv "${LOG_DIR:?}"/node_data/wallet/peers/add_peers.tmp "${LOG_DIR:?}"/node_data/wallet/peers/add_peers 2>/dev/null
 
   # create screen session
@@ -1388,12 +1388,12 @@ fi
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cg 2>/dev/null)" -eq "0" ]] &>/dev/null; then
   # use coingecko price
-  cp "${DATA_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/wallet/data/price.cg
+  cp "${DATA_DIR:?}"/price.cmc "${LOG_DIR:?}"/node_data/wallet/data/price.cg &>/dev/null
 fi
 # if zero
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cg 2>/dev/null)" -eq "0" ]] &>/dev/null; then
   # use coingecko volume
-  cp "${DATA_DIR:?}"/volume.cmc "${LOG_DIR:?}"/node_data/wallet/data/volume.cg
+  cp "${DATA_DIR:?}"/volume.cmc "${LOG_DIR:?}"/node_data/wallet/data/volume.cg &>/dev/null
 fi
 
 ################################################################################
@@ -1446,12 +1446,12 @@ fi
 
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/price.cmc 2>/dev/null)" -eq "0" ]] &>/dev/null; then
   # use coingecko price
-  cp "${DATA_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/wallet/data/price.cmc
+  cp "${DATA_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/wallet/data/price.cmc &>/dev/null
 fi
 # if zero
 if [[ "$(cat "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc 2>/dev/null)" -eq "0" ]] &>/dev/null; then
   # use coingecko volume
-  cp "${DATA_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc
+  cp "${DATA_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/wallet/data/volume.cmc &>/dev/null
 fi
 
 ### coinmarketcap data #########################################################
@@ -1548,8 +1548,8 @@ if grep "success" "${LOG_DIR:?}"/node_data/requests.cg &>/dev/null; then
   ##############################################################################
 
   if [[ "$(egrep "Cloudflare|Enable JavaScript and cookies to continue" "${LOG_DIR:?}"/node_data/wallet/data/raw.coingcko)" ]] &>/dev/null; then
-    cp "${DATA_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/wallet/data/price.cg
-    cp "${DATA_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/wallet/data/volume.cg
+    cp "${DATA_DIR:?}"/price.cg "${LOG_DIR:?}"/node_data/wallet/data/price.cg &>/dev/null
+    cp "${DATA_DIR:?}"/volume.cg "${LOG_DIR:?}"/node_data/wallet/data/volume.cg &>/dev/null
   fi
 
   ##############################################################################
