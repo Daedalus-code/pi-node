@@ -5,7 +5,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.7.2"
+VERSION="v1.7.7.7"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -240,8 +240,13 @@ MEMPOOL_LINES=$(wc -l "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | awk '{
 MEMPOOL_ACTIVE=$(grep "1" "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 MEMPOOL_NOACTIVE=$(grep "0" "${LOG_DIR:?}"/node_data/wallet/data/mempool 2>&1 | wc -l 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
 MEMPOOL_PERC_ACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_ACTIVE" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)
-MEMPOOL_PERC_NOACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_NOACTIVE" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)
 
+# if zero
+if [[ -z "$MEMPOOL_PERC_ACTIVE" ]] &>/dev/null; then
+  MEMPOOL_PERC_ACTIVE="0"
+fi
+
+MEMPOOL_PERC_NOACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_NOACTIVE" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)
 echo "A ${MEMPOOL_PERC_ACTIVE:?}% D ${MEMPOOL_PERC_NOACTIVE:?}%" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
 
 for i in {1..2}; do
