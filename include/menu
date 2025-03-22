@@ -125,15 +125,26 @@ function latest_release() {
 
 latest_release
 
+################################################################################
+
 # if missing
 if [[ ! -f "${LOG_DIR:?}"/node_data/system/ifconfig ]] &>/dev/null; then
   # save ifconfig values to ifconfig, do this once
   ifconfig >"${LOG_DIR:?}"/node_data/system/ifconfig 2>&1
 fi
 
-HEIGHT=18
-WIDTH=55
-CHOICE_HEIGHT=11
+################################################################################
+
+# if zero
+if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
+  BOOTSTRAP_URL="https://freedomcoin.global/wallets/bootstrap.zip"
+fi
+
+################################################################################
+
+HEIGHT="18"
+WIDTH="55"
+CHOICE_HEIGHT="11"
 BACKTITLE="Pi-Node - ${OLD_HEAD:?} ${LATEST_DATE:?}"
 TITLE="$(hostname 2>/dev/null) ($(grep "inet" "${LOG_DIR:?}"/node_data/system/ifconfig 2>/dev/null | egrep -v "inet6|127.0.0.1" 2>/dev/null | awk '{ print $2 }' 2>/dev/null | xargs 2>/dev/null | awk '{ print $1 }' 2>/dev/null))"
 MENU=" $(LC_ALL=de_US.utf8 date 2>/dev/null) ${CPU_CTEMP:?} ${CPU_FTEMP:?} P2P $(grep "connections" "${LOG_DIR:?}"/node_data/wallet/client/getinfo 2>/dev/null | awk '{ print $2 }' 2>/dev/null)"
@@ -164,9 +175,9 @@ case $CHOICE in
 
 "1")
 
-  HEIGHT=10
-  WIDTH=55
-  CHOICE_HEIGHT=3
+  HEIGHT="10"
+  WIDTH="55"
+  CHOICE_HEIGHT="3"
   BACKTITLE="Pi-Node"
   TITLE="Wallet Menu"
   MENU="Choose one option:"
@@ -300,9 +311,9 @@ case $CHOICE in
 
 "2")
 
-  HEIGHT=10
-  WIDTH=52
-  CHOICE_HEIGHT=3
+  HEIGHT="10"
+  WIDTH="52"
+  CHOICE_HEIGHT="3"
   BACKTITLE="Pi-Node"
   TITLE="Key Menu"
   MENU="Choose one option:"
@@ -414,9 +425,9 @@ Then the importprivkey can be used with this output
     UFW_INSTALLED="$(ufw --version | xargs)"
   fi
 
-  HEIGHT=15
-  WIDTH=50
-  CHOICE_HEIGHT=8
+  HEIGHT="15"
+  WIDTH="50"
+  CHOICE_HEIGHT="8"
   BACKTITLE="Pi-Node"
   TITLE="$UFW_INSTALLED"
   MENU="Choose one option:"
@@ -1410,8 +1421,9 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # if missing
     if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
+
       # change directory and download bootstrap.zip
-      cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/bootstrap.zip
+      cd || exit && wget -c "$BOOTSTRAP_URL"
       RESULT=$?
       # if any result
       if [ $RESULT -eq "0" ] &>/dev/null; then
@@ -1518,7 +1530,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
     # if missing
     if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
       # change directory and download bootstrap.zip
-      cd || exit && wget -c "${WALLET_DOWNLOAD:?}"/"${LATEST_VERSION:?}"/bootstrap.zip
+      cd || exit && wget -c "$BOOTSTRAP_URL"
 
       RESULT=$?
 
@@ -1560,9 +1572,9 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
 "5")
 
-  HEIGHT=20
-  WIDTH=48
-  CHOICE_HEIGHT=13
+  HEIGHT="20"
+  WIDTH="48"
+  CHOICE_HEIGHT="13"
   BACKTITLE="Configurations"
   TITLE="Configuration & Tools"
   MENU="Choose one option:"
@@ -1603,9 +1615,9 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
   "2")
 
-    HEIGHT=10
-    WIDTH=51
-    CHOICE_HEIGHT=3
+    HEIGHT="10"
+    WIDTH="51"
+    CHOICE_HEIGHT="3"
     BACKTITLE="Masternode menu"
     TITLE="Masternode Options"
     MENU="Choose one option:"
@@ -2025,9 +2037,9 @@ Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ 
 
   "9")
 
-    HEIGHT=10
-    WIDTH=45
-    CHOICE_HEIGHT=3
+    HEIGHT="10"
+    WIDTH="45"
+    CHOICE_HEIGHT="3"
     BACKTITLE="Graphs"
     TITLE="rrdtool (graphs) Options"
     MENU="Choose one option:"
@@ -2101,9 +2113,9 @@ Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ 
 
   "10")
 
-    HEIGHT=12
-    WIDTH=51
-    CHOICE_HEIGHT=5
+    HEIGHT="12"
+    WIDTH="51"
+    CHOICE_HEIGHT="5"
     BACKTITLE="Reset configurations, node lists"
     TITLE="Reset a specific config, list"
     MENU="Choose one option:"
@@ -2549,9 +2561,9 @@ ${HIDDEN_SERVICE:?}
 
   # swap menu, after the fact
 
-  HEIGHT=12
-  WIDTH=45
-  CHOICE_HEIGHT=5
+  HEIGHT="12"
+  WIDTH="45"
+  CHOICE_HEIGHT="5"
   BACKTITLE="Swap options"
   TITLE="Setup Swap space"
   MENU="Choose one option:"
@@ -2807,9 +2819,9 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
 
 "8")
 
-  HEIGHT=10
-  WIDTH=47
-  CHOICE_HEIGHT=3
+  HEIGHT="10"
+  WIDTH="47"
+  CHOICE_HEIGHT="3"
   BACKTITLE="Tor menu"
   TITLE="Proxy options (tor)"
   MENU="Choose one option:"
@@ -2926,9 +2938,9 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
   VPS_PROXY_STATUS="$(cat "${LOG_DIR:?}"/vps_proxy 2>/dev/null)"
 
   # VPS
-  HEIGHT=10
-  WIDTH=43
-  CHOICE_HEIGHT=3
+  HEIGHT="10"
+  WIDTH="43"
+  CHOICE_HEIGHT="3"
   BACKTITLE="Pi-Node VPS"
   TITLE="VPS Menu - Nodes: $VPS_COUNT"
   MENU="Choose one option:"
