@@ -1456,7 +1456,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         read -r -p "[YN] Delete bootstrap? y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          rm -R bootstrap bootstrap.zip &>/dev/null
+          rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
         fi
       fi
     fi
@@ -1587,7 +1587,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         read -r -p "[YN] Delete bootstrap? y/n " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          rm -R bootstrap bootstrap.zip &>/dev/null
+          rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
         fi
       fi
     else
