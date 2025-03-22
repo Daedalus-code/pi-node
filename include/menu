@@ -1422,14 +1422,20 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     # if missing
     if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
 
-      # change directory and download bootstrap.zip
+      # bootstrap file
       OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
       cd || exit
+
       # start the download and process progress
-      wget -c --progress=dot "$BOOTSTRAP_URL" 2>&1 |
+      wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
+        # capture the progress line with percentage, speed, and ETA
         grep --line-buffered "[0-9]% " |
-        sed -u -E 's/.* ([0-9]+)% +([0-9.]+[KM]) +([0-9hms]+).*/\1 \2 \3/' |
-        while read -r PERCENT SPEED ETA; do
+        while read -r line; do
+          # extract the percentage, speed, and ETA using regex
+          PERCENT=$(echo "$line" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
+          SPEED=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $1 }')
+          ETA=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $2 }')
+          # output progress to dialog (Display the progress bar)
           echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA" 10 65
           sleep 1
         done
@@ -1540,14 +1546,20 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
     # if missing
     if [[ ! -f /home/"$(whoami)"/bootstrap.zip || ! -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
 
-      # change directory and download bootstrap.zip
+      # bootstrap file
       OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
       cd || exit
+
       # start the download and process progress
-      wget -c --progress=dot "$BOOTSTRAP_URL" 2>&1 |
+      wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
+        # capture the progress line with percentage, speed, and eta
         grep --line-buffered "[0-9]% " |
-        sed -u -E 's/.* ([0-9]+)% +([0-9.]+[KM]) +([0-9hms]+).*/\1 \2 \3/' |
-        while read -r PERCENT SPEED ETA; do
+        while read -r line; do
+          # extract the percentage, speed, and eta using regex
+          PERCENT=$(echo "$line" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
+          SPEED=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $1 }')
+          ETA=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $2 }')
+          # output progress to dialog (display the progress bar)
           echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA" 10 65
           sleep 1
         done
