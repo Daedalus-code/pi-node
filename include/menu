@@ -1399,19 +1399,31 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # set user ownership
     sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME}-Core"/
+
     # build dependencies without Qt
     cd "$HOME/${WALLET_NAME}-Core/depends" || exit
     make HOST=arm-linux-gnueabihf NO_QT=1 -j"$CPU_CORES"
+
     # build wallet without wallet and GUI
     cd "$HOME/${WALLET_NAME}-Core" || exit
     ./autogen.sh
     ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --without-gui
     make -j"$CPU_CORES"
+
     # copy binaries
     sudo cp "$HOME"/"${WALLET_NAME}-Core"/src/"${WALLET_DAEMON}" src/"${WALLET_CLIENT}" "$HOME" &>/dev/null
+
     # calculate build time
     DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
     TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
+
+    # built wallet exist
+    if [[ -f /home/"$(whoami)"/"${WALLET_DAEMON}" && -f /home/"$(whoami)"/"${WALLET_CLIENT}" ]] &>/dev/null; then
+      echo "Installing daemon and cli.."
+      sudo cp /home/"$(whoami)"/"${WALLET_DAEMON}" /usr/local/bin &>/dev/null
+      sudo cp /home/"$(whoami)"/"${WALLET_CLIENT}" /usr/local/bin &>/dev/null
+    fi
+
     echo
     printf '%b' "Build time: ${GR}$TIMER${N0}\n"
     echo
