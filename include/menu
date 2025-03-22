@@ -166,7 +166,7 @@ download_bootstrap() {
     # disable cron
     sudo service cron stop
     # unzip bootstrap.zip
-    unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+    unzip -x /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
     # enable cron
     sudo service cron start
   else
@@ -1581,7 +1581,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         # disable cron
         sudo service cron stop
         # unzip bootstrap.zip
-        unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+        unzip -x /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
         # enable cron
         sudo service cron start
       fi
