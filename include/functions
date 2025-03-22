@@ -871,12 +871,12 @@ if [[ "$(grep "version" "${LOG_DIR:?}"/node_data/wallet/client/tmp/getinfo)" ]] 
   if [[ ! -f "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount || "$(grep "0.00" "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>&1)" || "$(echo "$(($(date +%s) - $(date +%s -r "${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>/dev/null)))")" -gt "60" ]] &>/dev/null; then
     # get masternode reward count, ruled by the masternode count
     WALLET_REWARD_COUNT=$(echo "${POS_LIMIT:?}/${WALLET_NODES_INQUEUE:?}" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.2f\n", $1 }' 2>&1)
+    # if zero
+    if [[ -z "$WALLET_REWARD_COUNT" ]] &>/dev/null; then
+      WALLET_REWARD_COUNT="0"
+    fi
     # save pay count
     echo "${WALLET_REWARD_COUNT:?}" >"${LOG_DIR:?}"/node_data/wallet/data/masternode_paycount 2>&1
-  fi
-
-  if [[ -z "$WALLET_REWARD_COUNT" ]] &>/dev/null; then
-    WALLET_REWARD_COUNT="0"
   fi
 
   # calculate average masternode payout with pn|mn input amounts
