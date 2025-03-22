@@ -1443,9 +1443,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       RESULT=$?
       # if any result
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        unzip bootstrap.zip
-        cp -R bootstrap/* "${DATA_DIR:?}"
+        # kill wallet
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
+        # unzip bootstrap.zip
+        unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
       fi
+
       # if found
       if [[ -f /home/"$(whoami)"/bootstrap.zip || -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
         # remove bootstrap
@@ -1568,10 +1571,10 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
       # if any result
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
-        unzip /home/"$(whoami)"/bootstrap.zip
-        cp -R /home/"$(whoami)"/bootstrap/* "${DATA_DIR:?}"
-        echo "[OK] Unzip complete"
+        # kill wallet
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
+        # unzip bootstrap.zip
+        unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
       else
         echo "[!!] Download failed"
       fi
@@ -1588,11 +1591,11 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
     else
       read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
       echo
-      # unzip bootstrap.zip
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        unzip /home/"$(whoami)"/bootstrap.zip
-        cp -R /home/"$(whoami)"/bootstrap/* "${DATA_DIR:?}"
-        echo "[OK] Unzip complete"
+        # kill wallet
+        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>&1)" &>/dev/null
+        # unzip bootstrap.zip
+        unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
       fi
     fi
 
