@@ -165,8 +165,11 @@ download_bootstrap() {
     kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
     # disable cron
     sudo service cron stop
-    # unzip bootstrap.zip
-    unzip -x bootstrap /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+    # list all files in the zip, exclude the top-level 'bootstrap' directory
+    unzip -l /home/$(whoami)/bootstrap.zip | awk '{print $4}' | grep '^bootstrap/' | sed 's/^bootstrap\///' | while read file; do
+      # extract each file individually to the target directory
+      unzip -p /home/$(whoami)/bootstrap.zip "$FILE" >"$DATA_DIR/$FILE"
+    done
     # enable cron
     sudo service cron start
   else
@@ -1580,8 +1583,11 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
         # disable cron
         sudo service cron stop
-        # unzip bootstrap.zip
-        unzip -x bootstrap /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+        # list all files in the zip, exclude the top-level 'bootstrap' directory
+        unzip -l /home/$(whoami)/bootstrap.zip | awk '{print $4}' | grep '^bootstrap/' | sed 's/^bootstrap\///' | while read file; do
+          # extract each file individually to the target directory
+          unzip -p /home/$(whoami)/bootstrap.zip "$FILE" >"$DATA_DIR/$FILE"
+        done
         # enable cron
         sudo service cron start
       fi
