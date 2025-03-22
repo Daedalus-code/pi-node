@@ -1429,8 +1429,8 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       wget -c --progress=dot "$BOOTSTRAP_URL" 2>&1 |
         grep --line-buffered "[0-9]% " |
         sed -u -E 's/.* ([0-9]+)% +([0-9.]+[KM]) +([0-9hms]+).*/\1 \2 \3/' |
-        while read -r percent speed eta; do
-          echo "$percent" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nSpeed..: $speed/sec\nETA....: $eta\nStatus.: $percent%" 10 55
+        while read -r PERCENT SPEED ETA; do
+          echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nSpeed..: $SPEED/sec\nETA....: $ETA" 9 55
           sleep 1
         done
 
@@ -1547,8 +1547,8 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
       wget -c --progress=dot "$BOOTSTRAP_URL" 2>&1 |
         grep --line-buffered "[0-9]% " |
         sed -u -E 's/.* ([0-9]+)% +([0-9.]+[KM]) +([0-9hms]+).*/\1 \2 \3/' |
-        while read -r percent speed eta; do
-          echo "$percent" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nSpeed..: $speed/sec\nETA....: $eta\nStatus.: $percent%" 10 55
+        while read -r PERCENT SPEED ETA; do
+          echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nSpeed..: $SPEED/sec\nETA....: $ETA" 9 55
           sleep 1
         done
 
