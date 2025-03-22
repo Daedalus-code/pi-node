@@ -1446,8 +1446,12 @@ ufw deny ${G1:?}smtp${N0:?}\n"
         clear
         # kill wallet
         kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
+        # disable cron
+        sudo service cron stop
         # unzip bootstrap.zip
         unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+        # enable cron
+        sudo service cron start
       fi
 
       # if found
@@ -1575,8 +1579,12 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         clear
         # kill wallet
         kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
+        # disable cron
+        sudo service cron stop
         # unzip bootstrap.zip
         unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+        # enable cron
+        sudo service cron start
       else
         echo "[!!] Download failed"
       fi
@@ -1597,8 +1605,12 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         clear
         # kill wallet
         kill -9 "$(pidof "${WALLET_DAEMON:?}" &>/dev/null)"
+        # disable cron
+        sudo service cron stop
         # unzip bootstrap.zip
         unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+        # enable cron
+        sudo service cron start
       fi
     fi
 
