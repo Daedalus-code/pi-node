@@ -5,7 +5,7 @@
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # script version for dashbord
-VERSION="v1.7.7.7"
+VERSION="v1.7.8.3"
 
 source /usr/local/bin/include/pinode/pinode.conf 2>&1
 source /usr/local/bin/include/pinode/color 2>&1
@@ -247,6 +247,12 @@ if [[ -z "$MEMPOOL_PERC_ACTIVE" ]] &>/dev/null; then
 fi
 
 MEMPOOL_PERC_NOACTIVE=$(echo "100/$MEMPOOL_LINES*$MEMPOOL_NOACTIVE" 2>&1 | bc -l 2>/dev/null | awk '{ printf "%.8f\n", $1 }' 2>&1)
+
+# if zero
+if [[ -z "$MEMPOOL_PERC_NOACTIVE" ]] &>/dev/null; then
+  MEMPOOL_PERC_NOACTIVE="0"
+fi
+
 echo "A ${MEMPOOL_PERC_ACTIVE:?}% D ${MEMPOOL_PERC_NOACTIVE:?}%" >"${LOG_DIR:?}"/node_data/wallet/data/mempool_activity 2>&1
 
 for i in {1..2}; do
