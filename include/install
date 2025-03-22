@@ -170,6 +170,11 @@ if ! [ -x "$(command -v unzip)" ] &>/dev/null; then
   sudo apt-get install unzip -y
 fi
 
+# make sure 7z exist
+if ! [ -x "$(command -v 7z)" ] &>/dev/null; then
+  sudo apt-get install p7zip-full -y
+fi
+
 # make sure html2text is installed
 if ! [ -x "$(command -v html2text)" ] &>/dev/null; then
   echo "Installing html2text"
