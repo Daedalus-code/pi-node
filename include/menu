@@ -135,10 +135,43 @@ fi
 
 ################################################################################
 
+unzip_bootstrap() {
+  read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    clear
+    # kill wallet
+    kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
+    # disable cron
+    sudo service cron stop
+    # unzip bootstrap.zip
+    unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+    # if found
+    if [[ -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
+      read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
+      fi
+    fi
+    # if exist
+    if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
+      # move blockchain out of bootstrap folder
+      mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
+    fi
+    # enable cron
+    sudo service cron start
+  fi
+}
+
+################################################################################
+
 # if zero
 if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
   BOOTSTRAP_URL="https://freedomcoin.global/wallets/bootstrap.zip"
 fi
+
+################################################################################
 
 download_bootstrap() {
   # bootstrap file
@@ -160,15 +193,7 @@ download_bootstrap() {
   RESULT=$?
   # if any result
   if [ $RESULT -eq "0" ] &>/dev/null; then
-    clear
-    # kill wallet
-    kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
-    # disable cron
-    sudo service cron stop
-    # unzip bootstrap.zip
-    7z e -tzip /home/"$(whoami)"/bootstrap.zip -o"${DATA_DIR:?}"/.
-    # enable cron
-    sudo service cron start
+    unzip_bootstrap
   else
     echo "[!!] Download failed"
   fi
@@ -1558,10 +1583,8 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
     # if missing
     if [[ ! -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
-
       # download bootstrap.zip
       download_bootstrap
-
       # if found
       if [[ -f /home/"$(whoami)"/bootstrap.zip || -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
         # remove bootstrap
@@ -1572,19 +1595,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         fi
       fi
     else
-      read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        clear
-        # kill wallet
-        kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
-        # disable cron
-        sudo service cron stop
-        # unzip bootstrap.zip
-        7z e -tzip /home/"$(whoami)"/bootstrap.zip -o"${DATA_DIR:?}"/.
-        # enable cron
-        sudo service cron start
-      fi
+      unzip_bootstrap
     fi
 
     ;;
