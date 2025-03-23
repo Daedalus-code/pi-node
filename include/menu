@@ -168,32 +168,15 @@ download_bootstrap_zip() {
 ################################################################################
 
 unzip_bootstrap_zip() {
-  read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-    clear
-    # kill wallet
-    kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
-    echo "[OK] Extracting bootstrap.zip.."
-    # unzip bootstrap.zip
-    unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
-  fi
-  remove_bootstrap_zip
-}
-
-################################################################################
-
-remove_bootstrap_zip() {
-  # if found
-  if [[ -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
-    read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "[OK] Removing bootstrap.zip.."
-      rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
-      sleep 1
-    fi
-  fi
+  clear
+  # kill wallet
+  kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
+  echo "[OK] Extracting bootstrap.zip.."
+  # unzip bootstrap.zip
+  unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+  echo "[OK] Removing bootstrap.zip.."
+  rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
+  sleep 1
 }
 
 ################################################################################
@@ -201,34 +184,30 @@ remove_bootstrap_zip() {
 remove_old_blockchain() {
   # if exist
   if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
-    read -r -p "[YN] Remove old blockchain? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      # backup wallet.dat
-      echo "[OK] Creating wallet.dat backup.."
-      cp "${DATA_DIR:?}"/wallet.dat /tmp/
-      sleep 1
-      # remove old blockchain files and folders
-      echo "[OK] Removing old blockchain.."
-      rm -rf "${DATA_DIR:?}"/* &>/dev/null
-      sleep 1
-      # restore wallet.dat backup
-      echo "[OK] Restoring wallet.dat backup.."
-      mv /tmp/wallet.dat "${DATA_DIR:?}"
-      sleep 1
-    fi
+    # backup wallet.dat
+    echo "[OK] Creating wallet.dat backup.."
+    cp "${DATA_DIR:?}"/wallet.dat /tmp/
+    sleep 1
+    # remove old blockchain files and folders
+    echo "[OK] Removing old blockchain.."
+    rm -rf "${DATA_DIR:?}"/* &>/dev/null
+    sleep 1
+    # restore wallet.dat backup
+    echo "[OK] Restoring wallet.dat backup.."
+    mv /tmp/wallet.dat "${DATA_DIR:?}"
+    sleep 1
   fi
 }
 
 ################################################################################
 
 install_bootstrap() {
-  echo "[OK] Installing blockchain.."
-  sleep 1
   # move blockchain out of bootstrap folder
+  echo "[OK] Installing blockchain.."
   mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
-  echo "[OK] Removing old files.."
+  sleep 1
   # remove old bootstrap
+  echo "[OK] Removing old files.."
   rm -r "${DATA_DIR:?}"/bootstrap &>/dev/null
   sleep 1
 }
@@ -237,13 +216,9 @@ install_bootstrap() {
 
 remove_bootstrap_files() {
   # remove bootstrap
-  read -r -p "[YN] Remove bootstrap files? y/n " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-    echo "[OK] Removing bootstrap files.."
-    rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
-    sleep 1
-  fi
+  echo "[OK] Removing bootstrap files.."
+  rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
+  sleep 1
 }
 
 ################################################################################
