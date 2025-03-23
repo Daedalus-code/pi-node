@@ -190,10 +190,14 @@ download_bootstrap() {
       # extract the percentage, speed, size and eta using regex
       PERCENT=$(echo "$LINE" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
       SPEED=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $1 }')
-      SIZE=$(echo "$LINE" | awk '{ print $1 }')
+      SIZE=$(echo "$LINE" | awk '{ print $1 }' | egrep "[0-9]+")
+
+      # calculate kilobytes into megabytes
+      SIZE="$(echo "$SIZE/1024" | bc -l 2>/dev/null)"
+
       ETA=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $2 }')
       # output progress to dialog (display the progress bar)
-      echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA\nSize...: $SIZE" 11 65
+      echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA\nSize...: ${SIZE}MB" 11 65
       sleep 1
     done
   RESULT=$?
