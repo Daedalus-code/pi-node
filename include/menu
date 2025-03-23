@@ -207,6 +207,17 @@ download_bootstrap() {
 
 ################################################################################
 
+remove_bootstrap() {
+  # remove bootstrap
+  read -r -p "[YN] Delete bootstrap? y/n " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
+  fi
+}
+
+################################################################################
+
 HEIGHT="18"
 WIDTH="55"
 CHOICE_HEIGHT="11"
@@ -1585,30 +1596,42 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
     ;;
 
+    ############################################################################
+
   "5")
 
-    # if missing
-    if [[ ! -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
-      # download bootstrap.zip
-      download_bootstrap
-      # if found
-      if [[ -f /home/"$(whoami)"/bootstrap.zip || -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
-        # remove bootstrap
-        read -r -p "[YN] Delete bootstrap? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
-        fi
-      fi
-    else
-      unzip_bootstrap
-    fi
+    HEIGHT="10"
+    WIDTH="42"
+    CHOICE_HEIGHT="3"
+    BACKTITLE="Bootstrap Menu"
+    MENU="Choose one option:"
+
+    OPTIONS=(1 "Download         bootstrap.zip"
+      2 "Unzip"
+      3 "Remove")
+
+    CHOICE=$(dialog --clear \
+      --backtitle "$BACKTITLE" \
+      --title "$TITLE" \
+      --menu "$MENU" \
+      $HEIGHT $WIDTH $CHOICE_HEIGHT \
+      "${OPTIONS[@]}" \
+      2>&1 >/dev/tty)
+
+    clear
+    case $CHOICE in
+    "1") download_bootstrap ;;
+    "2") unzip_bootstrap ;;
+    "3") remove_bootstrap ;;
+    esac
 
     ;;
 
   esac
 
   ;;
+
+################################################################################
 
 "5")
 
