@@ -161,13 +161,13 @@ download_bootstrap_zip() {
   # if any result
   if [ ! $RESULT -eq "0" ] &>/dev/null; then
     echo "[!!] Download failed"
+    sleep 1
   fi
 }
 
 ################################################################################
 
 unzip_bootstrap_zip() {
-  clear
   read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -191,6 +191,7 @@ remove_bootstrap_zip() {
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       echo "[OK] Removing bootstrap.zip.."
       rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
+      sleep 1
     fi
   fi
 }
@@ -203,11 +204,18 @@ remove_old_blockchain() {
     read -r -p "[YN] Remove old blockchain? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "[OK] Removing old blockchain.."
-      # remove old blockchain files and folders
+      # backup wallet.dat
+      echo "[OK] Creating wallet.dat backup.."
       cp "${DATA_DIR:?}"/wallet.dat /tmp/
+      sleep 1
+      # remove old blockchain files and folders
+      echo "[OK] Removing old blockchain.."
       rm -r "${DATA_DIR:?}"/* &>/dev/null
+      sleep 1
+      # restore wallet.dat backup
+      echo "[OK] Restoring wallet.dat backup.."
       mv /tmp/wallet.dat "${DATA_DIR:?}"
+      sleep 1
     fi
   fi
 }
@@ -216,11 +224,13 @@ remove_old_blockchain() {
 
 install_bootstrap() {
   echo "[OK] Installing blockchain.."
+  sleep 1
   # move blockchain out of bootstrap folder
   mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
   echo "[OK] Removing old files.."
   # remove old bootstrap
   rm "${DATA_DIR:?}"/bootstrap/ &>/dev/null
+  sleep 1
 }
 
 ################################################################################
@@ -232,6 +242,7 @@ remove_bootstrap_files() {
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
     echo "[OK] Removing bootstrap files.."
     rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
+    sleep 1
   fi
 }
 
@@ -1622,6 +1633,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
       remove_old_blockchain
       # download
       download_bootstrap_zip
+      clear
       # extract
       unzip_bootstrap_zip
       # install
