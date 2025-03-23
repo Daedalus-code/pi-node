@@ -135,65 +135,11 @@ fi
 
 ################################################################################
 
-unzip_bootstrap() {
-  # if exist
-  if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
-    read -r -p "[YN] Remove old blockchain? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "[OK] Removing old blockchain.."
-      # remove old blockchain files and folders
-      rm -r "${DATA_DIR:?}"/blocks "${DATA_DIR:?}"/chainstate "${DATA_DIR:?}"/evodb "${DATA_DIR:?}"/sporks "${DATA_DIR:?}"/zerocoin &>/dev/null
-    fi
-    echo "[OK] Installing blockchain.."
-    # move blockchain out of bootstrap folder
-    mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
-    echo "[OK] Removing old files.."
-    # remove old bootstrap
-    rm "${DATA_DIR:?}"/bootstrap/ &>/dev/null
-  else
-    clear
-    read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      clear
-      # kill wallet
-      kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
-      echo "[OK] Stopping cron service.."
-      # disable cron
-      sudo service cron stop
-      echo "[OK] Extracting bootstrap.zip.."
-      # unzip bootstrap.zip
-      unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
-      # if found
-      if [[ -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
-        read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          echo "[OK] Removing bootstrap.zip.."
-          rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
-        fi
-      fi
-    fi
+download_bootstrap_zip() {
+  # if zero
+  if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
+    BOOTSTRAP_URL="https://freedomcoin.global/wallets/bootstrap.zip"
   fi
-  # if missing
-  if [[ ! "$(pidof cron)" ]] &>/dev/null; then
-    echo "[OK] Starting cron service."
-    # enable cron
-    sudo service cron start
-  fi
-}
-
-################################################################################
-
-# if zero
-if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
-  BOOTSTRAP_URL="https://freedomcoin.global/wallets/bootstrap.zip"
-fi
-
-################################################################################
-
-download_bootstrap() {
   # bootstrap file
   OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
   cd || exit
@@ -214,7 +160,7 @@ download_bootstrap() {
   RESULT=$?
   # if any result
   if [ $RESULT -eq "0" ] &>/dev/null; then
-    unzip_bootstrap
+    unzip_bootstrap_zip
   else
     echo "[!!] Download failed"
   fi
@@ -222,11 +168,78 @@ download_bootstrap() {
 
 ################################################################################
 
-remove_bootstrap() {
-  # remove bootstrap
-  read -r -p "[YN] Delete bootstrap? y/n " -n 1 -r
+unzip_bootstrap_zip() {
+  clear
+  read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    clear
+    # kill wallet
+    kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
+    echo "[OK] Stopping cron service.."
+    # disable cron
+    sudo service cron stop
+    echo "[OK] Extracting bootstrap.zip.."
+    # unzip bootstrap.zip
+    unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+  fi
+  remove_bootstrap_zip
+  # if missing
+  if [[ ! "$(pidof cron 2>/dev/null)" ]] &>/dev/null; then
+    echo "[OK] Starting cron service."
+    # enable cron
+    sudo service cron start
+  fi
+}
+
+################################################################################
+
+remove_bootstrap_zip() {
+  # if found
+  if [[ -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
+    read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      echo "[OK] Removing bootstrap.zip.."
+      rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
+    fi
+  fi
+}
+
+################################################################################
+
+remove_old_blockchain() {
+  # if exist
+  if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
+    read -r -p "[YN] Remove old blockchain? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      echo "[OK] Removing old blockchain.."
+      # remove old blockchain files and folders
+      rm -r "${DATA_DIR:?}"/blocks "${DATA_DIR:?}"/chainstate "${DATA_DIR:?}"/evodb "${DATA_DIR:?}"/sporks "${DATA_DIR:?}"/zerocoin &>/dev/null
+    fi
+  fi
+}
+
+################################################################################
+
+install_bootstrap() {
+  echo "[OK] Installing blockchain.."
+  # move blockchain out of bootstrap folder
+  mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
+  echo "[OK] Removing old files.."
+  # remove old bootstrap
+  rm "${DATA_DIR:?}"/bootstrap/ &>/dev/null
+}
+
+################################################################################
+
+remove_bootstrap_files() {
+  # remove bootstrap
+  read -r -p "[YN] Remove bootstrap files? y/n " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    echo "[OK] Removing bootstrap files.."
     rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
   fi
 }
@@ -1512,18 +1525,11 @@ ufw deny ${G1:?}smtp${N0:?}\n"
 
     # if missing
     if [[ ! -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
-
       # download bootstrap.zip
-      download_bootstrap
-
+      download_bootstrap_zip
       # if found
       if [[ -f /home/"$(whoami)"/bootstrap.zip || -d /home/"$(whoami)"/bootstrap ]] &>/dev/null; then
-        # remove bootstrap
-        read -r -p "[YN] Delete bootstrap? y/n " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-          rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
-        fi
+        remove_bootstrap_files
       fi
     fi
 
@@ -1615,38 +1621,24 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
   "5")
 
-    HEIGHT="10"
-    WIDTH="42"
-    CHOICE_HEIGHT="3"
-    BACKTITLE="Bootstrap Menu"
-    MENU="Choose one option:"
-
-    OPTIONS=(1 "Download         bootstrap.zip"
-      2 "Unzip"
-      3 "Remove")
-
-    CHOICE=$(dialog --clear \
-      --backtitle "$BACKTITLE" \
-      --title "$TITLE" \
-      --menu "$MENU" \
-      $HEIGHT $WIDTH $CHOICE_HEIGHT \
-      "${OPTIONS[@]}" \
-      2>&1 >/dev/tty)
-
-    clear
-    case $CHOICE in
-    "1") download_bootstrap ;;
-    "2") unzip_bootstrap ;;
-    "3") remove_bootstrap ;;
-    esac
+    # download
+    download_bootstrap_zip
+    # extract
+    unzip_bootstrap_zip
+    # remove old blockchain
+    remove_old_blockchain
+    # install
+    install_bootstrap
+    # remove old files
+    remove_bootstrap_files
 
     ;;
+
+    ############################################################################
 
   esac
 
   ;;
-
-################################################################################
 
 "5")
 
