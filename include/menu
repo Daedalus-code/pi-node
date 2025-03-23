@@ -210,7 +210,7 @@ remove_old_blockchain() {
       sleep 1
       # remove old blockchain files and folders
       echo "[OK] Removing old blockchain.."
-      rm -r "${DATA_DIR:?}"/* &>/dev/null
+      rm -rf "${DATA_DIR:?}"/* &>/dev/null
       sleep 1
       # restore wallet.dat backup
       echo "[OK] Restoring wallet.dat backup.."
