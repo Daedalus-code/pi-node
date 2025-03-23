@@ -142,8 +142,10 @@ unzip_bootstrap() {
     clear
     # kill wallet
     kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
+    echo "[OK] Stopping cron service.."
     # disable cron
     sudo service cron stop
+    echo "[OK] Extracting bootstrap.zip.."
     # unzip bootstrap.zip
     unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
     # if found
@@ -151,14 +153,17 @@ unzip_bootstrap() {
       read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+        echo "[OK] Removing bootstrap.zip.."
         rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
       fi
     fi
     # if exist
     if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
+      echo "[OK] Installing blockchain.."
       # move blockchain out of bootstrap folder
       mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
     fi
+    echo "[OK] Starting cron service."
     # enable cron
     sudo service cron start
   fi
@@ -181,13 +186,14 @@ download_bootstrap() {
   wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
     # capture the progress line with percentage, speed, and eta
     grep --line-buffered "[0-9]% " |
-    while read -r line; do
-      # extract the percentage, speed, and eta using regex
-      PERCENT=$(echo "$line" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
-      SPEED=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $1 }')
-      ETA=$(echo "$line" | awk -F% '{ print $2 }' | awk '{ print $2 }')
+    while read -r LINE; do
+      # extract the percentage, speed, size and eta using regex
+      PERCENT=$(echo "$LINE" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
+      SPEED=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $1 }')
+      SIZE=$(echo "$LINE" | awk '{ print $1 }')
+      ETA=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $2 }')
       # output progress to dialog (display the progress bar)
-      echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA" 10 65
+      echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA\nSize....: $SIZE" 11 65
       sleep 1
     done
   RESULT=$?
