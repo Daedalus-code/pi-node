@@ -207,7 +207,11 @@ remove_old_blockchain() {
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       echo "[OK] Removing old blockchain.."
       # remove old blockchain files and folders
-      rm -r "${DATA_DIR:?}"/blocks "${DATA_DIR:?}"/chainstate "${DATA_DIR:?}"/evodb "${DATA_DIR:?}"/sporks "${DATA_DIR:?}"/zerocoin &>/dev/null
+      rm -r "${DATA_DIR:?}"/blocks &>/dev/null
+      rm -r "${DATA_DIR:?}"/chainstate &>/dev/null
+      rm -r "${DATA_DIR:?}"/evodb &>/dev/null
+      rm -r "${DATA_DIR:?}"/sporks &>/dev/null
+      rm -r "${DATA_DIR:?}"/zerocoin &>/dev/null
     fi
   fi
 }
