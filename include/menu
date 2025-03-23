@@ -171,10 +171,10 @@ unzip_bootstrap_zip() {
   clear
   # kill wallet
   kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
-  echo "[OK] Extracting bootstrap.zip.."
+  printf '%b' "[${G1}OK${N0}] Extracting bootstrap.zip..\n"
   # unzip bootstrap.zip
   unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
-  echo "[OK] Removing bootstrap.zip.."
+  printf '%b' "[${G1}OK${N0}] Removing bootstrap.zip..\n"
   rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
   sleep 1
 }
@@ -185,15 +185,15 @@ remove_old_blockchain() {
   # if exist
   if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
     # backup wallet.dat
-    echo "[OK] Creating wallet.dat backup.."
+    printf '%b' "[${G1}OK${N0}] Creating wallet.dat backup..\n"
     cp "${DATA_DIR:?}"/wallet.dat /tmp/
     sleep 1
     # remove old blockchain files and folders
-    echo "[OK] Removing old blockchain.."
+    printf '%b' "[${G1}OK${N0}] Removing old blockchain..\n"
     rm -rf "${DATA_DIR:?}"/* &>/dev/null
     sleep 1
     # restore wallet.dat backup
-    echo "[OK] Restoring wallet.dat backup.."
+    printf '%b' "[${G1}OK${N0}] Restoring wallet.dat backup..\n"
     mv /tmp/wallet.dat "${DATA_DIR:?}"
     sleep 1
   fi
@@ -203,11 +203,11 @@ remove_old_blockchain() {
 
 install_bootstrap() {
   # move blockchain out of bootstrap folder
-  echo "[OK] Installing blockchain.."
+  printf '%b' "[${G1}OK${N0}] Installing blockchain..\n"
   mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
   sleep 1
   # remove old bootstrap
-  echo "[OK] Removing old files.."
+  printf '%b' "[${G1}OK${N0}] Removing old files..\n"
   rm -r "${DATA_DIR:?}"/bootstrap &>/dev/null
   sleep 1
 }
@@ -216,7 +216,7 @@ install_bootstrap() {
 
 remove_bootstrap_files() {
   # remove bootstrap
-  echo "[OK] Removing bootstrap files.."
+  printf '%b' "[${G1}OK${N0}] Removing bootstrap files..\n"
   rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
   sleep 1
 }
@@ -556,7 +556,7 @@ $(sudo netstat -tulpn | grep LISTEN)")
     read -r -p "[YN] Enable firewall? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "[Ok] Enabling the firewall"
+      printf '%b' "[${G1}OK${N0}] Enabling the firewall\n"
       sudo ufw enable
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -570,7 +570,7 @@ $(sudo netstat -tulpn | grep LISTEN)")
     read -r -p "[YN] Disable firewall? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "[Ok] Disabling the firewall"
+      printf '%b' "[${G1}OK${N0}] Disabling the firewall\n"
       sudo ufw disable
       echo
       read -r -p "[Ok] Press Enter to continue" </dev/tty
@@ -684,7 +684,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
     fi
 
     # set default ufw rules
-    echo "[Ok] Set allow rules ${PORT:?}, 80, 22"
+    printf '%b' "[${G1}OK${N0}] Set allow rules ${PORT:?}, 80, 22\n"
     sudo ufw allow "${PORT:?}" comment "Node mainnet"
     sudo ufw allow 80 comment "Node Graphs"
     sudo ufw allow 22 comment "SSH"
@@ -1072,7 +1072,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/libs.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
+        printf '%b' "[${G1}OK${N0}] Download success\n"
       else
         echo "[!!] Download failed"
       fi
@@ -1089,7 +1089,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-aarch64-linux-gnu.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
+        printf '%b' "[${G1}OK${N0}] Download success\n"
         unzip "${WALLET_NAME:?}"-aarch64-linux-gnu.zip
         cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-aarch64-linux-gnu || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
@@ -1110,7 +1110,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-arm-linux-gnueabihf.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
+        printf '%b' "[${G1}OK${N0}] Download success\n"
         unzip "${WALLET_NAME:?}"-arm-linux-gnueabihf.zip
         cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-arm-linux-gnueabihf || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
@@ -1131,7 +1131,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-Linux.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
+        printf '%b' "[${G1}OK${N0}] Download success\n"
         unzip "${WALLET_NAME:?}"-Linux.zip
         cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Linux || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
@@ -1152,7 +1152,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-aarch64.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
+        printf '%b' "[${G1}OK${N0}] Download success\n"
         unzip "${WALLET_NAME:?}"-aarch64.zip
         cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-aarch64 || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
@@ -1173,7 +1173,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-arm.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
+        printf '%b' "[${G1}OK${N0}] Download success\n"
         unzip "${WALLET_NAME:?}"-arm.zip
         cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-arm || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
@@ -1194,7 +1194,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/"${WALLET_NAME:?}"-Ubuntu16.zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
+        printf '%b' "[${G1}OK${N0}] Download success\n"
         unzip "${WALLET_NAME:?}"-Ubuntu16.zip
         cd /home/"${WHOAMI:?}"/"${WALLET_NAME:?}"-Ubuntu16 || exit
         sudo cp "$(echo "${WALLET_NAME:?}" 2>&1 | tr '[:upper:]' '[:lower:]' 2>&1)"* "${WALLET_DIR:?}"
@@ -1215,7 +1215,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".zip
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
+        printf '%b' "[${G1}OK${N0}] Download success\n"
       else
         echo "[!!] Download failed"
       fi
@@ -1232,7 +1232,7 @@ ufw deny ${G1:?}smtp${N0:?}\n"
       cd || exit && wget -c "${URL:?}"/"${LATEST_VERSION:?}".tar.gz
       RESULT=$?
       if [ $RESULT -eq "0" ] &>/dev/null; then
-        echo "[Ok] Download success"
+        printf '%b' "[${G1}OK${N0}] Download success\n"
       else
         echo "[!!] Download failed"
       fi
@@ -1601,7 +1601,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
     read -r -p "[YN] Start downloading? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-      echo "[OK] Stopping cron service.."
+      printf '%b' "[${G1}OK${N0}] Stopping cron service..\n"
       # disable cron
       sudo service cron stop
       # remove old blockchain
@@ -1617,7 +1617,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
       remove_bootstrap_files
       # if missing
       if [[ ! "$(pidof cron 2>/dev/null)" ]] &>/dev/null; then
-        echo "[OK] Starting cron service."
+        printf '%b' "[${G1}OK${N0}] Starting cron service.\n"
         # enable cron
         sudo service cron start
       fi
@@ -2266,7 +2266,7 @@ listenonion=1
 maxconnections=${MAX_P2P:?}" >"${DATA_DIR:?}"/"${WALLET_CONFIG:?}".tmp 2>&1
 
         mv "${DATA_DIR:?}"/"${WALLET_CONFIG:?}".tmp "${DATA_DIR:?}"/"${WALLET_CONFIG:?}" 2>&1
-        echo "[Ok] Installed new wallet configuration! -> ${WALLET_DIR:?}/${WALLET_CONFIG:?}"
+        printf '%b' "[${G1}OK${N0}] Installed new wallet configuration! -> ${WALLET_DIR:?}/${WALLET_CONFIG:?}\n"
         echo
         read -r -p "[Ok] Press Enter to continue" </dev/tty
         echo
@@ -2604,19 +2604,19 @@ ${HIDDEN_SERVICE:?}
 
         if [[ ! "$(grep "swap swap" /etc/fstab 2>&1)" ]] &>/dev/null; then
           # no swap installed, continue
-          echo "[Ok] No Swap installed"
+          echo "[!!] No Swap installed!"
           # make change permanent
           echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp
           cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a /etc/fstab 2>&1
           # remove old file
           rm "${LOG_DIR:?}"/fstab.tmp &>/dev/null
         else
-          echo "[Ok] Swap already installed! -> /etc/fstab"
+          printf '%b' "[${G1}OK${N0}] Swap already installed! -> /etc/fstab\n"
         fi
       fi
     fi
   else
-    echo "[Ok] Swap already installed!"
+    printf '%b' "[${G1}OK${N0}] Swap already installed!\n"
     sleep 1
   fi
 
@@ -2672,7 +2672,7 @@ ${HIDDEN_SERVICE:?}
 
     if [[ ! "$(grep "swap swap" /etc/fstab 2>&1)" ]] &>/dev/null; then
       # no swap installed, continue
-      echo "[Ok] No Swap installed"
+      echo "[!!] No Swap installed"
       #To make the change permanent open the /etc/fstab file and append the following line:
       echo "/swapfile swap swap defaults 0 0" >"${LOG_DIR:?}"/fstab.tmp 2>&1
       cat "${LOG_DIR:?}"/fstab.tmp 2>/dev/null | sudo tee -a /etc/fstab 2>&1
