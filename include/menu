@@ -138,11 +138,19 @@ fi
 unzip_bootstrap() {
   # if exist
   if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
+    read -r -p "[YN] Remove old blockchain? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      echo "[OK] Removing old blockchain.."
+      # remove old blockchain files and folders
+      rm -r "${DATA_DIR:?}"/blocks "${DATA_DIR:?}"/chainstate "${DATA_DIR:?}"/evodb "${DATA_DIR:?}"/sporks "${DATA_DIR:?}"/zerocoin &>/dev/null
+    fi
     echo "[OK] Installing blockchain.."
-    # remove old blockchain files and folders
-    rm -r "${DATA_DIR:?}"/blocks "${DATA_DIR:?}"/chainstate "${DATA_DIR:?}"/evodb "${DATA_DIR:?}"/sporks "${DATA_DIR:?}"/zerocoin &>/dev/null
     # move blockchain out of bootstrap folder
     mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
+    echo "[OK] Removing old files.."
+    # remove old bootstrap
+    rm "${DATA_DIR:?}"/bootstrap/ &>/dev/null
   else
     clear
     read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
@@ -167,6 +175,9 @@ unzip_bootstrap() {
         fi
       fi
     fi
+  fi
+  # if missing
+  if [[ ! "$(pidof cron)" ]] &>/dev/null; then
     echo "[OK] Starting cron service."
     # enable cron
     sudo service cron start
