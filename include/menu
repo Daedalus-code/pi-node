@@ -193,7 +193,7 @@ download_bootstrap() {
       SIZE=$(echo "$LINE" | awk '{ print $1 }')
       ETA=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $2 }')
       # output progress to dialog (display the progress bar)
-      echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA\nSize....: $SIZE" 11 65
+      echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nETA....: $ETA\nSize...: $SIZE" 11 65
       sleep 1
     done
   RESULT=$?
