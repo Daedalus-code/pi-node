@@ -13,6 +13,7 @@ function timeline_stats() {
   # random start number
   TIMELINE_RANDOM=$((((RANDOM % 20) + 1)))
 
+  # if zero
   if [[ -z "$TIMELINE_RANDOM" ]] &>/dev/null; then
     # non responsive, go with difficulty
     TIMELINE_RANDOM="1"
@@ -74,10 +75,17 @@ function timeline_stats() {
       TIMELINE_INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
       TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     fi
+
+    # if zero
+    if [[ -z "$TIMELINE_INPUT_AGE_D" ]] &>/dev/null; then
+      TIMELINE_INPUT_AGE_D="0h:0m"
+    fi
+
+    # if zero
     if [[ -z "$TIMELINE_CONF" ]] &>/dev/null; then
-      # non responsive
       TIMELINE_CONF="${GR:?}0${N0:?}"
     fi
+
     TIMELINE="New Input $TIMELINE_CONF (${TIMELINE_INPUT_AGE_D:?}d) ${GR:?}$TIMELINE_INPUT_AGE${N0:?}"
 
     # highest confirmation
@@ -90,10 +98,17 @@ function timeline_stats() {
       TIMELINE_INPUT_AGE=$(printf '%dh:%dm' $(("$TIMELINE_SEC/3600")) $(("$TIMELINE_SEC%3600/60")))
       TIMELINE_INPUT_AGE_D=$(echo "$(echo "$TIMELINE_INPUT_AGE" 2>&1 | egrep -o "[0-9]+h" 2>&1 | tr -d 'h' 2>&1)/24" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
     fi
+
+    # if zero
+    if [[ -z "$TIMELINE_INPUT_AGE_D" ]] &>/dev/null; then
+      TIMELINE_INPUT_AGE_D="0h:0m"
+    fi
+
+    # if zero
     if [[ -z "$TIMELINE_CONF" ]] &>/dev/null; then
-      # non responsive
       TIMELINE_CONF="${GR:?}0${N0:?}"
     fi
+
     TIMELINE="Old Input $TIMELINE_CONF (${TIMELINE_INPUT_AGE_D:?}d) ${GR:?}$TIMELINE_INPUT_AGE${N0:?}"
 
     # average confirmation
@@ -102,10 +117,12 @@ function timeline_stats() {
     TIMELINE_CONF=$(grep "confirmations" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | awk '{ SUM += $1} END { print SUM }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # average calculated
     TIMELINE_AVG=$(echo "$TIMELINE_CONF/$TIMELINE_UNSPENT_COUNT" 2>&1 | bc 2>/dev/null | awk '{ printf "%.0f\n", $1 }' 2>&1)
+
+    # if zero
     if [[ -z "$TIMELINE_AVG" ]] &>/dev/null; then
-      # non responsive
       TIMELINE_AVG="${GR:?}0${N0:?}"
     fi
+
     # calculate seconds
     TIMELINE_SEC=$(echo "$TIMELINE_AVG*60" 2>&1 | bc -l 2>/dev/null | awk -F. '{ print $1 }' 2>&1 | awk '{ printf "%.0f\n", $1 }' 2>&1)
     # calculate seconds into age
@@ -124,19 +141,23 @@ function timeline_stats() {
     # highest input amount
   elif [ "$TIMELINE_RANDOM" -eq "10" ] &>/dev/null; then
     TIMELINE_HIGH_INPUT=$(grep "amount" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | tail -1 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
+
+    # if zero
     if [[ -z "$TIMELINE_HIGH_INPUT" ]] &>/dev/null; then
-      # non responsive
       TIMELINE_HIGH_INPUT="${GR:?}0${N0:?}"
     fi
+
     TIMELINE="Highest Input $TIMELINE_HIGH_INPUT"
 
     # lowest input amount
   elif [ "$TIMELINE_RANDOM" -eq "11" ] &>/dev/null; then
     TIMELINE_LOW_INPUT=$(grep "amount" "${LOG_DIR:?}"/node_data/wallet/client/listunspent 2>&1 | awk '{ print $2 }' 2>&1 | sort -n 2>&1 | head -1 2>&1 | awk '{ printf "%.8f\n", $1 }' 2>&1)
+
+    # if zero
     if [[ -z "$TIMELINE_LOW_INPUT" ]] &>/dev/null; then
-      # non responsive
       TIMELINE_LOW_INPUT="${GR:?}0${N0:?}"
     fi
+
     TIMELINE="Lowest Input ${TIMELINE_LOW_INPUT:?}"
 
     # wallet (daemon) uptime
@@ -173,11 +194,13 @@ function timeline_stats() {
       TIMELINE_MBS="$(sudo ethtool "${TIMELINE_INTERFACE:?}" 2>&1 | grep "Speed" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '/' 2>&1)"
       TIMELINE_SPEED="${TIMELINE_MBS:?}"
     fi
+
+    # if zero
     if [[ -z "$TIMELINE_MBS" ]] &>/dev/null; then
-      # non responsive
       TIMELINE_MBS="${GR:?}0${N0:?}"
       TIMELINE_SPEED="${N0:?}"
     fi
+
     TIMELINE="Network ${TIMELINE_INTERFACE:?} ${TIMELINE_SPEED:?}"
 
     # cpu information
