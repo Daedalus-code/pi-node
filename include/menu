@@ -176,20 +176,11 @@ unzip_bootstrap_zip() {
     clear
     # kill wallet
     kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
-    echo "[OK] Stopping cron service.."
-    # disable cron
-    sudo service cron stop
     echo "[OK] Extracting bootstrap.zip.."
     # unzip bootstrap.zip
     unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
   fi
   remove_bootstrap_zip
-  # if missing
-  if [[ ! "$(pidof cron 2>/dev/null)" ]] &>/dev/null; then
-    echo "[OK] Starting cron service."
-    # enable cron
-    sudo service cron start
-  fi
 }
 
 ################################################################################
@@ -1621,16 +1612,29 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
   "5")
 
-    # remove old blockchain
-    remove_old_blockchain
-    # download
-    download_bootstrap_zip
-    # extract
-    unzip_bootstrap_zip
-    # install
-    install_bootstrap
-    # remove old files
-    remove_bootstrap_files
+    read -r -p "[YN] Start downloading? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      echo "[OK] Stopping cron service.."
+      # disable cron
+      sudo service cron stop
+      # remove old blockchain
+      remove_old_blockchain
+      # download
+      download_bootstrap_zip
+      # extract
+      unzip_bootstrap_zip
+      # install
+      install_bootstrap
+      # remove old files
+      remove_bootstrap_files
+      # if missing
+      if [[ ! "$(pidof cron 2>/dev/null)" ]] &>/dev/null; then
+        echo "[OK] Starting cron service."
+        # enable cron
+        sudo service cron start
+      fi
+    fi
 
     ;;
 
