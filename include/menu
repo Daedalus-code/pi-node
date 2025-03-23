@@ -136,33 +136,36 @@ fi
 ################################################################################
 
 unzip_bootstrap() {
-  clear
-  read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+  # if exist
+  if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
+    echo "[OK] Installing blockchain.."
+    # remove old blockchain files and folders
+    rm -r blocks chainstate evodb sporks zerocoin &>/dev/null
+    # move blockchain out of bootstrap folder
+    mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
+  else
     clear
-    # kill wallet
-    kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
-    echo "[OK] Stopping cron service.."
-    # disable cron
-    sudo service cron stop
-    echo "[OK] Extracting bootstrap.zip.."
-    # unzip bootstrap.zip
-    unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
-    # if found
-    if [[ -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
-      read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-        echo "[OK] Removing bootstrap.zip.."
-        rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
+    read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+      clear
+      # kill wallet
+      kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
+      echo "[OK] Stopping cron service.."
+      # disable cron
+      sudo service cron stop
+      echo "[OK] Extracting bootstrap.zip.."
+      # unzip bootstrap.zip
+      unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+      # if found
+      if [[ -f /home/"$(whoami)"/bootstrap.zip ]] &>/dev/null; then
+        read -r -p "[YN] Remove bootstrap.zip? y/n " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+          echo "[OK] Removing bootstrap.zip.."
+          rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
+        fi
       fi
-    fi
-    # if exist
-    if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
-      echo "[OK] Installing blockchain.."
-      # move blockchain out of bootstrap folder
-      mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
     fi
     echo "[OK] Starting cron service."
     # enable cron
