@@ -159,9 +159,7 @@ download_bootstrap_zip() {
     done
   RESULT=$?
   # if any result
-  if [ $RESULT -eq "0" ] &>/dev/null; then
-    unzip_bootstrap_zip
-  else
+  if [ ! $RESULT -eq "0" ] &>/dev/null; then
     echo "[!!] Download failed"
   fi
 }
@@ -207,11 +205,9 @@ remove_old_blockchain() {
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
       echo "[OK] Removing old blockchain.."
       # remove old blockchain files and folders
-      rm -r "${DATA_DIR:?}"/blocks &>/dev/null
-      rm -r "${DATA_DIR:?}"/chainstate &>/dev/null
-      rm -r "${DATA_DIR:?}"/evodb &>/dev/null
-      rm -r "${DATA_DIR:?}"/sporks &>/dev/null
-      rm -r "${DATA_DIR:?}"/zerocoin &>/dev/null
+      cp "${DATA_DIR:?}"/wallet.dat /tmp/
+      rm -r "${DATA_DIR:?}"/* &>/dev/null
+      mv /tmp/wallet.dat "${DATA_DIR:?}"
     fi
   fi
 }
