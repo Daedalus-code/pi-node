@@ -140,7 +140,7 @@ unzip_bootstrap() {
   if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
     echo "[OK] Installing blockchain.."
     # remove old blockchain files and folders
-    rm -r blocks chainstate evodb sporks zerocoin &>/dev/null
+    rm -r "${DATA_DIR:?}"/blocks "${DATA_DIR:?}"/chainstate "${DATA_DIR:?}"/evodb "${DATA_DIR:?}"/sporks "${DATA_DIR:?}"/zerocoin &>/dev/null
     # move blockchain out of bootstrap folder
     mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
   else
