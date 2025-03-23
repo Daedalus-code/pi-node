@@ -2930,7 +2930,7 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
   df -h >"${LOG_DIR:?}"/final_space
 
   # no proxy config found (empty)
-  if [[ ! -s "${LOG_DIR:?}"/vps_proxy ]] &>/dev/null; then
+  if [[ ! -s /usr/local/bin/include/pinode/vps_proxy ]] &>/dev/null; then
     # run with proxy
     echo "no proxy config found (empty)"
     read -r -p "[YN] Run with proxy (tor)? y/n " -n 1 -r
@@ -2939,19 +2939,19 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
       # proxy config
       VPS_PROXY_STATUS="$(tor --version | head -1 | awk '{ print $1,$3}')"
       # set proxy config
-      echo "$VPS_PROXY_STATUS" >"${LOG_DIR:?}"/vps_proxy
+      echo "$VPS_PROXY_STATUS" >/usr/local/bin/include/pinode/vps_proxy
     else
       # normal config
       VPS_PROXY_STATUS="Normal"
       # set proxy config
-      echo "$VPS_PROXY_STATUS" >"${LOG_DIR:?}"/vps_proxy
+      echo "$VPS_PROXY_STATUS" >/usr/local/bin/include/pinode/vps_proxy
     fi
   fi
 
   # vps directory name
 
   # no proxy dir found (empty)
-  if [[ ! -s "${LOG_DIR:?}"/vps_dir ]] &>/dev/null; then
+  if [[ ! -s /usr/local/bin/include/pinode/vps_dir ]] &>/dev/null; then
     # vps directory
     echo "no proxy dir found (empty)"
     read -r -p "[YN] Set VPS directory? y/n " -n 1 -r
@@ -2960,16 +2960,16 @@ tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=${RA
       echo "Enter VPS directory name: (name1)"
       read -r WALLET
       # set proxy dir
-      echo "$WALLET" >"${LOG_DIR:?}"/vps_dir
+      echo "$WALLET" >/usr/local/bin/include/pinode/vps_dir
     else
       exit
     fi
   fi
 
-  WALLET="$(cat "${LOG_DIR:?}"/vps_dir 2>/dev/null)"
+  WALLET="$(cat /usr/local/bin/include/pinode/vps_dir 2>/dev/null)"
   WALLET_TRIM=$(echo "${WALLET:?}" 2>&1 | tr -d '1' 2>&1)
   WALLET_DIR="/home/$(whoami)/${WALLET_TRIM:?}"
-  VPS_PROXY_STATUS="$(cat "${LOG_DIR:?}"/vps_proxy 2>/dev/null)"
+  VPS_PROXY_STATUS="$(cat /usr/local/bin/include/pinode/vps_proxy 2>/dev/null)"
 
   # VPS
   HEIGHT="10"
