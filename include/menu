@@ -136,6 +136,7 @@ fi
 ################################################################################
 
 unzip_bootstrap() {
+  clear
   read -r -p "[YN] Unzip bootstrap? y/n " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
