@@ -1621,12 +1621,12 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
   "5")
 
+    # remove old blockchain
+    remove_old_blockchain
     # download
     download_bootstrap_zip
     # extract
     unzip_bootstrap_zip
-    # remove old blockchain
-    remove_old_blockchain
     # install
     install_bootstrap
     # remove old files
