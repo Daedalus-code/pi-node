@@ -229,7 +229,7 @@ install_bootstrap() {
   mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
   echo "[OK] Removing old files.."
   # remove old bootstrap
-  rm "${DATA_DIR:?}"/bootstrap/ &>/dev/null
+  rm -r "${DATA_DIR:?}"/bootstrap &>/dev/null
   sleep 1
 }
 
