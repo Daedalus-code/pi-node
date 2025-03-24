@@ -1840,27 +1840,6 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
           RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
           RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
-          # get proxy (tor) hostname with root
-          EXTERNALIP=$(sudo cat /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null)
-
-          if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
-
-            # try another
-            if [[ "$(grep ".onion" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null)" ]] &>/dev/null; then
-              EXTERNALIP=$(echo "$(grep "Got service" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1).onion" 2>&1)
-            fi
-            if [[ "$(grep ".onion" "${DATA_DIR:?}"/getonion 2>/dev/null)" ]] &>/dev/null; then
-              EXTERNALIP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
-            fi
-
-            if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
-              # non responsive
-              EXTERNALIP="#externalip=PLEASE_EDIT"
-            else
-              EXTERNALIP="externalip=${EXTERNALIP:?}"
-            fi
-          fi
-
           # wallet configuration file (overwriting old configuration)
           echo "## ${WALLET_NAME:?} configuration file.
 # Network-related settings:
@@ -1882,9 +1861,6 @@ patriotnodeaddr=$(cat "${DATA_DIR:?}"/wan_curl 2>/dev/null | egrep -o "[0-9]+.[0
 
 # masternode private key
 patriotnodeprivkey=${MASTERNODE_KEY:?}
-
-# external ip address
-${EXTERNALIP:?}
 
 # Connect via a SOCKS5 proxy (default: 127.0.0.1:9050)
 proxy=${PROXY:?}
@@ -2210,27 +2186,6 @@ Rewards $(wc -l "${DATA_DIR:?}"/rewards 2>&1 | awk '{ print $1 }' 2>&1 | awk '{ 
         RANDOM_RPCL=$(tr -dc 'a-z' </dev/urandom 2>&1 | head -c 4 2>&1 | rev 2>&1)
         RANDOM_RPCN=$(echo "$RANDOM_RPCL" 2>&1 | rev 2>&1)
 
-        # get proxy (tor) hostname with root
-        EXTERNALIP=$(sudo cat /var/lib/tor/"$(echo "${WALLET_NAME:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null)
-
-        if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
-
-          # try another
-          if [[ "$(grep ".onion" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null)" ]] &>/dev/null; then
-            EXTERNALIP=$(echo "$(grep "Got service" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1).onion" 2>&1)
-          fi
-          if [[ "$(grep ".onion" "${DATA_DIR:?}"/getonion 2>/dev/null)" ]] &>/dev/null; then
-            EXTERNALIP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
-          fi
-
-          if [[ -z "$EXTERNALIP" ]] &>/dev/null; then
-            # non responsive
-            EXTERNALIP="#externalip=PLEASE_EDIT"
-          else
-            EXTERNALIP="externalip=${EXTERNALIP:?}"
-          fi
-        fi
-
         echo "## ${WALLET_CONFIG:?} configuration file.
 # Network-related settings:
 
@@ -2242,9 +2197,6 @@ rpcuser=${RANDOM_RPCL:?}${RANDOM_RPCN:?}
 rpcpassword=${RANDOM_RPCN:?}${RANDOM_RPCL:?}
 rpcallowip=${RPC_IP:?}
 rpcbind=${RPC_IP:?}
-
-# Tor onion externalip
-${EXTERNALIP:?}
 
 # Connect via a SOCKS5 proxy (default: 127.0.0.1:9050)
 proxy=${PROXY:?}
@@ -2474,14 +2426,6 @@ ${HIDDEN_SERVICE:?}
 
   "12")
 
-    # try another
-    if [[ "$(grep ".onion" "${WALLET_LOG_DIR:?}"/debug.log 2>/dev/null)" ]] &>/dev/null; then
-      EXTERNALIP=$(echo "$(grep "Got service" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '{ print $6 }' 2>&1 | tr -d ',' 2>&1).onion" 2>&1)
-    fi
-    if [[ "$(grep ".onion" "${DATA_DIR:?}"/getonion 2>/dev/null)" ]] &>/dev/null; then
-      EXTERNALIP=$(cat "${DATA_DIR:?}"/getonion 2>/dev/null)
-    fi
-
     read -r -p "[YN] Raw format (without dialog)? y/n " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
@@ -2511,10 +2455,7 @@ ${HIDDEN_SERVICE:?}
       }
 
       # get proxy (tor) hostname with root
-      RESULT=$(
-        sudo cat /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null
-        echo "$(echo "${EXTERNALIP:?}" 2>&1 | awk -F: '{ print $1 }' 2>&1)" 2>&1
-      )
+      RESULT=$(sudo cat /var/lib/tor/"$(echo "${WALLET_DAEMON:?}" 2>&1 | sed 's/.$//' 2>&1)"-service/hostname 2>/dev/null)
       display_result "Proxy hostname"
       clear
     fi
