@@ -1823,15 +1823,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
           # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
           "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
-
-          # wait on tx hash
-          until [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | egrep -c "[0-9]+")" -gt "0" ]] &>/dev/null; do
-            # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
-            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
-            echo "Waiting on tx hash.."
-            clear
-            sleep 1
-          done
+          # wallet tx hash
           WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
           OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
@@ -1910,16 +1902,13 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
         if [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | egrep -c "[0-9]+")" -gt "0" || ! -f "${DATA_DIR}"/masternode_outputs || ! -s "${DATA_DIR}"/masternode_outputs || "$(wc -l "${DATA_DIR}"/masternode_outputs | awk '{ print $1 }')" -lt "3" ]] &>/dev/null; then
           # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
           "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
+          # wallet tx hash
+          WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
         else
 
-          # wait on tx hash
-          until [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | egrep -c "[0-9]+")" -gt "0" ]] &>/dev/null; do
-            # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
-            "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
-            echo "Waiting on tx hash.."
-            clear
-            sleep 1
-          done
+          # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
+          "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
+          # wallet tx hash
           WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
           OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
