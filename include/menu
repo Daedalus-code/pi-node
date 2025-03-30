@@ -1826,8 +1826,11 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
         OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
-        if [[ ! "$(grep "$WALLET_TXHASH" "${DATA_DIR:?}"/"${WALLET_MASTER:?}" | wc -l)" -eq "1" ]] &>/dev/null; then
-          echo "MN $(cat "${DATA_DIR:?}"/wan_curl 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?} ${MASTERNODE_KEY:?} ${WALLET_TXHASH:?} ${OUTPUT_IDX:?}" >>"${DATA_DIR:?}"/"${WALLET_MASTER:?}"
+        # ! if zero, skip?
+        if [[ ! -z "$WALLET_TXHASH" ]] &>/dev/null; then
+          if [[ ! "$(grep "$WALLET_TXHASH" "${DATA_DIR:?}"/"${WALLET_MASTER:?}" | wc -l)" -eq "1" ]] &>/dev/null; then
+            echo "MN $(cat "${DATA_DIR:?}"/wan_curl 2>/dev/null | egrep -o "[0-9]+.[0-9]+.[0-9]+.[0-9]+" 2>&1):${PORT:?} ${MASTERNODE_KEY:?} ${WALLET_TXHASH:?} ${OUTPUT_IDX:?}" >>"${DATA_DIR:?}"/"${WALLET_MASTER:?}"
+          fi
         fi
 
         read -r -p "[YN] Create new wallet configuration (overwriting)? y/n " -n 1 -r
