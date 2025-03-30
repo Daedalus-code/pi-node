@@ -1819,7 +1819,7 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
 
         curl -s https://api.myip.com >"${DATA_DIR:?}"/wan_curl 2>&1
 
-        if [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | egrep -c "[0-9]+")" -gt "0" || -f "${DATA_DIR}"/masternode_outputs || ! -s "${DATA_DIR}"/masternode_outputs || "$(wc -l "${DATA_DIR}"/masternode_outputs | awk '{ print $1 }')" -lt "3" ]] &>/dev/null; then
+        if [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | egrep -c "[0-9]+")" -eq "0" || -f "${DATA_DIR}"/masternode_outputs || ! -s "${DATA_DIR}"/masternode_outputs || "$(wc -l "${DATA_DIR}"/masternode_outputs | awk '{ print $1 }')" -lt "3" ]] &>/dev/null; then
 
           # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
           "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
@@ -1899,7 +1899,7 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
           rm "${DATA_DIR:?}"/masternode_outputs &>/dev/null
         fi
 
-        if [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | egrep -c "[0-9]+")" -gt "0" || ! -f "${DATA_DIR}"/masternode_outputs || ! -s "${DATA_DIR}"/masternode_outputs || "$(wc -l "${DATA_DIR}"/masternode_outputs | awk '{ print $1 }')" -lt "3" ]] &>/dev/null; then
+        if [[ "$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | egrep -c "[0-9]+")" -eq "0" || ! -f "${DATA_DIR}"/masternode_outputs || ! -s "${DATA_DIR}"/masternode_outputs || "$(wc -l "${DATA_DIR}"/masternode_outputs | awk '{ print $1 }')" -lt "3" ]] &>/dev/null; then
           # in the console debug window enter getpatriotnodeoutputs these are your PATRIOTNODE OUTPUT txhash and outputidx.
           "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
           # wallet tx hash
