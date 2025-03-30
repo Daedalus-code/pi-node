@@ -1825,6 +1825,14 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
           "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
 
           WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
+
+          # wait on tx hash
+          until [[ "$WALLET_TXHASH" ]] &>/dev/null; do
+            echo "Waiting on tx hash.."
+            clear
+            sleep 1
+          done
+
           OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
           if [[ ! "$(grep "$WALLET_TXHASH" "${DATA_DIR:?}"/"${WALLET_MASTER:?}" | wc -l)" -eq "1" ]] &>/dev/null; then
@@ -1903,6 +1911,14 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
           "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
         else
           WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
+
+          # wait on tx hash
+          until [[ "$WALLET_TXHASH" ]] &>/dev/null; do
+            echo "Waiting on tx hash.."
+            clear
+            sleep 1
+          done
+
           OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
           printf '%b' "[${G1:?}Ok${N0:?}] txhash ${CY:?}$WALLET_TXHASH${N0:?}\n"
           printf '%b' "[${G1:?}Ok${N0:?}] outputidx ${CY:?}$OUTPUT_IDX${N0:?}\n"
