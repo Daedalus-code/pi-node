@@ -94,10 +94,52 @@ if [[ "$(grep -c "WALLET_DAT=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; the
     echo "WALLET_DAT=$DAT_FOUND" >>/etc/pi-node/config
   fi
 else
-  # configuration client found
+  # configuration dat found
   DAT_FOUND="$(grep "WALLET_DAT=" /etc/pi-node/config | awk -F= '{ print $2 }')"
   # if configuration found
   printf '%b' "[${G1}OK${N0}] PrivKey : Found ${CY}$DAT_FOUND${N0} in configuration!\n"
+fi
+
+################################################################################
+# find wallet.conf
+################################################################################
+
+# if no configuration
+if [[ "$(grep -c "WALLET_CONF=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
+  printf '%b' "[${Y1}Ok${N0}] Config  : Searching for trumpcoin.conf..\n"
+  CON_FOUND="$(find / -name "trumpcoin.conf" 2>/dev/null | head -1)"
+  # if found
+  if [[ -f "$CON_FOUND" ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$CON_FOUND${N0}! Updating configuration!\n"
+    # update configuration
+    echo "WALLET_CONF=$CON_FOUND" >>/etc/pi-node/config
+  fi
+else
+  # configuration wallet.conf found
+  CON_FOUND="$(grep "WALLET_CONF=" /etc/pi-node/config | awk -F= '{ print $2 }')"
+  # if configuration found
+  printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$CON_FOUND${N0} in configuration!\n"
+fi
+
+################################################################################
+# find patriotnode.conf
+################################################################################
+
+# if no configuration
+if [[ "$(grep -c "WALLET_MASTER=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
+  printf '%b' "[${Y1}Ok${N0}] Master  : Searching for patriotnode.conf..\n"
+  MAS_FOUND="$(find / -name "patriotnode.conf" 2>/dev/null | head -1)"
+  # if found
+  if [[ -f "$MAS_FOUND" ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] Master  : Found ${CY}$MAS_FOUND${N0}! Updating configuration!\n"
+    # update configuration
+    echo "WALLET_MASTER=$MAS_FOUND" >>/etc/pi-node/config
+  fi
+else
+  # configuration patriotnode.conf found
+  MAS_FOUND="$(grep "WALLET_MASTER=" /etc/pi-node/config | awk -F= '{ print $2 }')"
+  # if configuration found
+  printf '%b' "[${G1}OK${N0}] Master  : Found ${CY}$MAS_FOUND${N0} in configuration!\n"
 fi
 
 # END
