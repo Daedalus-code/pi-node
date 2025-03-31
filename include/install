@@ -39,15 +39,18 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 
 ################################################################################
 
-# new configuration
-printf '%b' "[${N0}!!${N0}] Config  : Reset configuration? y/n "
-read -r -p "" -n 1 -r -s
-echo
-
-# if yes/no
-if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-  printf '%b' "[${N0}!!${N0}] Reset   : Deleting old files and directories!\n"
-  rm -r /etc/pi-node &>/dev/null
+# if found
+if [[ -f /etc/pi-node/config ]] &>/dev/null; then
+  # new configuration
+  printf '%b' "[${N0}!!${N0}] Config  : Reset configuration? y/n "
+  read -r -p "" -n 1 -r -s
+  echo
+  # if yes/no
+  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+    printf '%b' "[${N0}!!${N0}] Reset   : Deleting old files and directories!\n"
+    rm -r /etc/pi-node &>/dev/null
+  fi
+else
   # create new configuration
   printf '%b' "[${G1}OK${N0}] Echo    : Creating new configuration!\n"
   echo "# pi-node Configuration #
