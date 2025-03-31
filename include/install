@@ -87,6 +87,8 @@ CPU_FOUND="$(grep "model name" /proc/cpuinfo | head -1 | awk -F: '{ print $2 }' 
 COR_FOUND="$(egrep -c "bogomips|BogoMIPS" /proc/cpuinfo)"
 MEM_FOUND="$(echo "$(echo "$(grep "MemTotal" /proc/meminfo | awk '{ print $2 }')+"$(grep "SwapTotal" /proc/meminfo | awk '{ print $2 }') | bc -l 2>/dev/null)/1024" | bc 2>/dev/null) MB"
 HDD_FOUND="$(df -h --total | tail -1 | xargs | tr -d '-')"
+HDD_TOTAL="$(echo "$HDD_FOUND" | awk '{ print $2 }')"
+HDD_FREE="$(echo "$HDD_FOUND" | awk '{ print $4 }')"
 
 ################################################################################
 # kernal release version
@@ -145,14 +147,19 @@ fi
 
 # if found
 if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Drive   : $HDD_FOUND\n"
+  printf '%b' "[${G1}OK${N0}] Drive   : $HDD_TOTAL\n"
+  # if not enough space
+  if [[ "$(echo "$HDD_TOTAL" | egrep "[0-9]+")" -lt "16" ]] &>/dev/null; then
+    printf '%b' "[${GR}!!${N0}] Drive   : Not enough space..\n" && exit
+  fi
 else
   printf '%b' "[${GR}!!${N0}] Drive   : Error\n" && exit
 fi
 
 ################################################################################
+# wallet files
+################################################################################
 
-# find wallet files
 bash /etc/pi-node/include/find
 
 # END
