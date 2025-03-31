@@ -40,7 +40,7 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 ################################################################################
 
 # if missing
-if [[ ! -d pi-node/include ]] &>/dev/null; then
+if [[ ! -d /etc/pi-node/include ]] &>/dev/null; then
   # create install directory
   printf '%b' "[${G1}OK${N0}] Mkdir   : Creating install directory as root!\n"
   sudo mkdir /etc/pi-node &>/dev/null
