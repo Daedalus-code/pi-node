@@ -2,16 +2,11 @@
 
 ################################################################################
 
-source /usr/local/bin/include/pinode/pinode.conf 2>&1
+source /etc/pinode/config 2>&1
 
 for (( ; ; )); do # loop dashbord
 
-  # save dashbord time
-  echo "$(LC_ALL=de_US.utf8 date +%s 2>&1)" >"${LOG_DIR:?}"/node_data/wallet/data/time.dashbord 2>/dev/null
-
-  source /usr/local/bin/include/pinode/color 2>&1
-  source /usr/local/bin/include/pinode/functions 2>&1
-  source /usr/local/bin/include/pinode/time_fix 2>&1
+  source . # something!
 
   clear
   # dashbord

@@ -1,0 +1,246 @@
+#!/bin/bash
+
+################################################################################
+
+# colors
+B0='\e[34m'   # Blue
+B1='\e[94m'   # Blue light
+CY='\e[36m'   # Cyan
+C1='\e[96m'   # Cyan light
+G0='\e[32m'   # Green
+G1='\e[92m'   # Green light
+GR='\e[90m'   # Grey
+N0='\033[0m'  # No color
+P0='\e[0;35m' # Purple
+P1='\e[1;35m' # Purple light
+R0='\e[31m'   # Red
+R1='\e[91m'   # Red light
+Y0='\e[33m'   # Yellow
+Y1='\e[93m'   # Yellow light
+
+################################################################################
+
+clear
+printf '%b' "${Y0}
+F   R   E   E   D   O   M   C   O   I   N${B1}
+@${N0}@${B1}@${N0}  @${B1}@${N0}@${B1}    @${N0}@${B1}@${N0}@${B1}@${N0}@${B1}    @${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}    @${B1}@${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}
+${B1}@${N0}@${B1}@${N0}@${B1} @${N0}@${B1}@${N0}   @${B1}@${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}@${B1}@${N0}
+${N0}@${B1}@${N0}!${B1}@${N0}!${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}!  ${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}!  ${B1}@${N0}@${B1}@   ${N0}@${B1}@${N0}!
+!@!!@!@!   !@!  @!@   !@!  @!@   !@!${R1}
+@!@ !!@!   @!@  !@!   @!@  !@!   @!!!:!${N0}
+!@!  !!!   !@!  !!!   !@!  !!!   !!!!!:${R1}
+!!:  !!!   !!:  !!!   !!:  !!!   !!:${N0}
+:!:  !:!   :!:  !:!   :!:  !:!   :!:${R1}
+::   ::    :::: ::    :::: ::    :: ::::${N0}
+::    :     : :  :    :: :  :    : :: ::${R1}
+${N0}
+Spin up a Freedom node! ${GR}Version 1${N0}
+\n"
+
+################################################################################
+
+printf '%b' "[${N0}!!${N0}] Check   : Please wait..\n" && sleep 1
+
+################################################################################
+
+# create install directory
+if [[ ! -d /etc/pinode || ! -d /etc/pinode/include ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Mkdir   : Creating install directory as root!\n"
+  sudo mkdir /etc/pinode &>/dev/null
+  printf '%b' "[${G1}OK${N0}] Chown   : Updating ownership as $(whoami)!\n"
+  sudo chown "$(whoami)":"$(whoami)" /etc/pinode
+  printf '%b' "[${N0}!!${N0}] Github  : Updating pinode repository!\n"
+  printf '%b' "[${G1}OK${N0}] $(cd || exit && cd pi-node && git pull)\n"
+  printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
+  cd || exit && cp -rfv pi-node/include /etc/pinode | column -t
+fi
+
+################################################################################
+
+# new configuration
+printf '%b' "[${GR}!!${N0}] New     : Install/Reset configuration? y/n "
+read -r -p "" -n 1 -r -s
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+  # create new configuration
+  printf '%b' "[${G1}OK${N0}] Echo    : Creating new configuration!\n"
+  echo "# PiNode Configuration #
+" >/etc/pinode/config
+fi
+
+################################################################################
+
+VER_FOUND="$(uname -v)"
+REL_FOUND="$(uname -r)"
+MOD_FOUND="$(grep "Model" /proc/cpuinfo | awk -F: '{ print $2 }' | xargs)"
+CPU_FOUND="$(grep "model" /proc/cpuinfo | head -1 | awk -F: '{ print $2 }' | xargs)"
+MEM_FOUND="$(echo "$(echo "$(grep "MemTotal" /proc/meminfo | awk '{ print $2 }')+"$(grep "SwapTotal" /proc/meminfo | awk '{ print $2 }') | bc -l 2>/dev/null)/1024" | bc 2>/dev/null) MB"
+HDD_FOUND="$(df -h --total | tail -1 | xargs | tr -d '-')"
+
+################################################################################
+# find daemon
+################################################################################
+
+find_daemon() {
+  # if no configuration
+  if [[ "$(grep -c "WALLET_DAEMON=" /etc/pinode/config)" -eq "0" ]] &>/dev/null; then
+    printf '%b' "[${Y1}Ok${N0}] Find    : Searching for wallet daemon..\n"
+    # find freedomcoi daemon
+    DAE_FOUND="$(find / -name "freedomcoind" 2>/dev/null | head -1)"
+    # if found
+    if [[ -f "$DAE_FOUND" ]] &>/dev/null; then
+      printf '%b' "[${G1}OK${N0}] Daemon  : Found ${CY}$DAE_FOUND${N0}! Updating configuration!\n"
+      # update configuration
+      echo "WALLET_DAEMON=$DAE_FOUND" >>/etc/pinode/config
+    fi
+  else
+    # if configuration found
+    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}Daemon${N0} in configuration!\n"
+    # daemon found
+    DAE_FOUND="$(grep "WALLET_DAEMON=" /etc/pinode/config | awk -F= '{ print $2 }')"
+    # pidof daemon
+    DAE_PID="$(pidof "$(echo "$DAE_FOUND" | awk -F/ '{ print $NF }')")"
+    # active daemon
+    if [[ -n "$DAE_PID" ]] &>/dev/null; then
+      DAE_ACTIVE="Running PID: $DAE_PID"
+    fi
+    printf '%b' "[${G1}OK${N0}] Daemon  : ${DAE_FOUND} $DAE_ACTIVE\n"
+  fi
+}
+
+################################################################################
+# find client
+################################################################################
+
+find_client() {
+  # if no configuration
+  if [[ "$(grep -c "WALLET_CLIENT=" /etc/pinode/config)" -eq "0" ]] &>/dev/null; then
+    printf '%b' "[${Y1}Ok${N0}] Find    : Searching for wallet client..\n"
+    CLI_FOUND="$(find / -name "freedomcoin-cli" 2>/dev/null | head -1)"
+    # if found
+    if [[ -f "$CLI_FOUND" ]] &>/dev/null; then
+      printf '%b' "[${G1}OK${N0}] Client  : Found ${CY}$CLI_FOUND${N0}! Updating configuration!\n"
+      # update configuration
+      echo "WALLET_CLIENT=$CLI_FOUND" >>/etc/pinode/config
+    fi
+  else
+    # if configuration found
+    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}Client${N0} in configuration!\n"
+    # configuration client found
+    CLI_FOUND="$(grep "WALLET_CLIENT=" /etc/pinode/config | awk -F= '{ print $2 }')"
+    # pidof client
+    CLI_PID="$(pidof "$(echo "$CLI_FOUND" | awk -F/ '{ print $NF }')")"
+    # active client
+    if [[ -n "$CLI_PID" ]] &>/dev/null; then
+      CLI_ACTIVE="Running PID: $CLI_PID"
+    fi
+    printf '%b' "[${G1}OK${N0}] Client  : ${CLI_FOUND} $CLI_ACTIVE\n"
+  fi
+}
+
+################################################################################
+# find wallet
+################################################################################
+
+find_wallet() {
+  # if no configuration
+  if [[ "$(grep -c "WALLET_DAT=" /etc/pinode/config)" -eq "0" ]] &>/dev/null; then
+    printf '%b' "[${Y1}Ok${N0}] Find    : Searching for private key..\n"
+    DAT_FOUND="$(find / -name "wallet.dat" 2>/dev/null | head -1)"
+    # if found
+    if [[ -f "$DAT_FOUND" ]] &>/dev/null; then
+      printf '%b' "[${G1}OK${N0}] Wallet  : Found ${CY}$DAT_FOUND${N0}! Updating configuration!\n"
+      # update configuration
+      echo "WALLET_DAT=$DAT_FOUND" >>/etc/pinode/config
+    fi
+  else
+    # if configuration found
+    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}Private Key${N0} in configuration!\n"
+    # configuration client found
+    DAT_FOUND="$(grep "WALLET_DAT=" /etc/pinode/config | awk -F= '{ print $2 }')"
+    printf '%b' "[${G1}OK${N0}] Wallet  : ${DAT_FOUND}\n"
+  fi
+}
+
+################################################################################
+# kernal release version
+################################################################################
+
+# if found
+if [[ -n "$VER_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Version : $VER_FOUND\n"
+else
+  printf '%b' "[${GR}!!${N0}] System  : Error\n" && exit
+fi
+
+# if found
+if [[ -n "$REL_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Release : $REL_FOUND\n"
+else
+  printf '%b' "[${GR}!!${N0}] System  : Error\n" && exit
+fi
+
+################################################################################
+# model
+################################################################################
+
+# if found
+if [[ -n "$MOD_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Model   : $MOD_FOUND\n"
+else
+  printf '%b' "[${GR}!!${N0}] Model   : Error\n" && exit
+fi
+
+################################################################################
+# cpu
+################################################################################
+
+# if found
+if [[ -n "$CPU_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] CPU     : $CPU_FOUND\n"
+else
+  printf '%b' "[${GR}!!${N0}] CPU     : Error\n" && exit
+fi
+
+################################################################################
+# memory
+################################################################################
+
+# if found
+if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Memory  : $MEM_FOUND\n"
+else
+  printf '%b' "[${GR}!!${N0}] Memory  : Error\n" && exit
+fi
+
+################################################################################
+# hard drive
+################################################################################
+
+# if found
+if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Drive   : $HDD_FOUND\n"
+else
+  printf '%b' "[${GR}!!${N0}] Drive   : Error\n" && exit
+fi
+
+################################################################################
+# wallet daemon
+################################################################################
+
+find_daemon
+
+################################################################################
+# wallet client
+################################################################################
+
+find_client
+
+################################################################################
+# wallet dat (private key)
+################################################################################
+
+find_wallet
+
+# END
