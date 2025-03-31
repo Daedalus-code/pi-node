@@ -39,15 +39,18 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 
 ################################################################################
 
-# create install directory
-printf '%b' "[${G1}OK${N0}] Mkdir   : Creating install directory as root!\n"
-sudo mkdir /etc/pi-node &>/dev/null
-printf '%b' "[${G1}OK${N0}] Chown   : Updating ownership as $(whoami)!\n"
-sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
-printf '%b' "[${G1}OK${N0}] Install : Installing pi-node dashbord!\n"
-cd || exit && cp pi-node/dash /etc/pi-node
-printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
-cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
+# if missing
+if [[ ! -d pi-node/include ]] &>/dev/null; then
+  # create install directory
+  printf '%b' "[${G1}OK${N0}] Mkdir   : Creating install directory as root!\n"
+  sudo mkdir /etc/pi-node &>/dev/null
+  printf '%b' "[${G1}OK${N0}] Chown   : Updating ownership as $(whoami)!\n"
+  sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
+  printf '%b' "[${G1}OK${N0}] Install : Installing pi-node dashbord!\n"
+  cd || exit && cp pi-node/dash /etc/pi-node
+  printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
+  cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
+fi
 
 ################################################################################
 
