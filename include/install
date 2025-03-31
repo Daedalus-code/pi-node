@@ -40,6 +40,8 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 ################################################################################
 
 printf '%b' "[${N0}!!${N0}] Check   : Install node..\n" && sleep 1
+printf '%b' "[${N0}!!${N0}] Github  : Updating pinode repository!\n"
+printf '%b' "[${G1}OK${N0}] $(cd || exit && cd pi-node && git pull)\n"
 
 ################################################################################
 
@@ -49,8 +51,6 @@ if [[ ! -d /etc/pinode || ! -d /etc/pinode/include ]] &>/dev/null; then
   sudo mkdir /etc/pinode &>/dev/null
   printf '%b' "[${G1}OK${N0}] Chown   : Updating ownership as $(whoami)!\n"
   sudo chown "$(whoami)":"$(whoami)" /etc/pinode
-  printf '%b' "[${N0}!!${N0}] Github  : Updating pinode repository!\n"
-  printf '%b' "[${G1}OK${N0}] $(cd || exit && cd pi-node && git pull)\n"
   printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
   cd || exit && cp -rfv pi-node/include /etc/pinode | column -t
 fi
