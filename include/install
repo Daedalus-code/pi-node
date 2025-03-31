@@ -85,7 +85,7 @@ HDD_FOUND="$(df -h --total | tail -1 | xargs | tr -d '-')"
 find_daemon() {
   # if no configuration
   if [[ "$(grep -c "WALLET_DAEMON=" /etc/pinode/config)" -eq "0" ]] &>/dev/null; then
-    printf '%b' "[${Y1}Ok${N0}] Find    : Searching for wallet daemon..\n"
+    printf '%b' "[${Y1}Ok${N0}] Daemon  : Searching for wallet daemon..\n"
     # find freedomcoi daemon
     DAE_FOUND="$(find / -name "freedomcoind" 2>/dev/null | head -1)"
     # if found
@@ -115,7 +115,7 @@ find_daemon() {
 find_client() {
   # if no configuration
   if [[ "$(grep -c "WALLET_CLIENT=" /etc/pinode/config)" -eq "0" ]] &>/dev/null; then
-    printf '%b' "[${Y1}Ok${N0}] Find    : Searching for wallet client..\n"
+    printf '%b' "[${Y1}Ok${N0}] Client  : Searching for wallet client..\n"
     CLI_FOUND="$(find / -name "freedomcoin-cli" 2>/dev/null | head -1)"
     # if found
     if [[ -f "$CLI_FOUND" ]] &>/dev/null; then
@@ -144,11 +144,11 @@ find_client() {
 find_wallet() {
   # if no configuration
   if [[ "$(grep -c "WALLET_DAT=" /etc/pinode/config)" -eq "0" ]] &>/dev/null; then
-    printf '%b' "[${Y1}Ok${N0}] Find    : Searching for private key..\n"
+    printf '%b' "[${Y1}Ok${N0}] PrivKey : Searching for private key..\n"
     DAT_FOUND="$(find / -name "wallet.dat" 2>/dev/null | head -1)"
     # if found
     if [[ -f "$DAT_FOUND" ]] &>/dev/null; then
-      printf '%b' "[${G1}OK${N0}] Wallet  : Found ${CY}$DAT_FOUND${N0}! Updating configuration!\n"
+      printf '%b' "[${G1}OK${N0}] PrivKey : Found ${CY}$DAT_FOUND${N0}! Updating configuration!\n"
       # update configuration
       echo "WALLET_DAT=$DAT_FOUND" >>/etc/pinode/config
     fi
