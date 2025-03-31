@@ -89,11 +89,6 @@ MEM_FOUND="$(echo "$(echo "$(grep "MemTotal" /proc/meminfo | awk '{ print $2 }')
 HDD_FOUND="$(df -h --total | tail -1 | xargs | tr -d '-')"
 
 ################################################################################
-
-# find wallet files
-bash /etc/pi-node/include/find
-
-################################################################################
 # kernal release version
 ################################################################################
 
@@ -154,5 +149,10 @@ if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
 else
   printf '%b' "[${GR}!!${N0}] Drive   : Error\n" && exit
 fi
+
+################################################################################
+
+# find wallet files
+bash /etc/pi-node/include/find
 
 # END
