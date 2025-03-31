@@ -112,7 +112,7 @@ find_daemon() {
     fi
     # if configuration found
     printf '%b' "[${G1}OK${N0}] Daemon  : Found ${CY}$DAE_FOUND${N0} in configuration!\n"
-    printf '%b' "[${G1}OK${N0}] Daemon  : $DAE_ACTIVE\n"
+    printf '%b' "[${G1}OK${N0}] Status  : Daemon $DAE_ACTIVE\n"
   fi
 }
 
@@ -144,7 +144,7 @@ find_client() {
     fi
     # if configuration found
     printf '%b' "[${G1}OK${N0}] Client  : Found ${CY}$CLI_FOUND${N0} in configuration!\n"
-    printf '%b' "[${G1}OK${N0}] Client  : $CLI_ACTIVE\n"
+    printf '%b' "[${G1}OK${N0}] Status  : Client $CLI_ACTIVE\n"
   fi
 }
 
