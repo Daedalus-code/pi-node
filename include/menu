@@ -1824,6 +1824,17 @@ Timer${GR:?}....: ${N0:?}${SPEED_AGE:?}${N0:?}
         # wallet tx hash
         WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
+        # check transaction confirmations
+        CONFIRMATIONS=0
+        while [[ $CONFIRMATIONS -eq 0 ]] &>/dev/null; do
+          # get the transaction details (including confirmations)
+          CONFIRMATIONS=$("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" gettransaction "${WALLET_TXHASH}" | jq -r '.confirmations')
+          if [[ $CONFIRMATIONS -eq 0 ]] &>/dev/null; then
+            echo "Transaction not confirmed yet. Waiting..."
+            sleep 5 # wait for 5 seconds before checking again
+          fi
+        done
+
         OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
         # ! if zero, skip?
@@ -1903,6 +1914,17 @@ maxconnections=${MAX_P2P:?}" >"${LOG_DIR:?}"/wallet.conf.tmp 2>&1
         "${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" getpatriotnodeoutputs >"${DATA_DIR:?}"/masternode_outputs
         # wallet tx hash
         WALLET_TXHASH=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "txhash" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
+
+        # check transaction confirmations
+        CONFIRMATIONS=0
+        while [[ $CONFIRMATIONS -eq 0 ]] &>/dev/null; do
+          # get the transaction details (including confirmations)
+          CONFIRMATIONS=$("${WALLET_DIR:?}"/"${WALLET_CLIENT:?}" -datadir="${DATA_DIR:?}" gettransaction "${WALLET_TXHASH}" | jq -r '.confirmations')
+          if [[ $CONFIRMATIONS -eq 0 ]] &>/dev/null; then
+            echo "Transaction not confirmed yet. Waiting..."
+            sleep 5 # wait for 5 seconds before checking again
+          fi
+        done
 
         OUTPUT_IDX=$(cat "${DATA_DIR:?}"/masternode_outputs 2>/dev/null | grep "outputidx" 2>&1 | awk '{ print $2 }' 2>&1 | tr -d '"|,' 2>&1)
 
