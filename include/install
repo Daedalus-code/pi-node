@@ -104,7 +104,7 @@ find_daemon() {
       DAE_ACTIVE="PID: $DAE_PID"
     fi
     # if configuration found
-    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}Daemon${N0} in configuration! $DAE_ACTIVE\n"
+    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$DAE_FOUND${N0} in configuration! $DAE_ACTIVE\n"
   fi
 }
 
