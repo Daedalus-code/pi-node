@@ -39,6 +39,23 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 
 ################################################################################
 
+# new configuration
+printf '%b' "[${N0}!!${N0}] Config  : Reset configuration? y/n "
+read -r -p "" -n 1 -r -s
+echo
+
+# if yes/no
+if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
+  printf '%b' "[${N0}!!${N0}] Reset   : Deleting old files and directories!\n"
+  rm -r /etc/pi-node &>/dev/null
+  # create new configuration
+  printf '%b' "[${G1}OK${N0}] Echo    : Creating new configuration!\n"
+  echo "# pi-node Configuration #
+" >/etc/pi-node/config
+fi
+
+################################################################################
+
 printf '%b' "[${N0}!!${N0}] Check   : Install..\n" && sleep 1
 printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository!\n"
 printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
@@ -46,27 +63,15 @@ printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
 ################################################################################
 
 # create install directory
-if [[ ! -d /etc/pi-node || ! -d /etc/pi-node/include ]] &>/dev/null; then
+if [[ ! -d /etc/pi-node || ! -d /etc/pi-node/include || ! -f /etc/pi-node/dash ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Mkdir   : Creating install directory as root!\n"
   sudo mkdir /etc/pi-node &>/dev/null
   printf '%b' "[${G1}OK${N0}] Chown   : Updating ownership as $(whoami)!\n"
   sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
+  printf '%b' "[${G1}OK${N0}] Install : Installing pi-node dashbord!\n"
+  cd || exit && cp pi-node/dash /etc/pi-node
   printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
   cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
-fi
-
-################################################################################
-
-# new configuration
-printf '%b' "[${N0}!!${N0}] Config  : Install/Reset configuration? y/n "
-read -r -p "" -n 1 -r -s
-echo
-
-if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-  # create new configuration
-  printf '%b' "[${G1}OK${N0}] Echo    : Creating new configuration!\n"
-  echo "# pi-node Configuration #
-" >/etc/pi-node/config
 fi
 
 ################################################################################
