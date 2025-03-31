@@ -147,9 +147,9 @@ fi
 
 # if found
 if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Drive   : $HDD_TOTAL\n"
+  printf '%b' "[${G1}OK${N0}] Drive   : Total $HDD_TOTAL Free $HDD_FREE\n"
   # if not enough space
-  if [[ "$(echo "$HDD_TOTAL" | egrep "[0-9]+")" -lt "16" ]] &>/dev/null; then
+  if [[ "$(echo "$HDD_FREE" | egrep "[0-9]+")" -lt "8" ]] &>/dev/null; then
     printf '%b' "[${GR}!!${N0}] Drive   : Not enough space..\n" && exit
   fi
 else
