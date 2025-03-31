@@ -106,10 +106,13 @@ find_daemon() {
     DAE_PID="$(pidof "$(echo "$DAE_FOUND" | awk -F/ '{ print $NF }')")"
     # active daemon
     if [[ -n "$DAE_PID" ]] &>/dev/null; then
-      DAE_ACTIVE="PID: $DAE_PID"
+      DAE_ACTIVE="Online PID: $DAE_PID"
+    else
+      DAE_ACTIVE="Offline PID: $DAE_PID"
     fi
     # if configuration found
-    printf '%b' "[${G1}OK${N0}] Daemon  : Found ${CY}$DAE_FOUND${N0} in configuration! $DAE_ACTIVE\n"
+    printf '%b' "[${G1}OK${N0}] Daemon  : Found ${CY}$DAE_FOUND${N0} in configuration!\n"
+    printf '%b' "[${G1}OK${N0}] Daemon  : $DAE_ACTIVE\n"
   fi
 }
 
@@ -135,10 +138,13 @@ find_client() {
     CLI_PID="$(pidof "$(echo "$CLI_FOUND" | awk -F/ '{ print $NF }')")"
     # active client
     if [[ -n "$CLI_PID" ]] &>/dev/null; then
-      CLI_ACTIVE="PID: $CLI_PID"
+      CLI_ACTIVE="Online PID: $CLI_PID"
+    else
+      CLI_ACTIVE="Offline PID: $CLI_PID"
     fi
     # if configuration found
-    printf '%b' "[${G1}OK${N0}] Client  : Found ${CY}$CLI_FOUND${N0} in configuration! $CLI_ACTIVE\n"
+    printf '%b' "[${G1}OK${N0}] Client  : Found ${CY}$CLI_FOUND${N0} in configuration!\n"
+    printf '%b' "[${G1}OK${N0}] Client  : $CLI_ACTIVE\n"
   fi
 }
 
