@@ -41,7 +41,7 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 
 printf '%b' "[${N0}!!${N0}] Check   : Install node..\n" && sleep 1
 printf '%b' "[${N0}!!${N0}] Github  : Updating pinode repository!\n"
-printf '%b' "[${G1}OK${N0}] $(cd || exit && cd pi-node && git pull)\n"
+printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
 
 ################################################################################
 
