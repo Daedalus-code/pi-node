@@ -108,7 +108,7 @@ find_daemon() {
     if [[ -n "$DAE_PID" ]] &>/dev/null; then
       DAE_ACTIVE="${G1}Online${N0} PID: $DAE_PID"
     else
-      DAE_ACTIVE="${GR}Offline${N0} PID: $DAE_PID"
+      DAE_ACTIVE="${GR}Offline${N0}"
     fi
     # if configuration found
     printf '%b' "[${G1}OK${N0}] Daemon  : Found ${CY}$DAE_FOUND${N0} in configuration!\n"
@@ -140,7 +140,7 @@ find_client() {
     if [[ -n "$CLI_PID" ]] &>/dev/null; then
       CLI_ACTIVE="${G1}Online${N0} PID: $CLI_PID"
     else
-      CLI_ACTIVE="${GR}Offline${N0} PID: $CLI_PID"
+      CLI_ACTIVE="${GR}Offline${N0}"
     fi
     # if configuration found
     printf '%b' "[${G1}OK${N0}] Client  : Found ${CY}$CLI_FOUND${N0} in configuration!\n"
