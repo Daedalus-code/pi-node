@@ -200,7 +200,7 @@ fi
 if [[ -n "$MOD_FOUND" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Model   : $MOD_FOUND\n"
 else
-  printf '%b' "[${GR}!!${N0}] Model   : Error\n" && exit
+  printf '%b' "[${GR}!!${N0}] Model   : ${GR}Not found${N0}\n"
 fi
 
 ################################################################################
