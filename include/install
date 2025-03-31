@@ -58,7 +58,7 @@ fi
 ################################################################################
 
 # new configuration
-printf '%b' "[${GR}!!${N0}] New     : Install/Reset configuration? y/n "
+printf '%b' "[${N0}!!${N0}] New     : Install/Reset configuration? y/n "
 read -r -p "" -n 1 -r -s
 echo
 
