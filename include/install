@@ -39,20 +39,20 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 
 ################################################################################
 
-printf '%b' "[${N0}!!${N0}] Check   : Install node..\n" && sleep 1
-printf '%b' "[${N0}!!${N0}] Github  : Updating pinode repository!\n"
+printf '%b' "[${N0}!!${N0}] Check   : Install..\n" && sleep 1
+printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository!\n"
 printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
 
 ################################################################################
 
 # create install directory
-if [[ ! -d /etc/pinode || ! -d /etc/pinode/include ]] &>/dev/null; then
+if [[ ! -d /etc/pi-node || ! -d /etc/pi-node/include ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Mkdir   : Creating install directory as root!\n"
-  sudo mkdir /etc/pinode &>/dev/null
+  sudo mkdir /etc/pi-node &>/dev/null
   printf '%b' "[${G1}OK${N0}] Chown   : Updating ownership as $(whoami)!\n"
-  sudo chown "$(whoami)":"$(whoami)" /etc/pinode
+  sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
   printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
-  cd || exit && cp -rfv pi-node/include /etc/pinode | column -t
+  cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
 fi
 
 ################################################################################
@@ -65,8 +65,8 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
   # create new configuration
   printf '%b' "[${G1}OK${N0}] Echo    : Creating new configuration!\n"
-  echo "# PiNode Configuration #
-" >/etc/pinode/config
+  echo "# pi-node Configuration #
+" >/etc/pi-node/config
 fi
 
 ################################################################################
@@ -84,7 +84,7 @@ HDD_FOUND="$(df -h --total | tail -1 | xargs | tr -d '-')"
 
 find_daemon() {
   # if no configuration
-  if [[ "$(grep -c "WALLET_DAEMON=" /etc/pinode/config)" -eq "0" ]] &>/dev/null; then
+  if [[ "$(grep -c "WALLET_DAEMON=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
     printf '%b' "[${Y1}Ok${N0}] Daemon  : Searching for wallet daemon..\n"
     # find freedomcoi daemon
     DAE_FOUND="$(find / -name "freedomcoind" 2>/dev/null | head -1)"
@@ -92,11 +92,11 @@ find_daemon() {
     if [[ -f "$DAE_FOUND" ]] &>/dev/null; then
       printf '%b' "[${G1}OK${N0}] Daemon  : Found ${CY}$DAE_FOUND${N0}! Updating configuration!\n"
       # update configuration
-      echo "WALLET_DAEMON=$DAE_FOUND" >>/etc/pinode/config
+      echo "WALLET_DAEMON=$DAE_FOUND" >>/etc/pi-node/config
     fi
   else
     # daemon found
-    DAE_FOUND="$(grep "WALLET_DAEMON=" /etc/pinode/config | awk -F= '{ print $2 }')"
+    DAE_FOUND="$(grep "WALLET_DAEMON=" /etc/pi-node/config | awk -F= '{ print $2 }')"
     # pidof daemon
     DAE_PID="$(pidof "$(echo "$DAE_FOUND" | awk -F/ '{ print $NF }')")"
     # active daemon
@@ -114,18 +114,18 @@ find_daemon() {
 
 find_client() {
   # if no configuration
-  if [[ "$(grep -c "WALLET_CLIENT=" /etc/pinode/config)" -eq "0" ]] &>/dev/null; then
+  if [[ "$(grep -c "WALLET_CLIENT=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
     printf '%b' "[${Y1}Ok${N0}] Client  : Searching for wallet client..\n"
     CLI_FOUND="$(find / -name "freedomcoin-cli" 2>/dev/null | head -1)"
     # if found
     if [[ -f "$CLI_FOUND" ]] &>/dev/null; then
       printf '%b' "[${G1}OK${N0}] Client  : Found ${CY}$CLI_FOUND${N0}! Updating configuration!\n"
       # update configuration
-      echo "WALLET_CLIENT=$CLI_FOUND" >>/etc/pinode/config
+      echo "WALLET_CLIENT=$CLI_FOUND" >>/etc/pi-node/config
     fi
   else
     # configuration client found
-    CLI_FOUND="$(grep "WALLET_CLIENT=" /etc/pinode/config | awk -F= '{ print $2 }')"
+    CLI_FOUND="$(grep "WALLET_CLIENT=" /etc/pi-node/config | awk -F= '{ print $2 }')"
     # pidof client
     CLI_PID="$(pidof "$(echo "$CLI_FOUND" | awk -F/ '{ print $NF }')")"
     # active client
@@ -143,18 +143,18 @@ find_client() {
 
 find_wallet() {
   # if no configuration
-  if [[ "$(grep -c "WALLET_DAT=" /etc/pinode/config)" -eq "0" ]] &>/dev/null; then
+  if [[ "$(grep -c "WALLET_DAT=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
     printf '%b' "[${Y1}Ok${N0}] PrivKey : Searching for private key..\n"
     DAT_FOUND="$(find / -name "wallet.dat" 2>/dev/null | head -1)"
     # if found
     if [[ -f "$DAT_FOUND" ]] &>/dev/null; then
       printf '%b' "[${G1}OK${N0}] PrivKey : Found ${CY}$DAT_FOUND${N0}! Updating configuration!\n"
       # update configuration
-      echo "WALLET_DAT=$DAT_FOUND" >>/etc/pinode/config
+      echo "WALLET_DAT=$DAT_FOUND" >>/etc/pi-node/config
     fi
   else
     # configuration client found
-    DAT_FOUND="$(grep "WALLET_DAT=" /etc/pinode/config | awk -F= '{ print $2 }')"
+    DAT_FOUND="$(grep "WALLET_DAT=" /etc/pi-node/config | awk -F= '{ print $2 }')"
     # if configuration found
     printf '%b' "[${G1}OK${N0}] PrivKey : Found ${CY}$DAT_FOUND${N0} in configuration!\n"
   fi
