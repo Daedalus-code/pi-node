@@ -39,6 +39,20 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 
 ################################################################################
 
+# create install directory
+if [[ ! -d /etc/pi-node || ! -d /etc/pi-node/include || ! -f /etc/pi-node/dash ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Mkdir   : Creating install directory as root!\n"
+  sudo mkdir /etc/pi-node &>/dev/null
+  printf '%b' "[${G1}OK${N0}] Chown   : Updating ownership as $(whoami)!\n"
+  sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
+  printf '%b' "[${G1}OK${N0}] Install : Installing pi-node dashbord!\n"
+  cd || exit && cp pi-node/dash /etc/pi-node
+  printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
+  cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
+fi
+
+################################################################################
+
 # if found
 if [[ -f /etc/pi-node/config ]] &>/dev/null; then
   # new configuration
@@ -62,20 +76,6 @@ fi
 printf '%b' "[${N0}!!${N0}] Check   : Install..\n" && sleep 1
 printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository!\n"
 printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
-
-################################################################################
-
-# create install directory
-if [[ ! -d /etc/pi-node || ! -d /etc/pi-node/include || ! -f /etc/pi-node/dash ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Mkdir   : Creating install directory as root!\n"
-  sudo mkdir /etc/pi-node &>/dev/null
-  printf '%b' "[${G1}OK${N0}] Chown   : Updating ownership as $(whoami)!\n"
-  sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
-  printf '%b' "[${G1}OK${N0}] Install : Installing pi-node dashbord!\n"
-  cd || exit && cp pi-node/dash /etc/pi-node
-  printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
-  cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
-fi
 
 ################################################################################
 
