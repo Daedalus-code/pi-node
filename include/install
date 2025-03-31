@@ -104,7 +104,7 @@ find_daemon() {
       DAE_ACTIVE="PID: $DAE_PID"
     fi
     # if configuration found
-    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$DAE_FOUND${N0} in configuration! $DAE_ACTIVE\n"
+    printf '%b' "[${G1}OK${N0}] Daemon  : Found ${CY}$DAE_FOUND${N0} in configuration! $DAE_ACTIVE\n"
   fi
 }
 
@@ -133,7 +133,7 @@ find_client() {
       CLI_ACTIVE="PID: $CLI_PID"
     fi
     # if configuration found
-    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$CLI_FOUND${N0} in configuration! $CLI_ACTIVE\n"
+    printf '%b' "[${G1}OK${N0}] Client  : Found ${CY}$CLI_FOUND${N0} in configuration! $CLI_ACTIVE\n"
   fi
 }
 
@@ -156,7 +156,7 @@ find_wallet() {
     # configuration client found
     DAT_FOUND="$(grep "WALLET_DAT=" /etc/pinode/config | awk -F= '{ print $2 }')"
     # if configuration found
-    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$DAT_FOUND${N0} in configuration!\n"
+    printf '%b' "[${G1}OK${N0}] PrivKey : Found ${CY}$DAT_FOUND${N0} in configuration!\n"
   fi
 }
 
