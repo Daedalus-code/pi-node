@@ -53,6 +53,10 @@ reset_install() {
     cd || exit && cp pi-node/dash /etc/pi-node
     printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
     cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
+    # create new configuration
+    printf '%b' "[${G1}OK${N0}] Echo    : Creating new configuration!\n"
+    echo "# pi-node Configuration #
+  " >/etc/pi-node/config
   fi
 }
 reset_install
@@ -71,11 +75,6 @@ if [[ -f /etc/pi-node/config ]] &>/dev/null; then
     rm -r /etc/pi-node &>/dev/null
     reset_install
   fi
-else
-  # create new configuration
-  printf '%b' "[${G1}OK${N0}] Echo    : Creating new configuration!\n"
-  echo "# pi-node Configuration #
-" >/etc/pi-node/config
 fi
 
 ################################################################################
