@@ -26,7 +26,11 @@ Y1='\e[93m'   # Yellow light
 if [[ "$(grep -c "WALLET_DAEMON=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
   printf '%b' "[${Y1}Ok${N0}] Daemon  : Searching for wallet daemon..\n"
   # find freedomcoi daemon
-  DAE_FOUND="$(find / -name "freedomcoind" 2>/dev/null | head -1)"
+  DAE_FOUND="$(find "$HOME" -name "freedomcoind" 2>/dev/null | head -1)"
+  # if zero
+  if [[ -z "$DAE_FOUND" ]] &>/dev/null; then
+    DAE_FOUND="$(find /usr/local/bin -name "freedomcoind" 2>/dev/null | head -1)"
+  fi
   # if found
   if [[ -f "$DAE_FOUND" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Daemon  : Found ${CY}$DAE_FOUND${N0}! Updating configuration!\n"
@@ -56,7 +60,11 @@ fi
 # if no configuration
 if [[ "$(grep -c "WALLET_CLIENT=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
   printf '%b' "[${Y1}Ok${N0}] Client  : Searching for wallet client..\n"
-  CLI_FOUND="$(find / -name "freedomcoin-cli" 2>/dev/null | head -1)"
+  CLI_FOUND="$(find "$HOME" -name "freedomcoin-cli" 2>/dev/null | head -1)"
+  # if zero
+  if [[ -z "$CLI_FOUND" ]] &>/dev/null; then
+    CLI_FOUND="$(find /usr/local/bin -name "freedomcoin-cli" 2>/dev/null | head -1)"
+  fi
   # if found
   if [[ -f "$CLI_FOUND" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Client  : Found ${CY}$CLI_FOUND${N0}! Updating configuration!\n"
