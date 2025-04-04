@@ -88,34 +88,17 @@ else
 fi
 
 ################################################################################
-# find wallet
-################################################################################
-
-# if no configuration
-if [[ "$(grep -c "WALLET_DAT=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
-  printf '%b' "[${Y1}Ok${N0}] PrivKey : Searching for private key..\n"
-  DAT_FOUND="$(find / -name "wallet.dat" 2>/dev/null | head -1)"
-  # if found
-  if [[ -f "$DAT_FOUND" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] PrivKey : Found ${CY}$DAT_FOUND${N0}! Updating configuration!\n"
-    # update configuration
-    echo "WALLET_DAT=$DAT_FOUND" >>/etc/pi-node/config
-  fi
-else
-  # configuration dat found
-  DAT_FOUND="$(grep "WALLET_DAT=" /etc/pi-node/config | awk -F= '{ print $2 }')"
-  # if configuration found
-  printf '%b' "[${G1}OK${N0}] PrivKey : Found ${CY}$DAT_FOUND${N0} in configuration!\n"
-fi
-
-################################################################################
 # find wallet.conf
 ################################################################################
 
 # if no configuration
 if [[ "$(grep -c "WALLET_CONF=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
   printf '%b' "[${Y1}Ok${N0}] Config  : Searching for trumpcoin.conf..\n"
-  CON_FOUND="$(find / -name "trumpcoin.conf" 2>/dev/null | head -1)"
+  CON_FOUND="$(find "$HOME" -name "trumpcoin.conf" 2>/dev/null | head -1)"
+  # if zero
+  if [[ -z "$CON_FOUND" ]] &>/dev/null; then
+    CON_FOUND="$(find /usr/local/bin -name "trumpcoin.conf" 2>/dev/null | head -1)"
+  fi
   # if found
   if [[ -f "$CON_FOUND" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$CON_FOUND${N0}! Updating configuration!\n"
@@ -136,7 +119,11 @@ fi
 # if no configuration
 if [[ "$(grep -c "WALLET_MASTER=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
   printf '%b' "[${Y1}Ok${N0}] Master  : Searching for patriotnode.conf..\n"
-  MAS_FOUND="$(find / -name "patriotnode.conf" 2>/dev/null | head -1)"
+  MAS_FOUND="$(find "$HOME" -name "patriotnode.conf" 2>/dev/null | head -1)"
+  # if zero
+  if [[ -z "$MAS_FOUND" ]] &>/dev/null; then
+    MAS_FOUND="$(find /usr/local/bin -name "patriotnode.conf" 2>/dev/null | head -1)"
+  fi
   # if found
   if [[ -f "$MAS_FOUND" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Master  : Found ${CY}$MAS_FOUND${N0}! Updating configuration!\n"
