@@ -59,7 +59,6 @@ reset_install() {
   " >/etc/pi-node/config
   fi
 }
-reset_install
 
 ################################################################################
 
@@ -76,6 +75,8 @@ if [[ -f /etc/pi-node/config ]] &>/dev/null; then
     reset_install
   fi
 fi
+
+reset_install
 
 ################################################################################
 
