@@ -53,6 +53,11 @@ else
   printf '%b' "[${G1}OK${N0}] Status  : Daemon $DAE_ACTIVE\n"
 fi
 
+# if zero
+if [[ -z "$DAE_FOUND" ]] &>/dev/null; then
+  DAE_FOUND_CTRL="null"
+fi
+
 ################################################################################
 # find client
 ################################################################################
@@ -87,6 +92,11 @@ else
   printf '%b' "[${G1}OK${N0}] Status  : Client $CLI_ACTIVE\n"
 fi
 
+# if zero
+if [[ -z "$CLI_FOUND" ]] &>/dev/null; then
+  CLI_FOUND_CTRL="null"
+fi
+
 ################################################################################
 # find wallet.conf
 ################################################################################
@@ -112,6 +122,11 @@ else
   printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$CON_FOUND${N0} in configuration!\n"
 fi
 
+# if zero
+if [[ -z "$CON_FOUND" ]] &>/dev/null; then
+  CON_FOUND_CTRL="null"
+fi
+
 ################################################################################
 # find patriotnode.conf
 ################################################################################
@@ -135,6 +150,11 @@ else
   MAS_FOUND="$(grep "WALLET_MASTER=" /etc/pi-node/config | awk -F= '{ print $2 }')"
   # if configuration found
   printf '%b' "[${G1}OK${N0}] Master  : Found ${CY}$MAS_FOUND${N0} in configuration!\n"
+fi
+
+# if zero
+if [[ -z "$MAS_FOUND" ]] &>/dev/null; then
+  MAS_FOUND_CTRL="null"
 fi
 
 # END
