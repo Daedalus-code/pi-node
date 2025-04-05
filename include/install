@@ -65,7 +65,7 @@ reset_install() {
 # if found
 if [[ -f /etc/pi-node/config ]] &>/dev/null; then
   # new configuration
-  printf '%b' "[${N0}!!${N0}] Config  : Reset configuration? y/n "
+  printf '%b' "[${N0}!!${N0}] Config  : Old configuration found!, reset configuration? y/n "
   read -r -p "" -n 1 -r -s
   echo
   # if yes/no
@@ -218,7 +218,7 @@ if [[ "$DAE_FOUND_CTRL" == "null" || -z "$CLI_FOUND_CTRL" ]] &>/dev/null; then
   # change directory
   cd FreedomCoin-Core-Linux || exit
   # sudo copy
-  sudo cp freedomCoin* /usr/local/bin
+  sudo mv freedomCoin* /usr/local/bin
   # fix ownership
   sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin*
   printf '%b' "[${G1}OK${N0}] Owner   : Fixing ownership!\n"
