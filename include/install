@@ -359,10 +359,10 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     # if zero
     if [[ -z "$DATA_DIR" || -z "$WALLET_LOG_DIR" || -z "$WALLET_CONFIG" ]] &>/dev/null; then
       # start daemon default
-      ./freedomcoind -debug=tor -proxy="${PROXY:?}" -daemon
+      /usr/local/bin/freedomcoind -debug=tor -proxy="${PROXY:?}" -daemon
     else
       # start daemon w old configuration
-      ./freedomcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
+      /usr/local/bin/freedomcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
     fi
   fi
 fi
