@@ -23,6 +23,14 @@ BLD='\e[1m'   # Bold\brighter
 # bootstrap
 ################################################################################
 
+# not installed
+if ! [ -x "$(command -v dialog)" ]; then
+  printf '%b' "[${G1}OK${N0}] Proxy   : Installing dialog!\n"
+  sudo apt-get install dialog -y
+fi
+
+################################################################################
+
 # if enough space
 if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G')" -gt "7" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Blocks  : Downloading bootstrap.zip!\n"
