@@ -10,6 +10,7 @@ for (( ; ; )); do # loop dashbord
   # output specific data
   WALLET_TXLAST="$(grep "Progress" /tmp/dash.data.tmp | awk '{ print $3 }')"
   REPO_VERSION="$(grep "Repo_version" /tmp/dash.data.tmp | awk '{ print $3 }')"
+  SYSTEM_CLOCK="$(grep "system_clock" /tmp/dash.data.tmp | awk '{ print $3 }')"
 
   source . # something!
 

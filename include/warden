@@ -38,12 +38,14 @@ for (( ; ; )); do # loop warden
   ##############################################################################
 
   REPO_VERSION="$(/usr/local/bin/./freedomcoin-cli -version | tail -1 | awk '{ print $NF }')"
+  SYSTEM_CLOCK="$(date | awk '{ print $4 }')"
 
   ##############################################################################
 
   # store data for dash
   echo "Progress     : $WALLET_TXLAST" >/tmp/dash.data.tmp
   echo "Repo_version : $REPO_VERSION" >>/tmp/dash.data.tmp
+  echo "system_clock : $SYSTEM_CLOCK" >>/tmp/dash.data.tmp
 
   ##############################################################################
 
