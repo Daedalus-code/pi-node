@@ -52,6 +52,9 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
   sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoin-cli /usr/local/bin
   printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
 
+  # remove old directory
+  rm -r "$HOME"/"$WALLET_DOWNLOAD"
+
   # fix ownership
   sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin* 2>/dev/null
   printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
