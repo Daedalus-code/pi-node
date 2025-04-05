@@ -17,48 +17,48 @@ fi
 
 ################################################################################
 
-# if enough space
-if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G')" -gt "7" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Blocks  : Downloading bootstrap.zip!\n"
+# if exist
+if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
+  # if enough space
+  if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G')" -gt "7" ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] Blocks  : Downloading bootstrap.zip!\n"
 
-  # if zero
-  if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
-    BOOTSTRAP_URL="https://freedomcoin.global/wallets/bootstrap.zip"
-  fi
+    # if zero
+    if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
+      BOOTSTRAP_URL="https://freedomcoin.global/wallets/bootstrap.zip"
+    fi
 
-  # bootstrap file
-  OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
-  cd || exit
-  # start the download and process progress
-  wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
-    # capture the progress line with percentage, speed, and eta
-    grep --line-buffered "[0-9]% " |
-    while read -r LINE; do
-      # extract the percentage, speed, size and eta using regex
-      PERCENT=$(echo "$LINE" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
-      SPEED=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $1 }')
-      SIZE=$(echo "$LINE" | awk '{ print $1 }')
-      ETA=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $2 }')
-      # output progress to dialog (display the progress bar)
-      echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nSize...: ${SIZE}\nETA....: $ETA" 11 65
+    # bootstrap file
+    OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
+    cd || exit
+    # start the download and process progress
+    wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
+      # capture the progress line with percentage, speed, and eta
+      grep --line-buffered "[0-9]% " |
+      while read -r LINE; do
+        # extract the percentage, speed, size and eta using regex
+        PERCENT=$(echo "$LINE" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
+        SPEED=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $1 }')
+        SIZE=$(echo "$LINE" | awk '{ print $1 }')
+        ETA=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $2 }')
+        # output progress to dialog (display the progress bar)
+        echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nSize...: ${SIZE}\nETA....: $ETA" 11 65
+        sleep 1
+      done
+    RESULT=$?
+    # if any result
+    if [ ! $RESULT -eq "0" ] &>/dev/null; then
+      echo "[!!] Download failed"
       sleep 1
-    done
-  RESULT=$?
-  # if any result
-  if [ ! $RESULT -eq "0" ] &>/dev/null; then
-    echo "[!!] Download failed"
-    sleep 1
-  fi
+    fi
 
-  ##############################################################################
+    ############################################################################
 
-  # kill wallet
-  kill -9 "$(pidof freedomcoind 2>/dev/null)" &>/dev/null
+    # kill wallet
+    kill -9 "$(pidof freedomcoind 2>/dev/null)" &>/dev/null
 
-  ##############################################################################
+    ############################################################################
 
-  # if exist
-  if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
     # backup wallet.dat
     printf '%b' "[${G1}OK${N0}] Blocks  : Creating wallet.dat backup..\n"
     cp "${DATA_DIR:?}"/wallet.dat /tmp/ &>/dev/null
@@ -68,27 +68,27 @@ if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -
     # restore wallet.dat backup
     printf '%b' "[${G1}OK${N0}] Blocks  : Restoring wallet.dat backup..\n"
     mv /tmp/wallet.dat "${DATA_DIR:?}" 2>/dev/null
+
+    ############################################################################
+
+    # unzip bootstrap.zip
+    printf '%b' "[${G1}OK${N0}] Blocks  : Extracting bootstrap.zip..\n"
+    unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
+
+    ############################################################################
+
+    # remove blockchain.zip
+    printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap.zip..\n"
+    rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
+
+    ############################################################################
+
+    # move blockchain out of bootstrap folder
+    printf '%b' "[${G1}OK${N0}] Blocks  : Installing blockchain..\n"
+    mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
+  else
+    printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip, skipping..\n"
   fi
-
-  ##############################################################################
-
-  # unzip bootstrap.zip
-  printf '%b' "[${G1}OK${N0}] Blocks  : Extracting bootstrap.zip..\n"
-  unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
-
-  ##############################################################################
-
-  # remove blockchain.zip
-  printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap.zip..\n"
-  rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
-
-  ##############################################################################
-
-  # move blockchain out of bootstrap folder
-  printf '%b' "[${G1}OK${N0}] Blocks  : Installing blockchain..\n"
-  mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
-else
-  printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip, skipping..\n"
 fi
 
 # END
