@@ -285,10 +285,14 @@ else
 
   # if zero
   if [[ -z "$DATA_DIR" ]] &>/dev/null; then
-    mkdir "$HOME"/node &>/dev/null
-    DATA_DIR="$HOME/node"
-    # update configuration
-    echo "DATA_DIR=$DATA_DIR" >>/etc/pi-node/config
+    # if not found
+    if [[ ! -d "$HOME"/node ]] &>/dev/null; then
+      # create directory
+      mkdir "$HOME"/node &>/dev/null
+      DATA_DIR="$HOME/node"
+      # update configuration
+      echo "DATA_DIR=$DATA_DIR" >>/etc/pi-node/config
+    fi
   fi
 
   ##############################################################################
