@@ -176,7 +176,7 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
   fi
   # output
   echo "
-$(cat /etc/fstab 2>/dev/null)
+$(cat /etc/fstab 2>/dev/null | column -t)
 "
 else
   printf '%b' "[${GR}!!${N0}] Memory  : Error\n" && exit
