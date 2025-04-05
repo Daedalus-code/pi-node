@@ -309,6 +309,8 @@ else
     DATA_DIR="."
   fi
 
+  ##############################################################################
+
   # old pi-node log configuration
   WALLET_LOG_DIR="$(grep "WALLET_LOG_DIR=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$WALLET_LOG_DIR" ]] &>/dev/null; then
@@ -317,6 +319,8 @@ else
     # run default
     WALLET_LOG_DIR="."
   fi
+
+  ##############################################################################
 
   # old pi-node wallet configuration
   WALLET_CONFIG="$(grep "WALLET_CONFIG=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
@@ -327,11 +331,18 @@ else
     WALLET_CONFIG="."
   fi
 
+  ##############################################################################
+
   # old pi-node proxy configuration
   PROXY="$(grep "PROXY=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$PROXY" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Pi-Node : Old proxy setup found!\n"
     # check for tor install
+  fi
+
+  # if zero
+  if [[ -z "$PROXY" ]] &>/dev/null; then
+    # not installed
     if ! [ -x "$(command -v git)" ]; then
       printf '%b' "[${G1}OK${N0}] Proxy   : Installing tor!\n"
       sudo apt-get install tor -y
