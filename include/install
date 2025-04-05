@@ -204,7 +204,7 @@ bash /etc/pi-node/include/find
 ################################################################################
 
 # if no daemon found, if no client found
-if [[ "$DAE_FOUND_CTRL" == "null" || -z "$CLI_FOUND_CTRL" ]] &>/dev/null; then
+if [[ "$DAE_FOUND_CTRL" == "null" || "$CLI_FOUND_CTRL" == "null" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Dae/Cli : Not Found ${CY}$DAE_FOUND${N0}!\n"
   # linux
   LATEST_RELEASE="$(curl -s https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/latest | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }')"
