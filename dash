@@ -14,7 +14,18 @@ for (( ; ; )); do # loop dashbord
   WALLET_POS_REWARDS="$(grep "PoS_Rewards" /tmp/dash.data.tmp | awk '{ print $3 }')"
   WALLET_MOVEMENT="$(grep "Movements" /tmp/dash.data.tmp | awk '{ print $3 }')"
 
-  source . # something!
+  # default
+  CB="GR"
+  # moved
+  if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
+    CB="Y1" # yellow
+  fi
+  # staked
+  if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+    CB="G1" # green
+  fi
+
+  ##############################################################################
 
   clear
   # dashbord

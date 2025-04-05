@@ -42,18 +42,6 @@ for (( ; ; )); do # loop warden
   WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
   WALLET_MOVEMENT="$(grep -c "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log)"
 
-  # default
-  CB="GR"
-
-  # moved
-  if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
-    CB="Y1" # yellow
-  fi
-  # staked
-  if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
-    CB="G1" # green
-  fi
-
   ##############################################################################
 
   # store data for dash
