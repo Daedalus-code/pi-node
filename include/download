@@ -44,8 +44,9 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
     printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
   fi
 
-  # clean up __MACOSX
+  # clean up __MACOSX & zip
   rm -r "$HOME"/__MACOSX &>/dev/null
+  rm "$WALLET_DOWNLOAD".zip &>/dev/null
 
   # install deamon
   sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoind /usr/local/bin
