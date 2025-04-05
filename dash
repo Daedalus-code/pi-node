@@ -13,6 +13,7 @@ for (( ; ; )); do # loop dashbord
   SYSTEM_CLOCK="$(grep "system_clock" /tmp/dash.data.tmp | awk '{ print $3 }')"
   WALLET_POS_REWARDS="$(grep "PoS_Rewards" /tmp/dash.data.tmp | awk '{ print $3 }')"
   WALLET_MOVEMENT="$(grep "Movements" /tmp/dash.data.tmp | awk '{ print $3 }')"
+  THEME_STATUS="D"
 
   # default
   CB="GR"
@@ -30,6 +31,18 @@ for (( ; ; )); do # loop dashbord
   # if zero
   if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
     MASTER_STATUS="${GR}M${N0}"
+  fi
+  if [[ -z "$PROOF_STATUS" ]] &>/dev/null; then
+    PROOF_STATUS="${GR}0%${N0}"
+  fi
+  if [[ -z "$POS_STATUS" ]] &>/dev/null; then
+    POS_STATUS="${GR}S${N0}"
+  fi
+  if [[ -z "$TOR_STATUS" ]] &>/dev/null; then
+    TOR_STATUS="${GR}P${N0}"
+  fi
+  if [[ -z "$LAN_STATUS" ]] &>/dev/null; then
+    LAN_STATUS="${GR}null${N0}"
   fi
 
   ##############################################################################
