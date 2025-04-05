@@ -271,10 +271,10 @@ else
         # update tor configuration
         printf '%b' "[${G1}OK${N0}] Proxy   : Restarting tor!\n"
         sudo service tor@default restart
-        # update configuration
-        echo "PROXY=$PROXY" >>/etc/pi-node/config
       fi
     fi
+    # update configuration
+    echo "PROXY=$PROXY" >>/etc/pi-node/config
   fi
 
   ##############################################################################
