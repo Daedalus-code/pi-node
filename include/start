@@ -6,6 +6,9 @@ source /etc/pi-node/include/color
 source /etc/pi-node/config
 
 ################################################################################
+# daemon
+################################################################################
+
 # daemon running
 if [[ "$(pidof freedomcoind | wc -l)" -gt "0" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Daemon  : Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
@@ -20,5 +23,16 @@ else
     /usr/local/bin/./freedomcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
   fi
 fi
+
+################################################################################
+# warden screen
+################################################################################
+
+# kill old session
+screen -X -S warden quit &>/dev/null
+# create new screen session
+screen -dmS warden &>/dev/null
+# start warden
+screen -S warden -X -p 0 stuff $'bash /etc/pi-node/warden\n'
 
 # END
