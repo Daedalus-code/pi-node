@@ -44,32 +44,13 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
     printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
   fi
 
-  # change directory
-  cd "$HOME"/"$WALLET_DOWNLOAD" || exit
+  # install deamon
+  sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoind /usr/local/bin
+  printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
 
-  # if found
-  if [[ -f "$HOME"/"$WALLET_DOWNLOAD"/freedomcoin-cli ]] &>/dev/null; then
-    # if not installed
-    if [[ ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
-      # install
-      sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoin-cli /usr/local/bin
-      printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
-    else
-      printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli already installed!\n"
-    fi
-  fi
-
-  # if found
-  if [[ -f "$HOME"/"$WALLET_DOWNLOAD"/freedomcoind ]] &>/dev/null; then
-    # if not installed
-    if [[ ! -f /usr/local/bin/freedomcoind ]] &>/dev/null; then
-      # install
-      sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoind /usr/local/bin
-      printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
-    else
-      printf '%b' "[${G1}OK${N0}] mv      : freedomcoind already installed!\n"
-    fi
-  fi
+  # install client
+  sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoin-cli /usr/local/bin
+  printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
 
   # fix ownership
   sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin* 2>/dev/null
