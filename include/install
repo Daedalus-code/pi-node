@@ -69,7 +69,7 @@ MOD_FOUND="$(grep "Model" /proc/cpuinfo | awk -F: '{ print $2 }' | xargs)"
 
 # if zero
 if [[ -z "$MOD_FOUND" ]] &>/dev/null; then
-  MOD_FOUND="$(grep "vendor_id" /proc/cpuinfo | awk -F: '{ print $2 }' | head -1)"
+  MOD_FOUND="$(grep "vendor_id" /proc/cpuinfo | awk -F: '{ print $2 }' | head -1 | xargs)"
 fi
 
 ################################################################################
