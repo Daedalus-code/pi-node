@@ -222,8 +222,20 @@ if [[ "$DAE_FOUND_CTRL" -eq "0" || "$CLI_FOUND_CTRL" -eq "0" ]] &>/dev/null; the
   printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
   # change directory
   cd FreedomCoin-Core-Linux || exit
-  # sudo copy
-  sudo mv freedomCoin* /usr/local/bin
+  # if found
+  if [[ -f freedomcoin-cli ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] found   : freedomcoin-cli exist!\n"
+    # install
+    sudo mv freedomcoin-cli /usr/local/bin
+    printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
+  fi
+  # if found
+  if [[ -f freedomcoind ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] found   : freedomcoind exist!\n"
+    # install
+    sudo mv freedomcoind /usr/local/bin
+    printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
+  fi
   # fix ownership
   sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin*
   printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
