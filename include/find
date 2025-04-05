@@ -93,7 +93,7 @@ fi
 
 # if no configuration
 if [[ "$(grep -c "WALLET_CONF=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
-  printf '%b' "[${Y1}Ok${N0}] Config  : Searching for trumpcoin.conf..\n"
+  printf '%b' "[${Y1}Ok${N0}] Wallet  : Searching for trumpcoin.conf..\n"
   CON_FOUND="$(find "$HOME" -name "trumpcoin.conf" 2>/dev/null | head -1)"
   # if zero
   if [[ -z "$CON_FOUND" ]] &>/dev/null; then
