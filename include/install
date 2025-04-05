@@ -350,7 +350,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # daemon running
   if [[ "$(pidof freedomcoind | wc -l)" -gt "0" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Daemon  : Already running! PID: $DAE_PID\n"
+    printf '%b' "[${G1}OK${N0}] Daemon  : Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
   else
     printf '%b' "[${G1}OK${N0}] Daemon  : Starting daemon..\n"
     # if zero
