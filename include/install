@@ -41,46 +41,23 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 
 ################################################################################
 
-reset_install() {
-  # if missing
-  if [[ ! -d /etc/pi-node/include ]] &>/dev/null; then
-    # create install directory
-    printf '%b' "[${G1}OK${N0}] mkdir   : Creating install directory as root!\n"
-    sudo mkdir /etc/pi-node &>/dev/null
-    printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as $(whoami)!\n"
-    sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
-    printf '%b' "[${G1}OK${N0}] cp      : Installing pi-node dashbord!\n"
-    cd || exit && cp pi-node/dash /etc/pi-node
-    printf '%b' "[${G1}OK${N0}] cp -rfv : Installing directories as $(whoami)!\n"
-    cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
-    # create new configuration
-    printf '%b' "[${G1}OK${N0}] echo    : Creating new configuration!\n"
-    echo "# pi-node Configuration #
+# create install directory
+printf '%b' "[${G1}OK${N0}] mkdir   : Creating install directory as root!\n"
+sudo mkdir /etc/pi-node &>/dev/null
+printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as $(whoami)!\n"
+sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
+printf '%b' "[${G1}OK${N0}] cp      : Installing pi-node dashbord!\n"
+cd || exit && cp pi-node/dash /etc/pi-node
+printf '%b' "[${G1}OK${N0}] cp -rfv : Installing directories as $(whoami)!\n"
+cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
+# create configuration
+printf '%b' "[${G1}OK${N0}] echo    : Creating configuration..\n"
+echo "# pi-node Configuration #
   " >/etc/pi-node/config
-  fi
-}
 
 ################################################################################
 
-# if found
-if [[ -f /etc/pi-node/config ]] &>/dev/null; then
-  # new configuration
-  printf '%b' "[${N0}!!${N0}] Config  : Config found!, reset configuration? y/n "
-  read -r -p "" -n 1 -r -s
-  echo
-  # if yes/no
-  if [[ $REPLY =~ ^[Yy]$ ]] &>/dev/null; then
-    printf '%b' "[${N0}!!${N0}] Reset   : Deleting old files and directories!\n"
-    rm -r /etc/pi-node &>/dev/null
-    reset_install
-  fi
-fi
-
-reset_install
-
-################################################################################
-
-printf '%b' "[${N0}!!${N0}] Check   : Install..\n" && sleep 1
+printf '%b' "[${N0}!!${N0}] Check   : Installing..\n" && sleep 1
 printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository!\n"
 printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
 
