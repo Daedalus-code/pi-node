@@ -23,7 +23,7 @@ BLD='\e[1m'   # Bold\brighter
 # bootstrap
 ################################################################################
 
-# less than n in free space
+# if enough space
 if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -gt "7" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Blocks  : Downloading bootstrap.zip!\n"
 
