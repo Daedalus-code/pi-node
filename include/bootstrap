@@ -29,8 +29,6 @@ if ! [ -x "$(command -v dialog)" ]; then
   sudo apt-get install dialog -y
 fi
 
-export NCURSES_NO_UTF8_ACS=1
-
 ################################################################################
 
 # if enough space
