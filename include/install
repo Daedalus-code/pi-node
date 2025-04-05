@@ -219,20 +219,7 @@ else
   # start wallet daemon
   ##############################################################################
 
-  # daemon running
-  if [[ "$(pidof freedomcoind | wc -l)" -gt "0" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Daemon  : Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
-  else
-    printf '%b' "[${G1}OK${N0}] Daemon  : Starting daemon..\n"
-    # if zero
-    if [[ -z "$DATA_DIR" || -z "$WALLET_LOG_DIR" || -z "$WALLET_CONFIG" ]] &>/dev/null; then
-      # start daemon default
-      /usr/local/bin/./freedomcoind -debug=tor -proxy="${PROXY:?}" -daemon
-    else
-      # start daemon w old configuration
-      /usr/local/bin/./freedomcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
-    fi
-  fi
+  bash /etc/pi-node/include/start
 fi
 
 # END
