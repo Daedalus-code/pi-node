@@ -221,12 +221,6 @@ else
 
   # if zero
   if [[ -z "$DATA_DIR" ]] &>/dev/null; then
-    DATA_DIR="$HOME/node"
-    # if not found
-    if [[ ! -d "$HOME"/node ]] &>/dev/null; then
-      # create directory
-      mkdir "$HOME"/node &>/dev/null
-    fi
     # update configuration
     echo "DATA_DIR=/home/$(whoami)/.trumpcoin" >>/etc/pi-node/config
     echo "WALLET_LOG_DIR=/home/$(whoami)/.trumpcoin" >>/etc/pi-node/config
