@@ -227,7 +227,7 @@ if [[ "$DAE_FOUND_CTRL" -eq "0" || "$CLI_FOUND_CTRL" -eq "0" ]] &>/dev/null; the
     printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
   fi
   # change directory
-  cd FreedomCoin-Core-Linux || exit
+  cd "$HOME"/FreedomCoin-Core-Linux || exit
   # if found
   if [[ -f freedomcoin-cli ]] &>/dev/null; then
     # if not installed
