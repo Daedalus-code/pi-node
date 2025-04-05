@@ -65,7 +65,7 @@ reset_install() {
 # if found
 if [[ -f /etc/pi-node/config ]] &>/dev/null; then
   # new configuration
-  printf '%b' "[${N0}!!${N0}] Config  : Old configuration found!, reset configuration? y/n "
+  printf '%b' "[${N0}!!${N0}] Config  : Config found!, reset configuration? y/n "
   read -r -p "" -n 1 -r -s
   echo
   # if yes/no
