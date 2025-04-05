@@ -37,11 +37,17 @@ for (( ; ; )); do # loop warden
 
   ##############################################################################
 
+  REPO_VERSION="$(/usr/local/bin/./freedomcoin-cli -version | tail -1 | awk '{ print $NF }')"
+
+  ##############################################################################
+
   # store data for dash
-  echo "Progress : $WALLET_TXLAST" >/tmp/dash.data.tmp
+  echo "Progress     : $WALLET_TXLAST" >/tmp/dash.data.tmp
+  echo "Repo_version : $REPO_VERSION" >>/tmp/dash.data.tmp
 
   # output specific data
   WALLET_TXLAST="$(grep "WALLET_TXLAST=" /tmp/dash.data.tmp | awk -F= '{ print $2 }')"
+  REPO_VERSION="$(grep "REPO_VERSION=" /tmp/dash.data.tmp | awk -F= '{ print $2 }')"
 
   ##############################################################################
 
