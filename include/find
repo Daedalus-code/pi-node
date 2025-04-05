@@ -26,10 +26,10 @@ Y1='\e[93m'   # Yellow light
 if [[ "$(grep -c "WALLET_DAEMON=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
   printf '%b' "[${Y1}Ok${N0}] Daemon  : Searching for wallet daemon..\n"
   # find freedomcoi daemon
-  DAE_FOUND="$(find "$HOME" -name "freedomcoind" 2>/dev/null | head -1)"
+  DAE_FOUND="$(find /usr/local/bin -name "freedomcoind" 2>/dev/null | head -1)"
   # if zero
   if [[ -z "$DAE_FOUND" ]] &>/dev/null; then
-    DAE_FOUND="$(find /usr/local/bin -name "freedomcoind" 2>/dev/null | head -1)"
+    DAE_FOUND="$(find "$HOME" -name "freedomcoind" 2>/dev/null | head -1)"
   fi
   # if found
   if [[ -f "$DAE_FOUND" ]] &>/dev/null; then
@@ -53,13 +53,6 @@ else
   printf '%b' "[${G1}OK${N0}] Status  : Daemon $DAE_ACTIVE\n"
 fi
 
-# if zero
-if [[ -z "$DAE_FOUND" ]] &>/dev/null; then
-  # if configuration not found
-  printf '%b' "[${Y1}Ok${N0}] Daemon  : Not found!\n"
-  DAE_FOUND_CTRL="0"
-fi
-
 ################################################################################
 # find client
 ################################################################################
@@ -67,10 +60,10 @@ fi
 # if no configuration
 if [[ "$(grep -c "WALLET_CLIENT=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
   printf '%b' "[${Y1}Ok${N0}] Client  : Searching for wallet client..\n"
-  CLI_FOUND="$(find "$HOME" -name "freedomcoin-cli" 2>/dev/null | head -1)"
+  CLI_FOUND="$(find /usr/local/bin -name "freedomcoin-cli" 2>/dev/null | head -1)"
   # if zero
   if [[ -z "$CLI_FOUND" ]] &>/dev/null; then
-    CLI_FOUND="$(find /usr/local/bin -name "freedomcoin-cli" 2>/dev/null | head -1)"
+    CLI_FOUND="$(find "$HOME" -name "freedomcoin-cli" 2>/dev/null | head -1)"
   fi
   # if found
   if [[ -f "$CLI_FOUND" ]] &>/dev/null; then
@@ -92,13 +85,6 @@ else
   # if configuration found
   printf '%b' "[${G1}OK${N0}] Client  : Found ${CY}$CLI_FOUND${N0} in configuration!\n"
   printf '%b' "[${G1}OK${N0}] Status  : Client $CLI_ACTIVE\n"
-fi
-
-# if zero
-if [[ -z "$CLI_FOUND" ]] &>/dev/null; then
-  # if configuration not found
-  printf '%b' "[${Y1}Ok${N0}] Client  : Not found!\n"
-  CLI_FOUND_CTRL="0"
 fi
 
 ################################################################################
@@ -126,13 +112,6 @@ else
   printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$CON_FOUND${N0} in configuration!\n"
 fi
 
-# if zero
-if [[ -z "$CON_FOUND" ]] &>/dev/null; then
-  # if configuration not found
-  printf '%b' "[${Y1}Ok${N0}] Config  : Not found!\n"
-  CON_FOUND_CTRL="0"
-fi
-
 ################################################################################
 # find patriotnode.conf
 ################################################################################
@@ -156,13 +135,6 @@ else
   MAS_FOUND="$(grep "WALLET_MASTER=" /etc/pi-node/config | awk -F= '{ print $2 }')"
   # if configuration found
   printf '%b' "[${G1}OK${N0}] Master  : Found ${CY}$MAS_FOUND${N0} in configuration!\n"
-fi
-
-# if zero
-if [[ -z "$MAS_FOUND" ]] &>/dev/null; then
-  # if configuration not found
-  printf '%b' "[${Y1}Ok${N0}] Master  : Not found!\n"
-  MAS_FOUND_CTRL="0"
 fi
 
 # END
