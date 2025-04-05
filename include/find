@@ -55,7 +55,9 @@ fi
 
 # if zero
 if [[ -z "$DAE_FOUND" ]] &>/dev/null; then
-  DAE_FOUND_CTRL="null"
+  # if configuration not found
+  printf '%b' "[${Y1}Ok${N0}] Daemon  : Not found!\n"
+  DAE_FOUND_CTRL="0"
 fi
 
 ################################################################################
@@ -94,7 +96,9 @@ fi
 
 # if zero
 if [[ -z "$CLI_FOUND" ]] &>/dev/null; then
-  CLI_FOUND_CTRL="null"
+  # if configuration not found
+  printf '%b' "[${Y1}Ok${N0}] Client  : Not found!\n"
+  CLI_FOUND_CTRL="0"
 fi
 
 ################################################################################
@@ -124,7 +128,9 @@ fi
 
 # if zero
 if [[ -z "$CON_FOUND" ]] &>/dev/null; then
-  CON_FOUND_CTRL="null"
+  # if configuration not found
+  printf '%b' "[${Y1}Ok${N0}] Config  : Not found!\n"
+  CON_FOUND_CTRL="0"
 fi
 
 ################################################################################
@@ -154,7 +160,9 @@ fi
 
 # if zero
 if [[ -z "$MAS_FOUND" ]] &>/dev/null; then
-  MAS_FOUND_CTRL="null"
+  # if configuration not found
+  printf '%b' "[${Y1}Ok${N0}] Master  : Not found!\n"
+  MAS_FOUND_CTRL="0"
 fi
 
 # END
