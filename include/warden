@@ -41,6 +41,7 @@ for (( ; ; )); do # loop warden
   SYSTEM_CLOCK="$(date | awk '{ print $4 }')"
   WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
   WALLET_MOVEMENT="$(grep -c "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log)"
+  MASTER_STATUS=""
 
   ##############################################################################
 
