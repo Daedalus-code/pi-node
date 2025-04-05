@@ -229,7 +229,7 @@ else
     fi
     # update configuration
     echo "DATA_DIR=/home/$(whoami)/.trumpcoin" >>/etc/pi-node/config
-    echo "WALLET_LOG_DIR=/home/$(whoami)/.trumpcoin/debug.log" >>/etc/pi-node/config
+    echo "WALLET_LOG_DIR=/home/$(whoami)/.trumpcoin" >>/etc/pi-node/config
     echo "WALLET_CONFIG=/home/$(whoami).trumpcoin/trumpcoin.conf" >>/etc/pi-node/config
   fi
 
