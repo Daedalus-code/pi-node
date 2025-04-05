@@ -206,10 +206,10 @@ bash /etc/pi-node/include/find
 if [[ -d "$HOME"/freed1 ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Console : This is a VPS Server already! PID: ${G1}$(pidof freedomcoind)${N0}\n"
 else
-
   # if no daemon found, if no client found
   if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
-    printf '%b' "[${Y1}Ok${N0}] Console : Not Found ${CY}$DAE_FOUND${N0}!\n"
+    printf '%b' "[${Y1}Ok${N0}] Console : Daemon/Client not found!\n"
+
     # linux
     LATEST_RELEASE="$(curl -s https://api.github.com/repos/FreedomCoin-Project/FreedomCoin-Core/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)"
     printf '%b' "[${G1}OK${N0}] curl    : Checking latest release!\n"
@@ -236,14 +236,17 @@ else
       cd || exit && wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/download/"$LATEST_RELEASE"/"$WALLET_DOWNLOAD".zip
       printf '%b' "[${G1}OK${N0}] wget    : Download complete!\n"
     fi
+
     # if missing
     if [[ ! -d "$HOME"/"$WALLET_DOWNLOAD" ]] &>/dev/null; then
       # unzip file
       unzip "$WALLET_DOWNLOAD".zip
       printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
     fi
+
     # change directory
     cd "$HOME"/"$WALLET_DOWNLOAD" || exit
+
     # if found
     if [[ -f freedomcoin-cli ]] &>/dev/null; then
       # if not installed
@@ -255,6 +258,7 @@ else
         printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli already installed!\n"
       fi
     fi
+
     # if found
     if [[ -f freedomcoind ]] &>/dev/null; then
       # if not installed
@@ -266,6 +270,7 @@ else
         printf '%b' "[${G1}OK${N0}] mv      : freedomcoind already installed!\n"
       fi
     fi
+
     # fix ownership
     sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin* 2>/dev/null
     printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
