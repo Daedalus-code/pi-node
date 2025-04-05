@@ -45,16 +45,16 @@ reset_install() {
   # if missing
   if [[ ! -d /etc/pi-node/include ]] &>/dev/null; then
     # create install directory
-    printf '%b' "[${G1}OK${N0}] Mkdir   : Creating install directory as root!\n"
+    printf '%b' "[${G1}OK${N0}] mkdir   : Creating install directory as root!\n"
     sudo mkdir /etc/pi-node &>/dev/null
-    printf '%b' "[${G1}OK${N0}] Chown   : Updating ownership as $(whoami)!\n"
+    printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as $(whoami)!\n"
     sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
-    printf '%b' "[${G1}OK${N0}] Install : Installing pi-node dashbord!\n"
+    printf '%b' "[${G1}OK${N0}] cp      : Installing pi-node dashbord!\n"
     cd || exit && cp pi-node/dash /etc/pi-node
-    printf '%b' "[${G1}OK${N0}] Install : Installing directories as $(whoami)!\n"
+    printf '%b' "[${G1}OK${N0}] cp -rfv : Installing directories as $(whoami)!\n"
     cd || exit && cp -rfv pi-node/include /etc/pi-node | column -t
     # create new configuration
-    printf '%b' "[${G1}OK${N0}] Echo    : Creating new configuration!\n"
+    printf '%b' "[${G1}OK${N0}] echo    : Creating new configuration!\n"
     echo "# pi-node Configuration #
   " >/etc/pi-node/config
   fi
@@ -157,7 +157,7 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
   # if not enough memory
   if [[ "$(echo "$MEM_FOUND" | awk '{ print $1 }')" -lt "2000" ]] &>/dev/null; then
     printf '%b' "[${GR}!!${N0}] Memory  : Not enough memory!\n" && sleep 1
-    printf '%b' "[${G1}OK${N0}] Memory  : Creating 2G Swap..\n"
+    printf '%b' "[${G1}OK${N0}] mkswap  : Creating 2G Swap..\n"
     # create 2G swap ###########################################################
     sudo fallocate -l 2G /swapfile
     sudo chmod 600 /swapfile
@@ -166,7 +166,7 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
     ############################################################################
     # if swapfile is not already in /etc/fstab, append it
     if ! grep -q "^/swapfile swap swap defaults 0 0" /etc/fstab; then
-      printf '%b' "[${G1}OK${N0}] Memory  : Updating fstab..\n"
+      printf '%b' "[${G1}OK${N0}] echo    : Updating fstab..\n"
       echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab >/dev/null
     fi
     # backup fstab before modification
@@ -174,6 +174,10 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
     # format `/etc/fstab` properly using `column -t`
     sudo column -t /etc/fstab | sudo tee /etc/fstab >/dev/null
   fi
+  # output
+  echo "
+$(cat /etc/fstab 2>/dev/null)
+"
 else
   printf '%b' "[${GR}!!${N0}] Memory  : Error\n" && exit
 fi
@@ -208,20 +212,20 @@ if [[ "$DAE_FOUND_CTRL" == "null" || "$CLI_FOUND_CTRL" == "null" ]] &>/dev/null;
   printf '%b' "[${G1}OK${N0}] Dae/Cli : Not Found ${CY}$DAE_FOUND${N0}!\n"
   # linux
   LATEST_RELEASE="$(curl -s https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/latest | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }')"
-  printf '%b' "[${G1}OK${N0}] Release : Checking latest release!\n"
+  printf '%b' "[${G1}OK${N0}] curl    : Checking latest release!\n"
   # change directory
   cd || exit && wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/download/"$LATEST_RELEASE"/FreedomCoin-Core-Linux.zip
-  printf '%b' "[${G1}OK${N0}] WGet    : Download complete!\n"
+  printf '%b' "[${G1}OK${N0}] wget    : Download complete!\n"
   # unzip file
   unzip FreedomCoin-Core-Linux.zip
-  printf '%b' "[${G1}OK${N0}] ZIP     : Unzip complete!\n"
+  printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
   # change directory
   cd FreedomCoin-Core-Linux || exit
   # sudo copy
   sudo mv freedomCoin* /usr/local/bin
   # fix ownership
   sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin*
-  printf '%b' "[${G1}OK${N0}] Owner   : Fixing ownership!\n"
+  printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
 else
   printf '%b' "[${G1}OK${N0}] Dae/Cli : FreedomCoin Daemon and Client installed!\n"
 fi
