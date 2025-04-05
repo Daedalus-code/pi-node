@@ -101,7 +101,7 @@ if [[ "$(grep -c "WALLET_CONF=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; th
   fi
   # if found
   if [[ -f "$CON_FOUND" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Wallet  : Found ${CY}$CON_FOUND${N0}\n"
+    printf '%b' "[${G1}OK${N0}] Config  : Found ${CY}$CON_FOUND${N0}\n"
     # update configuration
     echo "WALLET_CONF=$CON_FOUND" >>/etc/pi-node/config
   fi
