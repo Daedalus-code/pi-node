@@ -2,10 +2,14 @@
 
 ################################################################################
 
-source /etc/pi-node/include/color
-source /etc/pi-node/config
-
 for (( ; ; )); do # loop dashbord
+
+  source /etc/pi-node/include/color
+  source /etc/pi-node/config
+
+  # output specific data
+  WALLET_TXLAST="$(grep "Progress" /tmp/dash.data.tmp | awk -F= '{ print $2 }')"
+  REPO_VERSION="$(grep "Repo_version" /tmp/dash.data.tmp | awk -F= '{ print $2 }')"
 
   source . # something!
 
