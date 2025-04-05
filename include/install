@@ -285,11 +285,11 @@ else
 
   # if zero
   if [[ -z "$DATA_DIR" ]] &>/dev/null; then
+    DATA_DIR="$HOME/node"
     # if not found
     if [[ ! -d "$HOME"/node ]] &>/dev/null; then
       # create directory
       mkdir "$HOME"/node &>/dev/null
-      DATA_DIR="$HOME/node"
     fi
     # update configuration
     echo "DATA_DIR=$DATA_DIR" >>/etc/pi-node/config
@@ -321,6 +321,7 @@ else
 
   # if zero
   if [[ -z "$PROXY" ]] &>/dev/null; then
+    PROXY="127.0.0.1:9050"
     # not installed
     if ! [ -x "$(command -v git)" ]; then
       printf '%b' "[${G1}OK${N0}] Proxy   : Installing tor!\n"
