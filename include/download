@@ -48,11 +48,11 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
   cd "$HOME"/"$WALLET_DOWNLOAD" || exit
 
   # if found
-  if [[ -f freedomcoin-cli ]] &>/dev/null; then
+  if [[ -f "$HOME"/"$WALLET_DOWNLOAD"/freedomcoin-cli ]] &>/dev/null; then
     # if not installed
     if [[ ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
       # install
-      sudo mv freedomcoin-cli /usr/local/bin
+      sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoin-cli /usr/local/bin
       printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
     else
       printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli already installed!\n"
@@ -60,11 +60,11 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
   fi
 
   # if found
-  if [[ -f freedomcoind ]] &>/dev/null; then
+  if [[ -f "$HOME"/"$WALLET_DOWNLOAD"/freedomcoind ]] &>/dev/null; then
     # if not installed
     if [[ ! -f /usr/local/bin/freedomcoind ]] &>/dev/null; then
       # install
-      sudo mv freedomcoind /usr/local/bin
+      sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoind /usr/local/bin
       printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
     else
       printf '%b' "[${G1}OK${N0}] mv      : freedomcoind already installed!\n"
