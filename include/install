@@ -212,7 +212,7 @@ bash /etc/pi-node/include/find
 if [[ "$DAE_FOUND_CTRL" -eq "0" || "$CLI_FOUND_CTRL" -eq "0" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Dae/Cli : Not Found ${CY}$DAE_FOUND${N0}!\n"
   # linux
-  LATEST_RELEASE="$(curl -s https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/latest | html2text 2>&1 | egrep -A1 "Releases" 2>&1 | tail -1 2>&1 | awk '{ print $2 }')"
+  LATEST_RELEASE="$(curl -s https://api.github.com/repos/FreedomCoin-Project/FreedomCoin-Core/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)"
   printf '%b' "[${G1}OK${N0}] curl    : Checking latest release!\n"
   # change directory
   cd || exit && wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/download/"$LATEST_RELEASE"/FreedomCoin-Core-Linux.zip
