@@ -68,6 +68,8 @@ if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -
     sleep 1
   fi
 
+  ##############################################################################
+
   # kill wallet
   kill -9 "$(pidof freedomcoind 2>/dev/null)" &>/dev/null
   printf '%b' "[${G1}OK${N0}] Blocks  : Extracting bootstrap.zip..\n"
@@ -77,6 +79,36 @@ if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -
   printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap.zip..\n"
   rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
   sleep 1
+
+  ##############################################################################
+
+  # if exist
+  if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
+    # backup wallet.dat
+    printf '%b' "[${G1}OK${N0}] Blocks  : Creating wallet.dat backup..\n"
+    cp "${DATA_DIR:?}"/wallet.dat /tmp/ &>/dev/null
+    # remove old blockchain files and folders
+    printf '%b' "[${G1}OK${N0}] Blocks  : Removing old blockchain..\n"
+    rm -rf "${DATA_DIR:?}"/* &>/dev/null
+    # restore wallet.dat backup
+    printf '%b' "[${G1}OK${N0}] Blocks  : Restoring wallet.dat backup..\n"
+    mv /tmp/wallet.dat "${DATA_DIR:?}" 2>/dev/null
+  fi
+
+  ##############################################################################
+
+  # move blockchain out of bootstrap folder
+  printf '%b' "[${G1}OK${N0}] Blocks  : Installing blockchain..\n"
+  mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}" 2>/dev/null
+  # remove old bootstrap
+  printf '%b' "[${G1}OK${N0}] Blocks  : Removing old files..\n"
+  rm -r "${DATA_DIR:?}"/bootstrap &>/dev/null
+
+  ##############################################################################
+
+  # remove bootstrap
+  printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap files..\n"
+  rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
 else
   printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip!\n"
 fi
