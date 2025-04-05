@@ -46,8 +46,8 @@ for (( ; ; )); do # loop warden
   echo "Repo_version : $REPO_VERSION" >>/tmp/dash.data.tmp
 
   # output specific data
-  WALLET_TXLAST="$(grep "WALLET_TXLAST=" /tmp/dash.data.tmp | awk -F= '{ print $2 }')"
-  REPO_VERSION="$(grep "REPO_VERSION=" /tmp/dash.data.tmp | awk -F= '{ print $2 }')"
+  WALLET_TXLAST="$(grep "Progress" /tmp/dash.data.tmp | awk -F= '{ print $2 }')"
+  REPO_VERSION="$(grep "Repo_version" /tmp/dash.data.tmp | awk -F= '{ print $2 }')"
 
   ##############################################################################
 
