@@ -17,8 +17,8 @@ fi
 
 ################################################################################
 
-# if exist
-if [[ -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
+# if missing
+if [[ ! -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
   # if enough space
   if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G')" -gt "7" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Blocks  : Downloading bootstrap.zip!\n"
