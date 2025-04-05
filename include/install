@@ -227,14 +227,12 @@ if [[ "$DAE_FOUND_CTRL" -eq "0" || "$CLI_FOUND_CTRL" -eq "0" ]] &>/dev/null; the
   cd FreedomCoin-Core-Linux || exit
   # if found
   if [[ -f freedomcoin-cli ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] found   : freedomcoin-cli exist!\n"
     # install
     sudo mv freedomcoin-cli /usr/local/bin
     printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
   fi
   # if found
   if [[ -f freedomcoind ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] found   : freedomcoind exist!\n"
     # install
     sudo mv freedomcoind /usr/local/bin
     printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
@@ -244,6 +242,67 @@ if [[ "$DAE_FOUND_CTRL" -eq "0" || "$CLI_FOUND_CTRL" -eq "0" ]] &>/dev/null; the
   printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
 else
   printf '%b' "[${G1}OK${N0}] Dae/Cli : FreedomCoin Daemon and Client installed!\n"
+fi
+
+################################################################################
+# wallet configuration
+################################################################################
+
+DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+if [[ -n "$DATA_DIR" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Pi-Node : Old data directory found!\n"
+else
+  # run default
+  DATA_DIR="."
+fi
+
+WALLET_LOG_DIR="$(grep "WALLET_LOG_DIR=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+if [[ -n "$WALLET_LOG_DIR" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Pi-Node : Old log directory found!\n"
+else
+  # run default
+  WALLET_LOG_DIR="."
+fi
+
+WALLET_CONFIG="$(grep "WALLET_CONFIG=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+if [[ -n "$WALLET_CONFIG" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Pi-Node : Old wallet config found!\n"
+else
+  # run default
+  WALLET_CONFIG="."
+fi
+
+PROXY="$(grep "PROXY=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+if [[ -n "$PROXY" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Pi-Node : Old proxy setup found!\n"
+  # check for tor install
+  if ! [ -x "$(command -v git)" ]; then
+    printf '%b' "[${G1}OK${N0}] Proxy   : Installing tor!\n"
+    sudo apt-get install tor -y
+    # if missing
+    if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" -eq "0" ]] &>/dev/null; then
+      # update tor configuration
+      printf '%b' "[${G1}OK${N0}] Proxy   : Updating configuration!\n"
+      echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
+HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
+      # update tor configuration
+      printf '%b' "[${G1}OK${N0}] Proxy   : Restarting tor!\n"
+      sudo service tor@default restart
+    fi
+  fi
+fi
+
+################################################################################
+# start wallet daemon
+################################################################################
+
+# daemon running
+if [[ "$DAE_PID" -gt "0" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Daemon  : Already running! PID: $DAE_PID\n"
+else
+  printf '%b' "[${G1}OK${N0}] Daemon  : Starting daemon..\n"
+  # start daemon
+  /usr/local/bin/freedomcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
 fi
 
 # END
