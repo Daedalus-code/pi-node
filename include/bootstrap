@@ -3,25 +3,7 @@
 ################################################################################
 
 source /etc/pi-node/config
-
-################################################################################
-
-# colors
-B0='\e[34m'   # Blue
-B1='\e[94m'   # Blue light
-CY='\e[36m'   # Cyan
-C1='\e[96m'   # Cyan light
-G0='\e[32m'   # Green
-G1='\e[92m'   # Green light
-GR='\e[90m'   # Grey
-N0='\033[0m'  # No color
-P0='\e[0;35m' # Purple
-P1='\e[1;35m' # Purple light
-R0='\e[31m'   # Red
-R1='\e[91m'   # Red light
-Y0='\e[33m'   # Yellow
-Y1='\e[93m'   # Yellow light
-BLD='\e[1m'   # Bold\brighter
+source /etc/pi-node/include/color
 
 ################################################################################
 # bootstrap

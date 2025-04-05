@@ -1,0 +1,149 @@
+#!/bin/bash
+
+################################################################################
+
+source /etc/pi-node/include/color
+
+################################################################################
+
+# if no daemon found, if no client found
+if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
+  printf '%b' "[${Y1}Ok${N0}] Console : Daemon/Client not found!\n"
+
+  # linux
+  LATEST_RELEASE="$(curl -s https://api.github.com/repos/FreedomCoin-Project/FreedomCoin-Core/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)"
+  printf '%b' "[${G1}OK${N0}] curl    : Checking latest release!\n"
+
+  # machine
+  UNAME_M="$(uname -m)"
+
+  if [[ "$(echo "$UNAME_M" | grep -c "x86_64")" == "1" ]] &>/dev/null; then
+    # x86_64
+    WALLET_DOWNLOAD="FreedomCoin-Core-Linux"
+  fi
+  if [[ "$(echo "$UNAME_M" | grep -c "aarch64")" == "1" ]] &>/dev/null; then
+    # aarch64
+    WALLET_DOWNLOAD="FreedomCoin-Core-Linux"
+  fi
+  if [[ "$(echo "$UNAME_M" | grep -c "arm")" == "1" ]] &>/dev/null; then
+    # arm
+    WALLET_DOWNLOAD="FreedomCoin_arm"
+  fi
+
+  # if missing
+  if [[ ! -f "$HOME"/"$WALLET_DOWNLOAD".zip ]] &>/dev/null; then
+    # change directory, download WALLET_DOWNLOAD.zip
+    cd || exit && wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/download/"$LATEST_RELEASE"/"$WALLET_DOWNLOAD".zip
+    printf '%b' "[${G1}OK${N0}] wget    : Download complete!\n"
+  fi
+
+  # if missing
+  if [[ ! -d "$HOME"/"$WALLET_DOWNLOAD" ]] &>/dev/null; then
+    # unzip file
+    unzip "$WALLET_DOWNLOAD".zip
+    printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
+  fi
+
+  # change directory
+  cd "$HOME"/"$WALLET_DOWNLOAD" || exit
+
+  # if found
+  if [[ -f freedomcoin-cli ]] &>/dev/null; then
+    # if not installed
+    if [[ ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
+      # install
+      sudo mv freedomcoin-cli /usr/local/bin
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
+    else
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli already installed!\n"
+    fi
+  fi
+
+  # if found
+  if [[ -f freedomcoind ]] &>/dev/null; then
+    # if not installed
+    if [[ ! -f /usr/local/bin/freedomcoind ]] &>/dev/null; then
+      # install
+      sudo mv freedomcoind /usr/local/bin
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
+    else
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoind already installed!\n"
+    fi
+  fi
+
+  # fix ownership
+  sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin* 2>/dev/null
+  printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
+else
+  printf '%b' "[${G1}OK${N0}] Console : FreedomCoin Daemon and Client installed!\n"
+fi
+
+##############################################################################
+# wallet configuration
+##############################################################################
+
+# old pi-node data configuration
+DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+if [[ -n "$DATA_DIR" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Pi-Node : Old data directory found!\n"
+fi
+
+# if zero
+if [[ -z "$DATA_DIR" ]] &>/dev/null; then
+  DATA_DIR="$HOME/node"
+  # if not found
+  if [[ ! -d "$HOME"/node ]] &>/dev/null; then
+    # create directory
+    mkdir "$HOME"/node &>/dev/null
+  fi
+  # update configuration
+  echo "DATA_DIR=$DATA_DIR" >>/etc/pi-node/config
+fi
+
+##############################################################################
+
+# old pi-node log configuration
+WALLET_LOG_DIR="$(grep "WALLET_LOG_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+if [[ -n "$WALLET_LOG_DIR" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Pi-Node : Old log directory found!\n"
+fi
+
+##############################################################################
+
+# old pi-node wallet configuration
+WALLET_CONFIG="$(grep "WALLET_CONFIG=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+if [[ -n "$WALLET_CONFIG" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Pi-Node : Old wallet config found!\n"
+fi
+
+##############################################################################
+
+# old pi-node proxy configuration
+PROXY="$(grep "PROXY=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+if [[ -n "$PROXY" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Pi-Node : Old proxy setup found!\n"
+fi
+
+# if zero
+if [[ -z "$PROXY" ]] &>/dev/null; then
+  PROXY="127.0.0.1:9050"
+  # not installed
+  if ! [ -x "$(command -v git)" ]; then
+    printf '%b' "[${G1}OK${N0}] Proxy   : Installing tor!\n"
+    sudo apt-get install tor -y
+    # if missing
+    if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" -eq "0" ]] &>/dev/null; then
+      # update tor configuration
+      printf '%b' "[${G1}OK${N0}] Proxy   : Updating configuration!\n"
+      echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
+HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
+      # update tor configuration
+      printf '%b' "[${G1}OK${N0}] Proxy   : Restarting tor!\n"
+      sudo service tor@default restart
+      # update configuration
+      echo "PROXY=$PROXY" >>/etc/pi-node/config
+    fi
+  fi
+fi
+
+# END
