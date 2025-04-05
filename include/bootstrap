@@ -106,7 +106,7 @@ if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -
   printf '%b' "[${G1}OK${N0}] Blocks  : Installing blockchain..\n"
   mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
 else
-  printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip, skipping!\n"
+  printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip, skipping..\n"
 fi
 
 # END
