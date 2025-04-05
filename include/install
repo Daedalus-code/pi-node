@@ -215,13 +215,13 @@ if [[ "$DAE_FOUND_CTRL" -eq "0" || "$CLI_FOUND_CTRL" -eq "0" ]] &>/dev/null; the
   LATEST_RELEASE="$(curl -s https://api.github.com/repos/FreedomCoin-Project/FreedomCoin-Core/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)"
   printf '%b' "[${G1}OK${N0}] curl    : Checking latest release!\n"
   # if missing
-  if [[ ! -f FreedomCoin-Core-Linux.zip ]] &>/dev/null; then
+  if [[ ! -f "$HOME"/FreedomCoin-Core-Linux.zip ]] &>/dev/null; then
     # change directory, download FreedomCoin-Core-Linux.zip
     cd || exit && wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/download/"$LATEST_RELEASE"/FreedomCoin-Core-Linux.zip
     printf '%b' "[${G1}OK${N0}] wget    : Download complete!\n"
   fi
   # if missing
-  if [[ ! -d FreedomCoin-Core-Linux ]] &>/dev/null; then
+  if [[ ! -d "$HOME"/FreedomCoin-Core-Linux ]] &>/dev/null; then
     # unzip file
     unzip FreedomCoin-Core-Linux.zip
     printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
