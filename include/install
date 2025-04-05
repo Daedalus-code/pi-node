@@ -204,7 +204,7 @@ bash /etc/pi-node/include/find
 
 # if VPS already, skip this
 if [[ -d "$HOME"/freed1 ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Console : This is a VPS Server already!\n"
+  printf '%b' "[${G1}OK${N0}] Console : This is a VPS Server already! PID: ${G1}$(pidof freedomcoind)${N0}\n"
 else
 
   # if no daemon found, if no client found
