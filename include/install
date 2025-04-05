@@ -45,7 +45,7 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 printf '%b' "[${G1}OK${N0}] mkdir   : Creating install directory as root!\n"
 sudo mkdir /etc/pi-node &>/dev/null
 printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as $(whoami)!\n"
-sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
+sudo chown "$(whoami)":"$(whoami)" /etc/pi-node 2>/dev/null
 printf '%b' "[${G1}OK${N0}] cp      : Installing pi-node dashbord!\n"
 cd || exit && cp pi-node/dash /etc/pi-node
 printf '%b' "[${G1}OK${N0}] cp -rf  : Installing directories as $(whoami)!\n"
@@ -267,7 +267,7 @@ else
       fi
     fi
     # fix ownership
-    sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin*
+    sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin* 2>/dev/null
     printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
   else
     printf '%b' "[${G1}OK${N0}] Console : FreedomCoin Daemon and Client installed!\n"
