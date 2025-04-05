@@ -39,6 +39,6 @@ screen -X -S warden quit &>/dev/null
 # create new screen session
 screen -dmS warden &>/dev/null
 # start warden
-screen -S warden -X -p 0 stuff $'bash /etc/pi-node/warden\n'
+screen -S warden -X -p 0 stuff $'bash /etc/pi-node/include/warden\n'
 
 # END
