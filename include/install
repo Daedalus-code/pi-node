@@ -258,7 +258,7 @@ else
   fi
 
   # not installed
-  if ! [ -x "$(command -v git)" ]; then
+  if ! [ -x "$(command -v tor)" ]; then
     printf '%b' "[${G1}OK${N0}] Proxy   : Installing tor!\n"
     sudo apt-get install tor -y
   fi
