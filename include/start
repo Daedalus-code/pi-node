@@ -28,6 +28,12 @@ fi
 # warden screen
 ################################################################################
 
+# not installed
+if ! [ -x "$(command -v screen)" ]; then
+  printf '%b' "[${G1}OK${N0}] Proxy   : Installing screen!\n"
+  sudo apt-get install screen -y
+fi
+
 # kill old session
 screen -X -S warden quit &>/dev/null
 # create new screen session
