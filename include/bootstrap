@@ -99,19 +99,19 @@ if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -
 
   # move blockchain out of bootstrap folder
   printf '%b' "[${G1}OK${N0}] Blocks  : Installing blockchain..\n"
-  mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}" 2>/dev/null
+  mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
+
+  ##############################################################################
+
   # if installed
   if [[ -d "$DATA_DIR"/blocks ]] &>/dev/null; then
     # remove old bootstrap
     printf '%b' "[${G1}OK${N0}] Blocks  : Removing old files..\n"
     rm -r "${DATA_DIR:?}"/bootstrap &>/dev/null
+    # remove bootstrap
+    printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap files..\n"
+    rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
   fi
-
-  ##############################################################################
-
-  # remove bootstrap
-  printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap files..\n"
-  rm -R /home/"$(whoami)"/bootstrap /home/"$(whoami)"/bootstrap.zip &>/dev/null
 else
   printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip!\n"
 fi
