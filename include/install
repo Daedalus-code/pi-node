@@ -223,7 +223,7 @@ if [[ "$DAE_FOUND_CTRL" == "null" || "$CLI_FOUND_CTRL" == "null" ]] &>/dev/null;
   sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin*
   printf '%b' "[${G1}OK${N0}] Owner   : Fixing ownership!\n"
 else
-  printf '%b' "[${G1}OK${N0}] Dae/Cli : Daemon and Client installed!\n"
+  printf '%b' "[${G1}OK${N0}] Dae/Cli : FreedomCoin Daemon and Client installed!\n"
 fi
 
 # END
