@@ -72,13 +72,6 @@ if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -
 
   # kill wallet
   kill -9 "$(pidof freedomcoind 2>/dev/null)" &>/dev/null
-  printf '%b' "[${G1}OK${N0}] Blocks  : Extracting bootstrap.zip..\n"
-
-  # unzip bootstrap.zip
-  unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
-  printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap.zip..\n"
-  rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
-  sleep 1
 
   ##############################################################################
 
@@ -94,6 +87,18 @@ if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -
     printf '%b' "[${G1}OK${N0}] Blocks  : Restoring wallet.dat backup..\n"
     mv /tmp/wallet.dat "${DATA_DIR:?}" 2>/dev/null
   fi
+
+  ##############################################################################
+
+  # remove old blockchain
+  printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap.zip..\n"
+  rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
+
+  ##############################################################################
+
+  # unzip bootstrap.zip
+  printf '%b' "[${G1}OK${N0}] Blocks  : Extracting bootstrap.zip..\n"
+  unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
 
   ##############################################################################
 
