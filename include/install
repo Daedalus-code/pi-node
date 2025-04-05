@@ -227,15 +227,25 @@ if [[ "$DAE_FOUND_CTRL" -eq "0" || "$CLI_FOUND_CTRL" -eq "0" ]] &>/dev/null; the
   cd FreedomCoin-Core-Linux || exit
   # if found
   if [[ -f freedomcoin-cli ]] &>/dev/null; then
-    # install
-    sudo mv freedomcoin-cli /usr/local/bin
-    printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
+    # if not installed
+    if [[ ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
+      # install
+      sudo mv freedomcoin-cli /usr/local/bin
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
+    else
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli already installed!\n"
+    fi
   fi
   # if found
   if [[ -f freedomcoind ]] &>/dev/null; then
-    # install
-    sudo mv freedomcoind /usr/local/bin
-    printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
+    # if not installed
+    if [[ ! -f /usr/local/bin/freedomcoind ]] &>/dev/null; then
+      # install
+      sudo mv freedomcoind /usr/local/bin
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
+    else
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoind already installed!\n"
+    fi
   fi
   # fix ownership
   sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin*
