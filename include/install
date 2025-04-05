@@ -48,7 +48,7 @@ printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as $(whoami)!\n"
 sudo chown "$(whoami)":"$(whoami)" /etc/pi-node
 printf '%b' "[${G1}OK${N0}] cp      : Installing pi-node dashbord!\n"
 cd || exit && cp pi-node/dash /etc/pi-node
-printf '%b' "[${G1}OK${N0}] cp -rfv : Installing directories as $(whoami)!\n"
+printf '%b' "[${G1}OK${N0}] cp -rf  : Installing directories as $(whoami)!\n"
 cd || exit && cp -rf pi-node/include /etc/pi-node
 # create configuration
 printf '%b' "[${G1}OK${N0}] echo    : Creating configuration..\n"
