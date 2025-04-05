@@ -290,9 +290,9 @@ else
       # create directory
       mkdir "$HOME"/node &>/dev/null
       DATA_DIR="$HOME/node"
-      # update configuration
-      echo "DATA_DIR=$DATA_DIR" >>/etc/pi-node/config
     fi
+    # update configuration
+    echo "DATA_DIR=$DATA_DIR" >>/etc/pi-node/config
   fi
 
   ##############################################################################
@@ -334,6 +334,8 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
         # update tor configuration
         printf '%b' "[${G1}OK${N0}] Proxy   : Restarting tor!\n"
         sudo service tor@default restart
+        # update configuration
+        echo "PROXY=$PROXY" >>/etc/pi-node/config
       fi
     fi
   fi
