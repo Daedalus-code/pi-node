@@ -175,8 +175,8 @@ if [[ -n "$MEM_FOUND" ]] &>/dev/null; then
     sudo column -t /etc/fstab | sudo tee /etc/fstab >/dev/null
   fi
   # output
-  printf '%b' "
-[${G1}OK${N0}] fstab   : Output data
+  printf '%b' "[${G1}OK${N0}] fstab   : Output data
+
 $(cat /etc/fstab 2>/dev/null | column -t)
 \n"
 else
