@@ -90,6 +90,11 @@ VER_FOUND="$(uname -v)"
 REL_FOUND="$(uname -r)"
 MOD_FOUND="$(grep "Model" /proc/cpuinfo | awk -F: '{ print $2 }' | xargs)"
 
+# if zero
+if [[ -z "$MOD_FOUND" ]] &>/dev/null; then
+  MOD_FOUND="$(grep "vendor_id" /proc/cpuinfo)"
+fi
+
 ################################################################################
 
 CPU_FOUND="$(grep "model name" /proc/cpuinfo | head -1 | awk -F: '{ print $2 }' | xargs)"
@@ -101,11 +106,23 @@ fi
 
 ################################################################################
 
+BOG_FOUND="$(egrep "bogomips|BogoMIPS" /proc/cpuinfo | awk '{ print $NF }' | head -1)"
 COR_FOUND="$(egrep -c "bogomips|BogoMIPS" /proc/cpuinfo)"
 MEM_FOUND="$(echo "$(echo "$(grep "MemTotal" /proc/meminfo | awk '{ print $2 }')+"$(grep "SwapTotal" /proc/meminfo | awk '{ print $2 }') | bc -l 2>/dev/null)/1024" | bc 2>/dev/null) MB"
 HDD_FOUND="$(df -h --total | tail -1 | xargs | tr -d '-')"
 HDD_TOTAL="$(echo "$HDD_FOUND" | awk '{ print $2 }')"
 HDD_FREE="$(echo "$HDD_FOUND" | awk '{ print $4 }')"
+
+################################################################################
+# bogomips
+################################################################################
+
+# if found
+if [[ -n "$BOG_FOUND" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Score   : BogoMIPS: ${CY}$BOG_FOUND${N0}\n"
+else
+  printf '%b' "[${GR}!!${N0}] Score   : Error\n" && exit
+fi
 
 ################################################################################
 # kernal release version
