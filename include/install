@@ -255,27 +255,30 @@ else
     printf '%b' "[${G1}OK${N0}] Pi-Node : Old proxy setup found!\n"
   fi
 
+  # not installed
+  if ! [ -x "$(command -v git)" ]; then
+    printf '%b' "[${G1}OK${N0}] Proxy   : Installing tor!\n"
+    sudo apt-get install tor -y
+  fi
+
+  # if missing
+  if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" -eq "0" ]] &>/dev/null; then
+    # update tor configuration
+    printf '%b' "[${G1}OK${N0}] Proxy   : Updating configuration!\n"
+    echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
+HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
+    # update tor configuration
+    printf '%b' "[${G1}OK${N0}] Proxy   : Restarting tor!\n"
+    sudo service tor@default restart
+  fi
+
   # if zero
   if [[ -z "$PROXY" ]] &>/dev/null; then
     PROXY="127.0.0.1:9050"
-    # not installed
-    if ! [ -x "$(command -v git)" ]; then
-      printf '%b' "[${G1}OK${N0}] Proxy   : Installing tor!\n"
-      sudo apt-get install tor -y
-      # if missing
-      if [[ "$(grep -c "FreedomCoin-service" /etc/tor/torrc)" -eq "0" ]] &>/dev/null; then
-        # update tor configuration
-        printf '%b' "[${G1}OK${N0}] Proxy   : Updating configuration!\n"
-        echo "HiddenServiceDir /var/lib/tor/FreedomCoin-service/
-  HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
-        # update tor configuration
-        printf '%b' "[${G1}OK${N0}] Proxy   : Restarting tor!\n"
-        sudo service tor@default restart
-      fi
-    fi
-    # update configuration
-    echo "PROXY=$PROXY" >>/etc/pi-node/config
   fi
+
+  # update configuration
+  echo "PROXY=$PROXY" >>/etc/pi-node/config
 
   ##############################################################################
   # bootstrap
