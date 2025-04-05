@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# CPU architecture
+CPU_ARCH=$(uname -m)
+# CPU cores
+CPU_CORES=$(nproc)
+
+# if architecture exist
+if [[ $CPU_ARCH == "aarch64" || $CPU_ARCH == "armv7l" || $CPU_ARCH == "x86_64" ]] &>/dev/null; then
+  echo "Detected $CPU_ARCH with $CPU_CORES cores."
+else
+  echo "Unsupported architecture. Exiting."
+  exit 1
+fi
+
+# install dependencies
+echo "Please wait. Installing dependencies..."
+# if missing
+if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
+  echo "updated $(date | xargs)" >/tmp/upd.tmp
+  sudo apt-get update
+fi
+sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev make autoconf libtool automake pkg-config
+sudo apt-get autoremove
+
+# start counting (seconds)
+START="$SECONDS"
+
+# check for and download berkeley DB if needed
+if [[ ! -f "$HOME/install_db4.sh" ]] &>/dev/null; then
+  cd || exit
+  wget https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
+  bash install_db4.sh "$HOME"
+  # build and install Berkeley DB
+  cd "$HOME/db4/db-4.8.30.NC" || exit
+  export BDB_PREFIX="$HOME/db4"
+  ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8.a" BDB_CFLAGS="-I${BDB_PREFIX}/include"
+  sudo make -j"$CPU_CORES"
+  sudo make install
+  # copy Berkeley DB header files
+  sudo cp /usr/local/berkeleydb/include/* /usr/include/
+fi
+
+# if repo doesnt exist
+if [[ ! -d "$HOME/${WALLET_NAME}-Core" ]] &>/dev/null; then
+  # download and extract wallet source
+  cd "$HOME" || exit
+  git clone "https://github.com/${WALLET_NAME}-Project/${WALLET_NAME}-Core.git"
+fi
+
+# set user ownership
+sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME}-Core"/
+
+# build dependencies without Qt
+cd "$HOME/${WALLET_NAME}-Core/depends" || exit
+make HOST=arm-linux-gnueabihf NO_QT=1 -j"$CPU_CORES"
+
+# build wallet without wallet and GUI
+cd "$HOME/${WALLET_NAME}-Core" || exit
+./autogen.sh
+./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --without-gui
+make -j"$CPU_CORES"
+
+# copy binaries
+sudo cp "$HOME"/"${WALLET_NAME}-Core"/src/"${WALLET_DAEMON}" src/"${WALLET_CLIENT}" "$HOME" &>/dev/null
+
+# calculate build time
+DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
+TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
+
+# built wallet exist
+if [[ -f /home/"$(whoami)"/"${WALLET_DAEMON}" && -f /home/"$(whoami)"/"${WALLET_CLIENT}" ]] &>/dev/null; then
+  echo "Installing daemon and cli.."
+  sudo cp /home/"$(whoami)"/"${WALLET_DAEMON}" /usr/local/bin &>/dev/null
+  sudo cp /home/"$(whoami)"/"${WALLET_CLIENT}" /usr/local/bin &>/dev/null
+fi
+
+echo
+printf '%b' "Build time: ${GR}$TIMER${N0}\n"
+echo
+read -r -p "[Ok] Press Enter to continue" </dev/tty
+echo
+
+# END
