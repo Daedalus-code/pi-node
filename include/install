@@ -185,7 +185,7 @@ fi
 if [[ -n "$HDD_FOUND" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Drive   : Total $HDD_TOTAL Free $HDD_FREE\n"
   # if not enough space
-  if [[ "$(echo "$HDD_FREE" | egrep "[0-9]+")" -lt "8" ]] &>/dev/null; then
+  if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -gt "7" ]] &>/dev/null; then
     printf '%b' "[${GR}!!${N0}] Drive   : Not enough space..\n" && exit
   fi
 else
@@ -278,43 +278,45 @@ else
   ##############################################################################
 
   # old pi-node data configuration
-  DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+  DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$DATA_DIR" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Pi-Node : Old data directory found!\n"
   else
     # run default
+    printf '%b' "[${G1}OK${N0}] Pi-Node : Use default data dir '.'\n"
     DATA_DIR="."
   fi
 
   ##############################################################################
 
   # old pi-node log configuration
-  WALLET_LOG_DIR="$(grep "WALLET_LOG_DIR=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+  WALLET_LOG_DIR="$(grep "WALLET_LOG_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$WALLET_LOG_DIR" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Pi-Node : Old log directory found!\n"
   else
     # run default
+    printf '%b' "[${G1}OK${N0}] Pi-Node : Use default log dir '.'\n"
     WALLET_LOG_DIR="."
   fi
 
   ##############################################################################
 
   # old pi-node wallet configuration
-  WALLET_CONFIG="$(grep "WALLET_CONFIG=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+  WALLET_CONFIG="$(grep "WALLET_CONFIG=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$WALLET_CONFIG" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Pi-Node : Old wallet config found!\n"
   else
     # run default
+    printf '%b' "[${G1}OK${N0}] Pi-Node : Use default config dir '.'\n"
     WALLET_CONFIG="."
   fi
 
   ##############################################################################
 
   # old pi-node proxy configuration
-  PROXY="$(grep "PROXY=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+  PROXY="$(grep "PROXY=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$PROXY" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Pi-Node : Old proxy setup found!\n"
-    # check for tor install
   fi
 
   # if zero

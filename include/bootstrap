@@ -24,7 +24,7 @@ BLD='\e[1m'   # Bold\brighter
 ################################################################################
 
 # less than n in free space
-if [[ "$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G')" -lt "6" ]] &>/dev/null; then
+if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -gt "7" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Blocks  : Downloading bootstrap.zip!\n"
 
   # if zero
