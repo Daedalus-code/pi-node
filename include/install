@@ -217,9 +217,12 @@ if [[ "$DAE_FOUND_CTRL" -eq "0" || "$CLI_FOUND_CTRL" -eq "0" ]] &>/dev/null; the
   # change directory
   cd || exit && wget -c https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/download/"$LATEST_RELEASE"/FreedomCoin-Core-Linux.zip
   printf '%b' "[${G1}OK${N0}] wget    : Download complete!\n"
-  # unzip file
-  unzip FreedomCoin-Core-Linux.zip
-  printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
+  # if missing
+  if [[ ! -d FreedomCoin-Core-Linux ]]; then
+    # unzip file
+    unzip FreedomCoin-Core-Linux.zip
+    printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
+  fi
   # change directory
   cd FreedomCoin-Core-Linux || exit
   # if found
