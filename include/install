@@ -227,12 +227,12 @@ bash /etc/pi-node/include/find
 
 # if VPS already, skip this
 if [[ -d "$HOME"/freed1 ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Dae/Cli : This is a VPS Server already!\n"
+  printf '%b' "[${G1}OK${N0}] Console : This is a VPS Server already!\n"
 else
 
   # if no daemon found, if no client found
   if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]] &>/dev/null; then
-    printf '%b' "[${Y1}Ok${N0}] Dae/Cli : Not Found ${CY}$DAE_FOUND${N0}!\n"
+    printf '%b' "[${Y1}Ok${N0}] Console : Not Found ${CY}$DAE_FOUND${N0}!\n"
     # linux
     LATEST_RELEASE="$(curl -s https://api.github.com/repos/FreedomCoin-Project/FreedomCoin-Core/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)"
     printf '%b' "[${G1}OK${N0}] curl    : Checking latest release!\n"
@@ -293,7 +293,7 @@ else
     sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin*
     printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
   else
-    printf '%b' "[${G1}OK${N0}] Dae/Cli : FreedomCoin Daemon and Client installed!\n"
+    printf '%b' "[${G1}OK${N0}] Console : FreedomCoin Daemon and Client installed!\n"
   fi
 
   ##############################################################################
