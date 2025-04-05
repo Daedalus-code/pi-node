@@ -2,7 +2,8 @@
 
 ################################################################################
 
-source /etc/pinode/config 2>&1
+source /etc/pi-node/include/color
+source /etc/pi-node/config
 
 for (( ; ; )); do # loop dashbord
 
