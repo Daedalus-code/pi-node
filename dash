@@ -11,6 +11,8 @@ for (( ; ; )); do # loop dashbord
   WALLET_TXLAST="$(grep "Progress" /tmp/dash.data.tmp | awk '{ print $3 }')"
   REPO_VERSION="$(grep "Repo_version" /tmp/dash.data.tmp | awk '{ print $3 }')"
   SYSTEM_CLOCK="$(grep "system_clock" /tmp/dash.data.tmp | awk '{ print $3 }')"
+  WALLET_POS_REWARDS="$(grep "PoS_Rewards" /tmp/dash.data.tmp | awk '{ print $3 }')"
+  WALLET_MOVEMENT="$(grep "Movements" /tmp/dash.data.tmp | awk '{ print $3 }')"
 
   source . # something!
 

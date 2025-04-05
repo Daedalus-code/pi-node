@@ -39,6 +39,20 @@ for (( ; ; )); do # loop warden
 
   REPO_VERSION="$(/usr/local/bin/./freedomcoin-cli -version | tail -1 | awk '{ print $NF }')"
   SYSTEM_CLOCK="$(date | awk '{ print $4 }')"
+  WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
+  WALLET_MOVEMENT="$(grep -c "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log)"
+
+  # default
+  CB="GR"
+
+  # moved
+  if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
+    CB="Y1" # yellow
+  fi
+  # staked
+  if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+    CB="G1" # green
+  fi
 
   ##############################################################################
 
@@ -46,6 +60,8 @@ for (( ; ; )); do # loop warden
   echo "Progress     : $WALLET_TXLAST" >/tmp/dash.data.tmp
   echo "Repo_version : $REPO_VERSION" >>/tmp/dash.data.tmp
   echo "system_clock : $SYSTEM_CLOCK" >>/tmp/dash.data.tmp
+  echo "PoS_Rewards  : $WALLET_POS_REWARDS" >>/tmp/dash.data.tmp
+  echo "Movements    : $WALLET_MOVEMENT" >>/tmp/dash.data.tmp
 
   ##############################################################################
 
