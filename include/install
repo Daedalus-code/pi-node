@@ -255,59 +255,10 @@ else
 fi
 
 ################################################################################
-# bootstrap
-################################################################################
-
-# less than n in free space
-if [[ "$(echo "$HDD_FREE" | tr -d 'G')" -gt "6" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Blocks  : Downloading bootstrap.zip!\n"
-
-  # if zero
-  if [[ -z "$BOOTSTRAP_URL" ]] &>/dev/null; then
-    BOOTSTRAP_URL="https://freedomcoin.global/wallets/bootstrap.zip"
-  fi
-
-  # bootstrap file
-  OUTPUT_FILE="$(echo "$BOOTSTRAP_URL" | awk -F/ '{ print $NF }')"
-  cd || exit
-  # start the download and process progress
-  wget -c --progress=dot:mega "$BOOTSTRAP_URL" 2>&1 |
-    # capture the progress line with percentage, speed, and eta
-    grep --line-buffered "[0-9]% " |
-    while read -r LINE; do
-      # extract the percentage, speed, size and eta using regex
-      PERCENT=$(echo "$LINE" | awk -F% '{ print $1 }' | awk '{ print $NF }"%"')
-      SPEED=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $1 }')
-      SIZE=$(echo "$LINE" | awk '{ print $1 }')
-      ETA=$(echo "$LINE" | awk -F% '{ print $2 }' | awk '{ print $2 }')
-      # output progress to dialog (display the progress bar)
-      echo "$PERCENT" | dialog --title "Downloading $OUTPUT_FILE..." --gauge "\nURL....: $BOOTSTRAP_URL\nSpeed..: $SPEED/sec\nSize...: ${SIZE}\nETA....: $ETA" 11 65
-      sleep 1
-    done
-  RESULT=$?
-  # if any result
-  if [ ! $RESULT -eq "0" ] &>/dev/null; then
-    echo "[!!] Download failed"
-    sleep 1
-  fi
-
-  # kill wallet
-  kill -9 "$(pidof "${WALLET_DAEMON:?}" 2>/dev/null)" &>/dev/null
-  printf '%b' "[${G1}OK${N0}] Blocks  : Extracting bootstrap.zip..\n"
-
-  # unzip bootstrap.zip
-  unzip /home/"$(whoami)"/bootstrap.zip -d "${DATA_DIR:?}"
-  printf '%b' "[${G1}OK${N0}] Blocks  : Removing bootstrap.zip..\n"
-  rm /home/"$(whoami)"/bootstrap.zip &>/dev/null
-  sleep 1
-else
-  printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip!\n"
-fi
-
-################################################################################
 # wallet configuration
 ################################################################################
 
+# old pi-node data configuration
 DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
 if [[ -n "$DATA_DIR" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Pi-Node : Old data directory found!\n"
@@ -316,6 +267,7 @@ else
   DATA_DIR="."
 fi
 
+# old pi-node log configuration
 WALLET_LOG_DIR="$(grep "WALLET_LOG_DIR=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
 if [[ -n "$WALLET_LOG_DIR" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Pi-Node : Old log directory found!\n"
@@ -324,6 +276,7 @@ else
   WALLET_LOG_DIR="."
 fi
 
+# old pi-node wallet configuration
 WALLET_CONFIG="$(grep "WALLET_CONFIG=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
 if [[ -n "$WALLET_CONFIG" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Pi-Node : Old wallet config found!\n"
@@ -332,6 +285,7 @@ else
   WALLET_CONFIG="."
 fi
 
+# old pi-node proxy configuration
 PROXY="$(grep "PROXY=" /usr/local/bin/include/pinode/pinode.conf | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
 if [[ -n "$PROXY" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Pi-Node : Old proxy setup found!\n"
@@ -353,16 +307,22 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 fi
 
 ################################################################################
+# bootstrap
+################################################################################
+
+bash /etc/pi-node/include/bootstrap
+
+################################################################################
 # start wallet daemon
 ################################################################################
 
 # daemon running
-if [[ "$DAE_PID" -gt "0" ]] &>/dev/null; then
+if [[ "$(pidof freedomcoind | wc -l)" -gt "0" ]] &>/dev/null; then
   printf '%b' "[${G1}OK${N0}] Daemon  : Already running! PID: $DAE_PID\n"
 else
   printf '%b' "[${G1}OK${N0}] Daemon  : Starting daemon..\n"
   # start daemon
-  /usr/local/bin/freedomcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
+  ./freedomcoind -datadir="${DATA_DIR:?}" -debuglogfile="${WALLET_LOG_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
 fi
 
 # END
