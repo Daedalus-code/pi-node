@@ -155,4 +155,8 @@ UPLOAD="$(ifconfig | grep "TX" | grep -v "error" | awk '{ print $6 }' | tr -d '(
 
 WALLET_DAEMON="$(echo "$WALLET_DAEMON" |  awk -F/ '{ print $NF }')"
 
+################################################################################
+
+WALLET_VERSION="$(/usr/local/bin/./freedomcoin-cli version | awk '{ print $NF }')"
+
 # END
