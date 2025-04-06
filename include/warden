@@ -43,6 +43,11 @@ SYSTEM_CLOCK="$(date | awk '{ print $4 }')"
 
 ################################################################################
 
+# default
+CB="${GR}"
+
+################################################################################
+
 WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
 
 # if any rewards
