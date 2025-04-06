@@ -184,4 +184,134 @@ if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
   WALLET_SYNC="0%"
 fi
 
+################################################################################
+
+PUBLIC_IP=""
+
+# if zero
+if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
+  PUBLIC_IP="0.0.0.0"
+fi
+
+################################################################################
+
+WALLET_PEERS_TOTAL=""
+
+# if zero
+if [[ -z "$WALLET_PEERS_TOTAL" ]] &>/dev/null; then
+  WALLET_PEERS_TOTAL="0"
+fi
+
+################################################################################
+
+WALLET_PEERS_LATEST=""
+
+# if zero
+if [[ -z "$WALLET_PEERS_LATEST" ]] &>/dev/null; then
+  WALLET_PEERS_LATEST="0"
+fi
+
+################################################################################
+
+WALLET_PEERS_OTHER=""
+
+# if zero
+if [[ -z "$WALLET_PEERS_OTHER" ]] &>/dev/null; then
+  WALLET_PEERS_OTHER="0"
+fi
+
+################################################################################
+
+WALLET_BALANCES=""
+
+# if zero
+if [[ -z "$WALLET_BALANCES" ]] &>/dev/null; then
+  WALLET_BALANCES="0"
+fi
+
+################################################################################
+
+WALLET_POS_REWARDS=""
+
+# if zero
+if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
+  WALLET_POS_REWARDS="0"
+fi
+
+################################################################################
+
+WALLET_INPUTS_NODES=""
+
+# if zero
+if [[ -z "$WALLET_INPUTS_NODES" ]] &>/dev/null; then
+  WALLET_INPUTS_NODES="0"
+fi
+
+################################################################################
+
+WALLET_TXCOUNT=""
+
+# if zero
+if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
+  WALLET_TXCOUNT="0"
+fi
+
+################################################################################
+
+WALLET_MEMPOOL=""
+
+# if zero
+if [[ -z "$WALLET_MEMPOOL" ]] &>/dev/null; then
+  WALLET_MEMPOOL="0"
+fi
+
+################################################################################
+
+WALLET_HEADS=""
+
+# if zero
+if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
+  WALLET_HEADS="0"
+fi
+
+################################################################################
+
+TIMELINE=""
+
+# if zero
+if [[ -z "$TIMELINE" ]] &>/dev/null; then
+  TIMELINE="0"
+fi
+
+################################################################################
+
+TX=""
+
+# if zero
+if [[ -z "$TX" ]] &>/dev/null; then
+  TX="${GR}"
+fi
+
+################################################################################
+
+WALLET_TXLAST=""
+
+# if zero
+if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+  WALLET_TXLAST="null"
+fi
+
+################################################################################
+
+LAST_LOG=""
+
+# if zero
+if [[ -z "$LAST_LOG" ]] &>/dev/null; then
+  LAST_LOG="null"
+fi
+
+################################################################################
+
+TIME="60"
+
 # END

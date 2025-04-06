@@ -25,7 +25,7 @@ else
 fi
 
 ################################################################################
-# warden screen
+# dash screen
 ################################################################################
 
 # not installed
@@ -35,10 +35,10 @@ if ! [ -x "$(command -v screen)" ]; then
 fi
 
 # kill old session
-screen -X -S warden quit &>/dev/null
+screen -X -S dash quit &>/dev/null
 # create new screen session
-screen -dmS warden &>/dev/null
-# start warden
-screen -S warden -X -p 0 stuff $'bash /etc/pi-node/include/warden\n'
+screen -dmS dash &>/dev/null
+# start dash
+screen -S dash -X -p 0 stuff $'bash /etc/pi-node/dash\n'
 
 # END
