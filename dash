@@ -4,46 +4,9 @@
 
 for (( ; ; )); do # loop dashbord
 
+  source /etc/pi-node/include/warden
   source /etc/pi-node/include/color
   source /etc/pi-node/config
-
-  # output specific data
-  WALLET_TXLAST="$(grep "Progress" /tmp/dash.data.tmp | awk '{ print $3 }')"
-  REPO_VERSION="$(grep "Repo_version" /tmp/dash.data.tmp | awk '{ print $3 }')"
-  SYSTEM_CLOCK="$(grep "system_clock" /tmp/dash.data.tmp | awk '{ print $3 }')"
-  WALLET_POS_REWARDS="$(grep "PoS_Rewards" /tmp/dash.data.tmp | awk '{ print $3 }')"
-  WALLET_MOVEMENT="$(grep "Movements" /tmp/dash.data.tmp | awk '{ print $3 }')"
-  THEME_STATUS="D"
-
-  # default
-  CB="GR"
-  # moved
-  if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
-    CB="Y1" # yellow
-  fi
-  # staked
-  if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
-    CB="G1" # green
-  fi
-
-  ##############################################################################
-
-  # if zero
-  if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
-    MASTER_STATUS="${GR}M${N0}"
-  fi
-  if [[ -z "$PROOF_STATUS" ]] &>/dev/null; then
-    PROOF_STATUS="${GR}0%${N0}"
-  fi
-  if [[ -z "$POS_STATUS" ]] &>/dev/null; then
-    POS_STATUS="${GR}S${N0}"
-  fi
-  if [[ -z "$TOR_STATUS" ]] &>/dev/null; then
-    TOR_STATUS="${GR}P${N0}"
-  fi
-  if [[ -z "$LAN_STATUS" ]] &>/dev/null; then
-    LAN_STATUS="${GR}null${N0}"
-  fi
 
   ##############################################################################
 

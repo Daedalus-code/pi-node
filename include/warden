@@ -1,62 +1,47 @@
 #!/bin/bash
 
-for (( ; ; )); do # loop warden
+################################################################################
 
-  ##############################################################################
+source /etc/pi-node/config
 
-  source /etc/pi-node/config
+################################################################################
+# progress bar
+################################################################################
 
-  ##############################################################################
-  # progress bar
-  ##############################################################################
+# if not synced
+if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${WALLET_LOG_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+  # function to draw the progress bar
+  draw_progress_bar() {
+    PROGRESS="$1"
+    local PERCENT
+    BAR_WIDTH=50
+    local FILLED
+    local EMPTY
 
-  # if not synced
-  if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${WALLET_LOG_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
-    # function to draw the progress bar
-    draw_progress_bar() {
-      PROGRESS="$1"
-      local PERCENT
-      BAR_WIDTH=50
-      local FILLED
-      local EMPTY
+    PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}")
+    FILLED=$((PERCENT * BAR_WIDTH / 100))
+    EMPTY=$((BAR_WIDTH - FILLED))
+    # bar
+    printf "["
+    for ((I = 0; I < FILLED; I++)); do printf "#"; done
+    for ((I = 0; I < EMPTY; I++)); do printf "."; done
+    printf "] %s%%\n" "$PERCENT"
+  }
+  # extract the progress value
+  PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "${WALLET_LOG_DIR}"/debug.log | tail -1)"
+  # draw the progress bar
+  WALLET_TXLAST="$(draw_progress_bar "$PROGRESS")"
+fi
 
-      PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}")
-      FILLED=$((PERCENT * BAR_WIDTH / 100))
-      EMPTY=$((BAR_WIDTH - FILLED))
-      # bar
-      printf "["
-      for ((I = 0; I < FILLED; I++)); do printf "#"; done
-      for ((I = 0; I < EMPTY; I++)); do printf "."; done
-      printf "] %s%%\n" "$PERCENT"
-    }
-    # extract the progress value
-    PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "${WALLET_LOG_DIR}"/debug.log | tail -1)"
-    # draw the progress bar
-    WALLET_TXLAST="$(draw_progress_bar "$PROGRESS")"
-  fi
+################################################################################
 
-  ##############################################################################
-
-  REPO_VERSION="$(/usr/local/bin/./freedomcoin-cli -version | tail -1 | awk '{ print $NF }')"
-  SYSTEM_CLOCK="$(date | awk '{ print $4 }')"
-  WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
-  WALLET_MOVEMENT="$(grep -c "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log)"
-  MASTER_STATUS=""
-  PROOF_STATUS=""
-
-  ##############################################################################
-
-  # store data for dash
-  echo "Progress     : $WALLET_TXLAST" >/tmp/dash.data.tmp
-  echo "Repo_version : $REPO_VERSION" >>/tmp/dash.data.tmp
-  echo "system_clock : $SYSTEM_CLOCK" >>/tmp/dash.data.tmp
-  echo "PoS_Rewards  : $WALLET_POS_REWARDS" >>/tmp/dash.data.tmp
-  echo "Movements    : $WALLET_MOVEMENT" >>/tmp/dash.data.tmp
-
-  ##############################################################################
-
-  sleep 60
-  clear
-done
+REPO_VERSION="$(/usr/local/bin/./freedomcoin-cli -version | tail -1 | awk '{ print $NF }')"
+SYSTEM_CLOCK="$(date | awk '{ print $4 }')"
+WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
+WALLET_MOVEMENT="$(grep -c "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log)"
+MASTER_STATUS=""
+PROOF_STATUS=""
+SYSTEM_LOAD="$(cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }')"
+CPU_CTEMP="$(cat /sys/devices/virtual/thermal/thermal_zone?/temp 2>/dev/null | awk '{printf " %5.2f °C\n" , $1/1000}' | xargs)"
 
 # END
