@@ -126,6 +126,6 @@ SYSTEM_LOAD="$(cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }')"
 ################################################################################
 
 CPU_CTEMP="$(cat /sys/devices/virtual/thermal/thermal_zone?/temp 2>/dev/null | awk '{printf " %5.2f °C\n" , $1/1000}' | xargs)"
-CPU_FTEMP="$(echo "$(echo "$CPU_CTEMP" | egrep "[0-9]+")*2+30" | bc 2>/dev/null)"
+CPU_FTEMP="$(echo "$(echo "$CPU_CTEMP" | egrep "[0-9]+.[0-9]+")*2+30" | bc 2>/dev/null | awk '{printf " %5.2f F\n" , $1/1000}')"
 
 # END
