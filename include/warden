@@ -36,12 +36,53 @@ fi
 ################################################################################
 
 REPO_VERSION="$(/usr/local/bin/./freedomcoin-cli -version | tail -1 | awk '{ print $NF }')"
+
+################################################################################
+
 SYSTEM_CLOCK="$(date | awk '{ print $4 }')"
+
+################################################################################
+
 WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
+
+# if any rewards
+if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+  CB="${G1}"
+fi
+
+################################################################################
+
 WALLET_MOVEMENT="$(grep -c "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log)"
+
+# if any movements
+if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
+  CB="${Y1}"
+fi
+
+################################################################################
+
 MASTER_STATUS=""
+
+# if zero
+if [[ -z "$MASTER_STATUS" ]] &>/dev/null; then
+  MASTER_STATUS="${GR}M${N0}"
+fi
+
+################################################################################
+
 PROOF_STATUS=""
+
+# if zero
+if [[ -z "$PROOF_STATUS" ]] &>/dev/null; then
+  PROOF_STATUS="${GR}S${N0}"
+fi
+
+################################################################################
+
 SYSTEM_LOAD="$(cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }')"
+
+################################################################################
+
 CPU_CTEMP="$(cat /sys/devices/virtual/thermal/thermal_zone?/temp 2>/dev/null | awk '{printf " %5.2f °C\n" , $1/1000}' | xargs)"
 
 # END
