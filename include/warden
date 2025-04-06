@@ -6,6 +6,13 @@ source /etc/pi-node/include/color
 source /etc/pi-node/config
 
 ################################################################################
+# client commands
+################################################################################
+
+# wallet getinfo
+/usr/local/bin/./freedomcoin-cli getinfo >/tmp/getinfo.tmp 2>/dev/null
+
+################################################################################
 # progress bar
 ################################################################################
 
@@ -36,15 +43,15 @@ fi
 
 ################################################################################
 
-REPO_VERSION="$(/usr/local/bin/./freedomcoin-cli -version | tail -1 | awk '{ print $NF }')"
+REPO_VERSION="$(wc -l /etc/pi-node/*/* 2>/dev/null | grep "total" | egrep -o "[0-9]+" | sed 's/./&./g;s/\.$//')"
 
 ################################################################################
 
-SYSTEM_CLOCK="$(date | awk '{ print $4 }')"
+SYSTEM_CLOCK="$(date 2>/dev/null | awk '{ print $4 }')"
 
 ################################################################################
 
-# default
+# default logo color (idle)
 CB="${GR}"
 
 ################################################################################
@@ -157,6 +164,24 @@ WALLET_DAEMON="$(echo "$WALLET_DAEMON" |  awk -F/ '{ print $NF }')"
 
 ################################################################################
 
-WALLET_VERSION="$(/usr/local/bin/./freedomcoin-cli version | awk '{ print $NF }')"
+WALLET_VERSION="$(/usr/local/bin/./freedomcoin-cli version 2>/dev/null | awk '{ print $NF }')"
+
+################################################################################
+
+WALLET_CHAIN=""
+
+# if zero
+if [[ -z "$WALLET_CHAIN" ]] &>/dev/null; then
+  WALLET_CHAIN="nonet"
+fi
+
+################################################################################
+
+WALLET_SYNC=""
+
+# if zero
+if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
+  WALLET_SYNC="0%"
+fi
 
 # END
