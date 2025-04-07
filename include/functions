@@ -132,9 +132,9 @@ SYSTEM_LOAD="$(cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }')"
 
 ################################################################################
 
-CPU_CTEMP="$(cat /sys/devices/virtual/thermal/thermal_zone?/temp 2>/dev/null | awk '{printf " %5.2f °C\n" , $1/1000}' | xargs)"
+CPU_CTEMP="$(cat /sys/devices/virtual/thermal/thermal_zone?/temp 2>/dev/null | awk '{printf " %5.2f °C\n" , $1/1000}' | xargs | awk -F. '{ print $1 }')"
 C_VAL=$(echo "$CPU_CTEMP" | grep -o "[0-9]\+\.[0-9]\+")
-CPU_FTEMP="$(echo "scale=2; ($C_VAL * 9/5) + 32" | bc | awk '{printf " %5.2f °F\n", $1}')"
+CPU_FTEMP="$(echo "scale=2; ($C_VAL * 9/5) + 32" | bc | awk '{printf " %5.2f °F\n", $1}' | awk -F. '{ print $1 }')"
 
 ################################################################################
 
@@ -161,11 +161,12 @@ DOWNLOAD_TOTAL=$(ifconfig | grep "RX packets" | awk '{ print $5 }' | paste -sd+ 
 # convert RX bytes to MB and GB
 DOWNLOAD_TOTAL_MB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024)" | bc)
 DOWNLOAD_TOTAL_GB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc)
+
 # which unit to display
 if (($(echo "$TOTAL_GB >= 1" | bc -l))); then
-  DOWNLOAD="$DOWNLOAD_TOTAL_GB GB"
-else
   DOWNLOAD="$DOWNLOAD_TOTAL_MB MB"
+else
+  DOWNLOAD="$DOWNLOAD_TOTAL_GB GB"
 fi
 
 ################################################################################
@@ -175,11 +176,12 @@ UPLOAD_TOTAL_BYTES=$(ifconfig | grep "TX packets" | awk '{ print $5 }' | paste -
 # convert RX bytes to MB and GB
 UPLOAD_TOTAL_MB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024)" | bc)
 UPLOAD_TOTAL_GB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc)
+
 # which unit to display
 if (($(echo "$TOTAL_GB >= 1" | bc -l))); then
-  UPLOAD="$UPLOAD_TOTAL_GB GB"
-else
   UPLOAD="$UPLOAD_TOTAL_MB MB"
+else
+  UPLOAD="$UPLOAD_TOTAL_GB GB"
 fi
 
 ################################################################################
