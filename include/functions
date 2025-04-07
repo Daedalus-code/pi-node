@@ -234,7 +234,7 @@ WALLET_VERSION="$(tail -1 /tmp/version.tmp 2>/dev/null | awk '{ print $NF }')"
 
 ################################################################################
 
-WALLET_CHAIN="$(grep "chain" /tmp/getblockchaininfo.tmp | awk '{ print $NF }' | tr -d ',')"
+WALLET_CHAIN="$(grep -w "chain" /tmp/getblockchaininfo.tmp | awk '{ print $NF }' | tr -d ',')"
 
 # if main
 if [[ "$WALLET_CHAIN" == "main" ]] &>/dev/null; then
