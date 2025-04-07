@@ -13,7 +13,7 @@ source /etc/pi-node/config
 /usr/local/bin/./freedomcoin-cli getinfo >/tmp/getinfo.tmp 2>/dev/null
 # version
 if [[ ! -f /tmp/version.tmp ]] &>/dev/null; then
-  /usr/local/bin/./freedomcoin-cli version >/tmp/version.tmp 2>/dev/null
+  /usr/local/bin/./freedomcoin-cli -version >/tmp/version.tmp 2>/dev/null
 fi
 
 ################################################################################
@@ -201,7 +201,7 @@ WALLET_DAEMON="$(echo "$WALLET_DAEMON" | awk -F/ '{ print $NF }')"
 
 ################################################################################
 
-WALLET_VERSION="$(cat /tmp/version.tmp 2>/dev/null)"
+WALLET_VERSION="$(cat /tmp/version.tmp 2>/dev/null | awk '{ print $NF }')"
 
 ################################################################################
 
