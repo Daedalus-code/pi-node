@@ -348,7 +348,7 @@ fi
 
 ################################################################################
 
-WALLET_TXLAST="${GR}$(cat /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
+WALLET_TXLAST="${GR}$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
 
 # if zero
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
