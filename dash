@@ -16,7 +16,7 @@ for (( ; ; )); do # loop dashbord
 ${GR:?}                       ${GR:?} Pi-Node ${REPO_VERSION:?}  ${SYSTEM_CLOCK:?}
 ${CB:?}        ##   ##        ${N0:?} Fullnode + Stakebox       ${MASTER_STATUS:?} ${PROOF_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}        ##.  ##        ${GR:?} -----------------------------------------${N0:?}
-${CB:?}    ##############     ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP:?} ${CPU_FTEMP:?}
+${CB:?}    ##############     ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP_C:?} ${CPU_FTEMP:?}
 ${CB:?}      ###      ####    ${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?} (${USED_HDD_P:?})
 ${CB:?}      ###.    ,###     ${N0:?} ${SYSTEM_USER:?}@${IP_ADDRESS:?} ${G0:?}⇩${N0:?} ${DOWNLOAD:?} ${R1:?}⇧${N0:?} ${UPLOAD:?}
 ${CB:?}      ###########      ${N0:?} ${WALLET_DAEMON:?} ${WALLET_VERSION:?} ${WALLET_CHAIN:?} Sync ${WALLET_SYNC:?}
