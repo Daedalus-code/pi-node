@@ -9,8 +9,12 @@ source /etc/pi-node/config
 # client commands
 ################################################################################
 
-# wallet getinfo
+# getinfo
 /usr/local/bin/./freedomcoin-cli getinfo >/tmp/getinfo.tmp 2>/dev/null
+# version
+if [[ ! -f /tmp/version.tmp ]] &>/dev/null; then
+  /usr/local/bin/./freedomcoin-cli version >/tmp/version.tmp 2>/dev/null
+fi
 
 ################################################################################
 # progress bar
@@ -197,7 +201,7 @@ WALLET_DAEMON="$(echo "$WALLET_DAEMON" | awk -F/ '{ print $NF }')"
 
 ################################################################################
 
-WALLET_VERSION="$(/usr/local/bin/./freedomcoin-cli version 2>/dev/null | awk '{ print $NF }')"
+WALLET_VERSION="$(cat /tmp/version.tmp 2>/dev/null)"
 
 ################################################################################
 
@@ -300,7 +304,7 @@ fi
 
 ################################################################################
 
-WALLET_HEADS=""
+WALLET_HEADS="$(grep "blocks" /tmp/getinfo.tmp | awk '{ print $NF }')"
 
 # if zero
 if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
