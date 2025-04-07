@@ -57,12 +57,12 @@ fi
 
 WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
 if [[ "$WALLET_SYNC" == "progress=1.00" ]]; then
-  WALLET_SYNC="OK"
+  WALLET_SYNC="${G1}OK${N0}"
 fi
 
 # if zero
 if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
-  WALLET_SYNC="0%"
+  WALLET_SYNC="${GR}0%${N0}"
 fi
 
 ################################################################################
