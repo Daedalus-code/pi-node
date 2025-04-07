@@ -278,7 +278,7 @@ fi
 
 ################################################################################
 
-WALLET_BALANCES=""
+WALLET_BALANCES="$(grep "Balance" /tmp/getinfo | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_BALANCES" ]] &>/dev/null; then
