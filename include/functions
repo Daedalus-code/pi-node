@@ -251,7 +251,7 @@ fi
 
 ################################################################################
 
-WALLET_PEERS_TOTAL="$(grep "connections" /tmp/getinfo.tmp | awk '{ print $NF }' | tr -d ',')"
+WALLET_PEERS_TOTAL="${G1}$(grep "connections" /tmp/getinfo.tmp | awk '{ print $NF }' | tr -d ',')${N0}"
 
 # if zero
 if [[ -z "$WALLET_PEERS_TOTAL" ]] &>/dev/null; then
@@ -264,7 +264,7 @@ WALLET_PEERS_LATEST=""
 
 # if zero
 if [[ -z "$WALLET_PEERS_LATEST" ]] &>/dev/null; then
-  WALLET_PEERS_LATEST="0"
+  WALLET_PEERS_LATEST="${GR}0${N0}"
 fi
 
 ################################################################################
@@ -273,7 +273,7 @@ WALLET_PEERS_OTHER=""
 
 # if zero
 if [[ -z "$WALLET_PEERS_OTHER" ]] &>/dev/null; then
-  WALLET_PEERS_OTHER="0"
+  WALLET_PEERS_OTHER="${GR}0${N0}"
 fi
 
 ################################################################################
@@ -282,7 +282,7 @@ WALLET_BALANCES="$(grep "balance" /tmp/getinfo.tmp | awk '{ print $NF }' | tr -d
 
 # if zero
 if [[ -z "$WALLET_BALANCES" ]] &>/dev/null; then
-  WALLET_BALANCES="0"
+  WALLET_BALANCES="${GR}0${N0}"
 fi
 
 ################################################################################
