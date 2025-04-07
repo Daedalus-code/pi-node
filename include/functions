@@ -11,12 +11,19 @@ source /etc/pi-node/config
 
 # getinfo
 /usr/local/bin/./freedomcoin-cli getinfo >/tmp/getinfo.tmp 2>/dev/null
+
 # version
 if [[ ! -f /tmp/version.tmp ]] &>/dev/null; then
   /usr/local/bin/./freedomcoin-cli -version >/tmp/version.tmp 2>/dev/null
 fi
+
 # getbestblockhash
 /usr/local/bin/freedomcoin-cli getbestblockhash >/tmp/getbestblockhash.tmp 2>/dev/null
+
+# getblockchaininfo
+if [[ ! -f /tmp/getblockchaininfo.tmp ]] &>/dev/null; then
+  /usr/local/bin/freedomcoin-cli getblockchaininfo >/tmp/getblockchaininfo.tmp 2>/dev/null
+fi
 
 ################################################################################
 # progress bar
@@ -227,7 +234,17 @@ WALLET_VERSION="$(tail -1 /tmp/version.tmp 2>/dev/null | awk '{ print $NF }')"
 
 ################################################################################
 
-WALLET_CHAIN=""
+WALLET_CHAIN="$(grep "chain" /tmp/getblockchaininfo.tmp | awk '{ print $NF }' | tr -d ',')"
+
+# if main
+if [[ "$WALLET_CHAIN" == "main" ]] &>/dev/null; then
+  WALLET_CHAIN="${G1}mainnet${N0}"
+fi
+
+# if test
+if [[ "$WALLET_CHAIN" == "test" ]] &>/dev/null; then
+  WALLET_CHAIN="${CY}testnet${N0}"
+fi
 
 # if zero
 if [[ -z "$WALLET_CHAIN" ]] &>/dev/null; then
