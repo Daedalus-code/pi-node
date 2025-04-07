@@ -332,11 +332,34 @@ fi
 
 ################################################################################
 
-TIMELINE=""
+# random start number
+RANDOM_QUOTES=$((((RANDOM % 10) + 1)))
+# quotes - art of the deal
+if [ "$RANDOM_QUOTES" -eq "1" ] &>/dev/null; then
+  TIMELINE="${GR}Think big${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "2" ] &>/dev/null; then
+  TIMELINE="${GR}Maximize your options${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "3" ] &>/dev/null; then
+  TIMELINE="${GR}Know your market${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "4" ] &>/dev/null; then
+  TIMELINE="${GR}Use your leverage${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "5" ] &>/dev/null; then
+  TIMELINE="${GR}Enhance your location${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "6" ] &>/dev/null; then
+  TIMELINE="${GR}Get the word out${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "7" ] &>/dev/null; then
+  TIMELINE="${GR}Fight back${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "8" ] &>/dev/null; then
+  TIMELINE="${GR}Deliver the goods${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "9" ] &>/dev/null; then
+  TIMELINE="${GR}Contain the costs${N0:?}"
+elif [ "$RANDOM_QUOTES" -eq "10" ] &>/dev/null; then
+  TIMELINE="${GR}Have fun${N0:?}"
+fi
 
 # if zero
 if [[ -z "$TIMELINE" ]] &>/dev/null; then
-  TIMELINE="0"
+  TIMELINE="Always something.."
 fi
 
 ################################################################################
