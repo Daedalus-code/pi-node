@@ -231,7 +231,7 @@ WALLET_CHAIN=""
 
 # if zero
 if [[ -z "$WALLET_CHAIN" ]] &>/dev/null; then
-  WALLET_CHAIN="nonet"
+  WALLET_CHAIN="${GR}nonet${N0}"
 fi
 
 ################################################################################
@@ -291,7 +291,7 @@ WALLET_POS_REWARDS=""
 
 # if zero
 if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
-  WALLET_POS_REWARDS="0"
+  WALLET_POS_REWARDS="Stakes 0"
 fi
 
 ################################################################################
@@ -300,7 +300,7 @@ WALLET_INPUTS_NODES=""
 
 # if zero
 if [[ -z "$WALLET_INPUTS_NODES" ]] &>/dev/null; then
-  WALLET_INPUTS_NODES="0"
+  WALLET_INPUTS_NODES="Inputs 0"
 fi
 
 ################################################################################
