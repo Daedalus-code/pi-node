@@ -47,6 +47,24 @@ fi
 
 ################################################################################
 
+# if missing
+if [[ ! -f /tmp/progress.tmp ]] &>/dev/null; then
+  WALLET_SYNC="$(grep -o "progress....." .trumpcoin/debug.log | tail -1)"
+  echo "$WALLET_SYNC" >/tmp/progress.tmp
+fi
+
+WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
+if [[ "$WALLET_SYNC" == "progress=1.00" ]]; then
+  WALLET_SYNC="OK"
+fi
+
+# if zero
+if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
+  WALLET_SYNC="0%"
+fi
+
+################################################################################
+
 REPO_VERSION="${N0}$(wc -l /etc/pi-node/*/* 2>/dev/null | grep "total" | egrep -o "[0-9]+" | sed 's/./&./g;s/\.$//')"
 
 ################################################################################
@@ -210,21 +228,6 @@ WALLET_CHAIN=""
 # if zero
 if [[ -z "$WALLET_CHAIN" ]] &>/dev/null; then
   WALLET_CHAIN="nonet"
-fi
-
-################################################################################
-
-# if missing
-if [[ ! -f /tmp/progress.tmp ]] &>/dev/null; then
-  WALLET_SYNC="$(grep -o "progress....." .trumpcoin/debug.log | tail -1)"
-  echo "$WALLET_SYNC" >/tmp/progress.tmp
-fi
-
-WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
-
-# if zero
-if [[ -z "$WALLET_SYNC" ]] &>/dev/null; then
-  WALLET_SYNC="0%"
 fi
 
 ################################################################################
