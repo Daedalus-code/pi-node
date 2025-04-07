@@ -53,7 +53,7 @@ sudo mkdir /etc/pi-node &>/dev/null
 printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as $(whoami)!\n"
 sudo chown "$(whoami)":"$(whoami)" /etc/pi-node 2>/dev/null
 printf '%b' "[${G1}OK${N0}] cp      : Installing pi-node dashbord!\n"
-cd || exit && cp pi-node/dash /usr/local/bin
+cd || exit && sudo cp pi-node/dash /usr/local/bin
 printf '%b' "[${G1}OK${N0}] chown   : Executable as $(whoami)!\n"
 sudo chmod +x "$(whoami)":"$(whoami)" /usr/local/bin/dash 2>/dev/null
 printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as $(whoami)!\n"
