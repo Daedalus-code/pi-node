@@ -214,11 +214,11 @@ fi
 # get all TX byte counts from ifconfig
 UPLOAD_TOTAL_BYTES=$(ifconfig | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
-UPLOAD_TOTAL_MB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024)" | bc)
-UPLOAD_TOTAL_GB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc)
+UPLOAD_TOTAL_MB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024)" | bc 2>/dev/null)
+UPLOAD_TOTAL_GB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null)
 
 # which unit to display
-if (($(echo "$TOTAL_GB >= 1" | bc -l))); then
+if (($(echo "$TOTAL_GB >= 1" | bc -l 2>/dev/null))); then
   UPLOAD="$UPLOAD_TOTAL_MB MB"
 else
   UPLOAD="$UPLOAD_TOTAL_GB GB"
@@ -413,18 +413,18 @@ TIME="60" # loop every n second
 # shellcheck disable=SC2034  # Unused variables left for readability
 
 # after the fact (script), remove leading zero
-TIME_SECONDS=$(LC_ALL=de_US.utf8 date +"%S" 2>&1 | sed 's/^0*//g; s/\.0*/./g' 2>&1)
+TIME_SECONDS=$(LC_ALL=de_US.utf8 date +"%S" | sed 's/^0*//g; s/\.0*/./g' 2>/dev/null)
 if [ -z "$TIME_SECONDS" ] &>/dev/null; then
   # too many zeros, create fiction
   TIME_SECONDS="1"
 fi
 if [[ "$TIME_SECONDS" -gt "30" ]] &>/dev/null; then
   # wait extra n seconds
-  TIME_FIX=$(echo "${TIME:?}-${TIME_SECONDS:?}" 2>&1 | bc -l 2>&1)
-  TIME=$(echo "${TIME:?}+${TIME_FIX:?}" 2>&1 | bc -l 2>&1)
+  TIME_FIX=$(echo "${TIME:?}-${TIME_SECONDS:?}" | bc -l 2>/dev/null)
+  TIME=$(echo "${TIME:?}+${TIME_FIX:?}" | bc -l 2>/dev/null)
 else
   # wait less n seconds
-  TIME=$(echo "${TIME:?}-${TIME_SECONDS:?}" 2>&1 | bc -l 2>&1)
+  TIME=$(echo "${TIME:?}-${TIME_SECONDS:?}" | bc -l 2>/dev/null)
 fi
 
 # END
