@@ -138,6 +138,9 @@ CPU_CTEMP_RAW=$(cat /sys/devices/virtual/thermal/thermal_zone0/temp)
 CPU_CTEMP_C=$((CPU_CTEMP_RAW / 1000))
 # integer fahrenheit (using integer math)
 CPU_FTEMP=$(((CPU_CTEMP_C * 9 / 5) + 32))
+# with symbol
+CPU_CTEMP_C="${CPU_CTEMP_C}°C"
+CPU_FTEMP="${CPU_FTEMP}°F"
 
 ################################################################################
 
