@@ -226,8 +226,7 @@ else
     echo "
 Please install this on a fresh system, remember to backup wallet.dat!
 "
-    read -r -p "[..] Press Enter to continue" </dev/tty
-    echo
+    read -r -p "[..] Press Enter to exit" </dev/tty
     exit
   fi
 
