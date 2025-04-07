@@ -6,7 +6,6 @@ for (( ; ; )); do # loop dashbord
 
   source /etc/pi-node/include/functions
   source /etc/pi-node/include/color
-  source /etc/pi-node/config
 
   ##############################################################################
 
