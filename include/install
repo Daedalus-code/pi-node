@@ -223,6 +223,12 @@ else
   DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$DATA_DIR" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Pi-Node : Old data directory found!\n"
+    echo "
+Please install this on a fresh system, remember to backup wallet.dat!
+"
+    read -r -p "[..] Press Enter to continue" </dev/tty
+    echo
+    exit
   fi
 
   # if zero
@@ -234,28 +240,6 @@ else
   fi
 
   ##############################################################################
-
-  # old pi-node log configuration
-  WALLET_LOG_DIR="$(grep "WALLET_LOG_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
-  if [[ -n "$WALLET_LOG_DIR" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Pi-Node : Old log directory found!\n"
-  fi
-
-  ##############################################################################
-
-  # old pi-node wallet configuration
-  WALLET_CONFIG="$(grep "WALLET_CONFIG=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
-  if [[ -n "$WALLET_CONFIG" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Pi-Node : Old wallet config found!\n"
-  fi
-
-  ##############################################################################
-
-  # old pi-node proxy configuration
-  PROXY="$(grep "PROXY=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
-  if [[ -n "$PROXY" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Pi-Node : Old proxy setup found!\n"
-  fi
 
   # not installed
   if ! [ -x "$(command -v tor)" ]; then
