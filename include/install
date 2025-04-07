@@ -223,9 +223,7 @@ else
   DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$DATA_DIR" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Pi-Node : Old data directory found!\n"
-    echo "
-Please install this on a fresh system, remember to backup wallet.dat!
-"
+    printf '%b' "[${R1}!!${N0}] Console : Please install this on a fresh system, remember to backup wallet.dat!"
     read -r -p "[..] Press Enter to exit" </dev/tty
     exit
   fi
