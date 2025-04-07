@@ -52,13 +52,13 @@ printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
 # create install directory
 printf '%b' "[${G1}OK${N0}] mkdir   : Creating install directory as root!\n"
 sudo mkdir /etc/pi-node &>/dev/null
-printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as $(whoami)!\n"
+printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as root for $(whoami)!\n"
 sudo chown "$(whoami)":"$(whoami)" /etc/pi-node 2>/dev/null
-printf '%b' "[${G1}OK${N0}] cp      : Installing pi-node dashbord!\n"
+printf '%b' "[${G1}OK${N0}] cp      : Installing pi-node dashbord as root!\n"
 cd || exit && sudo cp pi-node/dash /usr/local/bin
-printf '%b' "[${G1}OK${N0}] chmod   : Executable as $(whoami)!\n"
+printf '%b' "[${G1}OK${N0}] chmod   : Executable as root for $(whoami)!\n"
 sudo chmod +x "$(whoami)":"$(whoami)" /usr/local/bin/dash 2>/dev/null
-printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as $(whoami)!\n"
+printf '%b' "[${G1}OK${N0}] chown   : Updating ownership as root for $(whoami)!\n"
 sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/dash 2>/dev/null
 printf '%b' "[${G1}OK${N0}] cp -rf  : Installing directories as $(whoami)!\n"
 cd || exit && cp -rf pi-node/include /etc/pi-node
