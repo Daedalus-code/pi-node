@@ -132,9 +132,12 @@ SYSTEM_LOAD="$(cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }')"
 
 ################################################################################
 
-CPU_CTEMP="$(cat /sys/devices/virtual/thermal/thermal_zone?/temp 2>/dev/null | awk '{printf " %5.0f °C\n" , $1/1000}' | xargs)"
-C_VAL=$(echo "$CPU_CTEMP" | grep -o "[0-9]\+\.[0-9]\+")
-CPU_FTEMP="$(echo "scale=2; ($C_VAL * 9/5) + 32" | bc | awk '{printf " %5.0f °F\n", $1}')"
+# read raw temp in millidegrees
+CPU_CTEMP_RAW=$(cat /sys/devices/virtual/thermal/thermal_zone0/temp)
+# integer celsius
+CPU_CTEMP_C=$((CPU_CTEMP_RAW / 1000))
+# integer fahrenheit (using integer math)
+CPU_FTEMP=$(((CPU_CTEMP_C * 9 / 5) + 32))
 
 ################################################################################
 
