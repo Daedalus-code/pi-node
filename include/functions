@@ -15,6 +15,8 @@ source /etc/pi-node/config
 if [[ ! -f /tmp/version.tmp ]] &>/dev/null; then
   /usr/local/bin/./freedomcoin-cli -version >/tmp/version.tmp 2>/dev/null
 fi
+# getbestblockhash
+/usr/local/bin/freedomcoin-cli getbestblockhash >/tmp/getbestblockhash 2>/dev/null
 
 ################################################################################
 # progress bar
@@ -65,7 +67,7 @@ fi
 
 ################################################################################
 
-REPO_VERSION="${N0}$(wc -l /etc/pi-node/*/* 2>/dev/null | grep "total" | egrep -o "[0-9]+" | sed 's/./&./g;s/\.$//')"
+REPO_VERSION="${N0}v$(wc -l /etc/pi-node/*/* 2>/dev/null | grep "total" | egrep -o "[0-9]+" | sed 's/./&./g;s/\.$//')"
 
 ################################################################################
 
@@ -319,7 +321,7 @@ fi
 
 ################################################################################
 
-WALLET_HEADS="$(grep "blocks" /tmp/getinfo.tmp | awk '{ print $NF }')"
+WALLET_HEADS="$(grep "blocks" /tmp/getinfo.tmp | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
@@ -346,7 +348,7 @@ fi
 
 ################################################################################
 
-WALLET_TXLAST=""
+WALLET_TXLAST="$(cat /tmp/getbestblockhash.tmp)"
 
 # if zero
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
