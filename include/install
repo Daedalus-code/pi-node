@@ -224,7 +224,7 @@ else
   if [[ -n "$DATA_DIR" ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Pi-Node : Old data directory found!\n"
     printf '%b' "[${R1}!!${N0}] Console : Please install this on a fresh system, remember to backup wallet.dat!\n"
-    read -r -p "[..] Press Enter to exit" </dev/tty
+    printf '%b' "[${R1}!!${N0}] Console : Exiting..\n"
     exit
   fi
 
