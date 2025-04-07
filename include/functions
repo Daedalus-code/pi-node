@@ -223,7 +223,13 @@ fi
 
 ################################################################################
 
-PUBLIC_IP=""
+# if missing
+if [[ ! -f /tmp/wanip.tmp ]] &>/dev/null; then
+  PUBLIC_IP="$(curl -s http://whatismyip.akamai.com/)"
+  echo "$PUBLIC_IP" >/tmp/wanip.tmp
+fi
+
+PUBLIC_IP="${CY}$(cat /tmp/wanip.tmp)${N0}"
 
 # if zero
 if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
