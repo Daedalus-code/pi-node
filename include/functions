@@ -368,6 +368,23 @@ fi
 
 ################################################################################
 
-TIME="60"
+TIME="60" # loop every n second
+
+# shellcheck disable=SC2034  # Unused variables left for readability
+
+# after the fact (script), remove leading zero
+TIME_SECONDS=$(LC_ALL=de_US.utf8 date +"%S" 2>&1 | sed 's/^0*//g; s/\.0*/./g' 2>&1)
+if [ -z "$TIME_SECONDS" ] &>/dev/null; then
+  # too many zeros, create fiction
+  TIME_SECONDS="1"
+fi
+if [[ "$TIME_SECONDS" -gt "30" ]] &>/dev/null; then
+  # wait extra n seconds
+  TIME_FIX=$(echo "${TIME:?}-${TIME_SECONDS:?}" 2>&1 | bc -l 2>&1)
+  TIME=$(echo "${TIME:?}+${TIME_FIX:?}" 2>&1 | bc -l 2>&1)
+else
+  # wait less n seconds
+  TIME=$(echo "${TIME:?}-${TIME_SECONDS:?}" 2>&1 | bc -l 2>&1)
+fi
 
 # END
