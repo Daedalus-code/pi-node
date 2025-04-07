@@ -133,17 +133,18 @@ SYSTEM_LOAD="$(cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }')"
 ################################################################################
 
 CPU_CTEMP="$(cat /sys/devices/virtual/thermal/thermal_zone?/temp 2>/dev/null | awk '{printf " %5.2f °C\n" , $1/1000}' | xargs)"
-CPU_FTEMP="$(echo "$(echo "$CPU_CTEMP" | egrep -o "[0-9]+.[0-9]+")*2+30" | bc 2>/dev/null | awk '{printf " %5.2f F\n" , $1/1000}')"
+C_VAL=$(echo "$CPU_CTEMP" | grep -o "[0-9]\+\.[0-9]\+")
+CPU_FTEMP="$(echo "scale=2; ($C_VAL * 9/5) + 32" | bc | awk '{printf " %5.2f °F\n", $1}')"
 
 ################################################################################
 
-TOTAL_MEM="$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $2 }' | tr -d 'G')"
-FREE_MEM="$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $4 }' | tr -d 'G')"
+TOTAL_MEM="$(echo "$(echo "$(grep "MemTotal" /proc/meminfo | awk '{ print $2 }')+"$(grep "SwapTotal" /proc/meminfo | awk '{ print $2 }') | bc -l 2>/dev/null)/1024" | bc 2>/dev/null) MB"
+FREE_MEM="$(echo "$(grep "MemFree" /proc/meminfo | awk '{ print $2 }')1024" | bc -l 2>/dev/null) MB"
 
 ################################################################################
 
-USED_HDD="$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $5 }' | tr -d 'G')"
-USED_HDD_P="$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $3 }' | tr -d 'G')"
+USED_HDD="$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $3 }' | tr -d 'G')"
+USED_HDD_P="$(df -h --total | tail -1 | xargs | tr -d '-' | awk '{ print $5 }' | tr -d 'G')"
 
 ################################################################################
 
@@ -155,12 +156,35 @@ IP_ADDRESS="$(ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }
 
 ################################################################################
 
-DOWNLOAD="$(ifconfig | grep "RX" | grep -v "error" | awk '{ print $6 }' | tr -d '(' | awk '{ SUM += $1} END { print SUM }')"
-UPLOAD="$(ifconfig | grep "TX" | grep -v "error" | awk '{ print $6 }' | tr -d '(' | awk '{ SUM += $1} END { print SUM }')"
+# get all RX byte counts from ifconfig
+DOWNLOAD_TOTAL=$(ifconfig | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+# convert RX bytes to MB and GB
+DOWNLOAD_TOTAL_MB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024)" | bc)
+DOWNLOAD_TOTAL_GB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc)
+# which unit to display
+if (($(echo "$TOTAL_GB >= 1" | bc -l))); then
+  DOWNLOAD="$DOWNLOAD_TOTAL_GB GB"
+else
+  DOWNLOAD="$DOWNLOAD_TOTAL_MB MB"
+fi
 
 ################################################################################
 
-WALLET_DAEMON="$(echo "$WALLET_DAEMON" |  awk -F/ '{ print $NF }')"
+# get all TX byte counts from ifconfig
+UPLOAD_TOTAL_BYTES=$(ifconfig | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+# convert RX bytes to MB and GB
+UPLOAD_TOTAL_MB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024)" | bc)
+UPLOAD_TOTAL_GB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc)
+# which unit to display
+if (($(echo "$TOTAL_GB >= 1" | bc -l))); then
+  UPLOAD="$UPLOAD_TOTAL_GB GB"
+else
+  UPLOAD="$UPLOAD_TOTAL_MB MB"
+fi
+
+################################################################################
+
+WALLET_DAEMON="$(echo "$WALLET_DAEMON" | awk -F/ '{ print $NF }')"
 
 ################################################################################
 
@@ -195,7 +219,7 @@ fi
 
 ################################################################################
 
-WALLET_PEERS_TOTAL=""
+WALLET_PEERS_TOTAL="$(grep "connections" /tmp/getinfo.tmp | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_PEERS_TOTAL" ]] &>/dev/null; then
