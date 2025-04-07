@@ -201,7 +201,7 @@ WALLET_DAEMON="freedomcoind"
 
 ################################################################################
 
-WALLET_VERSION="$(cat /tmp/version.tmp 2>/dev/null | awk '{ print $NF }')"
+WALLET_VERSION="$(tail -1 /tmp/version.tmp 2>/dev/null | awk '{ print $NF }')"
 
 ################################################################################
 
