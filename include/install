@@ -41,6 +41,12 @@ Spin up a Freedom node! ${GR}Version 1${N0}
 
 ################################################################################
 
+printf '%b' "[${N0}!!${N0}] Check   : Installing..\n" && sleep 1
+printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository!\n"
+printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
+
+################################################################################
+
 # create install directory
 printf '%b' "[${G1}OK${N0}] mkdir   : Creating install directory as root!\n"
 sudo mkdir /etc/pi-node &>/dev/null
@@ -54,12 +60,6 @@ cd || exit && cp -rf pi-node/include /etc/pi-node
 printf '%b' "[${G1}OK${N0}] echo    : Creating configuration..\n"
 echo "# pi-node Configuration #
   " >/etc/pi-node/config
-
-################################################################################
-
-printf '%b' "[${N0}!!${N0}] Check   : Installing..\n" && sleep 1
-printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository!\n"
-printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
 
 ################################################################################
 
