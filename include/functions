@@ -357,7 +357,7 @@ fi
 
 ################################################################################
 
-LAST_LOG=""
+LAST_LOG="$(tail -1 "$DATA_DIR"/debug.log)"
 
 # if zero
 if [[ -z "$LAST_LOG" ]] &>/dev/null; then
