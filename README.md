@@ -18,7 +18,7 @@ edit rc.local
 ``sudo nano /etc/rc.local``  
 
 Change 'pi' user if needed, put this before exit, not after!  
-``sleep 10 && sudo -u pi bash /etc/pi-node/dash &``  
+``sleep 10 && sudo -u pi bash /usr/local/bin/dash &``  
 
 Save with ctrl+o  
 
