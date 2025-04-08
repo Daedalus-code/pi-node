@@ -133,7 +133,7 @@ if [[ "$POS_STATUS" == "0" || -z "$POS_STATUS" ]] &>/dev/null; then
 fi
 
 # if active
-if [[ "$PROOF_STATUS" == "1" ]] &>/dev/null; then
+if [[ "$POS_STATUS" == "1" ]] &>/dev/null; then
   POS_STATUS="${GR}S${N0}"
 fi
 
