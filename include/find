@@ -5,12 +5,15 @@
 source /etc/pi-node/include/color
 
 ################################################################################
+
+printf '%b' "[${Y1}Ok${N0}] Master  : Searching for files..\n"
+
+################################################################################
 # find daemon
 ################################################################################
 
 # if no configuration
 if [[ "$(grep -c "WALLET_DAEMON=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
-  printf '%b' "[${Y1}Ok${N0}] Daemon  : Searching for wallet daemon..\n"
   # find freedomcoi daemon
   DAE_FOUND="$(find /usr/local/bin -name "freedomcoind" 2>/dev/null | head -1)"
   # if zero
@@ -45,7 +48,6 @@ fi
 
 # if no configuration
 if [[ "$(grep -c "WALLET_CLIENT=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
-  printf '%b' "[${Y1}Ok${N0}] Client  : Searching for wallet client..\n"
   CLI_FOUND="$(find /usr/local/bin -name "freedomcoin-cli" 2>/dev/null | head -1)"
   # if zero
   if [[ -z "$CLI_FOUND" ]] &>/dev/null; then
@@ -79,7 +81,6 @@ fi
 
 # if no configuration
 if [[ "$(grep -c "WALLET_CONF=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
-  printf '%b' "[${Y1}Ok${N0}] Wallet  : Searching for trumpcoin.conf..\n"
   CON_FOUND="$(find "$HOME" -name "trumpcoin.conf" 2>/dev/null | head -1)"
   # if zero
   if [[ -z "$CON_FOUND" ]] &>/dev/null; then
@@ -104,7 +105,6 @@ fi
 
 # if no configuration
 if [[ "$(grep -c "WALLET_MASTER=" /etc/pi-node/config)" -eq "0" ]] &>/dev/null; then
-  printf '%b' "[${Y1}Ok${N0}] Master  : Searching for patriotnode.conf..\n"
   MAS_FOUND="$(find "$HOME" -name "patriotnode.conf" 2>/dev/null | head -1)"
   # if zero
   if [[ -z "$MAS_FOUND" ]] &>/dev/null; then
