@@ -96,6 +96,8 @@ cd "$HOME/FreedomCoin-Core" || exit
 sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME/FreedomCoin-Core/src/httpserver.cpp"
 # patch non-constexpr sysconf() usage in Catch2 test framework
 sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
+# add missing include <memory> to src/threshold.cpp
+sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/threshold.cpp"
 
 ################################################################################
 
