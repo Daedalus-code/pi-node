@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /etc/pi-node/include/color
+
 set -e
 
 # variables
@@ -19,6 +21,19 @@ sudo apt install -y \
 git clone --recursive "$REPO_URL"
 cd "$DIR_NAME"
 
+# start counting (seconds)
+START="$SECONDS"
+
+# if aarch64
+if [[ "$(uname -m)" == "aarch64" ]] &>/dev/null; then
+  # patch missing <deque> include
+  sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME/FreedomCoin-Core/src/httpserver.cpp"
+  # patch non-constexpr sysconf() usage in Catch2 test framework
+  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
+  # add missing include <memory> to src/threshold.cpp
+  sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/threshold.cpp"
+fi
+
 # build steps
 ./autogen.sh
 ./configure --enable-cxx --disable-tests --disable-bench --with-incompatible-bdb
@@ -27,6 +42,15 @@ make -j$(nproc)
 # optional: Strip binaries to save space
 strip src/freedomcoind src/freedomcoin-cli || true
 
+# calculate build time
+DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
+TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
+
+echo
+printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
+echo
+read -r -p "[Ok] Press Enter to continue" </dev/tty
+echo
 # done
 echo "[!!] FreedomCoin build complete!"
 
