@@ -1,10 +1,16 @@
 #!/bin/bash
 
+################################################################################
+
 source /etc/pi-node/include/color
+
+################################################################################
 
 # variables
 REPO_URL="https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
 DIR_NAME="FreedomCoin-Core"
+
+################################################################################
 
 # update and install dependencies
 sudo apt update
@@ -16,9 +22,13 @@ sudo apt install -y \
   protobuf-compiler libqrencode-dev libdb-dev libdb++-dev libsqlite3-dev
 sudo apt-get autoremove -y
 
+################################################################################
+
 # clone repository
 git clone --recursive "$REPO_URL"
 cd "$DIR_NAME"
+
+################################################################################
 
 # start counting (seconds)
 START="$SECONDS"
@@ -36,11 +46,23 @@ if [[ "$(uname -m)" == "aarch64" ]] &>/dev/null; then
   sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
 fi
 
+################################################################################
+
+# install rust and cargo
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+
+################################################################################
+
 ./configure --enable-cxx --disable-tests --disable-bench --with-incompatible-bdb
 make -j$(nproc)
 
+################################################################################
+
 # optional: Strip binaries to save space
 strip src/freedomcoind src/freedomcoin-cli || true
+
+################################################################################
 
 # calculate build time
 DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
@@ -51,7 +73,5 @@ printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
 echo
 read -r -p "[Ok] Press Enter to continue" </dev/tty
 echo
-# done
-echo "[!!] FreedomCoin build complete!"
 
 # END
