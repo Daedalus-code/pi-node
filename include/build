@@ -101,7 +101,7 @@ fi
 ################################################################################
 
 echo
-printf '%b' "[${N0}!!${N0}] Console : Build time: ${GR}$TIMER${N0}\n"
+printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
 echo
 read -r -p "[Ok] Press Enter to continue" </dev/tty
 echo
