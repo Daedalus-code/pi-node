@@ -30,34 +30,28 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
     cd || exit
     if wget -c "https://github.com/FreedomCoin-Project/FreedomCoin-Core/releases/download/$LATEST_RELEASE/$WALLET_DOWNLOAD.zip"; then
       printf '%b' "[${G1}OK${N0}] wget    : Download complete!\n"
+      # if missing
+      if [[ ! -d "$HOME"/"$WALLET_DOWNLOAD" ]] &>/dev/null; then
+        # unzip file
+        unzip "$WALLET_DOWNLOAD".zip
+        printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
+      fi
+      # clean up __MACOSX & zip
+      rm -r "$HOME"/__MACOSX &>/dev/null
+      rm "$WALLET_DOWNLOAD".zip &>/dev/null
+      # install deamon
+      sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoind /usr/local/bin
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
+      # install client
+      sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoin-cli /usr/local/bin
+      printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
+      # remove old directory
+      rm -r "$HOME"/"$WALLET_DOWNLOAD"
     else
       printf '%b' "[${R1}!!${N0}] wget    : Download failed! Running build script instead..\n"
       bash /etc/pi-node/include/build
     fi
   fi
-
-  # if missing
-  if [[ ! -d "$HOME"/"$WALLET_DOWNLOAD" ]] &>/dev/null; then
-    # unzip file
-    unzip "$WALLET_DOWNLOAD".zip
-    printf '%b' "[${G1}OK${N0}] unzip   : Unzip complete!\n"
-  fi
-
-  # clean up __MACOSX & zip
-  rm -r "$HOME"/__MACOSX &>/dev/null
-  rm "$WALLET_DOWNLOAD".zip &>/dev/null
-
-  # install deamon
-  sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoind /usr/local/bin
-  printf '%b' "[${G1}OK${N0}] mv      : freedomcoind installed!\n"
-
-  # install client
-  sudo mv "$HOME"/"$WALLET_DOWNLOAD"/freedomcoin-cli /usr/local/bin
-  printf '%b' "[${G1}OK${N0}] mv      : freedomcoin-cli installed!\n"
-
-  # remove old directory
-  rm -r "$HOME"/"$WALLET_DOWNLOAD"
-
   # fix ownership
   sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/freedomcoin* 2>/dev/null
   printf '%b' "[${G1}OK${N0}] chown   : Fixing ownership!\n"
