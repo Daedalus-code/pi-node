@@ -192,7 +192,7 @@ SYSTEM_USER="$(whoami)"
 
 ################################################################################
 
-IP_ADDRESS="${CY}$(ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')${N0}"
+IP_ADDRESS="${N0}$(ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')${N0}"
 
 ################################################################################
 

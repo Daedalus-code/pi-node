@@ -255,10 +255,6 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     sudo service tor@default restart
   fi
 
-  # fetch onion hostname from hidden service
-  sudo cat /var/lib/tor/FreedomCoin-service/hostname >/etc/pi-node/hostname.onion
-  printf '%b' "[${G1}OK${N0}] Proxy   : ${CY}$(cat /etc/pi-node/hostname.onion 2>/dev/null)${N0}\n"
-
   # if zero
   if [[ -z "$PROXY" ]] &>/dev/null; then
     PROXY="127.0.0.1:9050"
@@ -266,6 +262,18 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
 
   # update configuration
   echo "PROXY=$PROXY" >>/etc/pi-node/config
+
+  ##############################################################################
+
+  # fetch lan from ifconfig
+  ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }' >/tmp/lanip.tmp
+  printf '%b' "[${G1}OK${N0}] LAN     : ${N0}$(cat /etc/pi-node/hostname.onion 2>/dev/null)${N0}\n"
+  # fetch wan from whatismyip
+  curl -s http://whatismyip.akamai.com/ >/tmp/wanip.tmp
+  printf '%b' "[${G1}OK${N0}] WAN     : ${CY}$(cat /etc/pi-node/hostname.onion 2>/dev/null)${N0}\n"
+  # fetch onion from hidden service
+  sudo cat /var/lib/tor/FreedomCoin-service/hostname >/etc/pi-node/hostname.onion
+  printf '%b' "[${G1}OK${N0}] Proxy   : ${P1}$(cat /etc/pi-node/hostname.onion 2>/dev/null)${N0}\n"
 
   ##############################################################################
   # bootstrap
