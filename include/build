@@ -46,6 +46,9 @@ sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool auto
   libevent-dev libsodium-dev libgmp-dev libboost-all-dev build-essential
 sudo apt-get autoremove
 
+# rust and cargo
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 ################################################################################
 
 # start counting (seconds)
