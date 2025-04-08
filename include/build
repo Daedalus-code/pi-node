@@ -6,11 +6,6 @@ source /etc/pi-node/include/color
 
 ################################################################################
 
-export CFLAGS="-O2 -mno-strict-align"
-export CXXFLAGS="$CFLAGS"
-
-################################################################################
-
 # variables
 REPO_URL="https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
 DIR_NAME="FreedomCoin-Core"
@@ -37,6 +32,9 @@ cd "$DIR_NAME"
 
 # start counting (seconds)
 START="$SECONDS"
+
+export CFLAGS="-O2 -mno-strict-align"
+export CXXFLAGS="$CFLAGS"
 
 # build steps
 ./autogen.sh
