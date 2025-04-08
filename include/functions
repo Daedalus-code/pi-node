@@ -416,6 +416,12 @@ if [[ -z "$LAST_LOG" ]] &>/dev/null; then
   LAST_LOG="null"
 fi
 
+# if more than n megabytes
+if [[ "$(ls -lSh .trumpcoin/debug.log | awk '{ print $5 }' | tr -d 'M')" -gt "10" ]]; then
+  # trim debug.log
+  echo "$(tail -1001 "$WALLET_LOG_DIR"/debug.log 2>/dev/null)" >"$WALLET_LOG_DIR"/debug.log
+fi
+
 ################################################################################
 
 TIME="60" # loop every n second
