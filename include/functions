@@ -323,7 +323,7 @@ WALLET_POS_REWARDS=""
 
 # if zero
 if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
-  WALLET_POS_REWARDS="Stakes 0"
+  WALLET_POS_REWARDS="Stakes ${GR}0${N0}"
 fi
 
 ################################################################################
