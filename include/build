@@ -1,140 +1,33 @@
 #!/bin/bash
 
-################################################################################
+set -e
 
-source /etc/pi-node/include/color
-source /etc/pi-node/config
+# variables
+REPO_URL="https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
+DIR_NAME="FreedomCoin-Core"
 
-################################################################################
+# update and install dependencies
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y \
+  build-essential libtool autotools-dev automake pkg-config bsdmainutils curl \
+  git python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
+  libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev libprotobuf-dev \
+  protobuf-compiler libqrencode-dev libdb-dev libdb++-dev libsqlite3-dev
 
-# CPU architecture
-CPU_ARCH="$(uname -m)"
-# CPU cores
-CPU_CORES="$(nproc)"
-# whoami
-WHOAMI="$(whoami)"
+# clone repository
+git clone --recursive "$REPO_URL"
+cd "$DIR_NAME"
 
-################################################################################
-
-# decide HOST based on CPU_ARCH
-if [[ "$CPU_ARCH" == "aarch64" ]]; then
-  HOST="aarch64-linux-gnu"
-  TOOLCHAIN_PKGS="gcc-aarch64-linux-gnu g++-aarch64-linux-gnu"
-elif [[ "$CPU_ARCH" == "armv7l" ]]; then
-  HOST="arm-linux-gnueabihf"
-  TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
-elif [[ "$CPU_ARCH" == "x86_64" ]]; then
-  HOST="arm-linux-gnueabihf"
-  TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
-else
-  printf '%b' "[${R1}!!${N0}] Console : Unsupported architecture. Exiting.\n"
-  exit 1
-fi
-
-printf '%b' "[${G1}OK${N0}] Console : Detected ${CY}$CPU_ARCH${N0} with ${G1}$CPU_CORES${N0} cores. Using target: $HOST\n"
-
-################################################################################
-
-# install dependencies
-printf '%b' "[${G1}OK${N0}] Console : Please wait. Installing dependencies...\n"
-# if missing
-if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
-  echo "updated $(date | xargs)" >/tmp/upd.tmp
-  sudo apt-get update
-fi
-sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config \
-  libevent-dev libsodium-dev libgmp-dev libboost-all-dev build-essential
-sudo apt-get autoremove
-
-################################################################################
-
-# rust and cargo
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
-
-################################################################################
-
-# start counting (seconds)
-START="$SECONDS"
-
-cd || exit
-wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
-bash install_db4.sh "$HOME"
-# build and install Berkeley DB
-cd "$HOME/db4/db-4.8.30.NC" || exit
-export BDB_PREFIX="$HOME/db4"
-./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8.a" BDB_CFLAGS="-I${BDB_PREFIX}/include"
-sudo make -j"$CPU_CORES"
-sudo make install
-# copy Berkeley DB header files
-sudo cp /usr/local/berkeleydb/include/* /usr/include/
-
-# if repo doesn't exist
-if [[ ! -d "$HOME/FreedomCoin-Core" ]] &>/dev/null; then
-  # download and extract wallet source
-  cd "$HOME" || exit
-  git clone "https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
-fi
-
-# set user ownership
-sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
-
-# build dependencies without Qt
-cd "$HOME/FreedomCoin-Core/depends" || exit
-make HOST=$HOST NO_QT=1 -j"$CPU_CORES"
-
-# build wallet without wallet and GUI
-cd "$HOME/FreedomCoin-Core" || exit
+# build steps
 ./autogen.sh
+./configure --enable-cxx --disable-tests --disable-bench --with-incompatible-bdb
+make -j$(nproc)
 
-################################################################################
-# patches
-################################################################################
+# optional: Strip binaries to save space
+strip src/freedomcoind src/freedomcoin-cli || true
 
-# patch missing <deque> include
-sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME/FreedomCoin-Core/src/httpserver.cpp"
-# patch non-constexpr sysconf() usage in Catch2 test framework
-sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
-# add missing include <memory> to src/threshold.cpp
-sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/threshold.cpp"
-
-################################################################################
-
-# configure with Berkeley DB
-export BDB_PREFIX="$HOME/db4"
-./configure --prefix=$PWD/depends/$HOST \
-  --enable-glibc-back-compat \
-  --enable-reduce-exports \
-  LDFLAGS="-static-libstdc++" \
-  CPPFLAGS="-I${BDB_PREFIX}/include" \
-  LDFLAGS="-L${BDB_PREFIX}/lib -static-libstdc++" \
-  --with-incompatible-bdb=${BDB_PREFIX} \
-  --without-gui
-
-make -j"$CPU_CORES"
-
-# copy binaries
-sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind src/freedomcoin-cli "$HOME" &>/dev/null
-
-# calculate build time
-DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
-TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
-
-################################################################################
-
-# built wallet exist
-if [[ -f /home/"$(whoami)"/freedomcoind && -f /home/"$(whoami)"/freedomcoin-cli ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
-  sudo cp /home/"$(whoami)"/freedomcoind /usr/local/bin &>/dev/null
-  sudo cp /home/"$(whoami)"/freedomcoin-cli /usr/local/bin &>/dev/null
-fi
-
-################################################################################
-
-echo
-printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
-echo
-read -r -p "[Ok] Press Enter to continue" </dev/tty
-echo
+# done
+echo "[!!] FreedomCoin build complete!"
 
 # END
