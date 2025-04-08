@@ -1,20 +1,33 @@
 #!/bin/bash
 
+################################################################################
+
+source /etc/pi-node/include/color
+source /etc/pi-node/config
+
+################################################################################
+
 # CPU architecture
-CPU_ARCH=$(uname -m)
+CPU_ARCH="$(uname -m)"
 # CPU cores
-CPU_CORES=$(nproc)
+CPU_CORES="$(nproc)"
+# whoami
+WHOAMI="$(whoami)"
+
+################################################################################
 
 # if architecture exist
 if [[ $CPU_ARCH == "aarch64" || $CPU_ARCH == "armv7l" || $CPU_ARCH == "x86_64" ]] &>/dev/null; then
-  echo "Detected $CPU_ARCH with $CPU_CORES cores."
+  printf '%b' "[${G1}OK${N0}] Console : Detected $CPU_ARCH with $CPU_CORES cores.\n"
 else
-  echo "Unsupported architecture. Exiting."
+  printf '%b' "[${R1}!!${N0}] Console : Unsupported architecture. Exiting.\n"
   exit 1
 fi
 
+################################################################################
+
 # install dependencies
-echo "Please wait. Installing dependencies..."
+printf '%b' "[${G1}OK${N0}] Console : Please wait. Installing dependencies...\n"
 # if missing
 if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
   echo "updated $(date | xargs)" >/tmp/upd.tmp
@@ -22,6 +35,8 @@ if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
 fi
 sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev make autoconf libtool automake pkg-config
 sudo apt-get autoremove
+
+################################################################################
 
 # start counting (seconds)
 START="$SECONDS"
@@ -42,41 +57,45 @@ if [[ ! -f "$HOME/install_db4.sh" ]] &>/dev/null; then
 fi
 
 # if repo doesnt exist
-if [[ ! -d "$HOME/${WALLET_NAME}-Core" ]] &>/dev/null; then
+if [[ ! -d "$HOME/FreedomCoin-Core" ]] &>/dev/null; then
   # download and extract wallet source
   cd "$HOME" || exit
-  git clone "https://github.com/${WALLET_NAME}-Project/${WALLET_NAME}-Core.git"
+  git clone "https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
 fi
 
 # set user ownership
-sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/"${WALLET_NAME}-Core"/
+sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
 
 # build dependencies without Qt
-cd "$HOME/${WALLET_NAME}-Core/depends" || exit
+cd "$HOME/FreedomCoin-Core/depends" || exit
 make HOST=arm-linux-gnueabihf NO_QT=1 -j"$CPU_CORES"
 
 # build wallet without wallet and GUI
-cd "$HOME/${WALLET_NAME}-Core" || exit
+cd "$HOME/FreedomCoin-Core" || exit
 ./autogen.sh
 ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --without-gui
 make -j"$CPU_CORES"
 
 # copy binaries
-sudo cp "$HOME"/"${WALLET_NAME}-Core"/src/"${WALLET_DAEMON}" src/"${WALLET_CLIENT}" "$HOME" &>/dev/null
+sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind src/freedomcoin-cli "$HOME" &>/dev/null
 
 # calculate build time
 DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
 TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
 
+################################################################################
+
 # built wallet exist
-if [[ -f /home/"$(whoami)"/"${WALLET_DAEMON}" && -f /home/"$(whoami)"/"${WALLET_CLIENT}" ]] &>/dev/null; then
-  echo "Installing daemon and cli.."
-  sudo cp /home/"$(whoami)"/"${WALLET_DAEMON}" /usr/local/bin &>/dev/null
-  sudo cp /home/"$(whoami)"/"${WALLET_CLIENT}" /usr/local/bin &>/dev/null
+if [[ -f /home/"$(whoami)"/freedomcoind && -f /home/"$(whoami)"/freedomcoin-cli ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
+  sudo cp /home/"$(whoami)"/freedomcoind /usr/local/bin &>/dev/null
+  sudo cp /home/"$(whoami)"/freedomcoin-cli /usr/local/bin &>/dev/null
 fi
 
+################################################################################
+
 echo
-printf '%b' "Build time: ${GR}$TIMER${N0}\n"
+printf '%b' "[${N0}!!${N0}] Console : Build time: ${GR}$TIMER${N0}\n"
 echo
 read -r -p "[Ok] Press Enter to continue" </dev/tty
 echo
