@@ -42,7 +42,8 @@ if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
   echo "updated $(date | xargs)" >/tmp/upd.tmp
   sudo apt-get update
 fi
-sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config libevent-dev libsodium-dev libgmp-dev libboost-all-dev
+sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config \
+  libevent-dev libsodium-dev libgmp-dev libboost-all-dev
 sudo apt-get autoremove
 
 ################################################################################
@@ -80,6 +81,10 @@ make HOST=$HOST NO_QT=1 -j"$CPU_CORES"
 cd "$HOME/FreedomCoin-Core" || exit
 ./autogen.sh
 
+# patch missing <deque> include
+sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME/FreedomCoin-Core/src/httpserver.cpp"
+
+# configure with Berkeley DB
 export BDB_PREFIX="$HOME/db4"
 ./configure --prefix=$PWD/depends/$HOST \
   --enable-glibc-back-compat \
