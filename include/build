@@ -41,20 +41,17 @@ sudo apt-get autoremove
 # start counting (seconds)
 START="$SECONDS"
 
-# check for and download berkeley DB if needed
-if [[ ! -f "$HOME/install_db4.sh" ]] &>/dev/null; then
-  cd || exit
-  wget https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
-  bash install_db4.sh "$HOME"
-  # build and install Berkeley DB
-  cd "$HOME/db4/db-4.8.30.NC" || exit
-  export BDB_PREFIX="$HOME/db4"
-  ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8.a" BDB_CFLAGS="-I${BDB_PREFIX}/include"
-  sudo make -j"$CPU_CORES"
-  sudo make install
-  # copy Berkeley DB header files
-  sudo cp /usr/local/berkeleydb/include/* /usr/include/
-fi
+cd || exit
+wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
+bash install_db4.sh "$HOME"
+# build and install Berkeley DB
+cd "$HOME/db4/db-4.8.30.NC" || exit
+export BDB_PREFIX="$HOME/db4"
+./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8.a" BDB_CFLAGS="-I${BDB_PREFIX}/include"
+sudo make -j"$CPU_CORES"
+sudo make install
+# copy Berkeley DB header files
+sudo cp /usr/local/berkeleydb/include/* /usr/include/
 
 # if repo doesnt exist
 if [[ ! -d "$HOME/FreedomCoin-Core" ]] &>/dev/null; then
