@@ -19,9 +19,10 @@ fi
 
 # getbestblockhash
 /usr/local/bin/freedomcoin-cli getbestblockhash >/tmp/getbestblockhash.tmp 2>/dev/null
-
 # getmempoolinfo
 /usr/local/bin/freedomcoin-cli getmempoolinfo >/tmp/getmempoolinfo.tmp 2>/dev/null
+# getwalletinfo
+/usr/local/bin/freedomcoin-cli getwalletinfo >/tmp/getwalletinfo.tmp 2>/dev/null
 
 # getblockchaininfo
 if [[ ! -f /tmp/getblockchaininfo.tmp ]] &>/dev/null; then
@@ -331,16 +332,16 @@ WALLET_INPUTS_NODES=""
 
 # if zero
 if [[ -z "$WALLET_INPUTS_NODES" ]] &>/dev/null; then
-  WALLET_INPUTS_NODES="Inputs 0"
+  WALLET_INPUTS_NODES="Inputs ${GR}0${N0}"
 fi
 
 ################################################################################
 
-WALLET_TXCOUNT=""
+WALLET_TXCOUNT="$(grep "txcoun" /tmp/tmp/getwalletinfo.tmp | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
-  WALLET_TXCOUNT="0"
+  WALLET_TXCOUNT="${GR}0${N0}"
 fi
 
 ################################################################################
