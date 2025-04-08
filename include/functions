@@ -20,6 +20,9 @@ fi
 # getbestblockhash
 /usr/local/bin/freedomcoin-cli getbestblockhash >/tmp/getbestblockhash.tmp 2>/dev/null
 
+# getmempoolinfo
+/usr/local/bin/freedomcoin-cli getmempoolinfo >/tmp/getmempoolinfo.tmp 2>/dev/null
+
 # getblockchaininfo
 if [[ ! -f /tmp/getblockchaininfo.tmp ]] &>/dev/null; then
   /usr/local/bin/freedomcoin-cli getblockchaininfo >/tmp/getblockchaininfo.tmp 2>/dev/null
@@ -342,11 +345,11 @@ fi
 
 ################################################################################
 
-WALLET_MEMPOOL=""
+WALLET_MEMPOOL="$(grep "size" /tmp/getmempoolinfo | awk '{ print $2 }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_MEMPOOL" ]] &>/dev/null; then
-  WALLET_MEMPOOL="0"
+  WALLET_MEMPOOL="${GR}0${N0}"
 fi
 
 ################################################################################
