@@ -23,6 +23,9 @@ cd "$DIR_NAME"
 # start counting (seconds)
 START="$SECONDS"
 
+# build steps
+./autogen.sh
+
 # if aarch64
 if [[ "$(uname -m)" == "aarch64" ]] &>/dev/null; then
   # patch missing <deque> include
@@ -33,8 +36,6 @@ if [[ "$(uname -m)" == "aarch64" ]] &>/dev/null; then
   sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/threshold.cpp"
 fi
 
-# build steps
-./autogen.sh
 ./configure --enable-cxx --disable-tests --disable-bench --with-incompatible-bdb
 make -j$(nproc)
 
