@@ -16,13 +16,22 @@ WHOAMI="$(whoami)"
 
 ################################################################################
 
-# if architecture exist
-if [[ $CPU_ARCH == "aarch64" || $CPU_ARCH == "armv7l" || $CPU_ARCH == "x86_64" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Console : Detected $CPU_ARCH with $CPU_CORES cores.\n"
+# decide HOST based on CPU_ARCH
+if [[ "$CPU_ARCH" == "aarch64" ]]; then
+  HOST="aarch64-linux-gnu"
+  TOOLCHAIN_PKGS="gcc-aarch64-linux-gnu g++-aarch64-linux-gnu"
+elif [[ "$CPU_ARCH" == "armv7l" ]]; then
+  HOST="arm-linux-gnueabihf"
+  TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
+elif [[ "$CPU_ARCH" == "x86_64" ]]; then
+  HOST="arm-linux-gnueabihf"
+  TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
 else
   printf '%b' "[${R1}!!${N0}] Console : Unsupported architecture. Exiting.\n"
   exit 1
 fi
+
+printf '%b' "[${G1}OK${N0}] Console : Detected $CPU_ARCH with $CPU_CORES cores. Using target: $HOST\n"
 
 ################################################################################
 
@@ -33,7 +42,7 @@ if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
   echo "updated $(date | xargs)" >/tmp/upd.tmp
   sudo apt-get update
 fi
-sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf g++ libdb-dev make autoconf libtool automake pkg-config
+sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config
 sudo apt-get autoremove
 
 ################################################################################
@@ -53,7 +62,7 @@ sudo make install
 # copy Berkeley DB header files
 sudo cp /usr/local/berkeleydb/include/* /usr/include/
 
-# if repo doesnt exist
+# if repo doesn't exist
 if [[ ! -d "$HOME/FreedomCoin-Core" ]] &>/dev/null; then
   # download and extract wallet source
   cd "$HOME" || exit
@@ -65,12 +74,12 @@ sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
 
 # build dependencies without Qt
 cd "$HOME/FreedomCoin-Core/depends" || exit
-make HOST=arm-linux-gnueabihf NO_QT=1 -j"$CPU_CORES"
+make HOST=$HOST NO_QT=1 -j"$CPU_CORES"
 
 # build wallet without wallet and GUI
 cd "$HOME/FreedomCoin-Core" || exit
 ./autogen.sh
-./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --without-gui
+./configure --prefix=$PWD/depends/$HOST --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --without-gui
 make -j"$CPU_CORES"
 
 # copy binaries
