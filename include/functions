@@ -116,20 +116,6 @@ fi
 
 ################################################################################
 
-PROOF_STATUS="$(grep -c "Staking Not Active" /tmp/getinfo)"
-
-# if zero
-if [[ "$PROOF_STATUS" == "0" ]] &>/dev/null; then
-  PROOF_STATUS="${G1}S${N0}"
-fi
-
-# if zero
-if [[ "$PROOF_STATUS" == "1" ]] &>/dev/null; then
-  PROOF_STATUS="${GR}S${N0}"
-fi
-
-################################################################################
-
 THEME_STATUS=""
 
 # if zero
@@ -139,20 +125,30 @@ fi
 
 ################################################################################
 
-POS_STATUS=""
+POS_STATUS="$(grep -c "Staking Not Active" /tmp/getinfo)"
 
 # if zero
-if [[ -z "$POS_STATUS" ]] &>/dev/null; then
+if [[ "$POS_STATUS" == "0" ]] &>/dev/null; then
+  POS_STATUS="${G1}S${N0}"
+fi
+
+# if active
+if [[ "$PROOF_STATUS" == "1" ]] &>/dev/null; then
   POS_STATUS="${GR}S${N0}"
 fi
 
 ################################################################################
 
-TOR_STATUS=""
+TOR_STATUS="$(grep "proxy" /tmp/getinfo.tmp | awk '{ print $2 }' | tr -d '",' | egrep -c "[0-9]+|[A-Z]+|[a-z]")"
 
 # if zero
-if [[ -z "$TOR_STATUS" ]] &>/dev/null; then
+if [[ "$TOR_STATUS" == "0" ]] &>/dev/null; then
   TOR_STATUS="${GR}S${N0}"
+fi
+
+# if active
+if [[ "$TOR_STATUS" == "1" ]] &>/dev/null; then
+  TOR_STATUS="${P1}P${N0}"
 fi
 
 ################################################################################
