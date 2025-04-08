@@ -79,7 +79,17 @@ make HOST=$HOST NO_QT=1 -j"$CPU_CORES"
 # build wallet without wallet and GUI
 cd "$HOME/FreedomCoin-Core" || exit
 ./autogen.sh
-./configure --prefix=$PWD/depends/$HOST --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++ --with-incompatible-bdb=4.8 --without-gui
+
+export BDB_PREFIX="$HOME/db4"
+./configure --prefix=$PWD/depends/$HOST \
+  --enable-glibc-back-compat \
+  --enable-reduce-exports \
+  LDFLAGS="-static-libstdc++" \
+  CPPFLAGS="-I${BDB_PREFIX}/include" \
+  LDFLAGS="-L${BDB_PREFIX}/lib -static-libstdc++" \
+  --with-incompatible-bdb=${BDB_PREFIX} \
+  --without-gui
+
 make -j"$CPU_CORES"
 
 # copy binaries
