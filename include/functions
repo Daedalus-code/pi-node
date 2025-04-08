@@ -125,10 +125,10 @@ fi
 
 ################################################################################
 
-POS_STATUS="$(grep -c "Staking Not Active" /tmp/getinfo)"
+POS_STATUS="$(grep -c "Staking Not Active" /tmp/getinfo.tmp)"
 
 # if zero
-if [[ "$POS_STATUS" == "0" ]] &>/dev/null; then
+if [[ "$POS_STATUS" == "0" || -z "$POS_STATUS" ]] &>/dev/null; then
   POS_STATUS="${G1}S${N0}"
 fi
 
@@ -142,7 +142,7 @@ fi
 TOR_STATUS="$(grep "proxy" /tmp/getinfo.tmp | awk '{ print $2 }' | tr -d '",' | egrep -c "[0-9]+|[A-Z]+|[a-z]")"
 
 # if zero
-if [[ "$TOR_STATUS" == "0" ]] &>/dev/null; then
+if [[ "$TOR_STATUS" == "0" || -z "$TOR_STATUS" ]] &>/dev/null; then
   TOR_STATUS="${GR}S${N0}"
 fi
 
