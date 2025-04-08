@@ -13,7 +13,7 @@ for (( ; ; )); do # loop dashbord
   # dashbord
   printf '%b' "
 ${GR:?}                       ${GR:?} Pi-Node ${REPO_VERSION:?}  $SYSTEM_DATE ${SYSTEM_CLOCK:?}
-${CB:?}        ##   ##        ${N0:?} Fullnode + Stakebox        ${MASTER_STATUS:?} ${PROOF_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
+${CB:?}        ##   ##        ${N0:?} Fullnode + Stakebox          ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}        ##.  ##        ${GR:?} -----------------------------------------${N0:?}
 ${CB:?}    ##############     ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP_C:?} ${CPU_FTEMP:?}
 ${CB:?}      ###      ####    ${N0:?} Free Mem ${FREE_MEM:?}/${TOTAL_MEM:?} HDDuse ${USED_HDD:?}/${TOTAL_HDD} (${USED_HDD_P:?})

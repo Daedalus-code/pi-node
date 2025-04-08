@@ -116,10 +116,15 @@ fi
 
 ################################################################################
 
-PROOF_STATUS=""
+PROOF_STATUS="$(grep -c "Staking Not Active" /tmp/getinfo)"
 
 # if zero
-if [[ -z "$PROOF_STATUS" ]] &>/dev/null; then
+if [[ "$PROOF_STATUS" == "0" ]] &>/dev/null; then
+  PROOF_STATUS="${G1}S${N0}"
+fi
+
+# if zero
+if [[ "$PROOF_STATUS" == "1" ]] &>/dev/null; then
   PROOF_STATUS="${GR}S${N0}"
 fi
 
@@ -417,7 +422,7 @@ if [[ -z "$LAST_LOG" ]] &>/dev/null; then
 fi
 
 # if more than n megabytes
-if [[ "$(ls -lSh .trumpcoin/debug.log | awk '{ print $5 }' | tr -d 'M')" -gt "10" ]] &>/dev/null; then
+if [[ "$(ls -lSh .trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | tr -d 'M')" -gt "10" ]] &>/dev/null; then
   # trim debug.log
   echo "$(tail -1001 "$WALLET_LOG_DIR"/debug.log 2>/dev/null)" >"$WALLET_LOG_DIR"/debug.log
 fi
