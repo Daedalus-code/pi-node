@@ -2,8 +2,6 @@
 
 source /etc/pi-node/include/color
 
-set -e
-
 # variables
 REPO_URL="https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
 DIR_NAME="FreedomCoin-Core"
@@ -16,6 +14,7 @@ sudo apt install -y \
   git python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
   libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev libprotobuf-dev \
   protobuf-compiler libqrencode-dev libdb-dev libdb++-dev libsqlite3-dev
+sudo apt-get autoremove -y
 
 # clone repository
 git clone --recursive "$REPO_URL"
