@@ -42,7 +42,7 @@ if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
   echo "updated $(date | xargs)" >/tmp/upd.tmp
   sudo apt-get update
 fi
-sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config libevent-dev
+sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config libevent-dev libsodium-dev
 sudo apt-get autoremove
 
 ################################################################################
