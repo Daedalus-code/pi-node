@@ -31,7 +31,7 @@ else
   exit 1
 fi
 
-printf '%b' "[${G1}OK${N0}] Console : Detected $CPU_ARCH with $CPU_CORES cores. Using target: $HOST\n"
+printf '%b' "[${G1}OK${N0}] Console : Detected ${CY}$CPU_ARCH${N0} with ${G1}$CPU_CORES${N0} cores. Using target: $HOST\n"
 
 ################################################################################
 
