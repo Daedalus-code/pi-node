@@ -1,0 +1,103 @@
+#!/bin/bash
+
+set -e
+
+################################################################################
+# 🛠️ CONFIGURATION
+################################################################################
+
+# Set target Pi version: 1, 2, 3, 4, or 5
+TARGET_PI=${1:-4}
+
+# Repo info
+REPO_URL="https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
+PROJECT="FreedomCoin-Core"
+
+# Setup build directory
+BUILD_DIR=$(pwd)/freedomcoin-build-$TARGET_PI
+mkdir -p "$BUILD_DIR"
+
+################################################################################
+# 🎯 TOOLCHAIN SELECTION
+################################################################################
+
+if [[ $TARGET_PI == 1 || $TARGET_PI == "zero" ]]; then
+  HOST="arm-linux-gnueabi"
+  CC="arm-linux-gnueabi-gcc"
+  CXX="arm-linux-gnueabi-g++"
+  STRIP="arm-linux-gnueabi-strip"
+  CFLAGS="-march=armv6 -mfpu=vfp -mfloat-abi=softfp"
+elif [[ $TARGET_PI == 2 ]]; then
+  HOST="arm-linux-gnueabihf"
+  CC="arm-linux-gnueabihf-gcc"
+  CXX="arm-linux-gnueabihf-g++"
+  STRIP="arm-linux-gnueabihf-strip"
+  CFLAGS="-march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
+elif [[ $TARGET_PI == 3 ]]; then
+  HOST="arm-linux-gnueabihf"
+  CC="arm-linux-gnueabihf-gcc"
+  CXX="arm-linux-gnueabihf-g++"
+  STRIP="arm-linux-gnueabihf-strip"
+  CFLAGS="-march=armv8-a -mfpu=neon-fp-armv8 -mfloat-abi=hard"
+elif [[ $TARGET_PI == 4 || $TARGET_PI == 5 ]]; then
+  HOST="aarch64-linux-gnu"
+  CC="aarch64-linux-gnu-gcc"
+  CXX="aarch64-linux-gnu-g++"
+  STRIP="aarch64-linux-gnu-strip"
+  CFLAGS=""
+else
+  echo "❌ Unsupported TARGET_PI: $TARGET_PI"
+  exit 1
+fi
+
+################################################################################
+# 📦 Install required tools
+################################################################################
+
+echo "🔧 Installing cross-toolchains..."
+sudo apt update
+sudo apt install -y \
+  $CC $CXX $STRIP \
+  build-essential automake libtool pkg-config libssl-dev \
+  libevent-dev libprotobuf-dev protobuf-compiler \
+  libboost-all-dev libminiupnpc-dev libzmq3-dev \
+  libqrencode-dev libsqlite3-dev
+
+################################################################################
+# ⬇️ Clone & Prepare
+################################################################################
+
+cd "$BUILD_DIR"
+if [ ! -d "$PROJECT" ]; then
+  git clone --recursive "$REPO_URL"
+fi
+cd "$PROJECT"
+
+make distclean || true
+./autogen.sh
+
+################################################################################
+# ⚙️ Configure with Toolchain
+################################################################################
+
+echo "⚙️ Configuring for Raspberry Pi $TARGET_PI (host: $HOST)"
+
+./configure \
+  --host=$HOST \
+  --disable-tests \
+  --disable-bench \
+  CC=$CC CXX=$CXX STRIP=$STRIP \
+  CFLAGS="$CFLAGS" \
+  CXXFLAGS="$CFLAGS"
+
+################################################################################
+# 🔨 Build
+################################################################################
+
+echo "🚧 Building FreedomCoin for Pi $TARGET_PI..."
+make -j$(nproc)
+
+echo "✅ Build complete!"
+ls -lh src/freedomcoind src/freedomcoin-cli
+
+# END

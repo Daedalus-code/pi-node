@@ -48,8 +48,8 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
       # remove old directory
       rm -r "$HOME"/"$WALLET_DOWNLOAD"
     else
-      printf '%b' "[${R1}!!${N0}] wget    : Download failed! Running build script instead..\n"
-      bash /etc/pi-node/include/build
+      printf '%b' "[${R1}!!${N0}] wget    : Download failed! Running compile script instead!\n"
+      bash /etc/pi-node/include/compile
     fi
   fi
   # fix ownership

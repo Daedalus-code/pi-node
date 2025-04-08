@@ -6,7 +6,7 @@ source /etc/pi-node/include/color
 
 ################################################################################
 
-printf '%b' "[${N0}!!${N0}] Console : Searching for files..\n"
+printf '%b' "[${N0}!!${N0}] Console : Searching for node..\n"
 
 ################################################################################
 # find daemon
