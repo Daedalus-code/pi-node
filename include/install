@@ -331,7 +331,7 @@ After=network-online.target
 [Service]
 Type=simple
 Restart=always
-OnUnitInactiveSec=10s
+RestartSec=10
 ExecStart=/etc/pi-node/include/start
 
 [Install]
