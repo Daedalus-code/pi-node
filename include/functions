@@ -204,11 +204,11 @@ IP_ADDRESS="${N0}$(ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print
 # get all RX byte counts from ifconfig
 DOWNLOAD_TOTAL=$(ifconfig | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
-DOWNLOAD_TOTAL_MB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024)" | bc)
-DOWNLOAD_TOTAL_GB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc)
+DOWNLOAD_TOTAL_MB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024)" | bc 2>/dev/null)
+DOWNLOAD_TOTAL_GB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc 2>/dev/null)
 
 # which unit to display
-if (($(echo "$TOTAL_GB >= 1" | bc -l))); then
+if (($(echo "$TOTAL_GB >= 1" | bc -l 2>/dev/null))); then
   DOWNLOAD="$DOWNLOAD_TOTAL_MB MB"
 else
   DOWNLOAD="$DOWNLOAD_TOTAL_GB GB"
