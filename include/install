@@ -326,14 +326,11 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
     printf '%b' "[${G1}OK${N0}] Service : Installing FreedomCoin service..\n"
 
     echo "[Unit]
-Description=FreedomCoin daemon service
-After=network.target
+Description=freedomcoind service
+After=network-online.target
 
 [Service]
-Type=simple
-User=$(whoami)
 ExecStart=/etc/pi-node/include/start
-Restart=on-abort
 
 [Install]
 WantedBy=multi-user.target" >/tmp/service.tmp
