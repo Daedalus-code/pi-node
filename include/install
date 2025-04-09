@@ -240,8 +240,8 @@ else
     cp /home/"$(whoami)"/node/wallet.dat /home/"$(whoami)" &>/dev/null
     cp /home/"$(whoami)"/Wallet/wallet.dat /home/"$(whoami)" &>/dev/null
     printf '%b' "${GR}[!!] Pi-Node : Moving node into .trumpcoin..${N0}\n"
-    mv -r /home/"$(whoami)"/node /home/$(whoami)/.trumpcoin 2>/dev/null
-    mv -r /home/"$(whoami)"/Wallet /home/$(whoami)/.trumpcoin 2>/dev/null
+    mv /home/"$(whoami)"/node /home/$(whoami)/.trumpcoin 2>/dev/null
+    mv /home/"$(whoami)"/Wallet /home/$(whoami)/.trumpcoin 2>/dev/null
     update_configuration
   fi
 
