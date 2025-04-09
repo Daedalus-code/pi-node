@@ -227,21 +227,23 @@ else
     # kill daemon
     printf '%b' "${GR}[!!] Pi-Node : Shutdown daemon..${N0}\n"
     kill -9 "$(pidof freedomcoind)" &>/dev/null
+    # move old pi-node wallet into default directory
+    printf '%b' "${GR}[!!] Pi-Node : wallet.dat backup..${N0}\n"
+    cp /home/"$(whoami)"/node/wallet.dat /home/"$(whoami)"/pinode_wallet.dat &>/dev/null
+    cp /home/"$(whoami)"/Wallet/wallet.dat /home/"$(whoami)"/pinode_wallet.dat &>/dev/null
+    cp .trumpcoin/wallet.dat /home/"$(whoami)"/original_wallet.dat &>/dev/null
     # remove old pi-node data
     printf '%b' "${GR}[!!] Pi-Node : Removing old install..${N0}\n"
+    sudo rm -r .trumpcoin/* &>/dev/null
     sudo rm -r /usr/local/bin/include/pinode &>/dev/null
     sudo rm /usr/local/bin/helpme &>/dev/null
     sudo rm /usr/local/bin/pinode &>/dev/null
     sudo rm /usr/local/bin/update &>/dev/null
     sudo rm /usr/local/bin/menu &>/dev/null
     sudo rm /usr/local/bin/log &>/dev/null
-    # move old pi-node wallet into default directory
-    printf '%b' "${GR}[!!] Pi-Node : wallet.dat backup..${N0}\n"
-    cp /home/"$(whoami)"/node/wallet.dat /home/"$(whoami)" &>/dev/null
-    cp /home/"$(whoami)"/Wallet/wallet.dat /home/"$(whoami)" &>/dev/null
     printf '%b' "${GR}[!!] Pi-Node : Moving node into .trumpcoin..${N0}\n"
-    mv /home/"$(whoami)"/node /home/$(whoami)/.trumpcoin 2>/dev/null
-    mv /home/"$(whoami)"/Wallet /home/$(whoami)/.trumpcoin 2>/dev/null
+    mv /home/"$(whoami)"/node/* /home/$(whoami)/.trumpcoin 2>/dev/null
+    mv /home/"$(whoami)"/Wallet/* /home/$(whoami)/.trumpcoin 2>/dev/null
     update_configuration
   fi
 
