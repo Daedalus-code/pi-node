@@ -117,6 +117,11 @@ if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
   sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
   # add missing include <memory> to chiabls/src/threshold.cpp
   sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
+  # remove bad alignment on blake2s_state and blake2b_state in array declarations
+  sed -i 's/__attribute__((aligned(32))) blake2s_state/blake2s_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  sed -i 's/__attribute__((aligned(64))) blake2b_state/blake2b_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  # also check and fix in .c files
+  sed -i 's/__attribute__((aligned(32))) blake2s_state/blake2s_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2s-ref.c"
   sed -i 's|typedef struct blake2s_state {|typedef struct __attribute__((aligned(32))) blake2s_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
   sed -i 's|typedef struct blake2b_state {|typedef struct __attribute__((aligned(64))) blake2b_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
 fi
