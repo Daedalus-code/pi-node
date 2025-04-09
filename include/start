@@ -2,18 +2,22 @@
 
 ################################################################################
 
-source /etc/pi-node/include/color
-source /etc/pi-node/config
+for (( ; ; )); do # loop dashbord
 
-################################################################################
-# daemon
-################################################################################
+  source /etc/pi-node/include/color
+  source /etc/pi-node/config
 
-# daemon running
-if [[ "$(pidof freedomcoind | wc -l)" -eq "0" ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Daemon  : "
-  # start daemon w old configuration
-  /usr/local/bin/./freedomcoind -datadir="${DATA_DIR:?}" -debuglogfile="${DATA_DIR:?}"/debug.log -conf="${DATA_DIR:?}"/"${WALLET_CONFIG:?}" -debug=tor -proxy="${PROXY:?}" -daemon
-fi
+  ##############################################################################
+  # start node daemon
+  ##############################################################################
+
+  # daemon running
+  if [[ "$(pidof freedomcoind | wc -l)" -eq "0" ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] Daemon  : "
+    # start daemon
+    /usr/local/bin/./freedomcoind -debug=tor -proxy="${PROXY:?}" -daemon
+  fi
+  sleep 60
+done
 
 # END
