@@ -6,6 +6,39 @@ source /etc/pi-node/include/color
 source /etc/pi-node/config
 
 ################################################################################
+# display resolution
+################################################################################
+
+RES=$(fbset | grep geometry | awk '{print $2 "x" $3}')
+
+# fallback to tvservice if fbset gives nothing
+if [ -z "$RES" ]; then
+  RES=$(tvservice -s | awk -F@ '{ print $1 }' | awk '{ print $NF }')
+fi
+
+case "$RES" in
+# setfont for display Screen 3.5, 480x320 (~160 PPI)
+"320x480" | "480x320")
+  FONT="Lat7-Terminus20x10.psf.gz"
+  ;;
+"800x480")
+  # setfont for display HyperPixel 4.0, 800×480 (~235 PPI)
+  FONT="Lat7-Terminus24x12.psf.gz"
+  ;;
+"1024x600")
+  FONT="Lat7-Terminus20x10.psf.gz"
+  ;;
+"1280x720" | "1920x1080")
+  FONT="Lat7-Terminus16.psf.gz"
+  ;;
+*)
+  FONT="Lat7-Terminus20x10.psf.gz"
+  ;;
+esac
+
+sudo setfont /usr/share/consolefonts/$FONT
+
+################################################################################
 # client commands
 ################################################################################
 
