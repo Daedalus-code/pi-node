@@ -216,15 +216,11 @@ else
   # old pi-node data configuration
   DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$DATA_DIR" ]] &>/dev/null; then
-    FIND_WALLET_LOG_DIR="$(find $HOME -type d -name "Wallet")"
-    if [[ -z "$FIND_WALLET_LOG_DIR" ]] &>/dev/null; then
-      FIND_WALLET_LOG_DIR="$(find $HOME -type d -name "node")"
-    fi
-    # update configuration
-    echo "DATA_DIR=/$(find /tmp -name "debug.log" 2>/dev/null | awk -F/ '{ print $2 }')/" >>/etc/pi-node/config
-    echo "WALLET_LOG_DIR=/$(find /tmp -name "debug.log" 2>/dev/null | awk -F/ '{ print $2 }')/" >>/etc/pi-node/config
-    echo "WALLET_CONFIG=$FIND_WALLET_LOG_DIR/trumpcoin.conf" >>/etc/pi-node/config
+    echo "Old Pi-Node install found, please backup wallet.dat and reinstall."
+    exit
   fi
+
+  ##############################################################################
 
   # new pi-node data configuration
   if [[ -z "$DATA_DIR" ]] &>/dev/null; then
