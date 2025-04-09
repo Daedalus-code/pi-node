@@ -57,7 +57,7 @@ sudo chmod +x "$(whoami)":"$(whoami)" /usr/local/bin/dash 2>/dev/null
 sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/dash 2>/dev/null
 cd || exit && cp -rf pi-node/include /etc/pi-node
 # create configuration
-printf '%b' "[${N0}!!${N0}] echo    : Creating configuration..\n"
+printf '%b' "[${N0}!!${N0}] echo    : Setup configuration..\n"
 echo "# pi-node Configuration #
   " >/etc/pi-node/config
 
