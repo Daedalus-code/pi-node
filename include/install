@@ -252,8 +252,10 @@ else
     mv "$HOME"/node/* /home/$(whoami)/.trumpcoin 2>/dev/null
     mv "$HOME"/Wallet/* /home/$(whoami)/.trumpcoin 2>/dev/null
     update_configuration
-    printf '%b' "${GR}[!!] Pi-Node : Restoring keys (wallet.dat)${N0}\n"
-    cp "$HOME"/wallet.dat .trumpcoin/wallet.dat 2>/dev/null
+    if [[ -f "$HOME"/wallet.dat ]] &>/dev/null; then
+      printf '%b' "${GR}[!!] Pi-Node : Restoring keys (wallet.dat)${N0}\n"
+      cp "$HOME"/wallet.dat .trumpcoin/wallet.dat 2>/dev/null
+    fi
   fi
 
   ##############################################################################
