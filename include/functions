@@ -412,6 +412,11 @@ if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="null"
 fi
 
+# if syncing
+if [[ "$(tail -1 "$DATA_DIR"/debug.log | grep -c "skipped on sync")" -gt "0" ]] &>/dev/null; then
+  WALLET_TXLAST="${WALLET_SYNC}"
+fi
+
 ################################################################################
 
 LAST_LOG="$(tail -1 "$DATA_DIR"/debug.log)"
