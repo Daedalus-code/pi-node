@@ -67,7 +67,7 @@ fi
 ################################################################################
 
 # if not synced
-if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${WALLET_LOG_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   # function to draw the progress bar
   draw_progress_bar() {
     PROGRESS="$1"
@@ -86,14 +86,14 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${WALLET_LOG_DIR}"/debug.log | tail -1
     printf "] %s%%\n" "$PERCENT"
   }
   # extract the progress value
-  PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "${WALLET_LOG_DIR}"/debug.log | tail -1)"
+  PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1)"
   # draw the progress bar
   SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
 fi
 
 ################################################################################
 
-WALLET_SYNC="$(grep -o "progress......" "$DATA_DIR"/debug.log | tail -1)"
+WALLET_SYNC="$(grep -o "progress........." "${DATA_DIR}"/debug.log | tail -1 | awk -F= '{ printf "%.2f\n", $2 }')"
 echo "$WALLET_SYNC" >/tmp/progress.tmp
 
 WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
@@ -126,7 +126,7 @@ CB="${GR}"
 
 ################################################################################
 
-WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${WALLET_LOG_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
+WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
 
 # if any rewards
 if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
@@ -135,7 +135,7 @@ fi
 
 ################################################################################
 
-WALLET_MOVEMENT="$(grep -c "AddToWallet" "${WALLET_LOG_DIR:?}"/debug.log)"
+WALLET_MOVEMENT="$(grep -c "AddToWallet" "${DATA_DIR:?}"/debug.log)"
 
 # if any movements
 if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
@@ -439,7 +439,7 @@ fi
 ################################################################################
 
 # if syncing
-if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${WALLET_LOG_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   WALLET_TXLAST="    ${G1}${SYNC_PROGRESS_BAR}${N0}"
 else
   WALLET_TXLAST="${GR}$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
@@ -461,7 +461,7 @@ fi
 # if more than n megabytes
 if [[ "$(ls -lSh .trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | tr -d 'M')" -gt "10" ]] &>/dev/null; then
   # trim debug.log
-  echo "$(tail -1001 "$WALLET_LOG_DIR"/debug.log 2>/dev/null)" >"$WALLET_LOG_DIR"/debug.log
+  echo "$(tail -1001 "$DATA_DIR"/debug.log 2>/dev/null)" >"$DATA_DIR"/debug.log
 fi
 
 ################################################################################
