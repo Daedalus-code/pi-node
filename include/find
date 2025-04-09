@@ -123,4 +123,8 @@ else
   printf '%b' "[${G1}OK${N0}] Master  : Found ${CY}$MAS_FOUND${N0} in configuration!\n"
 fi
 
+################################################################################
+
+printf '%b' "[${G1}OK${N0}] echo    : Creating configuration..\n"
+
 # END
