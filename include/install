@@ -329,6 +329,7 @@ Description=freedomcoind service
 After=network-online.target
 
 [Service]
+Type=simple
 Restart=on-failure
 ExecStart=/etc/pi-node/include/start
 
