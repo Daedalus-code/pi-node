@@ -322,36 +322,29 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   # freedomcoin daemon service
   ##############################################################################
 
-  # if missing
-  if [[ ! -f /etc/systemd/system/freedomcoind.service ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Service : Installing FreedomCoin service..\n"
+  printf '%b' "[${G1}OK${N0}] Service : Installing FreedomCoin service..\n"
 
-    echo "[Unit]
+  echo "[Unit]
 Description=freedomcoind service
 After=network-online.target
 
 [Service]
+Restart=on-failure
+RestartSec=60s
 ExecStart=/etc/pi-node/include/start
 
 [Install]
 WantedBy=multi-user.target" >/tmp/service.tmp
 
-    # install service
-    sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
-    # enable service
-    printf '%b' "[${G1}OK${N0}] Service : Enabling FreedomCoin service..\n"
-    sudo systemctl enable freedomcoind
-    # reload
-    sudo systemctl daemon-reload
-    # start service
-    sudo service freedomcoind start
-  fi
-
-  ##############################################################################
-  # start wallet daemon
-  ##############################################################################
-
-  bash /etc/pi-node/include/start
+  # install service
+  sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
+  # enable service
+  printf '%b' "[${G1}OK${N0}] Service : Enabling FreedomCoin service..\n"
+  sudo systemctl enable freedomcoind
+  # reload
+  sudo systemctl daemon-reload
+  # start service
+  sudo service freedomcoind restart
 fi
 
 # END
