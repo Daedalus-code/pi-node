@@ -87,7 +87,7 @@ if [[ ! -d "${DATA_DIR:?}"/bootstrap/ ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Blocks  : Installing blockchain..\n"
     mv "${DATA_DIR:?}"/bootstrap/* "${DATA_DIR:?}"
   else
-    printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip, skipping..\n"
+    printf '%b' "[${G1}OK${N0}] Blocks  : Not enouh space for bootstrap.zip, skipping! Brace yourself xD ${GR}num num num coffeee${N0}\n"
   fi
 fi
 
