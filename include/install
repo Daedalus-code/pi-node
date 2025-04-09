@@ -322,7 +322,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   # freedomcoin daemon service
   ##############################################################################
 
-  printf '%b' "[${G1}OK${N0}] Service : Installing FreedomCoin service..\n"
+  printf '%b' "[${G1}OK${N0}] Service : Creating FreedomCoin service..\n"
 
   echo "[Unit]
 Description=freedomcoind service
