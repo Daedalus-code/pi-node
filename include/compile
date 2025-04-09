@@ -117,10 +117,14 @@ if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
   sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
   # add missing include <memory> to chiabls/src/threshold.cpp
   sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
-  # patch alignment of blake2s_state
-  sed -i 's/typedef struct {/typedef struct __attribute__((aligned(32))) {/' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
-  # patch alignment of blake2b_state
-  sed -i 's/typedef struct blake2b_state {/typedef struct __attribute__((aligned(64))) blake2b_state {/' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
+  # aarch64-specific blake2 alignment fix
+  sed -i 's|typedef struct blake2s_state {|typedef struct __attribute__((aligned(32))) blake2s_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
+  sed -i 's|typedef struct blake2b_state {|typedef struct __attribute__((aligned(64))) blake2b_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
+  sed -i 's/blake2s_state S\[8\]\[1\];/__attribute__((aligned(32))) blake2s_state S[8][1];/' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  sed -i 's/blake2s_state R\[1\];/__attribute__((aligned(32))) blake2s_state R[1];/' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  sed -i 's/blake2b_state S\[4\]\[1\];/__attribute__((aligned(64))) blake2b_state S[4][1];/' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  sed -i 's/blake2b_state R\[1\];/__attribute__((aligned(64))) blake2b_state R[1];/' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  sed -i 's/blake2s_state S\[1\];/__attribute__((aligned(32))) blake2s_state S[1];/' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2s-ref.c"
 fi
 
 ################################################################################
