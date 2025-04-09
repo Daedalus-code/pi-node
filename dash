@@ -12,7 +12,7 @@ for (( ; ; )); do # loop dashbord
   clear
   # dashbord
   printf '%b' "
-${GR:?}                       ${GR:?} Pi-Node ${REPO_VERSION:?}  $SYSTEM_DATE ${SYSTEM_CLOCK:?}
+${GR:?}                       ${GR:?} Pi-Node ${REPO_VERSION:?}        $SYSTEM_DATE ${SYSTEM_CLOCK:?}
 ${CB:?}        ##   ##        ${N0:?} Fullnode + Stakebox          ${MASTER_STATUS:?} ${THEME_STATUS:?} ${POS_STATUS:?} ${TOR_STATUS:?} ${LAN_STATUS:?}
 ${CB:?}        ##.  ##        ${GR:?} -----------------------------------------${N0:?}
 ${CB:?}    ##############     ${N0:?} Load ${SYSTEM_LOAD:?} temp ${CPU_CTEMP_C:?} ${CPU_FTEMP:?}
