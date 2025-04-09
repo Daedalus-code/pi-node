@@ -125,6 +125,6 @@ fi
 
 ################################################################################
 
-printf '%b' "[${G1}OK${N0}] echo    : Creating node configuration..\n"
+printf '%b' "[${G1}OK${N0}] Config  : Creating node configuration..\n"
 
 # END
