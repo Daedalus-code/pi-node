@@ -101,7 +101,7 @@ WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
 if [[ "$WALLET_SYNC" == "1.00" ]] &>/dev/null; then
   WALLET_SYNC="${G1}OK${N0}"
 else
-  WALLET_SYNC="$(echo "$WALLET_SYNC" | tr -d '.' | sed 's/^0*//')"
+  WALLET_SYNC="${G1}$(echo "$WALLET_SYNC" | tr -d '.' | sed 's/^0*//')%${N0}"
 fi
 
 # if zero
