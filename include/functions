@@ -98,10 +98,10 @@ echo "$WALLET_SYNC" >/tmp/progress.tmp
 
 WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
 # if synced
-if [[ "$WALLET_SYNC" == "progress=1.00" ]] &>/dev/null; then
+if [[ "$WALLET_SYNC" == "1.00" ]] &>/dev/null; then
   WALLET_SYNC="${G1}OK${N0}"
 else
-  WALLET_SYNC="$(echo "$WALLET_SYNC" | awk -F= '{ print $2 }' | tr -d '.' | sed 's/^0*//')"
+  WALLET_SYNC="$(echo "$WALLET_SYNC" | tr -d '.' | sed 's/^0*//')"
 fi
 
 # if zero
