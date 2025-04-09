@@ -12,6 +12,8 @@ CPU_CORES="$(nproc)"
 # whoami
 WHOAMI="$(whoami)"
 
+printf '%b' "[${G1}OK${N0}] Console : Detected ${CY}$CPU_ARCH${N0} with ${G1}$CPU_CORES${N0} cores. Using target: $HOST\n"
+
 ################################################################################
 
 # decide HOST based on CPU_ARCH
@@ -29,27 +31,23 @@ else
   exit 1
 fi
 
-printf '%b' "[${G1}OK${N0}] Console : Detected ${CY}$CPU_ARCH${N0} with ${G1}$CPU_CORES${N0} cores. Using target: $HOST\n"
-
 ################################################################################
 
 # install dependencies
 printf '%b' "[${G1}OK${N0}] Console : Please wait. Installing dependencies...\n"
-# if missing
-if [[ ! -f /tmp/upd.tmp ]] &>/dev/null; then
-  echo "updated $(date | xargs)" >/tmp/upd.tmp
-  sudo apt-get update
-fi
-# update and install dependencies
+
+# install toolchains and dependencies
 sudo apt update
-sudo apt upgrade -y
-sudo apt install -y \
-  build-essential libtool autotools-dev automake pkg-config bsdmainutils curl \
-  git python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
-  libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev libprotobuf-dev \
-  protobuf-compiler libqrencode-dev libdb-dev libdb++-dev libsqlite3-dev
 sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config \
   libevent-dev libsodium-dev libgmp-dev libboost-all-dev build-essential
+sudo apt install -y \
+  gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+  gcc-arm-linux-gnueabi g++-arm-linux-gnueabi \
+  gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+  build-essential autoconf libtool pkg-config \
+  libssl-dev libevent-dev libboost-all-dev \
+  libprotobuf-dev protobuf-compiler libminiupnpc-dev libzmq3-dev \
+  libqrencode-dev libsqlite3-dev libqt5svg5-dev
 sudo apt-get autoremove -y
 
 ################################################################################
@@ -63,6 +61,10 @@ source $HOME/.cargo/env
 # start counting (seconds)
 START="$SECONDS"
 
+################################################################################
+# berkeleydb 4.8
+################################################################################
+
 cd || exit
 wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
 bash install_db4.sh "$HOME"
@@ -74,6 +76,8 @@ sudo make -j"$CPU_CORES"
 sudo make install
 # copy Berkeley DB header files
 sudo cp /usr/local/berkeleydb/include/* /usr/include/
+
+################################################################################
 
 # if repo doesn't exist
 if [[ ! -d "$HOME/FreedomCoin-Core" ]] &>/dev/null; then
@@ -102,7 +106,7 @@ export CXXFLAGS="$CFLAGS"
 ################################################################################
 
 # if aarch64
-if [[ "$(uname -m)" == "aarch64" ]] &>/dev/null; then
+if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
   # patch missing <deque> include
   sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME/FreedomCoin-Core/src/httpserver.cpp"
   # patch non-constexpr sysconf() usage in Catch2 test framework
@@ -135,23 +139,19 @@ strip src/freedomcoind src/freedomcoin-cli || true
 
 ################################################################################
 
-# copy binaries
-sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind src/freedomcoin-cli "$HOME" &>/dev/null
+# if found
+if [[ -f "$HOME"/FreedomCoin-Core/src/freedomcoind && -f "$HOME"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
+  # copy wallet binaries
+  sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind /usr/local/bin &>/dev/null
+  sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoin-cli /usr/local/bin &>/dev/null
+fi
 
 ################################################################################
 
 # calculate build time
 DURATION=$(echo "$SECONDS-$START" | bc 2>/dev/null)
 TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(("$DURATION%60")))
-
-################################################################################
-
-# built wallet exist
-if [[ -f /home/"$(whoami)"/freedomcoind && -f /home/"$(whoami)"/freedomcoin-cli ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
-  sudo cp /home/"$(whoami)"/freedomcoind /usr/local/bin &>/dev/null
-  sudo cp /home/"$(whoami)"/freedomcoin-cli /usr/local/bin &>/dev/null
-fi
 
 ################################################################################
 
