@@ -71,6 +71,8 @@ WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
 # if synced
 if [[ "$WALLET_SYNC" == "progress=1.00" ]] &>/dev/null; then
   WALLET_SYNC="${G1}OK${N0}"
+else
+  WALLET_SYNC="$(echo "$WALLET_SYNC" | awk -F= '{ print $2 }' | tr -d '.')%"
 fi
 
 # if zero
@@ -409,7 +411,7 @@ fi
 
 # if syncing
 if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${WALLET_LOG_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
-  WALLET_TXLAST="     ${G1}${WALLET_TXLAST}${N0}"
+  WALLET_TXLAST="    ${G1}${WALLET_TXLAST}${N0}"
 else
   WALLET_TXLAST="${GR}$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
   # if zero
