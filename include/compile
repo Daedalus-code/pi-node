@@ -96,8 +96,12 @@ make HOST=$HOST NO_QT=1 -j"$CPU_CORES"
 # build wallet without wallet and GUI
 cd "$HOME/FreedomCoin-Core" || exit
 
-export CFLAGS="-O2 -mno-strict-align"
+################################################################################
+
+export CFLAGS="-O2 -mno-strict-align -Wno-error=attributes -Wno-error=cast-align"
 export CXXFLAGS="$CFLAGS"
+
+################################################################################
 
 ./autogen.sh
 
