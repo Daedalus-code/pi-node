@@ -5,6 +5,11 @@ source /etc/pi-node/config
 
 ################################################################################
 
+# start counting (seconds)
+START="$SECONDS"
+
+################################################################################
+
 # CPU architecture
 CPU_ARCH="$(uname -m)"
 # CPU cores
@@ -16,39 +21,13 @@ printf '%b' "[${G1}OK${N0}] Console : Detected ${CY}$CPU_ARCH${N0} with ${G1}$CP
 
 ################################################################################
 
-# decide HOST based on CPU_ARCH
-if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
-  HOST="aarch64-linux-gnu"
-  TOOLCHAIN_PKGS="gcc-aarch64-linux-gnu g++-aarch64-linux-gnu"
-elif [[ "$CPU_ARCH" == "armv7l" ]] &>/dev/null; then
-  HOST="arm-linux-gnueabihf"
-  TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
-elif [[ "$CPU_ARCH" == "x86_64" ]] &>/dev/null; then
-  HOST="arm-linux-gnueabihf"
-  TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
-else
-  printf '%b' "[${R1}!!${N0}] Console : Unsupported architecture. Exiting.\n"
-  exit 1
-fi
-
-################################################################################
-
-# install dependencies
-printf '%b' "[${G1}OK${N0}] Console : Please wait. Installing dependencies...\n"
-
-# install toolchains and dependencies
-sudo apt update
-sudo apt-get install -y "$TOOLCHAIN_PKGS" g++ libdb-dev make autoconf libtool automake pkg-config \
-  libevent-dev libsodium-dev libgmp-dev libboost-all-dev build-essential
+sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
-  gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-  gcc-arm-linux-gnueabi g++-arm-linux-gnueabi \
-  gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
-  build-essential autoconf libtool pkg-config \
-  libssl-dev libevent-dev libboost-all-dev \
-  libprotobuf-dev protobuf-compiler libminiupnpc-dev libzmq3-dev \
-  libqrencode-dev libsqlite3-dev libqt5svg5-dev
-sudo apt-get autoremove -y
+  git build-essential libtool autotools-dev automake pkg-config \
+  bsdmainutils curl libevent-dev libboost-system-dev \
+  libboost-filesystem-dev libboost-chrono-dev libboost-test-dev \
+  libboost-thread-dev libssl-dev libzmq3-dev libqrencode-dev \
+  libminiupnpc-dev software-properties-common
 
 ################################################################################
 
@@ -57,91 +36,27 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source "$HOME"/.cargo/env
 
 ################################################################################
-
-# start counting (seconds)
-START="$SECONDS"
-
-################################################################################
 # berkeleydb 4.8
 ################################################################################
 
-cd || exit
-wget -c https://raw.githubusercontent.com/PIVX-Project/PIVX/master/contrib/install_db4.sh
-bash install_db4.sh "$HOME"
-# build and install Berkeley DB
-cd "$HOME/db4/db-4.8.30.NC" || exit
-export BDB_PREFIX="$HOME/db4"
-./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8.a" BDB_CFLAGS="-I${BDB_PREFIX}/include"
-sudo make -j"$CPU_CORES"
+cd ~
+wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
+tar -xvzf db-4.8.30.NC.tar.gz
+cd db-4.8.30.NC/build_unix
+../dist/configure --prefix=/usr/local --enable-cxx
+make -j$(nproc)
 sudo make install
-# copy Berkeley DB header files
-sudo cp /usr/local/berkeleydb/include/* /usr/include/
 
 ################################################################################
 
-# if repo doesn't exist
-if [[ ! -d "$HOME/FreedomCoin-Core" ]] &>/dev/null; then
-  # download and extract wallet source
-  cd "$HOME" || exit
-  git clone "https://github.com/FreedomCoin-Project/FreedomCoin-Core.git"
-fi
-
-# set user ownership
-sudo chown -R "${WHOAMI:?}":"${WHOAMI:?}" /home/"${WHOAMI:?}"/FreedomCoin-Core/
-
-# build dependencies without Qt
-cd "$HOME/FreedomCoin-Core/depends" || exit
-make HOST=$HOST NO_QT=1 -j"$CPU_CORES"
-
-# build wallet without wallet and GUI
-cd "$HOME/FreedomCoin-Core" || exit
-
-################################################################################
-
-export CFLAGS="-O2 -mno-strict-align -Wno-error=attributes -Wno-error=cast-align"
-export CXXFLAGS="$CFLAGS"
-
-################################################################################
-
+git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
+cd FreedomCoin-Core
 ./autogen.sh
-
-################################################################################
-# patches, only for aarch64
-################################################################################
-
-# if aarch64
-if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
-  # patch missing <deque> include
-  sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME/FreedomCoin-Core/src/httpserver.cpp"
-  # patch non-constexpr sysconf() usage in Catch2 test framework
-  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
-  # add missing include <memory> to chiabls/src/threshold.cpp
-  sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
-  # remove bad alignment on blake2s_state and blake2b_state in array declarations
-  sed -i 's/__attribute__((aligned(32))) blake2s_state/blake2s_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
-  sed -i 's/__attribute__((aligned(64))) blake2b_state/blake2b_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
-  # also check and fix in .c files
-  sed -i 's/__attribute__((aligned(32))) blake2s_state/blake2s_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2s-ref.c"
-  sed -i 's|typedef struct blake2s_state {|typedef struct __attribute__((aligned(32))) blake2s_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
-  sed -i 's|typedef struct blake2b_state {|typedef struct __attribute__((aligned(64))) blake2b_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
-fi
-
-################################################################################
-
-# configure with Berkeley DB
-export BDB_PREFIX="$HOME/db4"
-./configure --prefix=$PWD/depends/$HOST \
-  --enable-glibc-back-compat \
-  --enable-reduce-exports \
-  LDFLAGS="-static-libstdc++" \
-  CPPFLAGS="-I${BDB_PREFIX}/include" \
-  LDFLAGS="-L${BDB_PREFIX}/lib -static-libstdc++" \
-  --with-incompatible-bdb=${BDB_PREFIX} \
-  --without-gui
-
-################################################################################
-
-make -j"$CPU_CORES"
+./configure \
+  --with-incompatible-bdb \
+  BDB_LIBS="-L/usr/local/lib -ldb_cxx-4.8" \
+  BDB_CFLAGS="-I/usr/local/include"
+make -j$(nproc)
 
 ################################################################################
 
