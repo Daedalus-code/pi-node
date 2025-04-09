@@ -343,8 +343,14 @@ WantedBy=multi-user.target" >/tmp/service.tmp
   sudo systemctl enable freedomcoind
   # reload
   sudo systemctl daemon-reload
-  # start service
-  sudo service freedomcoind restart
+
+  # daemon running
+  if [[ "$(pidof freedomcoind | wc -l)" -gt "0" ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] Daemon  : Already running! PID: ${G1}$(pidof freedomcoind)${N0}\n"
+  else
+    # start service
+    sudo service freedomcoind restart
+  fi
 fi
 
 # END
