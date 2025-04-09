@@ -218,16 +218,18 @@ else
   }
 
   ##############################################################################
+  # old pi-node configuration
+  ##############################################################################
 
-  # old pi-node data configuration
   DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
+
   # if any data, if missing keys
   if [[ -n "$DATA_DIR" || ! -f /home/$(whoami)/.trumpcoin/wallet.dat ]] &>/dev/null; then
     printf '%b' "${GR}[!!] Pi-Node : Reinstall node!${N0}\n"
     # kill daemon
     printf '%b' "${GR}[!!] Pi-Node : Shutdown daemon..${N0}\n"
     kill -9 "$(pidof freedomcoind)" &>/dev/null
-    # move old pi-node wallet into default directory
+    ############################################################################
     printf '%b' "${GR}[!!] Pi-Node : Backup keys (wallet.dat)${N0}\n"
     if [[ -f "$HOME"/node/wallet.dat ]] &>/dev/null; then
       cp "$HOME"/node/wallet.dat "$HOME"/pinode_wallet.dat &>/dev/null
@@ -238,6 +240,7 @@ else
     if [[ -f .trumpcoin/wallet.dat ]] &>/dev/null; then
       cp .trumpcoin/wallet.dat "$HOME"/original_wallet.dat &>/dev/null
     fi
+    ############################################################################
     # remove old pi-node data
     printf '%b' "${GR}[!!] Pi-Node : Removing old install..${N0}\n"
     sudo rm -r .trumpcoin/* &>/dev/null
@@ -248,6 +251,7 @@ else
     sudo rm /usr/local/bin/update &>/dev/null
     sudo rm /usr/local/bin/menu &>/dev/null
     sudo rm /usr/local/bin/log &>/dev/null
+    # move old pi-node wallet into default directory
     printf '%b' "${GR}[!!] Pi-Node : Moving node into .trumpcoin..${N0}\n"
     mv "$HOME"/node/* /home/$(whoami)/.trumpcoin 2>/dev/null
     mv "$HOME"/Wallet/* /home/$(whoami)/.trumpcoin 2>/dev/null
