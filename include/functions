@@ -337,7 +337,7 @@ fi
 
 ################################################################################
 
-WALLET_TXCOUNT="$(grep "txcoun" /tmp/tmp/getwalletinfo.tmp | awk '{ print $NF }' | tr -d ',')"
+WALLET_TXCOUNT="$(grep "txcoun" /tmp/getwalletinfo.tmp | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
@@ -346,7 +346,7 @@ fi
 
 ################################################################################
 
-WALLET_MEMPOOL="$(grep "size" /tmp/getmempoolinfo | awk '{ print $2 }' | tr -d ',')"
+WALLET_MEMPOOL="$(grep "size" /tmp/getmempoolinfo.tmp | awk '{ print $2 }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_MEMPOOL" ]] &>/dev/null; then
