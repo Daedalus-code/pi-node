@@ -10,74 +10,68 @@ START="$SECONDS"
 
 ################################################################################
 
-# CPU architecture
-CPU_ARCH="$(uname -m)"
-# CPU cores
-CPU_CORES="$(nproc)"
-# whoami
-WHOAMI="$(whoami)"
+#!/bin/bash
 
-printf '%b' "[${G1}OK${N0}] Console : Detected ${CY}$CPU_ARCH${N0} with ${G1}$CPU_CORES${N0} cores. Using target: $HOST\n"
+set -e
 
-################################################################################
+echo "📦 Starting FreedomCoin-Core build for Raspberry Pi"
 
+# Detect CPU arch
+ARCH=$(uname -m)
+
+# Define build concurrency
+CORES=$(nproc)
+
+# System Update
 sudo apt update && sudo apt upgrade -y
+
+# Dependencies
 sudo apt install -y \
-  git build-essential libtool autotools-dev automake pkg-config \
-  bsdmainutils curl libevent-dev libboost-system-dev \
-  libboost-filesystem-dev libboost-chrono-dev libboost-test-dev \
-  libboost-thread-dev libssl-dev libzmq3-dev libqrencode-dev \
+  build-essential libtool autotools-dev automake pkg-config \
+  bsdmainutils curl git libevent-dev libssl-dev \
+  libboost-system-dev libboost-filesystem-dev libboost-chrono-dev \
+  libboost-test-dev libboost-thread-dev libzmq3-dev libqrencode-dev \
   libminiupnpc-dev software-properties-common
 
-################################################################################
-
-# install rust and cargo silently with default options
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-source "$HOME"/.cargo/env
-
-################################################################################
-# patches for aarch64
-################################################################################
-
-# if aarch64
-if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
-  # patch missing <deque> include
-  sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME/FreedomCoin-Core/src/httpserver.cpp"
-  # patch non-constexpr sysconf() usage in Catch2 test framework
-  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
-  # add missing include <memory> to chiabls/src/threshold.cpp
-  sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
-  # remove bad alignment on blake2s_state and blake2b_state in array declarations
-  sed -i 's/__attribute__((aligned(32))) blake2s_state/blake2s_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
-  sed -i 's/__attribute__((aligned(64))) blake2b_state/blake2b_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
-  # also check and fix in .c files
-  sed -i 's/__attribute__((aligned(32))) blake2s_state/blake2s_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2s-ref.c"
-  sed -i 's|typedef struct blake2s_state {|typedef struct __attribute__((aligned(32))) blake2s_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
-  sed -i 's|typedef struct blake2b_state {|typedef struct __attribute__((aligned(64))) blake2b_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
-fi
-
-################################################################################
-# berkeleydb 4.8
-################################################################################
-
+# Berkeley DB 4.8
 cd ~
 wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
-tar -xvzf db-4.8.30.NC.tar.gz
+tar -xzf db-4.8.30.NC.tar.gz
 cd db-4.8.30.NC/build_unix
 ../dist/configure --prefix=/usr/local --enable-cxx
-make -j$(nproc)
+make -j$CORES
 sudo make install
+cd ~
 
-################################################################################
-
+# Clone FreedomCoin
 git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
 cd FreedomCoin-Core
+
+# Checkout latest tag
+TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+git checkout $TAG
+
 ./autogen.sh
-./configure \
-  --with-incompatible-bdb \
-  BDB_LIBS="-L/usr/local/lib -ldb_cxx-4.8" \
-  BDB_CFLAGS="-I/usr/local/include"
-make -j$(nproc)
+
+CONFIG_OPTS=(
+  "--with-incompatible-bdb"
+  "--disable-tests"
+  "--disable-bench"
+  "BDB_LIBS=-L/usr/local/lib -ldb_cxx-4.8"
+  "BDB_CFLAGS=-I/usr/local/include"
+)
+
+if [[ "$ARCH" == "aarch64" ]]; then
+  CONFIG_OPTS+=("--host=aarch64-linux-gnu")
+elif [[ "$ARCH" == "armv7l" ]]; then
+  CONFIG_OPTS+=("--host=arm-linux-gnueabihf")
+fi
+
+./configure "${CONFIG_OPTS[@]}"
+
+make -j$CORES
+
+echo "✅ Build completed! - $TIMER"
 
 ################################################################################
 
