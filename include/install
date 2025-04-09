@@ -216,7 +216,7 @@ else
   # old pi-node data configuration
   DATA_DIR="$(grep "DATA_DIR=" /usr/local/bin/include/pinode/pinode.conf 2>/dev/null | awk -F= '{ print $2 }' | awk '{ print $1 }' | tr -d '"')"
   if [[ -n "$DATA_DIR" ]] &>/dev/null; then
-    printf '%b' "${GR}[!!] Pi-Node : Old Pi-Node install found, please backup wallet.dat and reinstall.${N0}"
+    printf '%b' "${GR}[!!] Pi-Node : Old Pi-Node install found, please backup wallet.dat and reinstall.${N0}\n"
     exit
   fi
 
