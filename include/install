@@ -222,7 +222,7 @@ else
     fi
     # update configuration
     echo "DATA_DIR=$FIND_WALLET_LOG_DIR" >>/etc/pi-node/config
-    echo "WALLET_LOG_DIR=$FIND_WALLET_LOG_DIR" >>/etc/pi-node/config
+    echo "WALLET_LOG_DIR=/$(find /tmp -name "debug.log" 2>/dev/null | awk -F/ '{ print $2 }')/" >>/etc/pi-node/config
     echo "WALLET_CONFIG=$FIND_WALLET_LOG_DIR/trumpcoin.conf" >>/etc/pi-node/config
   fi
 
