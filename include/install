@@ -223,10 +223,10 @@ else
     # update configuration
     echo "DATA_DIR=$FIND_WALLET_LOG_DIR" >>/etc/pi-node/config
     echo "WALLET_LOG_DIR=$FIND_WALLET_LOG_DIR" >>/etc/pi-node/config
-    echo "WALLET_CONFIG=$WALLET_LOG_DIR/trumpcoin.conf" >>/etc/pi-node/config
+    echo "WALLET_CONFIG=$FIND_WALLET_LOG_DIR/trumpcoin.conf" >>/etc/pi-node/config
   fi
 
-  # if zero
+  # new pi-node data configuration
   if [[ -z "$DATA_DIR" ]] &>/dev/null; then
     # update configuration
     echo "DATA_DIR=/home/$(whoami)/.trumpcoin" >>/etc/pi-node/config
