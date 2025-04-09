@@ -36,6 +36,27 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source "$HOME"/.cargo/env
 
 ################################################################################
+# patches for aarch64
+################################################################################
+
+# if aarch64
+if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
+  # patch missing <deque> include
+  sed -i '/#include <event2\/keyvalq_struct.h>/a #include <deque>' "$HOME/FreedomCoin-Core/src/httpserver.cpp"
+  # patch non-constexpr sysconf() usage in Catch2 test framework
+  sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
+  # add missing include <memory> to chiabls/src/threshold.cpp
+  sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
+  # remove bad alignment on blake2s_state and blake2b_state in array declarations
+  sed -i 's/__attribute__((aligned(32))) blake2s_state/blake2s_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  sed -i 's/__attribute__((aligned(64))) blake2b_state/blake2b_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2.h"
+  # also check and fix in .c files
+  sed -i 's/__attribute__((aligned(32))) blake2s_state/blake2s_state/g' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2s-ref.c"
+  sed -i 's|typedef struct blake2s_state {|typedef struct __attribute__((aligned(32))) blake2s_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
+  sed -i 's|typedef struct blake2b_state {|typedef struct __attribute__((aligned(64))) blake2b_state {|' "$HOME/FreedomCoin-Core/src/chiabls/contrib/relic/src/md/blake2-impl.h"
+fi
+
+################################################################################
 # berkeleydb 4.8
 ################################################################################
 
