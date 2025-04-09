@@ -52,9 +52,6 @@ printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
 # create install directory
 sudo mkdir /etc/pi-node &>/dev/null
 sudo chown "$(whoami)":"$(whoami)" /etc/pi-node 2>/dev/null
-cd || exit && sudo cp pi-node/dash /usr/local/bin
-sudo chmod +x "$(whoami)":"$(whoami)" /usr/local/bin/dash 2>/dev/null
-sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/dash 2>/dev/null
 cd || exit && cp -rf pi-node/include /etc/pi-node
 # create configuration
 printf '%b' "[${N0}!!${N0}] Config  : Setup node configuration..\n"
@@ -229,6 +226,13 @@ else
     echo "WALLET_LOG_DIR=/home/$(whoami)/.trumpcoin" >>/etc/pi-node/config
     echo "WALLET_CONFIG=/home/$(whoami).trumpcoin/trumpcoin.conf" >>/etc/pi-node/config
   fi
+
+  ##############################################################################
+
+  # install dash
+  cd || exit && sudo cp pi-node/dash /usr/local/bin
+  sudo chmod +x "$(whoami)":"$(whoami)" /usr/local/bin/dash 2>/dev/null
+  sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/dash 2>/dev/null
 
   ##############################################################################
 
