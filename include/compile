@@ -17,13 +17,13 @@ printf '%b' "[${G1}OK${N0}] Console : Detected ${CY}$CPU_ARCH${N0} with ${G1}$CP
 ################################################################################
 
 # decide HOST based on CPU_ARCH
-if [[ "$CPU_ARCH" == "aarch64" ]]; then
+if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
   HOST="aarch64-linux-gnu"
   TOOLCHAIN_PKGS="gcc-aarch64-linux-gnu g++-aarch64-linux-gnu"
-elif [[ "$CPU_ARCH" == "armv7l" ]]; then
+elif [[ "$CPU_ARCH" == "armv7l" ]] &>/dev/null; then
   HOST="arm-linux-gnueabihf"
   TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
-elif [[ "$CPU_ARCH" == "x86_64" ]]; then
+elif [[ "$CPU_ARCH" == "x86_64" ]] &>/dev/null; then
   HOST="arm-linux-gnueabihf"
   TOOLCHAIN_PKGS="gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf"
 else
@@ -38,7 +38,7 @@ printf '%b' "[${G1}OK${N0}] Console : Please wait. Installing dependencies...\n"
 
 # install toolchains and dependencies
 sudo apt update
-sudo apt-get install -y $TOOLCHAIN_PKGS g++ libdb-dev make autoconf libtool automake pkg-config \
+sudo apt-get install -y "$TOOLCHAIN_PKGS" g++ libdb-dev make autoconf libtool automake pkg-config \
   libevent-dev libsodium-dev libgmp-dev libboost-all-dev build-essential
 sudo apt install -y \
   gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
@@ -54,7 +54,7 @@ sudo apt-get autoremove -y
 
 # rust and cargo
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
+source "$HOME"/.cargo/env
 
 ################################################################################
 
@@ -106,7 +106,7 @@ export CXXFLAGS="$CFLAGS"
 ./autogen.sh
 
 ################################################################################
-# patches
+# patches, only for aarch64
 ################################################################################
 
 # if aarch64
@@ -117,6 +117,12 @@ if [[ "$CPU_ARCH" == "aarch64" ]] &>/dev/null; then
   sed -i 's|static constexpr std::size_t sigStackSize = .*;|static const std::size_t sigStackSize = 32768;|' "$HOME/FreedomCoin-Core/src/contrib/catch/catch.hpp"
   # add missing include <memory> to chiabls/src/threshold.cpp
   sed -i '1s/^/#include <memory>\n/' "$HOME/FreedomCoin-Core/src/chiabls/src/threshold.cpp"
+  # patch struct alignment for blake2s_state and blake2b_state
+  if ! grep -q 'ALIGN(x)' "$HOME/FreedomCoin-Core/contrib/relic/src/md/blake2.h"; then
+    sed -i '1i#if defined(_MSC_VER)\n  #define ALIGN(x) __declspec(align(x))\n#else\n  #define ALIGN(x) __attribute__((aligned(x)))\n#endif\n' "$HOME/FreedomCoin-Core/contrib/relic/src/md/blake2.h"
+    sed -i 's/typedef struct blake2s_state/typedef struct ALIGN(32) blake2s_state/' "$HOME/FreedomCoin-Core/contrib/relic/src/md/blake2.h"
+    sed -i 's/typedef struct blake2b_state/typedef struct ALIGN(64) blake2b_state/' "$HOME/FreedomCoin-Core/contrib/relic/src/md/blake2.h"
+  fi
 fi
 
 ################################################################################
