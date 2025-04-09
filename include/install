@@ -338,7 +338,7 @@ WantedBy=multi-user.target" >/tmp/service.tmp
     # install service
     sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
     # enable service
-    printf '%b' "[${G1}OK${N0}] Service : Enable FreedomCoin service: "
+    printf '%b' "[${G1}OK${N0}] Service : Enable FreedomCoin service..\n"
     sudo systemctl enable freedomcoind
     # reload
     sudo systemctl daemon-reload
