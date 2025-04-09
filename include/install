@@ -318,6 +318,30 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   bash /etc/pi-node/include/bootstrap
 
   ##############################################################################
+  # freedomcoin daemon service
+  ##############################################################################
+
+  echo "[Unit]
+Description=FreedomCoin daemon service
+After=network.target
+
+[Service]
+Type=simple
+User=$(whoami)
+ExecStart=/etc/pi-node/include/start
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target" >/tmp/service.tmp
+
+  # install service
+  sudo mv /tmp/service.tmp /etc/system/systemd/freedomcoind.service &>/dev/null
+  # enable service
+  sudo systemctl enable freedomcoind
+  # reload
+  sudo systemctl daemon-reload
+
+  ##############################################################################
   # start wallet daemon
   ##############################################################################
 
