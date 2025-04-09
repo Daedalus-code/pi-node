@@ -116,9 +116,9 @@ REPO_VERSION="${N0}v$(wc -l /etc/pi-node/*/* 2>/dev/null | grep "total" | egrep 
 
 ################################################################################
 
-DATE="$(date 2>/dev/null)"
-SYSTEM_DATE="${GR}$(echo "$DATE" | awk '{ print $1,$2,$3,$6 }')${N0}"
-SYSTEM_CLOCK="$(echo "$DATE" | awk '{ print $4 }')"
+DATE="$(date '+%D %H:%M:%S' 2>/dev/null)"
+SYSTEM_DATE="${GR}$(echo "$DATE" | awk '{ print $1 }')${N0}"
+SYSTEM_CLOCK="$(echo "$DATE" | awk '{ print $2 }')"
 
 ################################################################################
 
