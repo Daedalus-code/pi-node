@@ -61,11 +61,7 @@ fi
 ################################################################################
 
 WALLET_SYNC="$(grep -o "progress....." "$DATA_DIR"/debug.log | tail -1)"
-
-# if missing
-if [[ ! -f /tmp/progress.tmp ]] &>/dev/null; then
-  echo "$WALLET_SYNC" >/tmp/progress.tmp
-fi
+echo "$WALLET_SYNC" >/tmp/progress.tmp
 
 WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
 # if synced
