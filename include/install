@@ -321,7 +321,11 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   # freedomcoin daemon service
   ##############################################################################
 
-  echo "[Unit]
+  # if missing
+  if [[ ! -f /etc/system/systemd/freedomcoind.service ]]; then
+    printf '%b' "[${G1}OK${N0}] Service : Installing FreedomCoin service..\n"
+
+    echo "[Unit]
 Description=FreedomCoin daemon service
 After=network.target
 
@@ -334,12 +338,13 @@ Restart=on-abort
 [Install]
 WantedBy=multi-user.target" >/tmp/service.tmp
 
-  # install service
-  sudo mv /tmp/service.tmp /etc/system/systemd/freedomcoind.service &>/dev/null
-  # enable service
-  sudo systemctl enable freedomcoind
-  # reload
-  sudo systemctl daemon-reload
+    # install service
+    sudo mv /tmp/service.tmp /etc/system/systemd/freedomcoind.service &>/dev/null
+    # enable service
+    sudo systemctl enable freedomcoind
+    # reload
+    sudo systemctl daemon-reload
+  fi
 
   ##############################################################################
   # start wallet daemon
