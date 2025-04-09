@@ -2,8 +2,6 @@
 
 source /etc/pi-node/include/color
 
-export HOME="/home/$(whoami)"
-
 # pi node updated age (seconds)
 PI_NODE_UPDATED="$(stat -c '%Y' /tmp/pnud.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
 # if missing, if older than n
