@@ -9,8 +9,11 @@ source /etc/pi-node/config
 # daemon
 ################################################################################
 
-printf '%b' "[${G1}OK${N0}] Daemon  : "
-# start daemon default
-/usr/local/bin/./freedomcoind -debug=tor -proxy="${PROXY:?}" -daemon
+# if no PID
+if [[ "$(pidof freedomcoind | wc -l)" -eq "0" ]] &>/dev/null; then
+  printf '%b' "[${G1}OK${N0}] Daemon  : "
+  # start daemon default
+  /usr/local/bin/./freedomcoind -debug=tor -proxy="${PROXY:?}" -daemon
+fi
 
 # END
