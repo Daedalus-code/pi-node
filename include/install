@@ -322,7 +322,7 @@ HiddenServicePort 15110 127.0.0.1:15110" | sudo tee -a /etc/tor/torrc >/dev/null
   ##############################################################################
 
   # if missing
-  if [[ ! -f /etc/system/systemd/freedomcoind.service ]]; then
+  if [[ ! -f /etc/systemd/system/freedomcoind.service ]] &>/dev/null; then
     printf '%b' "[${G1}OK${N0}] Service : Installing FreedomCoin service..\n"
 
     echo "[Unit]
@@ -341,6 +341,7 @@ WantedBy=multi-user.target" >/tmp/service.tmp
     # install service
     sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
     # enable service
+    printf '%b' "[${G1}OK${N0}] Service : Enable FreedomCoin service: "
     sudo systemctl enable freedomcoind
     # reload
     sudo systemctl daemon-reload
