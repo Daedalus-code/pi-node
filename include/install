@@ -339,7 +339,7 @@ Restart=on-abort
 WantedBy=multi-user.target" >/tmp/service.tmp
 
     # install service
-    sudo mv /tmp/service.tmp /etc/system/systemd/freedomcoind.service &>/dev/null
+    sudo mv /tmp/service.tmp /etc/systemd/system/freedomcoind.service &>/dev/null
     # enable service
     sudo systemctl enable freedomcoind
     # reload
