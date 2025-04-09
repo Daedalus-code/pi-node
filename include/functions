@@ -44,6 +44,8 @@ sudo setfont /usr/share/consolefonts/$FONT
 
 # getinfo
 /usr/local/bin/./freedomcoin-cli getinfo >/tmp/getinfo.tmp 2>/dev/null
+# getwalletinfo
+/usr/local/bin/freedomcoin-cli getwalletinfo >/tmp/getwalletinfo.tmp 2>/dev/null
 
 # version
 if [[ ! -f /tmp/version.tmp ]] &>/dev/null; then
@@ -52,15 +54,14 @@ fi
 
 # getbestblockhash
 /usr/local/bin/freedomcoin-cli getbestblockhash >/tmp/getbestblockhash.tmp 2>/dev/null
-# getmempoolinfo
-/usr/local/bin/freedomcoin-cli getmempoolinfo >/tmp/getmempoolinfo.tmp 2>/dev/null
-# getwalletinfo
-/usr/local/bin/freedomcoin-cli getwalletinfo >/tmp/getwalletinfo.tmp 2>/dev/null
 
 # getblockchaininfo
 if [[ ! -f /tmp/getblockchaininfo.tmp ]] &>/dev/null; then
   /usr/local/bin/freedomcoin-cli getblockchaininfo >/tmp/getblockchaininfo.tmp 2>/dev/null
 fi
+
+# getmempoolinfo
+/usr/local/bin/freedomcoin-cli getmempoolinfo >/tmp/getmempoolinfo.tmp 2>/dev/null
 
 ################################################################################
 # progress bar
@@ -346,7 +347,7 @@ fi
 WALLET_BALANCES="$(grep "balance" /tmp/getinfo.tmp | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
-if [[ -z "$WALLET_BALANCES" ]] &>/dev/null; then
+if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" -eq "0" ]] &>/dev/null; then
   WALLET_BALANCES="${GR}0${N0}"
 fi
 
