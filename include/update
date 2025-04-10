@@ -5,7 +5,7 @@ source /etc/pi-node/include/color
 # update pi-node files
 printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository..\n"
 printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
-printf '%b' "[${N0}!!${N0}] Github  : Installing update-pi-node..\n"
+printf '%b' "[${N0}!!${N0}] Github  : Installing ${G1}update-pi-node${N0}..\n"
 cd || exit && sudo cp pi-node/include/update /usr/local/bin/update-pi-node
 sudo chmod +x /usr/local/bin/update-pi-node
 printf '%b' "[${N0}!!${N0}] Github  : Updating include..\n"
