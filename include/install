@@ -49,6 +49,7 @@ printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
 printf '%b' "[${N0}!!${N0}] Script  : Installing ${G1}update-pi-node${N0}..\n"
 cd || exit && sudo cp pi-node/include/update /usr/local/bin/update-pi-node
 sudo chmod +x /usr/local/bin/update-pi-node
+sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/update-pi-node
 
 ################################################################################
 
