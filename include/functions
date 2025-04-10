@@ -167,7 +167,7 @@ if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &
   CB="${G1}"
   TX="${G1}"
 else
-  WALLET_POS_REWARDS="Stakes ${GR}$WALLET_POS_REWARDS${N0}"
+  WALLET_POS_REWARDS="Stakes ${N0}$WALLET_POS_REWARDS${N0}"
   CB="${GR}"
   TX="${GR}"
 fi
@@ -451,12 +451,12 @@ else
   if [[ "$WALLET_POS_REWARDS_AGE" -gt "$WALLET_MOVEMENT_AGE" ]] &>/dev/null; then
     # if any proof-of-stake
     if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
-      WALLET_TXLAST="${G1}$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
+      WALLET_TXLAST="$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
     fi
   else
     # if any wallet movements
     if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
-      WALLET_TXLAST="${Y1}$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
+      WALLET_TXLAST="$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
     fi
   fi
 
