@@ -123,8 +123,9 @@ SYSTEM_CLOCK="$(echo "$DATE" | awk '{ print $2 }')"
 
 ################################################################################
 
-# default logo color (idle)
+# default color (idle)
 CB="${GR}"
+TX="${GR}"
 
 ################################################################################
 
@@ -133,6 +134,7 @@ WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${D
 # if any rewards
 if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
   CB="${G1}"
+  TX="${G1}"
 fi
 
 ################################################################################
@@ -142,6 +144,7 @@ WALLET_MOVEMENT="$(grep -c "AddToWallet" "${DATA_DIR:?}"/debug.log)"
 # if any movements
 if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
   CB="${Y1}"
+  TX="${Y1}"
 fi
 
 ################################################################################
@@ -360,7 +363,7 @@ fi
 
 ################################################################################
 
-WALLET_TXCOUNT="$(grep "txcoun" /tmp/getwalletinfo.tmp | awk '{ print $NF }' | tr -d ',')"
+WALLET_TXCOUNT="$(grep "txcount" /tmp/getwalletinfo.tmp | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
@@ -419,20 +422,11 @@ fi
 
 ################################################################################
 
-TX=""
-
-# if zero
-if [[ -z "$TX" ]] &>/dev/null; then
-  TX="${GR}"
-fi
-
-################################################################################
-
 # if syncing
 if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
 else
-  WALLET_TXLAST="${GR}$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null | grep -v "BOX64")${N0}"
+  WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null | grep -v "BOX64")"
   # if zero
   if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
     WALLET_TXLAST="null"
