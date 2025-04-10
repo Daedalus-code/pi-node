@@ -364,12 +364,9 @@ fi
 WALLET_INPUTS_NODES="$(grep -c "amount" /tmp/listunspent.tmp 2>/dev/null)"
 
 # if zero
-if [[ -z "$WALLET_INPUTS_NODES" ]] &>/dev/null; then
+if [[ -z "$WALLET_INPUTS_NODES" || "$WALLET_INPUTS_NODES" == "0" ]] &>/dev/null; then
   WALLET_INPUTS_NODES="Inputs ${GR}0${N0}"
-fi
-
-# if any data
-if [[ -n "$WALLET_INPUTS_NODES" ]] &>/dev/null; then
+else
   WALLET_INPUTS_NODES="Inputs ${G1}$WALLET_INPUTS_NODES${N0}"
 fi
 
