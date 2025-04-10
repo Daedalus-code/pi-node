@@ -331,6 +331,10 @@ fi
 
 WALLET_BALANCES="$(grep "balance" /tmp/getinfo.tmp | awk '{ print $NF }' | tr -d ',')"
 
+if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
+  WALLET_BALANCES="$(echo "$WALLET_BALANCES" | awk '{ printf "%.2f\n", $1 }')"
+fi
+
 # if zero
 if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" -eq "0" ]] &>/dev/null; then
   WALLET_BALANCES="${GR}0${N0}"
