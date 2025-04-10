@@ -2,22 +2,17 @@
 
 source /etc/pi-node/include/color
 
-# pi node updated age (seconds)
-PI_NODE_UPDATED="$(stat -c '%Y' /tmp/pnud.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
-# if missing, if older than n
-if [[ ! -f /tmp/pnud.tmp || "$PI_NODE_UPDATED" -gt "30" ]] &>/dev/null; then
-  # update pi-node files
-  printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository..\n"
-  printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
-  printf '%b' "[${N0}!!${N0}] Github  : Installing update-pi-node..\n"
-  cd || exit && sudo cp pi-node/include/update /usr/local/bin/update-pi-node
-  sudo chmod +x /usr/local/bin/update-pi-node
-  printf '%b' "[${N0}!!${N0}] Github  : Updating include..\n"
-  cd || exit && cp -rf pi-node/include /etc/pi-node
-  printf '%b' "[${N0}!!${N0}] Github  : Updating dash..\n"
-  cd || exit && sudo cp pi-node/dash /usr/local/bin
-  printf '%b' "[${G1}OK${N0}] Console : Done!\n"
-  echo "$(date | xargs) - Updated" >/tmp/pnud.tmp
-fi
+# update pi-node files
+printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository..\n"
+printf '%b' "[${G1}OK${N0}] Github  : $(cd || exit && cd pi-node && git pull)\n"
+printf '%b' "[${N0}!!${N0}] Github  : Installing update-pi-node..\n"
+cd || exit && sudo cp pi-node/include/update /usr/local/bin/update-pi-node
+sudo chmod +x /usr/local/bin/update-pi-node
+printf '%b' "[${N0}!!${N0}] Github  : Updating include..\n"
+cd || exit && cp -rf pi-node/include /etc/pi-node
+printf '%b' "[${N0}!!${N0}] Github  : Updating dash..\n"
+cd || exit && sudo cp pi-node/dash /usr/local/bin
+printf '%b' "[${G1}OK${N0}] Console : Done!\n"
+echo "$(date | xargs) - Updated" >/tmp/pnud.tmp
 
 # END
