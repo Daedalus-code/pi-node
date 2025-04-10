@@ -363,6 +363,11 @@ if [[ -z "$WALLET_INPUTS_NODES" ]] &>/dev/null; then
   WALLET_INPUTS_NODES="Inputs ${GR}0${N0}"
 fi
 
+# if any data
+if [[ -n "$WALLET_INPUTS_NODES" ]] &>/dev/null; then
+  WALLET_INPUTS_NODES="Inputs ${G1}$WALLET_INPUTS_NODES${N0}"
+fi
+
 ################################################################################
 
 WALLET_TXCOUNT="$(grep "txcount" /tmp/getwalletinfo.tmp | awk '{ print $NF }' | tr -d ',')"
