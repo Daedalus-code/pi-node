@@ -346,7 +346,7 @@ if [[ -n "$WALLET_BALANCES" ]] &>/dev/null; then
 fi
 
 # if zero
-if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" -eq "0" ]] &>/dev/null; then
+if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^0*//')" -eq "0" || "$WALLET_BALANCES" == "0.00000000" ]] &>/dev/null; then
   WALLET_BALANCES="${GR}0${N0}"
 fi
 
