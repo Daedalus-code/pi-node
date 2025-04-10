@@ -74,7 +74,7 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egr
     local FILLED
     local EMPTY
 
-    PERCENT=$(awk "BEGIN {printf \"%.0f\", $PROGRESS * 100}")
+    PERCENT=$(awk "BEGIN {printf \"%.6f\", $PROGRESS * 100}")
     FILLED=$((PERCENT * BAR_WIDTH / 100))
     EMPTY=$((BAR_WIDTH - FILLED))
     # bar
