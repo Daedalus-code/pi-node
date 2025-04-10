@@ -146,6 +146,8 @@ if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &
   TX="${G1}"
 fi
 
+WALLET_POS_REWARDS="Stakes $WALLET_POS_REWARDS"
+
 ################################################################################
 
 WALLET_MOVEMENT="$(tail -101 "${DATA_DIR:?}"/debug.log | grep -c "AddToWallet")"
