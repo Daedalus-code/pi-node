@@ -131,17 +131,24 @@ TX="${GR}"
 
 ################################################################################
 
-WALLET_POS_REWARDS="$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log 2>&1 | awk '!a[$0]++' 2>&1 | wc -l)"
+# if new signed block
+if [[ ! "$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' | tail -1)" == "$(tail -1 /tmp/stakes)" ]] &>/dev/null; then
+  # fetch signed proof-of-stake block
+  grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' >/tmp/stakes
+fi
 
-# if any rewards
-if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+WALLET_POS_REWARDS="$(cat /tmp/stakes | wc -l)"
+WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /tmp/stakes 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+
+# if any rewards and less than n age
+if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &>/dev/null; then
   CB="${G1}"
   TX="${G1}"
 fi
 
 ################################################################################
 
-WALLET_MOVEMENT="$(grep -c "AddToWallet" "${DATA_DIR:?}"/debug.log)"
+WALLET_MOVEMENT="$(tail -101 "${DATA_DIR:?}"/debug.log | grep -c "AddToWallet")"
 
 # if any movements
 if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
@@ -345,15 +352,6 @@ if [[ -z "$WALLET_BALANCES" || "$(echo "$WALLET_BALANCES" | tr -d '.' | sed 's/^
   WALLET_BALANCES="${GR}0${N0}"
 else
   WALLET_BALANCES="${G1}$WALLET_BALANCES${N0}"
-fi
-
-################################################################################
-
-WALLET_POS_REWARDS=""
-
-# if zero
-if [[ -z "$WALLET_POS_REWARDS" ]] &>/dev/null; then
-  WALLET_POS_REWARDS="Stakes ${GR}0${N0}"
 fi
 
 ################################################################################
