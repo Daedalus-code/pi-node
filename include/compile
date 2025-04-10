@@ -10,22 +10,14 @@ START="$SECONDS"
 
 ################################################################################
 
-#!/bin/bash
-
-set -e
-
-echo "📦 Starting FreedomCoin-Core build for Raspberry Pi"
-
-# Detect CPU arch
+# detect CPU arch
 ARCH=$(uname -m)
-
-# Define build concurrency
+# define build concurrency
 CORES=$(nproc)
 
-# System Update
+# system Update
 sudo apt update && sudo apt upgrade -y
-
-# Dependencies
+# dependencies
 sudo apt install -y \
   build-essential libtool autotools-dev automake pkg-config \
   bsdmainutils curl git libevent-dev libssl-dev \
@@ -43,11 +35,11 @@ make -j$CORES
 sudo make install
 cd ~
 
-# Clone FreedomCoin
+# clone FreedomCoin
 git clone https://github.com/FreedomCoin-Project/FreedomCoin-Core.git
 cd FreedomCoin-Core
 
-# Checkout latest tag
+# checkout latest tag
 TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
 git checkout $TAG
 
@@ -71,7 +63,7 @@ fi
 
 make -j$CORES
 
-echo "✅ Build completed! - $TIMER"
+printf '%b' "[${G1}OK${N0}] Console :  Build completed! - $TIMER\n"
 
 ################################################################################
 
