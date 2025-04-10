@@ -445,7 +445,7 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egr
   WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
 else
 
-  # if movements are older than proof-of-stake
+  # if proof-of-stake are older than movements
   if [[ "$WALLET_POS_REWARDS_AGE" -gt "$WALLET_MOVEMENT_AGE" ]] &>/dev/null; then
     # if any proof-of-stake
     if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
@@ -463,10 +463,11 @@ else
     # get best block hash
     WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
   fi
-  # if zero
-  if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
-    WALLET_TXLAST="null"
-  fi
+fi
+
+# if zero
+if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+  WALLET_TXLAST="No transactions found.."
 fi
 
 ################################################################################
