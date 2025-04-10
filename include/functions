@@ -134,13 +134,13 @@ TX="${GR}"
 ################################################################################
 
 # if new addtowallet
-if [[ ! "$(grep "AddToWallet" "${DATA_DIR:?}"/debug.log | awk '{ print $3 }' | tail -1)" == "$(tail -1 /tmp/movements)" ]] &>/dev/null; then
+if [[ ! "$(grep "AddToWallet" "${DATA_DIR:?}"/debug.log | awk '{ print $3 }' | tail -1)" == "$(tail -1 /tmp/movements.tmp)" ]] &>/dev/null; then
   # fetch addtowallet
-  grep "AddToWallet" "${DATA_DIR:?}"/debug.log | awk '{ print $3 }' >/tmp/movements
+  grep "AddToWallet" "${DATA_DIR:?}"/debug.log | awk '{ print $3 }' >/tmp/movements.tmp
 fi
 
-WALLET_MOVEMENT="$(cat /tmp/movements 2>/dev/null | wc -l)"
-WALLET_MOVEMENT_AGE="$(stat -c '%Y' /tmp/movements 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+WALLET_MOVEMENT="$(cat /tmp/movements.tmp 2>/dev/null | wc -l)"
+WALLET_MOVEMENT_AGE="$(stat -c '%Y' /tmp/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
 
 # if any movements
 if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/null; then
@@ -149,17 +149,17 @@ if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/
 fi
 
 ################################################################################
-# proof of stake
+# proof-of-stake
 ################################################################################
 
 # if new signed block
-if [[ ! "$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' | tail -1)" == "$(tail -1 /tmp/stakes)" ]] &>/dev/null; then
+if [[ ! "$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' | tail -1)" == "$(tail -1 /tmp/stakes.tmp)" ]] &>/dev/null; then
   # fetch signed proof-of-stake block
-  grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' >/tmp/stakes
+  grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' >/tmp/stakes.tmp
 fi
 
-WALLET_POS_REWARDS="$(cat /tmp/stakes 2>/dev/null | wc -l)"
-WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /tmp/stakes 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+WALLET_POS_REWARDS="$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)"
+WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /tmp/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
 
 # if any rewards and less than n age
 if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &>/dev/null; then
@@ -444,7 +444,16 @@ fi
 if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
 else
-  WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
+  # if any proof-of-stake
+  if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+    WALLET_TXLAST="${G1}$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
+    # if any wallet movements
+  elif [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
+    WALLET_TXLAST="$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
+    # get best block hash
+  else
+    WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
+  fi
   # if zero
   if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
     WALLET_TXLAST="null"
