@@ -46,22 +46,19 @@ sudo setfont /usr/share/consolefonts/$FONT
 /usr/local/bin/./freedomcoin-cli getinfo >/tmp/getinfo.tmp 2>/dev/null
 # getwalletinfo
 /usr/local/bin/freedomcoin-cli getwalletinfo >/tmp/getwalletinfo.tmp 2>/dev/null
+# getbestblockhash
+/usr/local/bin/freedomcoin-cli getbestblockhash >/tmp/getbestblockhash.tmp 2>/dev/null
+# getmempoolinfo
+/usr/local/bin/freedomcoin-cli getmempoolinfo >/tmp/getmempoolinfo.tmp 2>/dev/null
 
 # version
 if [[ ! -f /tmp/version.tmp ]] &>/dev/null; then
   /usr/local/bin/./freedomcoin-cli -version >/tmp/version.tmp 2>/dev/null
 fi
-
-# getbestblockhash
-/usr/local/bin/freedomcoin-cli getbestblockhash >/tmp/getbestblockhash.tmp 2>/dev/null
-
 # getblockchaininfo
 if [[ ! -f /tmp/getblockchaininfo.tmp ]] &>/dev/null; then
   /usr/local/bin/freedomcoin-cli getblockchaininfo >/tmp/getblockchaininfo.tmp 2>/dev/null
 fi
-
-# getmempoolinfo
-/usr/local/bin/freedomcoin-cli getmempoolinfo >/tmp/getmempoolinfo.tmp 2>/dev/null
 
 ################################################################################
 # progress bar
@@ -81,10 +78,10 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egr
     FILLED=$((PERCENT * BAR_WIDTH / 100))
     EMPTY=$((BAR_WIDTH - FILLED))
     # bar
-    printf "["
+    printf ""
     for ((I = 0; I < FILLED; I++)); do printf "#"; done
     for ((I = 0; I < EMPTY; I++)); do printf "."; done
-    printf "] %s%%\n" "$PERCENT"
+    printf " %s%%\n" "$PERCENT"
   }
   # extract the progress value
   PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1)"
