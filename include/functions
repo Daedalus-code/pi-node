@@ -451,10 +451,7 @@ else
     if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
       WALLET_TXLAST="${Y1}$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
     fi
-  fi
-
-  # if proof-of-stake are older than movements
-  if [[ "$WALLET_MOVEMENT_AGE" -gt "$WALLET_POS_REWARDS_AGE" ]] &>/dev/null; then
+  else
     # if any proof-of-stake
     if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
       WALLET_TXLAST="${G1}$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
