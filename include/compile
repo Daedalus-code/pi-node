@@ -63,28 +63,6 @@ fi
 
 make -j$CORES 2>/tmp/make
 
-# if any error
-if [[ "$(grep "Error 1" /tmp/make)" ]] &>/dev/null; then
-  printf '%b' "[${R1}!!${N0}] Console :  Build failed! - $TIMER\n"
-else
-  printf '%b' "[${G1}OK${N0}] Console :  Build completed! - $TIMER\n"
-fi
-
-################################################################################
-
-# strip binaries to save space
-strip src/freedomcoind src/freedomcoin-cli || true
-
-################################################################################
-
-# if found
-if [[ -f "$HOME"/FreedomCoin-Core/src/freedomcoind && -f "$HOME"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
-  printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
-  # copy wallet binaries
-  sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind /usr/local/bin &>/dev/null
-  sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoin-cli /usr/local/bin &>/dev/null
-fi
-
 ################################################################################
 
 # calculate build time
@@ -93,10 +71,30 @@ TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(
 
 ################################################################################
 
-echo
-printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
-echo
-read -r -p "[Ok] Press Enter to continue" </dev/tty
-echo
+# if any error
+if [[ "$(grep "Error 1" /tmp/make)" ]] &>/dev/null; then
+  printf '%b' "[${R1}!!${N0}] Console :  Build failed! - $TIMER\n"
+  exit
+else
+  printf '%b' "[${G1}OK${N0}] Console :  Build completed!\n"
+
+  # strip binaries to save space
+  strip src/freedomcoind src/freedomcoin-cli || true
+
+  ##############################################################################
+
+  # if found
+  if [[ -f "$HOME"/FreedomCoin-Core/src/freedomcoind && -f "$HOME"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
+    printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
+    # copy wallet binaries
+    sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind /usr/local/bin &>/dev/null
+    sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoin-cli /usr/local/bin &>/dev/null
+  fi
+  echo
+  printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
+  echo
+  read -r -p "[Ok] Press Enter to continue" </dev/tty
+  echo
+fi
 
 # END
