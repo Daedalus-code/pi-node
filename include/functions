@@ -426,7 +426,7 @@ fi
 if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
 else
-  WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null | grep -v "BOX64")"
+  WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
   # if zero
   if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
     WALLET_TXLAST="null"
