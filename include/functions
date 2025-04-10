@@ -240,7 +240,7 @@ DOWNLOAD_TOTAL_MB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024)" | bc 2>/dev/
 DOWNLOAD_TOTAL_GB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc 2>/dev/null)
 
 # which unit to display
-if (($(echo "$TOTAL_GB >= 1" | bc -l 2>/dev/null))); then
+if (($(echo "$DOWNLOAD_TOTAL_GB >= 1" | bc -l 2>/dev/null))); then
   DOWNLOAD="$DOWNLOAD_TOTAL_MB MB"
 else
   DOWNLOAD="$DOWNLOAD_TOTAL_GB GB"
@@ -255,7 +255,7 @@ UPLOAD_TOTAL_MB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024)" | bc 2>/de
 UPLOAD_TOTAL_GB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null)
 
 # which unit to display
-if (($(echo "$TOTAL_GB >= 1" | bc -l 2>/dev/null))); then
+if (($(echo "$UPLOAD_TOTAL_GB >= 1" | bc -l 2>/dev/null))); then
   UPLOAD="$UPLOAD_TOTAL_MB MB"
 else
   UPLOAD="$UPLOAD_TOTAL_GB GB"
