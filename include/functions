@@ -444,14 +444,23 @@ fi
 if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
 else
-  # if any wallet movements
-  if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
-    WALLET_TXLAST="${Y1}$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
+
+  # if movements are older than proof-of-stake
+  if [[ "$WALLET_POS_REWARDS_AGE" -gt "$WALLET_MOVEMENT_AGE" ]] &>/dev/null; then
+    # if any wallet movements
+    if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
+      WALLET_TXLAST="${Y1}$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
+    fi
   fi
-  # if any proof-of-stake
-  if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
-    WALLET_TXLAST="${G1}$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
+
+  # if proof-of-stake are older than movements
+  if [[ "$WALLET_MOVEMENT_AGE" -gt "$WALLET_POS_REWARDS_AGE" ]] &>/dev/null; then
+    # if any proof-of-stake
+    if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+      WALLET_TXLAST="${G1}$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
+    fi
   fi
+
   # if no proof-of-stake and wallet movements
   if [[ "$WALLET_POS_REWARDS" -eq "0" && "$WALLET_MOVEMENT" -eq "0" ]] &>/dev/null; then
     # get best block hash
