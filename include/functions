@@ -130,6 +130,27 @@ CB="${GR}"
 TX="${GR}"
 
 ################################################################################
+# wallet movements
+################################################################################
+
+# if new addtowallet
+if [[ ! "$(grep "AddToWallet" "${DATA_DIR:?}"/debug.log | awk '{ print $3 }' | tail -1)" == "$(tail -1 /tmp/movements)" ]] &>/dev/null; then
+  # fetch addtowallet
+  grep "AddToWallet" "${DATA_DIR:?}"/debug.log | awk '{ print $3 }' >/tmp/movements
+fi
+
+WALLET_MOVEMENT="$(cat /tmp/movements 2>/dev/null | wc -l)"
+WALLET_MOVEMENT_AGE="$(stat -c '%Y' /tmp/movements 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
+
+# if any movements
+if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/null; then
+  CB="${Y1}"
+  TX="${Y1}"
+fi
+
+################################################################################
+# proof of stake
+################################################################################
 
 # if new signed block
 if [[ ! "$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' | tail -1)" == "$(tail -1 /tmp/stakes)" ]] &>/dev/null; then
@@ -137,7 +158,7 @@ if [[ ! "$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"
   grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' >/tmp/stakes
 fi
 
-WALLET_POS_REWARDS="$(cat /tmp/stakes | wc -l)"
+WALLET_POS_REWARDS="$(cat /tmp/stakes 2>/dev/null | wc -l)"
 WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /tmp/stakes 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
 
 # if any rewards and less than n age
@@ -147,16 +168,6 @@ if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &
 fi
 
 WALLET_POS_REWARDS="Stakes $WALLET_POS_REWARDS"
-
-################################################################################
-
-WALLET_MOVEMENT="$(tail -101 "${DATA_DIR:?}"/debug.log | grep -c "AddToWallet")"
-
-# if any movements
-if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
-  CB="${Y1}"
-  TX="${Y1}"
-fi
 
 ################################################################################
 
