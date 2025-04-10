@@ -73,10 +73,10 @@ TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(
 
 # if any error
 if [[ "$(grep "Error 1" /tmp/make)" ]] &>/dev/null; then
-  printf '%b' "[${R1}!!${N0}] Console :  Build failed! - $TIMER\n"
+  printf '%b' "[${R1}!!${N0}] Console : Build failed! - $TIMER\n"
   exit
 else
-  printf '%b' "[${G1}OK${N0}] Console :  Build completed!\n"
+  printf '%b' "[${G1}OK${N0}] Console : Build completed!\n"
 
   # strip binaries to save space
   strip src/freedomcoind src/freedomcoin-cli || true

@@ -51,6 +51,10 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
     else
       printf '%b' "[${R1}!!${N0}] wget    : Download failed! Running compile script instead!\n"
       bash /etc/pi-node/include/compile
+      # if any error
+      if [[ "$(grep "Error 1" /tmp/make)" ]] &>/dev/null; then
+        exit
+      fi
     fi
   fi
   # fix ownership
