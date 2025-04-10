@@ -18,11 +18,17 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
   # machine
   UNAME_M="$(uname -m)"
 
+  ##############################################################################
+
+  # default
+  BOX64="0"
   # box64
   if [[ "$(box64 --version)" ]] &>/dev/null; then
-    printf '%b' "[${G1}OK${N0}] Console : Box64 detected!\n"
+    printf '%b' "[${G1}OK${N0}] Console : ${R1}Box64${N0} detected!\n"
     BOX64="1"
   fi
+
+  ##############################################################################
 
   if [[ "$(echo "$UNAME_M" | grep -c "x86_64")" == "1" || "$BOX64" == "1" ]] &>/dev/null; then
     WALLET_DOWNLOAD="FreedomCoin-Core-Linux"
