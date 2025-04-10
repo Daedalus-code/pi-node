@@ -18,7 +18,7 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
   # machine
   UNAME_M="$(uname -m)"
 
-  if [[ "$(echo "$UNAME_M" | grep -c "x86_64")" == "1" ]]; then
+  if [[ "$(echo "$UNAME_M" | grep -c "x86_64")" == "1" || "$(box64 --version)" ]] &>/dev/null; then
     WALLET_DOWNLOAD="FreedomCoin-Core-Linux"
   elif [[ "$(echo "$UNAME_M" | grep -c "aarch64")" == "1" ]]; then
     WALLET_DOWNLOAD="FreedomCoin-aarch64"
