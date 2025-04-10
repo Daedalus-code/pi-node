@@ -15,9 +15,6 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
   printf '%b' "[${G1}OK${N0}] curl    : Checking latest release!\n"
   echo
 
-  # machine
-  UNAME_M="$(uname -m)"
-
   ##############################################################################
 
   # default
@@ -30,13 +27,19 @@ if [[ ! -f /usr/local/bin/freedomcoind && ! -f /usr/local/bin/freedomcoin-cli ]]
 
   ##############################################################################
 
+  # machine
+  UNAME_M="$(uname -m)"
+
+  # if any
   if [[ "$(echo "$UNAME_M" | grep -c "x86_64")" == "1" || "$BOX64" == "1" ]] &>/dev/null; then
     WALLET_DOWNLOAD="FreedomCoin-Core-Linux"
-  elif [[ "$(echo "$UNAME_M" | grep -c "aarch64")" == "1" ]]; then
+  elif [[ "$(echo "$UNAME_M" | grep -c "aarch64")" == "1" ]] &>/dev/null; then
     WALLET_DOWNLOAD="FreedomCoin-aarch64"
-  elif [[ "$(echo "$UNAME_M" | grep -c "arm")" == "1" ]]; then
+  elif [[ "$(echo "$UNAME_M" | grep -c "arm")" == "1" ]] &>/dev/null; then
     WALLET_DOWNLOAD="FreedomCoin_arm"
   fi
+
+  ##############################################################################
 
   # if missing
   if [[ ! -f "$HOME"/"$WALLET_DOWNLOAD".zip ]]; then
