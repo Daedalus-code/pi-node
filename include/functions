@@ -50,6 +50,8 @@ sudo setfont /usr/share/consolefonts/$FONT
 /usr/local/bin/freedomcoin-cli getbestblockhash | grep -v "Error" >/tmp/getbestblockhash.tmp 2>/dev/null
 # getmempoolinfo
 /usr/local/bin/freedomcoin-cli getmempoolinfo | grep -v "Error" >/tmp/getmempoolinfo.tmp 2>/dev/null
+# listunspent
+/usr/local/bin/freedomcoin-cli listunspent | grep -v "Error" >/tmp/listunspent.tmp 2>/dev/null
 
 # version
 if [[ ! -f /tmp/version.tmp || ! -s /tmp/version.tmp ]] &>/dev/null; then
@@ -354,7 +356,7 @@ fi
 
 ################################################################################
 
-WALLET_INPUTS_NODES=""
+WALLET_INPUTS_NODES="$(grep -c "amount" /tmp/listunspent.tmp 2>/dev/null)"
 
 # if zero
 if [[ -z "$WALLET_INPUTS_NODES" ]] &>/dev/null; then
