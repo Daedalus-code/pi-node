@@ -300,9 +300,10 @@ After=network-online.target
 
 [Service]
 Type=simple
+ExecStart=/etc/pi-node/include/start
+ExecStop=/usr/local/bin/freedomcoin-cli stop
 Restart=always
 RestartSec=60
-ExecStart=/etc/pi-node/include/start
 
 [Install]
 WantedBy=multi-user.target" >/tmp/service.tmp
