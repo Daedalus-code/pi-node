@@ -143,7 +143,7 @@ WALLET_MOVEMENT="$(cat /tmp/movements.tmp 2>/dev/null | wc -l)"
 WALLET_MOVEMENT_AGE="$(stat -c '%Y' /tmp/movements.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
 
 # if any movements
-if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "3600" ]] &>/dev/null; then
+if [[ "$WALLET_MOVEMENT" -gt "0" && "$WALLET_MOVEMENT_AGE" -lt "2777" ]] &>/dev/null; then
   CB="${Y1}"
   TX="${Y1}"
 fi
@@ -162,7 +162,7 @@ WALLET_POS_REWARDS="$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)"
 WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /tmp/stakes.tmp 2>/dev/null | while read lastedit; do echo "$(($(date +%s) - $lastedit))"; done)"
 
 # if any rewards and less than n age
-if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &>/dev/null; then
+if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &>/dev/null; then
   WALLET_POS_REWARDS="Stakes ${G1}$WALLET_POS_REWARDS${N0}"
   CB="${G1}"
   TX="${G1}"
