@@ -4,6 +4,7 @@ source /etc/pi-node/include/color
 
 ################################################################################
 
+set -e
 clear
 # update pi-node files
 printf '%b' "[${N0}!!${N0}] Github  : Updating pi-node repository..\n"
