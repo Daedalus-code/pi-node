@@ -15,7 +15,7 @@ cd || exit && sudo cp pi-node/dash /usr/local/bin
 printf '%b' "[${N0}!!${N0}] Script  : Updating ${G1}update-pi-node${N0}\n"
 cd || exit && sudo cp pi-node/include/update /usr/local/bin/update-pi-node.update
 printf '%b' "[${G1}OK${N0}] Console : Done!\n"
-echo "$(date | xargs) - Updated" >/tmp/pnud.tmp
+# update script
 sudo chmod +x /usr/local/bin/update-pi-node.update
 sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/update-pi-node.update
 sudo mv /usr/local/bin/update-pi-node.update /usr/local/bin/update-pi-node 2>/dev/null
