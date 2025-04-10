@@ -239,30 +239,14 @@ IP_ADDRESS="${N0}$(ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print
 # get all RX byte counts from ifconfig
 DOWNLOAD_TOTAL=$(ifconfig | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
-DOWNLOAD_TOTAL_MB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024)" | bc 2>/dev/null)
-DOWNLOAD_TOTAL_GB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc 2>/dev/null)
-
-# which unit to display
-if [[ "$DOWNLOAD_TOTAL_GB" < "1" ]] &>/dev/null; then
-  DOWNLOAD="$DOWNLOAD_TOTAL_MB MB"
-else
-  DOWNLOAD="$DOWNLOAD_TOTAL_GB GB"
-fi
+DOWNLOAD_TOTAL_GB=$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }')
 
 ################################################################################
 
 # get all TX byte counts from ifconfig
 UPLOAD_TOTAL_BYTES=$(ifconfig | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
-UPLOAD_TOTAL_MB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024)" | bc 2>/dev/null)
-UPLOAD_TOTAL_GB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null)
-
-# which unit to display
-if [[ "$UPLOAD_TOTAL_GB" < "1" ]] &>/dev/null; then
-  UPLOAD="$UPLOAD_TOTAL_MB MB"
-else
-  UPLOAD="$UPLOAD_TOTAL_GB GB"
-fi
+UPLOAD_TOTAL_GB=$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }')
 
 ################################################################################
 
