@@ -71,18 +71,18 @@ TIMER=$(printf '%dh:%dm:%ds\n' $(("$DURATION/3600")) $(("$DURATION%3600/60")) $(
 
 ################################################################################
 
-# strip binaries to save space
-strip src/freedomcoind src/freedomcoin-cli || true
-
-################################################################################
-
 # if found
 if [[ -f "$HOME"/FreedomCoin-Core/src/freedomcoind && -f "$HOME"/FreedomCoin-Core/src/freedomcoin-cli ]] &>/dev/null; then
+  # strip binaries to save space
+  strip src/freedomcoind src/freedomcoin-cli || true
   printf '%b' "[${G1}OK${N0}] Console : Installing daemon and cli..\n"
   # copy wallet binaries
   sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoind /usr/local/bin &>/dev/null
   sudo cp "$HOME"/FreedomCoin-Core/src/freedomcoin-cli /usr/local/bin &>/dev/null
 fi
+
+################################################################################
+
 echo
 printf '%b' "[${N0}!!${N0}] Console : Build time: ${G1}$TIMER${N0}\n"
 echo
