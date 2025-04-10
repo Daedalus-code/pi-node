@@ -163,11 +163,12 @@ WALLET_POS_REWARDS_AGE="$(stat -c '%Y' /tmp/stakes 2>/dev/null | while read last
 
 # if any rewards and less than n age
 if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "3600" ]] &>/dev/null; then
+  WALLET_POS_REWARDS="Stakes ${G1}$WALLET_POS_REWARDS${N0}"
   CB="${G1}"
   TX="${G1}"
+else
+  WALLET_POS_REWARDS="Stakes ${GR}$WALLET_POS_REWARDS${N0}"
 fi
-
-WALLET_POS_REWARDS="Stakes $WALLET_POS_REWARDS"
 
 ################################################################################
 
