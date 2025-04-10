@@ -61,9 +61,14 @@ fi
 
 ./configure "${CONFIG_OPTS[@]}"
 
-make -j$CORES
+make -j$CORES 2>/tmp/make
 
-printf '%b' "[${G1}OK${N0}] Console :  Build completed! - $TIMER\n"
+# if any error
+if [[ "$(grep "Error 1" /tmp/make)" ]] &>/dev/null; then
+  printf '%b' "[${R1}!!${N0}] Console :  Build failed! - $TIMER\n"
+else
+  printf '%b' "[${G1}OK${N0}] Console :  Build completed! - $TIMER\n"
+fi
 
 ################################################################################
 
