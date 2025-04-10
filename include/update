@@ -18,6 +18,6 @@ printf '%b' "[${G1}OK${N0}] Console : Done!\n"
 echo "$(date | xargs) - Updated" >/tmp/pnud.tmp
 sudo chmod +x /usr/local/bin/update-pi-node.update
 sudo chown "$(whoami)":"$(whoami)" /usr/local/bin/update-pi-node.update
-sudo mv /usr/local/bin/update-pi-node.update /usr/local/bin/update-pi-node
+sudo mv /usr/local/bin/update-pi-node.update /usr/local/bin/update-pi-node 2>/dev/null
 
 # END
