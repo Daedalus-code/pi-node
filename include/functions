@@ -168,6 +168,8 @@ if [[ "$WALLET_POS_REWARDS" -gt "0" && "$WALLET_POS_REWARDS_AGE" -lt "2777" ]] &
   TX="${G1}"
 else
   WALLET_POS_REWARDS="Stakes ${GR}$WALLET_POS_REWARDS${N0}"
+  CB="${GR}"
+  TX="${GR}"
 fi
 
 ################################################################################
@@ -467,7 +469,7 @@ fi
 
 # if zero
 if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
-  WALLET_TXLAST="No transactions found.."
+  WALLET_TXLAST="No tx hash found.."
 fi
 
 ################################################################################
