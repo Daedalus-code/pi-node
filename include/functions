@@ -52,11 +52,11 @@ sudo setfont /usr/share/consolefonts/$FONT
 /usr/local/bin/freedomcoin-cli getmempoolinfo >/tmp/getmempoolinfo.tmp 2>/dev/null
 
 # version
-if [[ ! -f /tmp/version.tmp ]] &>/dev/null; then
+if [[ ! -f /tmp/version.tmp || -s /tmp/version.tmp ]] &>/dev/null; then
   /usr/local/bin/./freedomcoin-cli -version >/tmp/version.tmp 2>/dev/null
 fi
 # getblockchaininfo
-if [[ ! -f /tmp/getblockchaininfo.tmp ]] &>/dev/null; then
+if [[ ! -f /tmp/getblockchaininfo.tmp || -s /tmp/getblockchaininfo.tmp ]] &>/dev/null; then
   /usr/local/bin/freedomcoin-cli getblockchaininfo >/tmp/getblockchaininfo.tmp 2>/dev/null
 fi
 
