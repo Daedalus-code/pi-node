@@ -50,6 +50,8 @@ sudo setfont /usr/share/consolefonts/$FONT
 /usr/local/bin/freedomcoin-cli getbestblockhash | grep -v "Error" >/tmp/getbestblockhash.tmp 2>/dev/null
 # getmempoolinfo
 /usr/local/bin/freedomcoin-cli getmempoolinfo | grep -v "Error" >/tmp/getmempoolinfo.tmp 2>/dev/null
+# getpeerinfo
+/usr/local/bin/freedomcoin-cli getpeerinfo | grep -v "Error" >/tmp/getpeerinfo.tmp 2>/dev/null
 # listunspent
 /usr/local/bin/freedomcoin-cli listunspent | grep -v "Error" >/tmp/listunspent.tmp 2>/dev/null
 
@@ -229,7 +231,7 @@ fi
 
 ################################################################################
 
-SYSTEM_LOAD="$(cat /proc/loadavg 2>/dev/null | awk '{ print $1,$2,$3 }')"
+SYSTEM_LOAD="$(awk '{ print $1,$2,$3 }' /proc/loadavg 2>/dev/null)"
 
 ################################################################################
 
