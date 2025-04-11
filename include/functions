@@ -453,14 +453,14 @@ fi
 ################################################################################
 
 # if no proof-of-stake and wallet movements
-if [[ "$WALLET_POS_REWARDS" -eq "0" && "$WALLET_MOVEMENT" -eq "0" ]] &>/dev/null; then
+if [[ "$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)" -eq "0" && "$WALLET_MOVEMENT" -eq "0" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
 # if any wallet movements
 elif [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
 # if any proof-of-stake
-elif [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+elif [[ "$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)" -gt "0" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
 # if syncing
 elif [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
