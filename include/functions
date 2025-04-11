@@ -9,11 +9,11 @@ source /etc/pi-node/config
 # display resolution
 ################################################################################
 
-RES=$(fbset | grep geometry | awk '{print $2 "x" $3}')
+RES=$(fbset 2>/dev/null | grep "geometry" | awk '{print $2 "x" $3}')
 
 # fallback to tvservice if fbset gives nothing
 if [ -z "$RES" ]; then
-  RES=$(tvservice -s | awk -F@ '{ print $1 }' | awk '{ print $NF }')
+  RES=$(tvservice -s 2>/dev/null | awk -F@ '{ print $1 }' | awk '{ print $NF }')
 fi
 
 case "$RES" in
@@ -43,25 +43,25 @@ sudo setfont /usr/share/consolefonts/$FONT
 ################################################################################
 
 # getinfo
-/usr/local/bin/./freedomcoin-cli getinfo | grep -v "Error" >/tmp/getinfo.tmp 2>/dev/null
+/usr/local/bin/./freedomcoin-cli getinfo 2>/dev/null | grep -v "Error" >/tmp/getinfo.tmp 2>/dev/null
 # getwalletinfo
-/usr/local/bin/freedomcoin-cli getwalletinfo | grep -v "Error" >/tmp/getwalletinfo.tmp 2>/dev/null
+/usr/local/bin/freedomcoin-cli getwalletinfo 2>/dev/null | grep -v "Error" >/tmp/getwalletinfo.tmp 2>/dev/null
 # getbestblockhash
-/usr/local/bin/freedomcoin-cli getbestblockhash | grep -v "Error" >/tmp/getbestblockhash.tmp 2>/dev/null
+/usr/local/bin/freedomcoin-cli getbestblockhash 2>/dev/null | grep -v "Error" >/tmp/getbestblockhash.tmp 2>/dev/null
 # getmempoolinfo
-/usr/local/bin/freedomcoin-cli getmempoolinfo | grep -v "Error" >/tmp/getmempoolinfo.tmp 2>/dev/null
+/usr/local/bin/freedomcoin-cli getmempoolinfo 2>/dev/null | grep -v "Error" >/tmp/getmempoolinfo.tmp 2>/dev/null
 # getpeerinfo
-/usr/local/bin/freedomcoin-cli getpeerinfo | grep -v "Error" >/tmp/getpeerinfo.tmp 2>/dev/null
+/usr/local/bin/freedomcoin-cli getpeerinfo 2>/dev/null | grep -v "Error" >/tmp/getpeerinfo.tmp 2>/dev/null
 # listunspent
-/usr/local/bin/freedomcoin-cli listunspent | grep -v "Error" >/tmp/listunspent.tmp 2>/dev/null
+/usr/local/bin/freedomcoin-cli listunspent 2>/dev/null | grep -v "Error" >/tmp/listunspent.tmp 2>/dev/null
 
 # version
 if [[ ! -f /tmp/version.tmp || ! -s /tmp/version.tmp ]] &>/dev/null; then
-  /usr/local/bin/./freedomcoin-cli -version | grep -v "Error" >/tmp/version.tmp 2>/dev/null
+  /usr/local/bin/./freedomcoin-cli -version 2>/dev/null | grep -v "Error" >/tmp/version.tmp 2>/dev/null
 fi
 # getblockchaininfo
 if [[ ! -f /tmp/getblockchaininfo.tmp || ! -s /tmp/getblockchaininfo.tmp ]] &>/dev/null; then
-  /usr/local/bin/freedomcoin-cli getblockchaininfo | grep -v "Error" >/tmp/getblockchaininfo.tmp 2>/dev/null
+  /usr/local/bin/freedomcoin-cli getblockchaininfo 2>/dev/null | grep -v "Error" >/tmp/getblockchaininfo.tmp 2>/dev/null
 fi
 
 ################################################################################
@@ -69,7 +69,7 @@ fi
 ################################################################################
 
 # if not synced
-if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   # function to draw the progress bar
   draw_progress_bar() {
     PROGRESS="$1"
@@ -92,14 +92,14 @@ if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egr
     printf " %s%%\n" "$PERCENT_RAW"
   }
   # extract the progress value
-  PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1)"
+  PROGRESS="$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log 2>/dev/null | tail -1)"
   # draw the progress bar
   SYNC_PROGRESS_BAR="$(draw_progress_bar "$PROGRESS")"
 fi
 
 ################################################################################
 
-WALLET_SYNC="$(grep -o "progress........." "${DATA_DIR}"/debug.log | tail -1 | awk -F= '{ printf "%.2f\n", $2 }')"
+WALLET_SYNC="$(grep -o "progress........." "${DATA_DIR}"/debug.log 2>/dev/null | tail -1 | awk -F= '{ printf "%.2f\n", $2 }')"
 echo "$WALLET_SYNC" >/tmp/progress.tmp
 
 WALLET_SYNC="$(cat /tmp/progress.tmp 2>/dev/null)"
@@ -136,9 +136,9 @@ TX="${GR}"
 ################################################################################
 
 # if new addtowallet
-if [[ ! "$(grep "AddToWallet" "${DATA_DIR:?}"/debug.log | awk '{ print $3 }' | tail -1)" == "$(tail -1 /tmp/movements.tmp)" ]] &>/dev/null; then
+if [[ ! "$(grep "AddToWallet" "${DATA_DIR:?}"/debug.log 2>/dev/null | awk '{ print $3 }' | tail -1)" == "$(tail -1 /tmp/movements.tmp)" ]] &>/dev/null; then
   # fetch addtowallet
-  grep "AddToWallet" "${DATA_DIR:?}"/debug.log | awk '{ print $3 }' >/tmp/movements.tmp
+  grep "AddToWallet" "${DATA_DIR:?}"/debug.log 2>/dev/null | awk '{ print $3 }' >/tmp/movements.tmp
 fi
 
 WALLET_MOVEMENT="$(cat /tmp/movements.tmp 2>/dev/null | wc -l)"
@@ -155,9 +155,9 @@ fi
 ################################################################################
 
 # if new signed block
-if [[ ! "$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' | tail -1)" == "$(tail -1 /tmp/stakes.tmp)" ]] &>/dev/null; then
+if [[ ! "$(grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log 2>/dev/null | awk '{ print $NF }' | tail -1)" == "$(tail -1 /tmp/stakes.tmp)" ]] &>/dev/null; then
   # fetch signed proof-of-stake block
-  grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log | awk '{ print $NF }' >/tmp/stakes.tmp
+  grep "BitcoinMiner : proof-of-stake block was signed" "${DATA_DIR:?}"/debug.log 2>/dev/null | awk '{ print $NF }' >/tmp/stakes.tmp
 fi
 
 WALLET_POS_REWARDS="$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)"
@@ -194,7 +194,7 @@ fi
 
 ################################################################################
 
-POS_STATUS="$(grep -c "Staking Not Active" /tmp/getinfo.tmp)"
+POS_STATUS="$(grep -c "Staking Not Active" /tmp/getinfo.tmp 2>/dev/null)"
 
 # if zero
 if [[ "$POS_STATUS" == "0" || -z "$POS_STATUS" ]] &>/dev/null; then
@@ -208,7 +208,7 @@ fi
 
 ################################################################################
 
-TOR_STATUS="$(grep "proxy" /tmp/getinfo.tmp | awk '{ print $2 }' | tr -d '",' | egrep -c "[0-9]+|[A-Z]+|[a-z]")"
+TOR_STATUS="$(grep "proxy" /tmp/getinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d '",' | egrep -c "[0-9]+|[A-Z]+|[a-z]")"
 
 # if zero
 if [[ "$TOR_STATUS" == "0" || -z "$TOR_STATUS" ]] &>/dev/null; then
@@ -247,8 +247,8 @@ CPU_FTEMP="${CPU_FTEMP}°F"
 
 ################################################################################
 
-TOTAL_MEM="${G0}$(echo "$(echo "$(grep "MemTotal" /proc/meminfo | awk '{ print $2 }')+"$(grep "SwapTotal" /proc/meminfo | awk '{ print $2 }') | bc -l 2>/dev/null)/1024" | bc 2>/dev/null)${N0}"
-FREE_MEM="${G1}$(echo "$(grep "MemFree" /proc/meminfo | awk '{ print $2 }')/1024" | bc 2>/dev/null)${N0}"
+TOTAL_MEM="${G0}$(echo "$(echo "$(grep "MemTotal" /proc/meminfo 2>/dev/null | awk '{ print $2 }')+"$(grep "SwapTotal" /proc/meminfo 2>/dev/null | awk '{ print $2 }') | bc -l 2>/dev/null)/1024" | bc 2>/dev/null)${N0}"
+FREE_MEM="${G1}$(echo "$(grep "MemFree" /proc/meminfo 2>/dev/null | awk '{ print $2 }')/1024" | bc 2>/dev/null)${N0}"
 
 ################################################################################
 
@@ -262,19 +262,19 @@ SYSTEM_USER="$(whoami)"
 
 ################################################################################
 
-IP_ADDRESS="${N0}$(ifconfig | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')${N0}"
+IP_ADDRESS="${N0}$(ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')${N0}"
 
 ################################################################################
 
 # get all RX byte counts from ifconfig
-DOWNLOAD_TOTAL=$(ifconfig | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+DOWNLOAD_TOTAL=$(ifconfig 2>/dev/null | grep "RX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
 DOWNLOAD="$(echo "scale=2; $DOWNLOAD_TOTAL / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }') GB"
 
 ################################################################################
 
 # get all TX byte counts from ifconfig
-UPLOAD_TOTAL_BYTES=$(ifconfig | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
+UPLOAD_TOTAL_BYTES=$(ifconfig 2>/dev/null | grep "TX packets" | awk '{ print $5 }' | paste -sd+ - | bc 2>/dev/null)
 # convert RX bytes to MB and GB
 UPLOAD="$(echo "scale=2; $UPLOAD_TOTAL_BYTES / (1024 * 1024 * 1024)" | bc 2>/dev/null | awk '{ printf "%.2f\n", $1 }') GB"
 
@@ -288,7 +288,7 @@ WALLET_VERSION="$(tail -1 /tmp/version.tmp 2>/dev/null | awk '{ print $NF }')"
 
 ################################################################################
 
-WALLET_CHAIN="$(grep -w "chain" /tmp/getblockchaininfo.tmp | awk '{ print $NF }' | tr -d ',"')"
+WALLET_CHAIN="$(grep -w "chain" /tmp/getblockchaininfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',"')"
 
 # if main
 if [[ "$WALLET_CHAIN" == "main" ]] &>/dev/null; then
@@ -332,17 +332,19 @@ fi
 
 ################################################################################
 
-WALLET_PEERS_TOTAL="${G1}$(grep "connections" /tmp/getinfo.tmp | awk '{ print $NF }' | tr -d ',')${N0}"
+WALLET_PEERS_TOTAL="$(grep "connections" /tmp/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_PEERS_TOTAL" ]] &>/dev/null; then
   WALLET_PEERS_TOTAL="0"
+else
+  WALLET_PEERS_TOTAL="${G1}$WALLET_PEERS_TOTAL${N0}"
 fi
 
 ################################################################################
 
 # ip4 address
-WALLET_PEERS_IP4="$(grep "addrlocal" /tmp/getpeerinfo.tmp | awk '{ print $NF }' | awk -F: '{ print $1 }' | tr -d ',"' | egrep -v "[a-z]+" | grep -oP '\b(?:\d{1,3}\.){3}\d{1,3}\b' | wc -l)"
+WALLET_PEERS_IP4="$(grep "addrlocal" /tmp/getpeerinfo.tmp 2>/dev/null | awk '{ print $NF }' | awk -F: '{ print $1 }' | tr -d ',"' | egrep -v "[a-z]+" | grep -oP '\b(?:\d{1,3}\.){3}\d{1,3}\b' | wc -l)"
 
 # if zero
 if [[ -z "$WALLET_PEERS_IP4" ]] &>/dev/null; then
@@ -354,7 +356,7 @@ fi
 ################################################################################
 
 # ip6 address
-WALLET_PEERS_IP6="$(grep "addrlocal" /tmp/getpeerinfo.tmp | awk '{ print $NF }' | awk -F: '{ print $1 }' | tr -d ',"' | grep -oP '\[?' | wc -l)"
+WALLET_PEERS_IP6="$(grep "addrlocal" /tmp/getpeerinfo.tmp 2>/dev/null | awk '{ print $NF }' | awk -F: '{ print $1 }' | tr -d ',"' | grep -oP '\[?' | wc -l)"
 
 # if zero
 if [[ -z "$WALLET_PEERS_IP6" ]] &>/dev/null; then
@@ -365,7 +367,7 @@ fi
 
 ################################################################################
 
-WALLET_BALANCES="$(grep "balance" /tmp/getwalletinfo.tmp | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
+WALLET_BALANCES="$(grep "balance" /tmp/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',' | awk '{ SUM += $1} END { print SUM }')"
 
 if [[ "$(echo "$WALLET_BALANCES" | awk -F. '{ print $1 }')" -gt "0" ]] &>/dev/null; then
   WALLET_BALANCES="$(echo "$WALLET_BALANCES" | awk '{ printf "%.2f\n", $1 }')"
@@ -391,7 +393,7 @@ fi
 
 ################################################################################
 
-WALLET_TXCOUNT="$(grep "txcount" /tmp/getwalletinfo.tmp | awk '{ print $NF }' | tr -d ',')"
+WALLET_TXCOUNT="$(grep "txcount" /tmp/getwalletinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_TXCOUNT" ]] &>/dev/null; then
@@ -400,7 +402,7 @@ fi
 
 ################################################################################
 
-WALLET_MEMPOOL="$(grep "size" /tmp/getmempoolinfo.tmp | awk '{ print $2 }' | tr -d ',')"
+WALLET_MEMPOOL="$(grep "size" /tmp/getmempoolinfo.tmp 2>/dev/null | awk '{ print $2 }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_MEMPOOL" ]] &>/dev/null; then
@@ -409,7 +411,7 @@ fi
 
 ################################################################################
 
-WALLET_HEADS="$(grep "blocks" /tmp/getinfo.tmp | awk '{ print $NF }' | tr -d ',')"
+WALLET_HEADS="$(grep "blocks" /tmp/getinfo.tmp 2>/dev/null | awk '{ print $NF }' | tr -d ',')"
 
 # if zero
 if [[ -z "$WALLET_HEADS" ]] &>/dev/null; then
@@ -451,7 +453,7 @@ fi
 ################################################################################
 
 # if syncing
-if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
 else
 
