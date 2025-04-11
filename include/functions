@@ -456,17 +456,25 @@ fi
 if [[ "$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)" -eq "0" && "$WALLET_MOVEMENT" -eq "0" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
+fi
+
 # if any wallet movements
-elif [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
+if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
+fi
+
 # if any proof-of-stake
-elif [[ "$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)" -gt "0" ]] &>/dev/null; then
+if [[ "$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)" -gt "0" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
+fi
+
 # if syncing
-elif [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
+if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
+fi
+
 # if zero
-elif [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
+if [[ -z "$WALLET_TXLAST" ]] &>/dev/null; then
   WALLET_TXLAST="No tx hash found.."
 fi
 
