@@ -452,29 +452,25 @@ fi
 
 ################################################################################
 
+# if no proof-of-stake and wallet movements
+if [[ "$WALLET_POS_REWARDS" -eq "0" && "$WALLET_MOVEMENT" -eq "0" ]] &>/dev/null; then
+  # get best block hash
+  WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
+fi
+
+# if any wallet movements
+if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
+  WALLET_TXLAST="$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
+fi
+
+# if any proof-of-stake
+if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
+  WALLET_TXLAST="$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
+fi
+
 # if syncing
 if [[ ! "$(grep -oP 'progress=\K[0-9.]+' "${DATA_DIR}"/debug.log 2>/dev/null | tail -1 | egrep "[0-9]+.[0-9]+")" == "1.000000" ]] &>/dev/null; then
   WALLET_TXLAST="   ${G1}${SYNC_PROGRESS_BAR}${N0}"
-else
-
-  # if proof-of-stake are older than movements
-  if [[ "$WALLET_POS_REWARDS_AGE" -gt "$WALLET_MOVEMENT_AGE" ]] &>/dev/null; then
-    # if any proof-of-stake
-    if [[ "$WALLET_POS_REWARDS" -gt "0" ]] &>/dev/null; then
-      WALLET_TXLAST="$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
-    fi
-  else
-    # if any wallet movements
-    if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
-      WALLET_TXLAST="$(tail -1 /tmp/movements.tmp 2>/dev/null)${N0}"
-    fi
-  fi
-
-  # if no proof-of-stake and wallet movements
-  if [[ "$WALLET_POS_REWARDS" -eq "0" && "$WALLET_MOVEMENT" -eq "0" ]] &>/dev/null; then
-    # get best block hash
-    WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
-  fi
 fi
 
 # if zero
