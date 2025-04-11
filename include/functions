@@ -453,7 +453,7 @@ fi
 ################################################################################
 
 # if no proof-of-stake and wallet movements
-if [[ "$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)" -eq "0" && "$WALLET_MOVEMENT" -eq "0" ]] &>/dev/null; then
+if [[ "$(wc -l /tmp/stakes.tmp 2>/dev/null | awk '{ print $1 }')" -eq "0" && "$WALLET_MOVEMENT" -eq "0" ]] &>/dev/null; then
   # get best block hash
   WALLET_TXLAST="$(tail -1 /tmp/getbestblockhash.tmp 2>/dev/null)${N0}"
 fi
@@ -464,7 +464,7 @@ if [[ "$WALLET_MOVEMENT" -gt "0" ]] &>/dev/null; then
 fi
 
 # if any proof-of-stake
-if [[ "$(cat /tmp/stakes.tmp 2>/dev/null | wc -l)" -gt "0" ]] &>/dev/null; then
+if [[ "$(wc -l /tmp/stakes.tmp 2>/dev/null | awk '{ print $1 }')" -gt "0" ]] &>/dev/null; then
   WALLET_TXLAST="$(tail -1 /tmp/stakes.tmp 2>/dev/null)${N0}"
 fi
 
