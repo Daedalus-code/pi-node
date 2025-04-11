@@ -262,7 +262,7 @@ SYSTEM_USER="$(whoami)"
 
 ################################################################################
 
-IP_ADDRESS="${N0}$(ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')${N0}"
+IP_ADDRESS="$(ifconfig 2>/dev/null | grep "inet" | egrep -v "prefix|127" | awk '{ print $2 }')"
 
 ################################################################################
 
@@ -323,11 +323,11 @@ if [[ "$RANDOM_PUBLIC_IP" == "1" ]] &>/dev/null; then
 fi
 # wan ip address
 if [[ "$RANDOM_PUBLIC_IP" == "2" ]] &>/dev/null; then
-  PUBLIC_IP="${CY}$(cat /tmp/wanip.tmp 2>/dev/null)${N0}"
+  PUBLIC_IP="${CY}$(cat /tmp/wanip.tmp 2>/dev/null):15110${N0}"
 fi
 # if zero
 if [[ -z "$PUBLIC_IP" ]] &>/dev/null; then
-  PUBLIC_IP="${GR}0.0.0.0${N0}"
+  PUBLIC_IP="${GR}Updating..${N0}"
 fi
 
 ################################################################################
