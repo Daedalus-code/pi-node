@@ -474,18 +474,21 @@ fi
 
 ################################################################################
 
-LAST_LOG="$(tail -1 "$DATA_DIR"/debug.log)"
+LAST_LOG="$(tail -1 "$DATA_DIR"/debug.log 2>/dev/null)"
 
 # if zero
 if [[ -z "$LAST_LOG" ]] &>/dev/null; then
-  LAST_LOG="null"
+  LAST_LOG="debug.log is empty.."
 fi
 
 # if more than n megabytes
-if [[ "$(ls -lSh .trumpcoin/debug.log 2>/dev/null | awk '{ print $5 }' | tr -d 'M')" -gt "10" ]] &>/dev/null; then
+if [[ "$(ls -lSh "$DATA_DIR"/debug.log 2>/dev/null | awk '{ print $5 }' | tr -d 'M')" -gt "10" ]] &>/dev/null; then
   # trim debug.log
   echo "$(tail -1001 "$DATA_DIR"/debug.log 2>/dev/null)" >"$DATA_DIR"/debug.log
 fi
+
+LOG_SIZE=$(ls -lSh "$DATA_DIR"/debug.log 2>/dev/null | awk '{ print $5 }')
+LAST_LOG="${N0}${LAST_LOG:0:188} log=${LOG_SIZE}${N0}"
 
 ################################################################################
 
