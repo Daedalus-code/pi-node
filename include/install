@@ -216,13 +216,13 @@ DATA_DIR=/home/$(whoami)/.trumpcoin
 
 ###
 
-WALLET_DAEMON=/home/vps/freed2/freedomcoind
-WALLET_CLIENT=/home/vps/freed2/freedomcoin-cli
+WALLET_DAEMON=/usr/local/bin/freedomcoind
+WALLET_CLIENT=/usr/local/bin/freedomcoin-cli
 
 ###
 
-WALLET_CONFIG=/home/vps/freed2/trumpcoin.conf
-WALLET_MASTER=/home/vps/freed2/patriotnode.conf
+WALLET_CONFIG=/home/$(whoami)/.trumpcoin/trumpcoin.conf
+WALLET_MASTER=/home/$(whoami)/.trumpcoin/patriotnode.conf
 
 ###
 
